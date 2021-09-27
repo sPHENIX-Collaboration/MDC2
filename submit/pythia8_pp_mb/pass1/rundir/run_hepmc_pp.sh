@@ -6,6 +6,14 @@ source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1.8
 
 echo running: run_hepmc_pp.sh $*
 
+if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
+then
+  cd $_CONDOR_SCRATCH_DIR
+  rsync -av /sphenix/u/sphnxpro/MDC2/submit/pythia8_pp_mb/pass1/rundir/* .
+else
+ echo condor scratch NOT set
+fi
+
 # arguments 
 # $1: number of events
 # $2: hepmc input file
