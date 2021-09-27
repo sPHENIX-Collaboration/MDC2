@@ -1,12 +1,12 @@
 #!/usr/bin/bash
 export HOME=/sphenix/u/${LOGNAME}
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1.2
+source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1.8
 echo running: run_pileup.sh $*
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
   cd $_CONDOR_SCRATCH_DIR
-  rsync -av /sphenix/u/sphnxpro/MDC1/submit/fm_0_488/pass2/rundir/* .
+  rsync -av /sphenix/u/sphnxpro/MDC1/submit/fm_0_488/pass2_50kHz_0_20fm/rundir/* .
     getinputfiles.pl $2
     if [ $? -ne 0 ]
     then
