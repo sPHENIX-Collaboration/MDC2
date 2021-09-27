@@ -9,6 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
+my $input_runnumber = 2;
 my $test;
 my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
@@ -18,6 +19,14 @@ if ($#ARGV < 0)
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--test : dryrun - create jobfiles\n";
+    exit(1);
+}
+
+my $hostname = `hostname`;
+chomp $hostname;
+if ($hostname !~ /phnxsub/)
+{
+    print "submit only from phnxsub01 or phnxsub02\n";
     exit(1);
 }
 
@@ -45,10 +54,10 @@ mkpath($logdir);
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%sHijing_0_488fm%' order by filename") || die $DBI::error;
+my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%sHijing_0_488fm%' and runnumber = $input_runnumber order by filename") || die $DBI::error;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
 
-my $getbkglastsegment = $dbh->prepare("select max(segment) from datasets where dsttype = 'G4Hits' and filename like '%sHijing_0_12fm%'");
+my $getbkglastsegment = $dbh->prepare("select max(segment) from datasets where dsttype = 'G4Hits' and filename like '%sHijing_0_20fm%' and runnumber = $input_runnumber");
 $getbkglastsegment->execute();
 my @res1 = $getbkglastsegment->fetchrow_array();
 my $lastsegment = $res1[0];
@@ -68,7 +77,7 @@ while (my @res = $getfiles->fetchrow_array())
 	my $foundall = 1;
 	foreach my $type (sort keys %outfiletype)
 	{
-            my $lfn =  sprintf("%s_sHijing_0_488fm_50kHz_bkg_0_12fm-%010d-%05d.root",$type,$runnumber,$segment);
+            my $lfn =  sprintf("%s_sHijing_0_488fm_50kHz_bkg_0_20fm-%010d-%05d.root",$type,$runnumber,$segment);
 	    $chkfile->execute($lfn);
 	    if ($chkfile->rows > 0)
 	    {
@@ -86,7 +95,7 @@ while (my @res = $getfiles->fetchrow_array())
 	}
 # output file does not exist yet, check for 2 MB background files (n to n+1)
 	$foundall = 1;
-	$prefix =~ s/sHijing_0_488fm/sHijing_0_12fm/;
+	$prefix =~ s/sHijing_0_488fm/sHijing_0_20fm/;
 	my @bkgfiles = ();
 
 	for (my $cnt = $segment; $cnt <=$segment+1; $cnt++)
