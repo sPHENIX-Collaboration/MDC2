@@ -38,7 +38,7 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_HF_pp_signal(
     const int nEvents = 1,
-    const string &HF_Q_filter = "Charm", // or "Bottom" or "MinBias"
+    const string &HF_Q_filter = "CharmD0", // or "BottomD0" or "MinBias"
     const string &outputFile = "G4sPHENIX.root",
     const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
     const int skip = 0,
@@ -131,12 +131,12 @@ int Fun4All_G4_HF_pp_signal(
   {
     PHPy8ParticleTrigger * p8_hf_signal_trigger = new PHPy8ParticleTrigger();
 
-    if (HF_Q_filter == "Charm")
+    if (HF_Q_filter == "CharmD0")
     {
       p8_hf_signal_trigger -> AddParticles(4);
       p8_hf_signal_trigger -> AddParticles(-4);
     }
-    else if (HF_Q_filter == "Bottom")
+    else if (HF_Q_filter == "BottomD0")
     {
       p8_hf_signal_trigger -> AddParticles(5);
       p8_hf_signal_trigger -> AddParticles(-5);
@@ -167,9 +167,32 @@ int Fun4All_G4_HF_pp_signal(
     p8_hf_signal_trigger->PrintConfig();
 //    p8_hf_signal_trigger->Verbosity(10);
 
-    if (HF_Q_filter == "Charm" or HF_Q_filter == "Bottom") INPUTGENERATOR::Pythia8->register_trigger(p8_hf_signal_trigger);
-    INPUTGENERATOR::Pythia8->set_vertex_distribution_function( PHHepMCGenHelper::Gaus, PHHepMCGenHelper::Gaus,PHHepMCGenHelper::Uniform ,PHHepMCGenHelper::Gaus);
-    INPUTGENERATOR::Pythia8->set_vertex_distribution_width(0.1,0.1,10,0);
+    if (HF_Q_filter == "CharmD0" or HF_Q_filter == "BottomD0") INPUTGENERATOR::Pythia8->register_trigger(p8_hf_signal_trigger);
+
+    PHPy8ParticleTrigger * p8_d0pi_trigger = new PHPy8ParticleTrigger();
+    p8_d0pi_trigger->AddParents(421);
+    p8_d0pi_trigger->AddParticles(211);
+    p8_d0pi_trigger->AddParticles(-211);
+    p8_d0pi_trigger->SetEtaLow(-1.1);
+    p8_d0pi_trigger->SetEtaHigh(1.1);
+    p8_d0pi_trigger->SetStableParticleOnly(true);
+    INPUTGENERATOR::Pythia8->register_trigger(p8_d0pi_trigger);
+
+    PHPy8ParticleTrigger * p8_d0K_trigger = new PHPy8ParticleTrigger();
+    p8_d0K_trigger->AddParents(421);
+    p8_d0K_trigger->AddParticles(321);
+    p8_d0K_trigger->AddParticles(-321);
+    p8_d0K_trigger->SetEtaLow(-1.1);
+    p8_d0K_trigger->SetEtaHigh(1.1);
+    p8_d0K_trigger->SetStableParticleOnly(true);
+    INPUTGENERATOR::Pythia8->register_trigger(p8_d0K_trigger);
+
+    INPUTGENERATOR::Pythia8->set_trigger_AND ();
+
+    Input::ApplysPHENIXBeamParameter(INPUTGENERATOR::Pythia8);
+
+    // INPUTGENERATOR::Pythia8->set_vertex_distribution_function( PHHepMCGenHelper::Gaus, PHHepMCGenHelper::Gaus,PHHepMCGenHelper::Uniform ,PHHepMCGenHelper::Gaus);
+    // INPUTGENERATOR::Pythia8->set_vertex_distribution_width(0.1,0.1,10,0);
   }
 
   // Simple Input generator:
@@ -219,11 +242,6 @@ int Fun4All_G4_HF_pp_signal(
   // Set Input Manager specific options
   //--------------
   // can only be set after InputInit() is called
-  if (Input::PYTHIA8)
-  {
-
-  }
-
   if (Input::HEPMC)
   {
     INPUTMANAGER::HepMCInputManager->set_vertex_distribution_width(100e-4, 100e-4, 8, 0);  //optional collision smear in space, time
