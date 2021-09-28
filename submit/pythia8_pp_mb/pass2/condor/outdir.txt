@@ -1,1 +1,1 @@
-/sphenix/sim/sim01/sphnxpro/MDC1/pythia8_pp/PileUp/data
+/pnfs/rcf.bnl.gov/sphenix/disk/MDC2/pythia8_pp/PileUp
