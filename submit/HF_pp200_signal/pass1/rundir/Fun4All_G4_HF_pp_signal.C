@@ -254,7 +254,7 @@ int Fun4All_G4_HF_pp_signal(
   //======================
 
   Enable::DSTOUT = true;
-  Enable::DSTOUT_COMPRESS = true;
+  Enable::DSTOUT_COMPRESS = false;
   DstOut::OutputDir = outdir;
   DstOut::OutputFile = outputFile;
 
