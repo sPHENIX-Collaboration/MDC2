@@ -6,9 +6,8 @@ echo running: run_pileup.sh $*
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
-  cd $_CONDOR_SCRATCH_DIR
-#  rsync -av /sphenix/u/sphnxpro/MDC2/submit/pythia8_pp_mb/pass2/rundir/* .
-  rsync -av /sphenix/user/pinkenbu/MDC2/submit/pythia8_pp_mb/pass2/rundir/* .
+    cd $_CONDOR_SCRATCH_DIR
+    rsync -av /sphenix/u/sphnxpro/MDC2/submit/pythia8_pp_mb/pass2/rundir/* .
     getinputfiles.pl $2
     if [ $? -ne 0 ]
     then
@@ -16,7 +15,7 @@ then
 	exit -1
     fi
 else
- echo condor scratch NOT set
+    echo condor scratch NOT set
 fi
 
 # arguments 
