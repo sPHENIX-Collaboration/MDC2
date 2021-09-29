@@ -22,7 +22,7 @@ void CreateDstOutput(int runnumber, int segment)
 
   char segrun[100];
   snprintf(segrun,100,"%010d-%05d",runnumber,segment);
-  string FullOutFile = "DST_TRUTH_sHijing_0_488fm_50kHz_bkg_0_20fm-" + string(segrun) + ".root";;
+  string FullOutFile = "DST_TRUTH_pythia8_mb-" + string(segrun) + ".root";;
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("BBCOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("PHHepMCGenEventMap");
@@ -32,7 +32,7 @@ void CreateDstOutput(int runnumber, int segment)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "DST_TRKR_CLUSTER_sHijing_0_488fm_50kHz_bkg_0_20fm-" + string(segrun) + ".root";;
+  FullOutFile = "DST_TRKR_CLUSTER_pythia8_mb-" + string(segrun) + ".root";;
   out = new Fun4AllDstOutputManager("TRKROUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("TRKR_HITSET");
