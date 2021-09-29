@@ -22,6 +22,9 @@
 
 #include <phpythia8/PHPy8ParticleTrigger.h>
 
+#include <ffamodules/HeadReco.h>
+#include <ffamodules/SyncReco.h>
+
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
@@ -63,6 +66,16 @@ int Fun4All_G4_HF_pp_signal(
   //  rc->set_IntFlag("RANDOMSEED", 12345);
   //int seedValue = 491258969;
   //rc->set_IntFlag("RANDOMSEED", seedValue);
+
+  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
+  int runnumber=runseg.first;
+  int segment=runseg.second;
+  if (runnumber != 0)
+  {
+    rc->set_IntFlag("RUNNUMBER",runnumber);
+    Fun4AllSyncManager *syncman = se->getSyncManager();
+    syncman->SegmentNumber(segment);
+  }
 
   //===============
   // Input options
@@ -263,6 +276,12 @@ int Fun4All_G4_HF_pp_signal(
   }
   // register all input generators with Fun4All
   InputRegister();
+
+  SyncReco *sync = new SyncReco();
+  se->registerSubsystem(sync);
+
+  HeadReco *head = new HeadReco();
+  se->registerSubsystem(head);
 
   // set up production relatedstuff
   Enable::PRODUCTION = true;
