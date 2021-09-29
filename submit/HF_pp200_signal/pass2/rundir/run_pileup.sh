@@ -7,7 +7,7 @@ echo running: run_pileup.sh $*
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
     cd $_CONDOR_SCRATCH_DIR
-    rsync -av /sphenix/u/sphnxpro/MDC2/submit/pythia8_pp_mb/pass2/rundir/* .
+    rsync -av /sphenix/u/sphnxpro/MDC2/submit/HF_pp200_signal/pass2/rundir/* .
     getinputfiles.pl $2
     if [ $? -ne 0 ]
     then
