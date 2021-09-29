@@ -89,7 +89,7 @@ while (my @res = $getfiles->fetchrow_array())
 	}
 	if ($foundall == 1)
 	{
-	    print "foundall is 1\n";
+#	    print "foundall is 1\n";
 	    next;
 	}
 # output file does not exist yet, check for 2 MB background files (n to n+1)
