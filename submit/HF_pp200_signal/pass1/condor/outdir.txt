@@ -1,1 +1,1 @@
-/pnfs/rcf.bnl.gov/sphenix/disk/MDC2/HF_pp200_signal
+/pnfs/rcf.bnl.gov/sphenix/disk/MDC2/HF_pp200_signal/G4Hits
