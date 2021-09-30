@@ -8,9 +8,13 @@ use File::stat;
 use Getopt::Long;
 use DBI;
 use Digest::MD5  qw(md5 md5_hex md5_base64);
+use Env;
 
 sub getmd5;
 sub getentries;
+
+Env::import();
+
 #only created if initial copy fails (only for sphnxpro account)
 my $backupdir = sprintf("/sphenix/sim/sim01/sphnxpro/MDC2/backup");
 
@@ -20,7 +24,6 @@ GetOptions("outdir:s"=>\$outdir, "test"=>\$test);
 
 
 my $file = $ARGV[0];
-
 if (! -f $file)
 {
     print "$file not found\n";
@@ -59,7 +62,7 @@ if ($outdir =~ /pnfs/)
 	print "no copying to dCache for $username, only sphnxpro can do that\n";
 	exit 0;
     }
-    $copycmd = sprintf("dccp -d7 -C 3600 %s %s",$file,$outfile);
+    $copycmd = sprintf("env LD_LIBRARY_PATH=/usr/lib64:%s xrdcp --nopbar --retry 3 %s root://dcsphdoor02.rcf.bnl.gov:1095%s",$LD_LIBRARY_PATH,$file,$outfile);
     $outhost = 'dcache';
 }
 else
@@ -67,6 +70,7 @@ else
     $copycmd = sprintf("rsync -av %s %s",$file,$outfile);
     $outhost = 'gpfs';
 }
+
 # create output dir if it does not exist and if it is not a test
 # user check for dCache is handled before so we do
 # not have to protect here against users trying to create a dir in dCache
@@ -84,8 +88,13 @@ if (defined $test)
 }
 else
 {
-    print "cmd: $copycmd\n";
+    my $thisdate = `date +%s`;
+    chomp $thisdate;
+    print "unixtime begin: $thisdate cmd: $copycmd\n";
     system($copycmd);
+    my $thisdate = `date +%s`;
+    chomp $thisdate;
+    print "unixtime end: $thisdate cmd: $copycmd\n";
 }
 
 # down here only things for the production account
@@ -109,7 +118,6 @@ if (! -f $outfile)
     $outhost = 'gpfs';
     system($copycmd);
 }
-
 my $outsize = $size;
 if (! defined $test)
 {
@@ -145,7 +153,7 @@ if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/)
 my @sp1 = split(/\_pythia8/,$lfn);
 if (! defined $test)
 {
- $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries);
+    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries);
 }
 else
 {
@@ -194,20 +202,13 @@ sub getentries
 	print F "  // in case of crashes, it hangs the condor job\n";
 	print F "  for (int i = 0; i < kMAXSIGNALS; i++)\n";
 	print F "  {\n";
-	print F "    gSystem->IgnoreSignal((ESignals)i);\n";
+	print F "     gSystem->IgnoreSignal((ESignals)i);\n";
 	print F "  }\n";
 	print F "  FROG *fr = new FROG();\n";
 	print F "  TFile *f = TFile::Open(fr->location(file));\n";
 	print F "  cout << \"Getting events for \" << file << endl;\n";
 	print F "  TTree *T = (TTree *) f->Get(\"T\");\n";
-	print F "  if (! T)\n";
-	print F "  {\n";
-	print F "    cout << \"Number of Entries: 0\" << endl;\n";
-	print F "  }\n";
-	print F "  else\n";
-	print F "  {\n";
-	print F "    cout << \"Number of Entries: \" <<  T->GetEntries() << endl;\n";
-	print F "  }\n";
+	print F "  cout << \"Number of Entries: \" <<  T->GetEntries() << endl;\n";
 	print F "}\n";
 	print F "#endif\n";
 	close(F);
