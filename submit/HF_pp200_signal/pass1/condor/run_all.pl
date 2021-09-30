@@ -27,10 +27,19 @@ if ($hostname !~ /phnxsub/)
 
 my $maxsubmit = $ARGV[0];
 my $quarkfilter = $ARGV[1];
+my $filetype="pythia8";
 if ($quarkfilter  ne "CharmD0" && $quarkfilter  ne "BottomD0" && $quarkfilter  ne "MinBias")
 {
     print "second argument has to be either Charm, Bottom or MinBias\n";
     exit(1);
+}
+if ($quarkfilter eq "CharmD0")
+{
+    $filetype=sprintf("%s_d0",$filetype);
+}
+else
+{
+    die "$quarkfilter not implemented for filetype\n";
 }
 my $runnumber = 2;
 my $events = 1000;
@@ -53,8 +62,7 @@ for (my $isub = 0; $isub < $maxsubmit; $isub++)
 	$jobfile = sprintf("%s/condor-%s-%010d-%05d.job",$logdir,$quarkfilter,$runnumber,$njob);
     }
     print "using jobfile $jobfile\n";
-    my $upperfilter = uc $quarkfilter;
-    my $outfile = sprintf("DST_HF_%s_pythia8-%010d-%05d.root",$upperfilter,$runnumber,$njob);
+    my $outfile = sprintf("G4Hits_%s-%010d-%05d.root",$filetype, $runnumber,$njob);
     my $fulloutfile = sprintf("%s/%s",$outdir,$outfile);
     print "out: $fulloutfile\n";
     if (! -f $fulloutfile)
