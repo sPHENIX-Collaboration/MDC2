@@ -7,8 +7,7 @@ echo running: run_pass4trk.sh $*
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
     cd $_CONDOR_SCRATCH_DIR
-#    rsync -av /sphenix/u/sphnxpro/MDC2/submit/fm_0_20/pass4trk/rundir/* .
-    rsync -av /sphenix/user/pinkenbu/MDC2/submit/fm_0_20/pass4trk/rundir/* .
+    rsync -av /sphenix/u/sphnxpro/MDC2/submit/fm_0_20/pass4trk/rundir/* .
     getinputfiles.pl $2
     if [ $? -ne 0 ]
     then
