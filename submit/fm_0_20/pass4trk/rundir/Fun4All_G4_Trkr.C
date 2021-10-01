@@ -545,6 +545,7 @@ int Fun4All_G4_Trkr(
   {
     string FullOutFile = DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
+    out->StripNode("TRKR_HITSET");
     if (Enable::DSTOUT_COMPRESS)
     {
       ShowerCompress();
