@@ -46,7 +46,7 @@ mkpath($logdir);
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'DST_HF_CHARMD0' and filename like '%CHARMD0_pythia8%' and runnumber = $runnumber order by filename") || die $DBI::error;
+my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%G4Hits_pythia8_d0%' and runnumber = $runnumber order by filename") || die $DBI::error;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
 
 my $getbkglastsegment = $dbh->prepare("select max(segment) from datasets where dsttype = 'G4Hits' and filename like '%pythia8_mb%' and runnumber = $runnumber");
