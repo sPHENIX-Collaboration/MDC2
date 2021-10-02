@@ -92,7 +92,7 @@ else
     chomp $thisdate;
     print "unixtime begin: $thisdate cmd: $copycmd\n";
     system($copycmd);
-    my $thisdate = `date +%s`;
+    $thisdate = `date +%s`;
     chomp $thisdate;
     print "unixtime end: $thisdate cmd: $copycmd\n";
 }
