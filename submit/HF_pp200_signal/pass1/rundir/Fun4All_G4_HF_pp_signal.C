@@ -38,9 +38,6 @@
 
 R__LOAD_LIBRARY(libfun4all.so)
 
-// For HepMC Hijing
-// try inputFile = /sphenix/sim/sim01/sphnxpro/sHijing_HepMC/sHijing_0-12fm.dat
-
 int Fun4All_G4_HF_pp_signal(
     const int nEvents = 1,
     const string &HF_Q_filter = "Charm", // or "Bottom"  or "CharmD0"  or "BottomD0" or "MinBias"
