@@ -1,0 +1,15 @@
+# this crontab is in repo MDC2/cronjobs/crontab.txt, please modify this textfile
+# and install with 
+# crontab crontab.txt
+SHELL=/bin/bash
+MAILTO="pinkenburg@bnl.gov"
+#
+#-----------------
+# rsync mdc2 condor logs
+#-----------------
+17 7 * * * source /opt/sphenix/core/bin/sphenix_setup.sh -n; /sphenix/u/sphnxpro/MDC2/cronjobs/rsync_condorlogs.pl >&  /sphenix/u/sphnxpro/MDC2/cronjobs/rsync_condorlogs.log
+#
+#-----------------
+# autopilot condor submission
+#-----------------
+#17 21 * * * source /opt/sphenix/core/bin/sphenix_setup.sh -n; /sphenix/u/sphnxpro/MDC2/cronjobs/autopilot.pl >&  /sphenix/u/sphnxpro/MDC2/cronjobs/autopilot.log
