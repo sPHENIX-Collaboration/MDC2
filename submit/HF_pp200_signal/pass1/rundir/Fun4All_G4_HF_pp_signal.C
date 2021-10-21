@@ -383,9 +383,19 @@ int Fun4All_G4_HF_pp_signal(
   Enable::EPD = true;
 
   //! forward flux return plug door. Out of acceptance and off by default.
-  //Enable::PLUGDOOR = true;
+  Enable::PLUGDOOR = true;
+  Enable::PLUGDOOR_BLACKHOLE = true;
 //  Enable::PLUGDOOR_ABSORBER = true;
 
+  Enable::BEAMLINE = true;
+  G4BEAMLINE::skin_thickness = 0.5;
+//  Enable::BEAMLINE_ABSORBER = true;  // makes the beam line magnets sensitive volumes
+//  Enable::BEAMLINE_BLACKHOLE = true; // turns the beamline magnets into black holes
+  Enable::ZDC = true;
+//  Enable::ZDC_ABSORBER = true;
+//  Enable::ZDC_SUPPORT = true;
+//  Enable::ZDC_TOWER = Enable::ZDC && true;
+  Enable::ZDC_EVAL = Enable::ZDC_TOWER && true;
 //  Enable::GLOBAL_RECO = true;
   //Enable::GLOBAL_FASTSIM = true;
   
