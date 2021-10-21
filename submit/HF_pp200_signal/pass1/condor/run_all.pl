@@ -10,7 +10,7 @@ my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"CharmD0\", \"BottomD0\" or \"MinBias\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Charm\", \"CharmD0\", \"Bottom\", \"BottomD0\" or \"MinBias\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--test : dryrun - create jobfiles\n";
@@ -28,19 +28,16 @@ if ($hostname !~ /phnxsub/)
 my $maxsubmit = $ARGV[0];
 my $quarkfilter = $ARGV[1];
 my $filetype="pythia8";
-if ($quarkfilter  ne "CharmD0" && $quarkfilter  ne "BottomD0" && $quarkfilter  ne "MinBias")
+if ($quarkfilter  ne "Charm" &&
+    $quarkfilter  ne "CharmD0" &&
+    $quarkfilter  ne "Bottom" &&
+    $quarkfilter  ne "BottomD0" &&
+    $quarkfilter  ne "MinBias")
 {
-    print "second argument has to be either Charm, Bottom or MinBias\n";
+    print "second argument has to be either Charm, CharmD0, Bottom, BottomD0 or MinBias\n";
     exit(1);
 }
-if ($quarkfilter eq "CharmD0")
-{
-    $filetype=sprintf("%s_d0",$filetype);
-}
-else
-{
-    die "$quarkfilter not implemented for filetype\n";
-}
+$filetype=sprintf("%s_%s",$filetype,$quarkfilter);
 my $runnumber = 2;
 my $events = 1000;
 open(F,"outdir.txt");
