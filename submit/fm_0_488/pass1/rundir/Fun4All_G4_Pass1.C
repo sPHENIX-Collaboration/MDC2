@@ -163,11 +163,13 @@ int Fun4All_G4_Pass1(
 
   Enable::EPD = true;
 
-  //Enable::BEAMLINE = true;
+  Enable::BEAMLINE = true;
+  G4BEAMLINE::skin_thickness = 0.5;
 
-  //Enable::ZDC = true;
+  Enable::ZDC = true;
   //! forward flux return plug door. Out of acceptance and off by default.
-  //Enable::PLUGDOOR = true;
+  Enable::PLUGDOOR = true;
+  Enable::PLUGDOOR_BLACKHOLE = true;
 
   // new settings using Enable namespace in GlobalVariables.C
   Enable::BLACKHOLE = true;
@@ -178,7 +180,7 @@ int Fun4All_G4_Pass1(
   //---------------
   // World Settings
   //---------------
-  //G4WORLD::PhysicsList = "FTFP_BERT_HP"; //FTFP_BERT_HP best for calo
+  // G4WORLD::PhysicsList = "FTFP_BERT_HP"; //FTFP_BERT_HP best for calo
   //  G4WORLD::WorldMaterial = "G4_AIR"; // set to G4_GALACTIC for material scans
 
   //---------------
