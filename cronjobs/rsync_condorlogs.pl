@@ -28,43 +28,12 @@ push(@passes,"pass3calo_50kHz_0_20fm");
 push(@passes,"pass4trk");
 push(@passes,"pass4trk_50kHz_0_20fm");
 push(@passes,"pass5trk");
-#push(@passes,"hwpass1");
-#push(@passes,"hwpass2");
-# for FixDST
-#my @FixDSTpasses = ();
-#push(@FixDSTpasses,"HF_pp200_signal");
-#push(@FixDSTpasses,"fm_0_20");
 
 foreach my $fm (sort @fmrange)
 {
-    if ($fm eq "HF_pp200_signal")
+    foreach my $pass (sort @passes)
     {
-	$condorlogs{sprintf("/tmp/%s",$fm)} = sprintf("%s/%s/condor/log",$submitdir,$fm);
-    }
-    elsif ($fm eq "FixDST")
-    {
-	foreach my $fixpass (sort @FixDSTpasses)
-	{
-	    if ($fixpass eq "HF_pp200_signal")
-	    {
-		$condorlogs{sprintf("/tmp/%s",$fm)} = sprintf("%s/%s/%s/condor/log",$submitdir,$fm,$fixpass);
-	    }
-
-	    foreach my $pass (sort @passes)
-	    {
-
-		$condorlogs{sprintf("/tmp/%s/%s/%s",$fm,$fixpass,$pass)} = sprintf("%s/%s/%s/%s/condor/log",$submitdir,$fm,$fixpass,$pass);
-
-	    }
-	}
-    }
-    else
-    {
-	foreach my $pass (sort @passes)
-	{
-	    $condorlogs{sprintf("/tmp/%s/%s",$fm,$pass)} = sprintf("%s/%s/%s/condor/log",$submitdir,$fm,$pass);
-
-	}
+	$condorlogs{sprintf("/tmp/%s/%s",$fm,$pass)} = sprintf("%s/%s/%s/condor/log",$submitdir,$fm,$pass);
     }
 }
 
