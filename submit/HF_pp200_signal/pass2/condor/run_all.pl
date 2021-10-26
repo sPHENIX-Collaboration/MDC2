@@ -13,16 +13,36 @@ my $runnumber = 2;
 my $test;
 my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
-if ($#ARGV < 0)
+if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs>\n";
+    print "usage: run_all.pl <number of jobs> <\"Charm\", \"CharmD0\", \"Bottom\", \"BottomD0\" or \"MinBias\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
 
+my $hostname = `hostname`;
+chomp $hostname;
+if ($hostname !~ /phnxsub/)
+{
+    print "submit only from phnxsub01 or phnxsub02\n";
+    exit(1);
+}
+
 my $maxsubmit = $ARGV[0];
+my $quarkfilter = $ARGV[1];
+my $filetype="pythia8";
+if ($quarkfilter  ne "Charm" &&
+    $quarkfilter  ne "CharmD0" &&
+    $quarkfilter  ne "Bottom" &&
+    $quarkfilter  ne "BottomD0" &&
+    $quarkfilter  ne "MinBias")
+{
+    print "second argument has to be either Charm, CharmD0, Bottom, BottomD0 or MinBias\n";
+    exit(1);
+}
+
 if (! -f "outdir.txt")
 {
     print "could not find outdir.txt\n";
@@ -46,7 +66,7 @@ mkpath($logdir);
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%G4Hits_pythia8_d0%' and runnumber = $runnumber order by filename") || die $DBI::error;
+my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%G4Hits_pythia8_$quarkfilter%' and runnumber = $runnumber order by filename") || die $DBI::error;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
 
 my $getbkglastsegment = $dbh->prepare("select max(segment) from datasets where dsttype = 'G4Hits' and filename like '%pythia8_mb%' and runnumber = $runnumber");
@@ -69,7 +89,7 @@ while (my @res = $getfiles->fetchrow_array())
 	my $foundall = 1;
 	foreach my $type (sort keys %outfiletype)
 	{
-	    my $outfilename = sprintf("%s/%s_pythia8_d0-%010d-%05d.root",$outdir,$type,$runnumber,$segment);
+	    my $outfilename = sprintf("%s/%s_pythia8_%s_3MHz-%010d-%05d.root",$outdir,$type,$quarkfilter,$runnumber,$segment);
 #	    print "checking for $outfilename\n";
 	    if (! -f  $outfilename)
 	    {
@@ -130,7 +150,7 @@ $currsegment = 0;
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %d %s", $outevents, $lfn, $bkglistfile, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $quarkfilter, $lfn, $bkglistfile, $outdir, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
