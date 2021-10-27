@@ -8,9 +8,13 @@ use File::stat;
 use Getopt::Long;
 use DBI;
 use Digest::MD5  qw(md5 md5_hex md5_base64);
+use Env;
 
 sub getmd5;
 sub getentries;
+
+Env::import();
+
 #only created if initial copy fails (only for sphnxpro account)
 my $backupdir = sprintf("/sphenix/sim/sim01/sphnxpro/MDC2/backup");
 
@@ -58,7 +62,7 @@ if ($outdir =~ /pnfs/)
 	print "no copying to dCache for $username, only sphnxpro can do that\n";
 	exit 0;
     }
-    $copycmd = sprintf("dccp -d7 -C 3600 %s %s",$file,$outfile);
+    $copycmd = sprintf("env LD_LIBRARY_PATH=/usr/lib64:%s xrdcp --nopbar --retry 3 %s root://dcsphdoor02.rcf.bnl.gov:1095%s",$LD_LIBRARY_PATH,$file,$outfile);
     $outhost = 'dcache';
 }
 else
@@ -84,8 +88,13 @@ if (defined $test)
 }
 else
 {
-    print "cmd: $copycmd\n";
+    my $thisdate = `date +%s`;
+    chomp $thisdate;
+    print "unixtime begin: $thisdate cmd: $copycmd\n";
     system($copycmd);
+    $thisdate = `date +%s`;
+    chomp $thisdate;
+    print "unixtime end: $thisdate cmd: $copycmd\n";
 }
 
 # down here only things for the production account
@@ -141,10 +150,10 @@ if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/)
     $runnumber = int($2);
     $segment = int($3);
 }
-my @sp1 = split(/\_pythia/,$lfn);
+my @sp1 = split(/\_pythia8/,$lfn);
 if (! defined $test)
 {
- $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries);
+    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries);
 }
 else
 {

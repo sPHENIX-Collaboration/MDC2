@@ -8,11 +8,15 @@ use File::stat;
 use Getopt::Long;
 use DBI;
 use Digest::MD5  qw(md5 md5_hex md5_base64);
+use Env;
 
 sub getmd5;
 sub getentries;
+
+Env::import();
+
 #only created if initial copy fails (only for sphnxpro account)
-my $backupdir = sprintf("/sphenix/sim/sim01/sphnxpro/MDC1/backup");
+my $backupdir = sprintf("/sphenix/sim/sim01/sphnxpro/MDC2/backup");
 
 my $outdir = ".";
 my $test;
@@ -34,8 +38,8 @@ my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $chkfile = $dbh->prepare("select size,full_file_path from files where full_file_path = ?") || die $DBI::error; 
 my $insertfile = $dbh->prepare("insert into files (lfn,full_host_name,full_file_path,time,size,md5) values (?,?,?,'now',?,?)");
-my $insertdataset = $dbh->prepare("insert into datasets (filename,runnumber,segment,size,dataset,dsttype,events) values (?,?,?,?,'mdc1',?,?)");
-my $chkdataset = $dbh->prepare("select size from datasets where filename=? and dataset='mdc1'");
+my $insertdataset = $dbh->prepare("insert into datasets (filename,runnumber,segment,size,dataset,dsttype,events) values (?,?,?,?,'mdc2',?,?)");
+my $chkdataset = $dbh->prepare("select size from datasets where filename=? and dataset='mdc2'");
 my $delfile = $dbh->prepare("delete from files where full_file_path = ?");
 my $delcat = $dbh->prepare("delete from datasets where filename = ?");
 
@@ -58,7 +62,7 @@ if ($outdir =~ /pnfs/)
 	print "no copying to dCache for $username, only sphnxpro can do that\n";
 	exit 0;
     }
-    $copycmd = sprintf("dccp -d7 -C 3600 %s %s",$file,$outfile);
+    $copycmd = sprintf("env LD_LIBRARY_PATH=/usr/lib64:%s xrdcp --nopbar --retry 3 %s root://dcsphdoor02.rcf.bnl.gov:1095%s",$LD_LIBRARY_PATH,$file,$outfile);
     $outhost = 'dcache';
 }
 else
@@ -84,8 +88,13 @@ if (defined $test)
 }
 else
 {
-    print "cmd: $copycmd\n";
+    my $thisdate = `date +%s`;
+    chomp $thisdate;
+    print "unixtime begin: $thisdate cmd: $copycmd\n";
     system($copycmd);
+    $thisdate = `date +%s`;
+    chomp $thisdate;
+    print "unixtime end: $thisdate cmd: $copycmd\n";
 }
 
 # down here only things for the production account
@@ -144,7 +153,7 @@ if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/)
 my @sp1 = split(/\_sHijing/,$lfn);
 if (! defined $test)
 {
- $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries);
+    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries);
 }
 else
 {
