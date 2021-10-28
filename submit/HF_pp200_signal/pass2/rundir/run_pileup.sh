@@ -30,6 +30,7 @@ echo arg1 \(output events\) : $1
 echo arg2 \(input file\): $2
 echo arg3 \(background listfile\): $3
 echo arg4 \(output dir\): $4
-echo running root.exe -q -b Fun4All_G4_Pileup_pp.C\($1,\"$2\",\"$3\",\"$4\"\)
-root.exe -q -b  Fun4All_G4_Pileup_pp.C\($1,\"$2\",\"$3\",\"$4\"\)
+echo arg5 \(quarkfilter\): $5
+echo running root.exe -q -b Fun4All_G4_Pileup_pp.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
+root.exe -q -b  Fun4All_G4_Pileup_pp.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
 echo "script done"

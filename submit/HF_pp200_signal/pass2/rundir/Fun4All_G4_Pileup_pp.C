@@ -27,7 +27,8 @@ int Fun4All_G4_Pileup_pp(
     const int nEvents = 0,
     const string &inputFile = "G4Hits_pythia8_mb-0000000001-00000.root",
     const string &backgroundList = "pileupbkgppmb.list",
-    const string &outdir = ".")
+    const string &outdir = ".",
+    const string &quarkfilter = "NONE")
 
 {
   gSystem->Load("libg4dst.so");
@@ -77,7 +78,7 @@ int Fun4All_G4_Pileup_pp(
   //  se->registerOutputManager(out);
   if (Enable::PRODUCTION)
   {
-    CreateDstOutput(runnumber, segment);
+    CreateDstOutput(runnumber, segment, quarkfilter);
   }
 
   // process events

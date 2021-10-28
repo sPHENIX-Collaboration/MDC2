@@ -32,7 +32,6 @@ if ($hostname !~ /phnxsub/)
 
 my $maxsubmit = $ARGV[0];
 my $quarkfilter = $ARGV[1];
-my $filetype="pythia8";
 if ($quarkfilter  ne "Charm" &&
     $quarkfilter  ne "CharmD0" &&
     $quarkfilter  ne "Bottom" &&
@@ -63,10 +62,10 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
-
+my $quarkfilterWithMHz = sprintf("%s_3MHz",$quarkfilter);
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%G4Hits_pythia8_$quarkfilter%' and runnumber = $runnumber order by filename") || die $DBI::error;
+my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%G4Hits_pythia8_$quarkfilterWithMHz%' and runnumber = $runnumber order by filename") || die $DBI::error;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
 
 my $getbkglastsegment = $dbh->prepare("select max(segment) from datasets where dsttype = 'G4Hits' and filename like '%pythia8_mb%' and runnumber = $runnumber");
@@ -89,7 +88,7 @@ while (my @res = $getfiles->fetchrow_array())
 	my $foundall = 1;
 	foreach my $type (sort keys %outfiletype)
 	{
-	    my $outfilename = sprintf("%s/%s_pythia8_%s_3MHz-%010d-%05d.root",$outdir,$type,$quarkfilter,$runnumber,$segment);
+	    my $outfilename = sprintf("%s/%s_pythia8_%s-%010d-%05d.root",$outdir,$type,$quarkfilterWithMHz,$runnumber,$segment);
 #	    print "checking for $outfilename\n";
 	    if (! -f  $outfilename)
 	    {
@@ -117,14 +116,14 @@ while (my @res = $getfiles->fetchrow_array())
 	my @bkgfiles = ();
 	my $bkgsegments = 0;
 	my $currsegment = $segment;
-while ($bkgsegments <= 100)
-{
-    $currsegment++;
-if ($currsegment > $lastsegment)
- {
-$currsegment = 0;
-}
-    my $prefix_mb = sprintf("G4Hits_pythia8_mb");
+	while ($bkgsegments <= 100)
+	{
+	    $currsegment++;
+	    if ($currsegment > $lastsegment)
+	    {
+		$currsegment = 0;
+	    }
+	    my $prefix_mb = sprintf("G4Hits_pythia8_mb");
 	    my $bckfile = sprintf("%s-%010d-%05d.root",$prefix_mb,$runnumber,$currsegment);
 	    $chkfile->execute($bckfile);
 	    if ($chkfile->rows == 0)
@@ -132,13 +131,13 @@ $currsegment = 0;
 		print "missing bkg $bckfile\n";
 #		$foundall = 0;
 	    }
- else
- {
-     $bkgsegments++;
-	    push(@bkgfiles,$bckfile);
-}
-}
-	my $bkglistfile = sprintf("%s/condor-%010d-%05d.bkglist",$logdir,$runnumber,$segment);
+	    else
+	    {
+		$bkgsegments++;
+		push(@bkgfiles,$bckfile);
+	    }
+	}
+	my $bkglistfile = sprintf("%s/condor_%s-%010d-%05d.bkglist",$logdir,$quarkfilterWithMHz,$runnumber,$segment);
 	open(F1,">$bkglistfile");
 	foreach my $bf (@bkgfiles)
 	{

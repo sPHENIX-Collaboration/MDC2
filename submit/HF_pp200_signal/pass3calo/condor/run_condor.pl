@@ -9,7 +9,7 @@ my $test;
 GetOptions("test"=>\$test);
 if ($#ARGV < 3)
 {
-    print "usage: run_condor.pl <events> <g4hit infile> <vertex infile> <outfile> <outdir> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events>  <quarkfilter> <g4hit infile> <vertex infile> <outfile> <outdir> <runnumber> <sequence>\n";
     print "options:\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
@@ -20,16 +20,17 @@ chomp $localdir;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_pass3calo.sh",$rundir);
 my $nevents = $ARGV[0];
-my $infile0 = $ARGV[1];
-my $infile1 = $ARGV[2];
-my $dstoutfile = $ARGV[3];
-my $dstoutdir = $ARGV[4];
-my $runnumber = $ARGV[5];
-my $sequence = $ARGV[6];
-my $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
+my $quarkfilter = $ARGV[1];
+my $infile0 = $ARGV[2];
+my $infile1 = $ARGV[3];
+my $dstoutfile = $ARGV[4];
+my $dstoutdir = $ARGV[5];
+my $runnumber = $ARGV[6];
+my $sequence = $ARGV[7];
+my $suffix = sprintf("%s-%010d-%05d",$quarkfilter,$runnumber,$sequence);
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/pythia8_d0/pass3calo");
+my $condorlogdir = sprintf("/tmp/HF_pp200_signal/pass3calo");
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor-%s.job",$logdir,$suffix);
 if (-f $jobfile)

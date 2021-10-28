@@ -13,9 +13,9 @@ my $runnumber=2;
 my $test;
 my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
-if ($#ARGV < 0)
+if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs>\n";
+    print "usage: run_all.pl <number of jobs> <\"Charm\", \"CharmD0\", \"Bottom\", \"BottomD0\" or \"MinBias\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--test : dryrun - create jobfiles\n";
@@ -31,6 +31,17 @@ if ($hostname !~ /phnxsub/)
 }
 
 my $maxsubmit = $ARGV[0];
+my $quarkfilter = $ARGV[1];
+if ($quarkfilter  ne "Charm" &&
+    $quarkfilter  ne "CharmD0" &&
+    $quarkfilter  ne "Bottom" &&
+    $quarkfilter  ne "BottomD0" &&
+    $quarkfilter  ne "MinBias")
+{
+    print "second argument has to be either Charm, CharmD0, Bottom, BottomD0 or MinBias\n";
+    exit(1);
+}
+$quarkfilter = sprintf("%s_3MHz",$quarkfilter);
 if (! -f "outdir.txt")
 {
     print "could not find outdir.txt\n";
@@ -46,9 +57,11 @@ my %vtxhash = ();
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_G4HIT' and filename like '%pythia8_d0%' and runnumber = $runnumber order by filename") || die $DBI::error;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_G4HIT' and filename like '%pythia8_$quarkfilter%' and runnumber = $runnumber order by filename") || die $DBI::error;
+#print "select filename,segment from datasets where dsttype = 'DST_CALO_G4HIT' and filename like '%pythia8_$quarkfilter%' and runnumber = $runnumber order by filename\n";
+
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
-my $getvtxfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_VERTEX' and filename like '%pythia8_d0%' and runnumber = $runnumber");
+my $getvtxfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_VERTEX' and filename like '%pythia8_$quarkfilter%' and runnumber = $runnumber");
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::error;
 my $ncal = $getfiles->rows;
@@ -64,7 +77,7 @@ while (my @res = $getvtxfiles->fetchrow_array())
     $vtxhash{sprintf("%05d",$res[1])} = $res[0];
 }
 $getvtxfiles->finish();
-#print "input files: $ncal, vtx: $nvtx\n";
+print "input files: $ncal, vtx: $nvtx\n";
 foreach my $segment (sort keys %calohash)
 {
     if (! exists $vtxhash{$segment})
@@ -77,7 +90,7 @@ foreach my $segment (sort keys %calohash)
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_CALO_CLUSTER_pythia8_d0-%010d-%05d.root",$runnumber,$segment);
+	my $outfilename = sprintf("DST_CALO_CLUSTER_pythia8_%s-%010d-%05d.root",$quarkfilter,$runnumber,$segment);
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
@@ -88,7 +101,7 @@ foreach my $segment (sort keys %calohash)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $vtxhash{sprintf("%05d",$segment)}, $outfilename, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %d %d %s", $outevents, $quarkfilter, $lfn, $vtxhash{sprintf("%05d",$segment)}, $outfilename, $outdir, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
