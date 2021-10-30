@@ -69,7 +69,7 @@ while (my @res = $getfiles->fetchrow_array())
 	my $foundall = 1;
 	foreach my $type (sort keys %outfiletype)
 	{
-	    my $outfilename = sprintf("%s/%s_pythia8_mb-%010d-%05d.root",$outdir,$type,$runnumber,$segment);
+	    my $outfilename = sprintf("%s/%s_pythia8_mb_3MHz-%010d-%05d.root",$outdir,$type,$runnumber,$segment);
 #	    print "checking for $outfilename\n";
 	    if (! -f  $outfilename)
 	    {
@@ -97,13 +97,13 @@ while (my @res = $getfiles->fetchrow_array())
 	my @bkgfiles = ();
 	my $bkgsegments = 0;
 	my $currsegment = $segment;
-while ($bkgsegments <= 100)
-{
-    $currsegment++;
-if ($currsegment > $lastsegment)
- {
-$currsegment = 0;
-}
+	while ($bkgsegments <= 100)
+	{
+	    $currsegment++;
+	    if ($currsegment > $lastsegment)
+	    {
+		$currsegment = 0;
+	    }
 	    my $bckfile = sprintf("%s-%010d-%05d.root",$prefix,$runnumber,$currsegment);
 	    $chkfile->execute($bckfile);
 	    if ($chkfile->rows == 0)
@@ -111,13 +111,13 @@ $currsegment = 0;
 		print "missing bkg $bckfile\n";
 #		$foundall = 0;
 	    }
- else
- {
-     $bkgsegments++;
-	    push(@bkgfiles,$bckfile);
-}
-}
-	my $bkglistfile = sprintf("%s/condor-%010d-%05d.bkglist",$logdir,$runnumber,$segment);
+	    else
+	    {
+		$bkgsegments++;
+		push(@bkgfiles,$bckfile);
+	    }
+	}
+	my $bkglistfile = sprintf("%s/condor_3MHz-%010d-%05d.bkglist",$logdir,$runnumber,$segment);
 	open(F1,">$bkglistfile");
 	foreach my $bf (@bkgfiles)
 	{
