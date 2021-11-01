@@ -10,6 +10,14 @@ my $mdc = "mdc2";
 my $test;
 GetOptions("test"=>\$test);
 
+if ($#ARGV < 0)
+{
+    print "usage: add_fcat <dcachedir>\n";
+    print "parameters:\n";
+    print "--test: run in test mode\n";
+    exit(1);
+}
+
 my $dcachedir = $ARGV[0];
 if (! -d $dcachedir)
 {
@@ -26,7 +34,7 @@ my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc");
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $chkfile = $dbh->prepare("select size,full_file_path from files where lfn=?"); 
 my $insertfile = $dbh->prepare("insert into files (lfn,full_host_name,full_file_path,time,size) values (?,'dcache',?,'now',?)");
-my $updatesize = $dbh->prepare("update files set size=? where lfn = ? and full_file_path = ?");
+my $updatesize = $dbh->prepare("update files set size=?,md5=NULL where lfn = ? and full_file_path = ?");
 
 print "checking $dcachedir for new files\n";
 #open(F,"find $dcachedir -maxdepth 1 -type f -name '*.root' -cmin +30 | sort |");
@@ -73,7 +81,6 @@ while (my $file = <F>)
 		    if (! defined $test)
 		    {
 			print "updating size for $lfn from $res[0] to $fsize\n";
-			die;
 		        $updatesize->execute($fsize,$lfn,$file);
 			$needinsert = 0;
 			next;
