@@ -2,7 +2,7 @@
 
 export HOME=/sphenix/u/${LOGNAME}
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1.8
+source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.2
 
 echo running: run_pass3trk.sh $*
 
@@ -19,7 +19,7 @@ then
     getinputfiles.pl $3
     if [ $? -ne 0 ]
     then
-	echo error from getinputfiles.pl $2, exiting
+	echo error from getinputfiles.pl $3, exiting
 	exit -1
     fi
 else
@@ -38,6 +38,7 @@ echo arg1 \(events\) : $1
 echo arg2 \(track g4hits file\): $2
 echo arg3 \(truth g4hits file\): $3
 echo arg4 \(output dir\): $4
-echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\"\)
-root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\"\)
+echo arg5 \(quarkfilter\): $5
+echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\",\"$5\"\)
+root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\",\"$5\"\)
 echo "script done"

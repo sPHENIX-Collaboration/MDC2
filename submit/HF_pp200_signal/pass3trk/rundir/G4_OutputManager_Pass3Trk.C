@@ -16,13 +16,13 @@ namespace OUTPUTMANAGER
 
 void AddCommonNodes(Fun4AllOutputManager *out);
 
-void CreateDstOutput(int runnumber, int segment)
+void CreateDstOutput(int runnumber, int segment, const string &quarkfilter)
 {
   auto se = Fun4AllServer::instance();
 
   char segrun[100];
-  snprintf(segrun,100,"%010d-%05d",runnumber,segment);
-  string FullOutFile = "DST_TRUTH_pythia8_d0-" + string(segrun) + ".root";;
+  snprintf(segrun,100,"%s_3MHz-%010d-%05d",quarkfilter.c_str(),runnumber,segment);
+  string FullOutFile = "DST_TRUTH_pythia8_" + string(segrun) + ".root";;
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("TRUTHOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("PHHepMCGenEventMap");
@@ -32,7 +32,7 @@ void CreateDstOutput(int runnumber, int segment)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "DST_TRKR_CLUSTER_pythia8_d0-" + string(segrun) + ".root";;
+  FullOutFile = "DST_TRKR_CLUSTER_pythia8_" + string(segrun) + ".root";;
   out = new Fun4AllDstOutputManager("TRKROUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("TRKR_HITSET");

@@ -41,7 +41,8 @@ int Fun4All_G4_Pass3Trk(
     const string &outputFile = "G4sPHENIX.root",
     const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
     const int skip = 0,
-    const string &outdir = ".")
+    const string &outdir = ".",
+    const string &quarkfilter = "NONE")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -552,7 +553,7 @@ int Fun4All_G4_Pass3Trk(
 
   if (Enable::PRODUCTION)
   {
-    CreateDstOutput(runnumber, segment);
+    CreateDstOutput(runnumber, segment, quarkfilter);
 //    Production_CreateOutputDir();
   }
 
