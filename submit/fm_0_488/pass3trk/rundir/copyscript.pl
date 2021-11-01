@@ -118,10 +118,28 @@ if (! -f $outfile)
     $outhost = 'gpfs';
     system($copycmd);
 }
-my $outsize = $size;
+my $outsize = 0;
+my $imax = 100;
 if (! defined $test)
 {
     $outsize = stat($outfile)->size;
+    my $icnt = 0;
+    while($outsize == 0 || $outsize != $size)
+    {
+        $icnt++;
+	if ($icnt > $imax)
+	{
+	    print "number of tries exceeded, quitting\n";
+	    die;
+	}
+	print "sleeping $icnt times for $outfile\n";
+	sleep(10);
+	$outsize = stat($outfile)->size;
+    }
+}
+else
+{
+    $outsize = $size;
 }
 my $md5sum = &getmd5($file);
 my $entries = &getentries($file);
@@ -150,7 +168,12 @@ if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/)
     $runnumber = int($2);
     $segment = int($3);
 }
-my @sp1 = split(/\_sHijing/,$lfn);
+my $splitstring = "_sHijing";
+if ($lfn =~ /pythia8/)
+{
+    $splitstring = "_pythia8";
+}
+my @sp1 = split(/$splitstring/,$lfn);
 if (! defined $test)
 {
     $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries);
