@@ -42,8 +42,8 @@ while (my @res = $getfiles->fetchrow_array)
 	my @ds = $chkfile->fetchrow_array;
 	if ($ds[0] != $fsize)
 	{
-	    print "filesize mismatch, dataset: $ds[0], fcat: $fsize\n";
-	    die;
+	    print "filesize mismatch for $lfn, dataset: $ds[0], fcat: $fsize\n";
+#	    die;
 	}
 	next;
     }
