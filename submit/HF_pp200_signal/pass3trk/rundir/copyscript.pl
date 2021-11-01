@@ -92,6 +92,8 @@ else
     chomp $thisdate;
     print "unixtime begin: $thisdate cmd: $copycmd\n";
     system($copycmd);
+    my $exit_value  = $? >> 8;
+    print "xrdcp return code: $exit_value\n";
     $thisdate = `date +%s`;
     chomp $thisdate;
     print "unixtime end: $thisdate cmd: $copycmd\n";
