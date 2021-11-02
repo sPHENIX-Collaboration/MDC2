@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 export HOME=/sphenix/u/${LOGNAME}
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1.8
+source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.2
 
 echo running: run_pass4trk.sh $*
 
@@ -19,10 +19,9 @@ else
 fi
 # arguments 
 # $1: number of events
-# $2: calo g4hits input file
-# $3: vertex input file
-# $4: output file
-# $5: output dir
+# $2: trkr cluster input file
+# $3: output file
+# $4: output dir
 
 echo 'here comes your environment'
 printenv
