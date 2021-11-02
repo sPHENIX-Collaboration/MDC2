@@ -43,32 +43,34 @@ if (! defined $runremlist)
     }
 
     if (-f $runremlist)
-{
-    unlink $runremlist;
-}
-my $cnt = 0;
-open(F2,">$runremlist");
-open(F,"$cmd");
-while (my $file = <F>)
-{
-    print "file: $file";
-    chomp $file;
-    my $fcmd = sprintf("cat %s | grep 'Memory (MB)' | awk '{print \$4}' | ",$file);
-    open(F1,$fcmd);
-    while (my $remline = <F1>)
     {
-	print F2 "$remline";
+	unlink $runremlist;
     }
-    close(F1);
-    $cnt++;
-    if (defined $count &&  $cnt >= $count)
+    print "command: $cmd\n";
+    my $cnt = 0;
+    open(F2,">$runremlist");
+    open(F,"$cmd");
+    while (my $file = <F>)
     {
-	last;
+	print "file: $file";
+	chomp $file;
+	my $fcmd = sprintf("cat %s | grep 'Memory (MB)' | awk '{print \$4}' | ",$file);
+	open(F1,$fcmd);
+	while (my $remline = <F1>)
+	{
+	    print F2 "$remline";
+	}
+	close(F1);
+	$cnt++;
+	if (defined $count &&  $cnt >= $count)
+	{
+	    last;
+	}
     }
+    close(F);
+    close(F2);
 }
-close(F);
-close(F2);
-}
+
 
 my $cmd = sprintf("root.exe plotmem.C\\(\\\"%s\\\"\\)",$runremlist);
 
