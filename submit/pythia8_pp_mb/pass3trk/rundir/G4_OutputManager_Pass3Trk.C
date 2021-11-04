@@ -21,7 +21,7 @@ void CreateDstOutput(int runnumber, int segment)
   auto se = Fun4AllServer::instance();
 
   char segrun[100];
-  snprintf(segrun,100,"_3MHZ_%010d-%05d",runnumber,segment);
+  snprintf(segrun,100,"_3MHZ-%010d-%05d",runnumber,segment);
   string FullOutFile = "DST_TRUTH_pythia8_mb" + string(segrun) + ".root";;
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("TRUTHOUT", FullOutFile);
   AddCommonNodes(out);
