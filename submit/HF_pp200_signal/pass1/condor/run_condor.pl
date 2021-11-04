@@ -33,19 +33,19 @@ my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
 my $condorlogdir = sprintf("/tmp/HF_pp200_signal/pass1");
 mkpath($condorlogdir);
-my $jobfile = sprintf("%s/condor-%s-%s.job",$logdir,$quarkfilter,$suffix);
+my $jobfile = sprintf("%s/condor_%s-%s.job",$logdir,$quarkfilter,$suffix);
 if (-f $jobfile)
 {
     print "jobfile $jobfile exists, possible overlapping names\n";
     exit(1);
 }
-my $condorlogfile = sprintf("%s/condor-%s-%s.log",$condorlogdir,$quarkfilter,$suffix);
+my $condorlogfile = sprintf("%s/condor_%s-%s.log",$condorlogdir,$quarkfilter,$suffix);
 if (-f $condorlogfile)
 {
     unlink $condorlogfile;
 }
-my $errfile = sprintf("%s/condor-%s-%s.err",$logdir,$quarkfilter,$suffix);
-my $outfile = sprintf("%s/condor-%s-%s.out",$logdir,$quarkfilter,$suffix);
+my $errfile = sprintf("%s/condor_%s-%s.err",$logdir,$quarkfilter,$suffix);
+my $outfile = sprintf("%s/condor_%s-%s.out",$logdir,$quarkfilter,$suffix);
 print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";

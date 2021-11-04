@@ -52,11 +52,11 @@ my $nsubmit = 0;
 my $njob = 0;
 for (my $isub = 0; $isub < $maxsubmit; $isub++)
 {
-    my $jobfile = sprintf("%s/condor-%s-%010d-%05d.job",$logdir,$quarkfilter,$runnumber,$njob);
+    my $jobfile = sprintf("%s/condor_%s-%010d-%05d.job",$logdir,$quarkfilter,$runnumber,$njob);
     while (-f $jobfile)
     {
 	$njob++;
-	$jobfile = sprintf("%s/condor-%s-%010d-%05d.job",$logdir,$quarkfilter,$runnumber,$njob);
+	$jobfile = sprintf("%s/condor_%s-%010d-%05d.job",$logdir,$quarkfilter,$runnumber,$njob);
     }
     print "using jobfile $jobfile\n";
     my $outfile = sprintf("G4Hits_%s-%010d-%05d.root",$filetype, $runnumber,$njob);
