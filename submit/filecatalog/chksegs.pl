@@ -73,10 +73,15 @@ elsif ($system == 7)
 }
 elsif ($system == 8)
 {
-    $systemstring = "DST_HF_BOTTOM_pythia8-";
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "pythia8_Bottom";
+    $systemstring = sprintf("%s_3MHz",$systemstring_g4hits);
+    $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
     $gpfsdir = "HF_pp200_signal";
+#    $systemstring = "DST_HF_BOTTOM_pythia8-";
+#    $gpfsdir = "HF_pp200_signal";
 }
-elsif ($system == 8)
+elsif ($system == 9)
 {
     $g4hits_exist = 1;
     $systemstring_g4hits = "pythia8_Charm";

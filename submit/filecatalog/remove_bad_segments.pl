@@ -154,6 +154,14 @@ elsif ($system == 7)
 }
 elsif ($system == 8)
 {
+    $specialsystemstring{"G4Hits"} = "pythia8_Bottom-";
+    $systemstring = "pythia8_Bottom_";
+    $topdir = sprintf("%s/HF_pp200_signal",$topdir);
+    $condorfileadd = sprintf("Bottom_3MHz");
+    $specialcondorfileadd{"G4Hits"} = "Bottom";
+}
+elsif ($system == 9)
+{
     $systemstring = "DST_HF_BOTTOM_pythia8-";
     $topdir = sprintf("%s/HF_pp200_signal",$topdir);
     $condorfileadd = sprintf("Bottom");
