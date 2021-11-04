@@ -93,6 +93,7 @@ my $systemstring;
 my %specialsystemstring = ();
 my $pileupdir;
 my $condorfileadd;
+
 my %specialcondorfileadd = ();
 my %productionsubdir = (
     "DST_BBC_G4HIT" => "pass2",
@@ -117,8 +118,10 @@ elsif ($system == 2)
 }
 elsif ($system == 3)
 {
-    $systemstring = "pythia8_mb";
+    $specialsystemstring{"G4Hits"} = "pythia8_mb-";
+    $systemstring = "pythia8_mb_3MHz";
     $topdir = sprintf("%s/pythia8_pp_mb",$topdir);
+    #$condornameprefix = sprintf("condor_3MHz");
 }
 elsif ($system == 4)
 {
@@ -204,6 +207,11 @@ foreach my $rem (keys %removethese)
 	$condor_subdir = sprintf("%s/condor/log",$condor_subdir);
     }
     my $condornameprefix = sprintf("condor");
+    if ($system == 3 && $rem ne "G4Hits")
+    {
+	$condornameprefix = sprintf("condor_3MHz");
+    }
+#    print "condor_subdir: $condor_subdir\n";
     if (defined $condorfileadd)
     {
 	if (exists $specialcondorfileadd{$rem})
@@ -252,6 +260,7 @@ foreach my $rem (keys %removethese)
 }
 foreach my $condorfile (keys %removecondorfiles)
 {
+#    print "condorfile: $condorfile\n";
     if (-f $condorfile)
     {
 	if (defined $kill)
