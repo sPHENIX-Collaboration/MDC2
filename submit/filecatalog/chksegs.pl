@@ -11,7 +11,7 @@ my $system = 0;
 
 GetOptions("type:i"=>\$system);
 
-if ($system < 1 || $system > 8)
+if ($system < 1 || $system > 10)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
@@ -23,6 +23,8 @@ if ($system < 1 || $system > 8)
     print "    6 : hijing (0-4.88fm) pileup 0-20fm\n";
     print "    7 : HF pythia8 Charm\n";
     print "    8 : HF pythia8 Bottom\n";
+    print "    9 : HF pythia8 CharmD0\n";
+    print "   10 : HF pythia8 BottomD0\n";
     exit(0);
 }
 
@@ -84,8 +86,20 @@ elsif ($system == 8)
 elsif ($system == 9)
 {
     $g4hits_exist = 1;
-    $systemstring_g4hits = "pythia8_Charm";
-    $systemstring = sprintf("%s_50kHz_bkg_0_20fm",$systemstring_g4hits);
+    $systemstring_g4hits = "pythia8_CharmD0";
+    $systemstring = sprintf("%s_3MHz",$systemstring_g4hits);
+    $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
+    $gpfsdir = "HF_pp200_signal";
+}
+elsif ($system == 10)
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "pythia8_BottomD0";
+    $systemstring = sprintf("%s_3MHz",$systemstring_g4hits);
+    $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
+    $gpfsdir = "HF_pp200_signal";
+#    $systemstring = "DST_HF_BOTTOM_pythia8-";
+#    $gpfsdir = "HF_pp200_signal";
 }
 
 else
@@ -126,6 +140,7 @@ if ($g4hits_exist == 1 && $type eq "G4Hits")
     $systemstring = $systemstring_g4hits;
 }
 my $getsegments = $dbh->prepare("select segment,filename from datasets where dsttype = ? and  filename like '%$systemstring%' order by segment")|| die $DBI::error;
+print "select segment,filename from datasets where dsttype = $type and  filename like '%$systemstring%' order by segment\n";
 my $getlastseg = $dbh->prepare("select max(segment) from datasets where dsttype = ? and filename like '%$systemstring%'")|| die $DBI::error;
 
 $getlastseg->execute($type)|| die $DBI::error;;
