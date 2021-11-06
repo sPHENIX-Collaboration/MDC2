@@ -20,29 +20,30 @@ chomp $localdir;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_pass4trk.sh",$rundir);
 my $nevents = $ARGV[0];
-my $infile = $ARGV[1];
-my $dstoutfile = $ARGV[2];
-my $dstoutdir = $ARGV[3];
-my $runnumber = $ARGV[4];
-my $sequence = $ARGV[5];
-my $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
+my $quarkfilter = $ARGV[1];
+my $infile = $ARGV[2];
+my $dstoutfile = $ARGV[3];
+my $dstoutdir = $ARGV[4];
+my $runnumber = $ARGV[5];
+my $sequence = $ARGV[6];
+my $suffix = sprintf("%s_3MHz-%010d-%05d",$quarkfilter,$runnumber,$sequence);
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/pythia8_d0/pass4trk");
+my $condorlogdir = sprintf("/tmp/HF_pp200_signal/pass4trk");
 mkpath($condorlogdir);
-my $jobfile = sprintf("%s/condor-%s.job",$logdir,$suffix);
+my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
 if (-f $jobfile)
 {
     print "jobfile $jobfile exists, possible overlapping names\n";
     exit(1);
 }
-my $condorlogfile = sprintf("%s/condor-%s.log",$condorlogdir,$suffix);
+my $condorlogfile = sprintf("%s/condor_%s.log",$condorlogdir,$suffix);
 if (-f $condorlogfile)
 {
     unlink $condorlogfile;
 }
-my $errfile = sprintf("%s/condor-%s.err",$logdir,$suffix);
-my $outfile = sprintf("%s/condor-%s.out",$logdir,$suffix);
+my $errfile = sprintf("%s/condor_%s.err",$logdir,$suffix);
+my $outfile = sprintf("%s/condor_%s.out",$logdir,$suffix);
 print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";

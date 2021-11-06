@@ -13,9 +13,9 @@ my $runnumber=2;
 my $test;
 my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
-if ($#ARGV < 0)
+if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs>\n";
+    print "usage: run_all.pl <number of jobs> <\"Charm\", \"CharmD0\", \"Bottom\", \"BottomD0\" or \"MinBias\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--test : dryrun - create jobfiles\n";
@@ -36,6 +36,18 @@ if (! -f "outdir.txt")
     print "could not find outdir.txt\n";
     exit(1);
 }
+my $quarkfilter = $ARGV[1];
+if ($quarkfilter  ne "Charm" &&
+    $quarkfilter  ne "CharmD0" &&
+    $quarkfilter  ne "Bottom" &&
+    $quarkfilter  ne "BottomD0" &&
+    $quarkfilter  ne "MinBias")
+{
+    print "second argument has to be either Charm, CharmD0, Bottom, BottomD0 or MinBias\n";
+    exit(1);
+}
+my $quarkfilterWithMHz = sprintf("%s_3MHz",$quarkfilter);
+
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 mkpath($outdir);
@@ -43,7 +55,7 @@ mkpath($outdir);
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_CLUSTER' and filename like '%pythia8_d0%' and runnumber = $runnumber order by filename") || die $DBI::error;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_CLUSTER' and filename like '%pythia8_$quarkfilterWithMHz%' and runnumber = $runnumber order by filename") || die $DBI::error;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::error;
@@ -54,7 +66,7 @@ while (my @res = $getfiles->fetchrow_array())
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_Tracks_pythia8_d0-%010d-%05d.root",$runnumber,$segment);
+	my $outfilename = sprintf("DST_Tracks_pythia8_%s-%010d-%05d.root",$quarkfilterWithMHz,$runnumber,$segment);
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
@@ -65,7 +77,7 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %d %s", $outevents, $lfn, $outfilename, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $quarkfilter, $lfn, $outfilename, $outdir, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
