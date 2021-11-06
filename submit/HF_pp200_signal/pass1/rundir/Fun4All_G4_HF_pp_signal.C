@@ -105,7 +105,6 @@ int Fun4All_G4_HF_pp_signal(
   //  Input::PYTHIA6 = true;
 
   Input::PYTHIA8 = true;
-  PYTHIA8::config_file = "./phpythia8_HF_MDC2.cfg";
 
   //  Input::GUN = true;
   //  Input::GUN_NUMBER = 3; // if you need 3 of them
@@ -183,9 +182,12 @@ int Fun4All_G4_HF_pp_signal(
         or HF_Q_filter == "Charm" or HF_Q_filter == "Bottom" )
       INPUTGENERATOR::Pythia8->register_trigger(p8_hf_signal_trigger);
 
+    string pythia8_config_file = "./phpythia8_HF_MDC2.cfg";
 
     if (HF_Q_filter == "CharmD0" or HF_Q_filter == "BottomD0")
     {
+      pythia8_config_file = "./phpythia8_d02kpi_MDC2";
+
       PHPy8ParticleTrigger * p8_d0pi_trigger = new PHPy8ParticleTrigger();
       p8_d0pi_trigger->AddParents(421);
       p8_d0pi_trigger->AddParticles(211);
@@ -207,6 +209,7 @@ int Fun4All_G4_HF_pp_signal(
       INPUTGENERATOR::Pythia8->set_trigger_AND ();
     }
 
+    PYTHIA8::config_file = pythia8_config_file;
     Input::ApplysPHENIXBeamParameter(INPUTGENERATOR::Pythia8);
 
     // INPUTGENERATOR::Pythia8->set_vertex_distribution_function( PHHepMCGenHelper::Gaus, PHHepMCGenHelper::Gaus,PHHepMCGenHelper::Uniform ,PHHepMCGenHelper::Gaus);
