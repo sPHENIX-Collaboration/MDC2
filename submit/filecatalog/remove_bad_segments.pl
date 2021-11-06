@@ -74,7 +74,7 @@ if( ! exists $daughters{$dsttype})
     }
     exit(0);
 }
-if ($system < 1 || $system > 8)
+if ($system < 1 || $system > 10)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
@@ -86,6 +86,8 @@ if ($system < 1 || $system > 8)
     print "    6 : hijing (0-4.88fm) pileup 0-20fm\n";
     print "    7 : HF pythia8 Charm\n";
     print "    8 : HF pythia8 Bottom\n";
+    print "    9 : HF pythia8 CharmD0\n";
+    print "   10 : HF pythia8 BottomD0\n";
     exit(0);
 }
 
@@ -165,9 +167,19 @@ elsif ($system == 8)
 }
 elsif ($system == 9)
 {
-    $systemstring = "DST_HF_BOTTOM_pythia8-";
+    $specialsystemstring{"G4Hits"} = "pythia8_CharmD0-";
+    $systemstring = "pythia8_CharmD0_";
     $topdir = sprintf("%s/HF_pp200_signal",$topdir);
-    $condorfileadd = sprintf("Bottom");
+    $condorfileadd = sprintf("CharmD0_3MHz");
+    $specialcondorfileadd{"G4Hits"} = "CharmD0";
+}
+elsif ($system == 10)
+{
+    $specialsystemstring{"G4Hits"} = "pythia8_BottomD0-";
+    $systemstring = "pythia8_BottomD0_";
+    $topdir = sprintf("%s/HF_pp200_signal",$topdir);
+    $condorfileadd = sprintf("BottomD0_3MHz");
+    $specialcondorfileadd{"G4Hits"} = "BottomD0";
 }
 else
 {
