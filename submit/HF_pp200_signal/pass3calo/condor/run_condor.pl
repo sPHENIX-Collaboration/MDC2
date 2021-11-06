@@ -27,24 +27,24 @@ my $dstoutfile = $ARGV[4];
 my $dstoutdir = $ARGV[5];
 my $runnumber = $ARGV[6];
 my $sequence = $ARGV[7];
-my $suffix = sprintf("%s-%010d-%05d",$quarkfilter,$runnumber,$sequence);
+my $suffix = sprintf("_%s-%010d-%05d",$quarkfilter,$runnumber,$sequence);
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
 my $condorlogdir = sprintf("/tmp/HF_pp200_signal/pass3calo");
 mkpath($condorlogdir);
-my $jobfile = sprintf("%s/condor-%s.job",$logdir,$suffix);
+my $jobfile = sprintf("%s/condor%s.job",$logdir,$suffix);
 if (-f $jobfile)
 {
     print "jobfile $jobfile exists, possible overlapping names\n";
     exit(1);
 }
-my $condorlogfile = sprintf("%s/condor-%s.log",$condorlogdir,$suffix);
+my $condorlogfile = sprintf("%s/condor%s.log",$condorlogdir,$suffix);
 if (-f $condorlogfile)
 {
     unlink $condorlogfile;
 }
-my $errfile = sprintf("%s/condor-%s.err",$logdir,$suffix);
-my $outfile = sprintf("%s/condor-%s.out",$logdir,$suffix);
+my $errfile = sprintf("%s/condor%s.err",$logdir,$suffix);
+my $outfile = sprintf("%s/condor%s.out",$logdir,$suffix);
 print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
