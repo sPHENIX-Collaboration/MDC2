@@ -18,10 +18,6 @@ my $filelist;
 GetOptions("test"=>\$test, "filelist" => \$filelist);
 
 
-my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
-$dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $filelocation = $dbh->prepare("select full_file_path,md5,size from files where lfn = ? and full_host_name = 'dcache'") || die $DBI::error; 
-my $updatemd5 = $dbh->prepare("update files set md5=? where full_file_path = ?");
 
 my %inputfiles = ();
 
@@ -40,18 +36,31 @@ else
     $inputfiles{$ARGV[0]} = 1;
 }
 
+my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
+$dbh->{LongReadLen}=2000; # full file paths need to fit in here
+my $filelocation = $dbh->prepare("select full_file_path,md5,size from files where lfn = ? and full_host_name = 'dcache'") || die $DBI::error;
+my $updatemd5 = $dbh->prepare("update files set md5=? where full_file_path = ?");
+my %filemd5 = ();
+my %filesizes = ();
 foreach my $file (keys %inputfiles)
 {
   print "will copy $file\n";
-}
-
-foreach my $file (keys %inputfiles)
-{
-    $filelocation->execute($file);
-
+  $filelocation->execute($file);
     my @res = $filelocation->fetchrow_array();
+  $filemd5{$res[0]} = $res[1];
+  $filesizes{$res[0]} = $res[2];
+}
+$filelocation->finish();
+$updatemd5->finish();
+$dbh->disconnect;
+
+foreach my $file (keys %filemd5)
+{
+#    $filelocation->execute($file);
+
+#    my @res = $filelocation->fetchrow_array();
 #    print "full: $res[0]\n";
-    if (! defined $res[1])
+    if (! defined $filemd5{$file})
     {
 	print "md5 needs recalc\n";
     }
@@ -61,44 +70,44 @@ foreach my $file (keys %inputfiles)
 #    }
 #    print "size: $res[2]\n";
 
-    my $copycmd = sprintf("env LD_LIBRARY_PATH=/usr/lib64:%s xrdcp --nopbar --retry 3 root://dcsphdoor02.rcf.bnl.gov:1095%s .", $LD_LIBRARY_PATH, $res[0]);
+    my $copycmd = sprintf("env LD_LIBRARY_PATH=/usr/lib64:%s xrdcp --nopbar --retry 3 root://dcsphdoor02.rcf.bnl.gov:1095%s .", $LD_LIBRARY_PATH, $file);
     print "executing $copycmd\n";
 
     system($copycmd);
-
-    if (-f $file)
+    my $lfn = basename($file);
+    if (-f $lfn)
     {
-        my $fsize =  stat($file)->size;
-	if ($fsize != $res[2])
+        my $fsize =  stat($lfn)->size;
+	if ($fsize != $filesizes{$file})
 	{
-	    print "size mismatch for $file, db: $res[2], on disk: $fsize\n";
+	    print "size mismatch for $lfn, db: $filesizes{$file}, on disk: $fsize\n";
 	    die;
 	}
 	else
 	{
-	    print "size for $file matches $fsize\n";
+	    print "size for $lfn matches $fsize\n";
 	}
-	my $recalcmd5 = &getmd5($file);
-	if (defined $res[1])
+	my $recalcmd5 = &getmd5($lfn);
+	if (defined $filemd5{$file})
 	{
-	    if ($res[1] ne $recalcmd5)
+	    if ($filemd5{$file} ne $recalcmd5)
 	    {
-		print "md5 mismatch for $res[0], orig $res[1], recalc $recalcmd5\n";
+		print "md5 mismatch for $file, orig $filemd5{$file}, recalc $recalcmd5\n";
 		die;
 	    }
 	    else
 	    {
-		print "md5 for $res[0] matches: $recalcmd5\n";
+		print "md5 for $file matches: $recalcmd5\n";
 	    }
 	}
 	else
 	{
-	    $updatemd5->execute($recalcmd5,$res[0]);
+	    $updatemd5->execute($recalcmd5,$file);
 	}
     }
     else
     {
-	print "local copy of $res[0] failed\n";
+	print "local copy of $file failed\n";
     }
 }
 
