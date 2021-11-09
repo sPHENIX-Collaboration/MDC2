@@ -44,6 +44,7 @@ open(F,"outdir.txt");
 my $outdir=<F>;
 chomp  $outdir;
 close(F);
+$outdir = sprintf("%s/%s",$outdir,$quarkfilter);
 mkpath($outdir);
 my $localdir=`pwd`;
 chomp $localdir;
