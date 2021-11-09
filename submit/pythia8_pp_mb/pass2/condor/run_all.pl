@@ -46,10 +46,10 @@ mkpath($logdir);
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%pythia8_mb%' and runnumber = $runnumber order by filename") || die $DBI::error;
+my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%pythia8_pp_mb%' and runnumber = $runnumber order by filename") || die $DBI::error;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
 
-my $getbkglastsegment = $dbh->prepare("select max(segment) from datasets where dsttype = 'G4Hits' and filename like '%pythia8_mb%' and runnumber = $runnumber");
+my $getbkglastsegment = $dbh->prepare("select max(segment) from datasets where dsttype = 'G4Hits' and filename like '%pythia8_pp_mb%' and runnumber = $runnumber");
 $getbkglastsegment->execute();
 my @res1 = $getbkglastsegment->fetchrow_array();
 my $lastsegment = $res1[0];
@@ -69,7 +69,7 @@ while (my @res = $getfiles->fetchrow_array())
 	my $foundall = 1;
 	foreach my $type (sort keys %outfiletype)
 	{
-	    my $outfilename = sprintf("%s/%s_pythia8_mb_3MHz-%010d-%05d.root",$outdir,$type,$runnumber,$segment);
+	    my $outfilename = sprintf("%s/%s_pythia8_pp_mb_3MHz-%010d-%05d.root",$outdir,$type,$runnumber,$segment);
 #	    print "checking for $outfilename\n";
 	    if (! -f  $outfilename)
 	    {

@@ -42,7 +42,7 @@ for (my $segment=0; $segment<100; $segment++)
     for (my $n=0; $n<$nmax; $n+=$events)
     {
         
-	my $outfile = sprintf("G4Hits_pythia8_mb-%010d-%05d.root",$runnumber,$sequence);
+	my $outfile = sprintf("G4Hits_pythia8_pp_mb-%010d-%05d.root",$runnumber,$sequence);
 	my $fulloutfile = sprintf("%s/%s",$outdir,$outfile);
 	print "out: $fulloutfile\n";
 	if (! -f $fulloutfile)
