@@ -46,9 +46,9 @@ my %vtxhash = ();
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_G4HIT' and filename like '%pythia8_mb_3MHz%' and runnumber = $runnumber order by filename") || die $DBI::error;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_G4HIT' and filename like '%pythia8_pp_mb_3MHz%' and runnumber = $runnumber order by filename") || die $DBI::error;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
-my $getvtxfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_VERTEX' and filename like '%pythia8_mb_3MHz%' and runnumber = $runnumber");
+my $getvtxfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_VERTEX' and filename like '%pythia8_pp_mb_3MHz%' and runnumber = $runnumber");
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::error;
 my $ncal = $getfiles->rows;
@@ -77,7 +77,7 @@ foreach my $segment (sort keys %calohash)
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_CALO_CLUSTER_pythia8_mb_3MHz-%010d-%05d.root",$runnumber,$segment);
+	my $outfilename = sprintf("DST_CALO_CLUSTER_pythia8_pp_mb_3MHz-%010d-%05d.root",$runnumber,$segment);
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{

@@ -29,7 +29,7 @@ my $sequence = $ARGV[6];
 my $suffix = sprintf("_3MHz-%010d-%05d",$runnumber,$sequence);
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/pythia8_mb/pass3calo");
+my $condorlogdir = sprintf("/tmp/pythia8_pp_mb/pass3calo");
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor%s.job",$logdir,$suffix);
 if (-f $jobfile)
@@ -55,7 +55,7 @@ print F "Log  		= $condorlogfile\n";
 print F "Initialdir  	= $rundir\n";
 print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
 print F "accounting_group = group_sphenix.prod\n";
-print F "request_memory = 4GB\n";
+print F "request_memory = 1500MB\n";
 print F "Priority 	= 25\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
