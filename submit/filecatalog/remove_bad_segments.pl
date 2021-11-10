@@ -120,8 +120,8 @@ elsif ($system == 2)
 }
 elsif ($system == 3)
 {
-    $specialsystemstring{"G4Hits"} = "pythia8_mb-";
-    $systemstring = "pythia8_mb_3MHz";
+    $specialsystemstring{"G4Hits"} = "pythia8_pp_mb-";
+    $systemstring = "pythia8_pp_mb_3MHz";
     $topdir = sprintf("%s/pythia8_pp_mb",$topdir);
     #$condornameprefix = sprintf("condor_3MHz");
 }

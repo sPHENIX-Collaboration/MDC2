@@ -46,8 +46,8 @@ elsif ($system == 2)
 }
 elsif ($system == 3)
 {
-    $systemstring = "pythia8_mb";
-    $gpfsdir = "pythia8_pp";
+    $systemstring = "pythia8_pp_mb";
+    $gpfsdir = "pythia8_pp_mb";
 }
 elsif ($system == 4)
 {
