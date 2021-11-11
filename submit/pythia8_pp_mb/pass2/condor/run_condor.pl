@@ -28,7 +28,7 @@ my $sequence = $ARGV[5];
 my $suffix = sprintf("3MHz-%010d-%05d",$runnumber,$sequence);
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/pythia8_mb/pass2");
+my $condorlogdir = sprintf("/tmp/pythia8_pp_mb/pass2");
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
 if (-f $jobfile)
