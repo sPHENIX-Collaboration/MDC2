@@ -49,6 +49,7 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
+$outdir = sprintf("%s/%s",$outdir,$quarkfilter);
 mkpath($outdir);
 
 my %outfiletype = ();
@@ -69,7 +70,7 @@ $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like 'G4Hits_pythia8_$quarkfilterWithUnderScore%' and runnumber = $runnumber order by filename") || die $DBI::error;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
 
-my $getbkglastsegment = $dbh->prepare("select max(segment) from datasets where dsttype = 'G4Hits' and filename like '%pythia8_mb%' and runnumber = $runnumber");
+my $getbkglastsegment = $dbh->prepare("select max(segment) from datasets where dsttype = 'G4Hits' and filename like '%pythia8_pp_mb%' and runnumber = $runnumber");
 $getbkglastsegment->execute();
 my @res1 = $getbkglastsegment->fetchrow_array();
 my $lastsegment = $res1[0];
@@ -124,7 +125,7 @@ while (my @res = $getfiles->fetchrow_array())
 	    {
 		$currsegment = 0;
 	    }
-	    my $prefix_mb = sprintf("G4Hits_pythia8_mb");
+	    my $prefix_mb = sprintf("G4Hits_pythia8_pp_mb");
 	    my $bckfile = sprintf("%s-%010d-%05d.root",$prefix_mb,$runnumber,$currsegment);
 	    $chkfile->execute($bckfile);
 	    if ($chkfile->rows == 0)
