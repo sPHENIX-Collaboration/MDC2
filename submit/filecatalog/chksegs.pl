@@ -8,8 +8,8 @@ use Getopt::Long;
 use DBI;
 
 my $system = 0;
-
-GetOptions("type:i"=>\$system);
+my $verbosity;
+GetOptions("type:i"=>\$system,"verbosity" => \$verbosity);
 
 if ($system < 1 || $system > 10)
 {
@@ -71,6 +71,7 @@ elsif ($system == 7)
     $systemstring_g4hits = "pythia8_Charm";
     $systemstring = sprintf("%s_3MHz",$systemstring_g4hits);
     $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
+#    $systemstring_g4hits = "pythia8_Charm-";
     $gpfsdir = "HF_pp200_signal";
 }
 elsif ($system == 8)
@@ -140,7 +141,7 @@ if ($g4hits_exist == 1 && $type eq "G4Hits")
     $systemstring = $systemstring_g4hits;
 }
 my $getsegments = $dbh->prepare("select segment,filename from datasets where dsttype = ? and  filename like '%$systemstring%' order by segment")|| die $DBI::error;
-print "select segment,filename from datasets where dsttype = $type and  filename like '%$systemstring%' order by segment\n";
+print "select segment,filename from datasets where dsttype = '$type' and  filename like '%$systemstring%' order by segment\n";
 my $getlastseg = $dbh->prepare("select max(segment) from datasets where dsttype = ? and filename like '%$systemstring%'")|| die $DBI::error;
 
 $getlastseg->execute($type)|| die $DBI::error;;
@@ -157,7 +158,10 @@ print "number of segments processed:  $nsegs_gpfs\n";
 foreach my $dcdir (keys  %topdcachedir)
 {
     my $getsegsdc = $dbh->prepare("select lfn from files where lfn like '$type%' and lfn like '%$systemstring%' and full_file_path like '$dcdir/%/$type%'");
-#    print "select lfn from files where lfn like '$type%' and lfn like '%$systemstring%' and full_file_path like '$dcdir/$type/%/$type%\n";
+if (defined $verbosity)
+{
+    print "select lfn from files where lfn like '$type%' and lfn like '%$systemstring%' and full_file_path like '$dcdir/$type/%/$type%'\n";
+}
     $getsegsdc->execute();
     my $rows = $getsegsdc->rows;
     print "entries for $dcdir: $rows\n";
