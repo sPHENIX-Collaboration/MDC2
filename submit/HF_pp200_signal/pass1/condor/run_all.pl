@@ -7,12 +7,14 @@ use Getopt::Long;
 
 my $test;
 my $incremental;
-GetOptions("test"=>\$test, "increment"=>\$incremental);
+my $killexist;
+GetOptions("test"=>\$test, "increment"=>\$incremental, "killexist" => \$killexist);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Charm\", \"CharmD0\", \"Bottom\", \"BottomD0\" or \"MinBias\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
+    print "--killexist : delete output file if it already exists (but no jobfile)\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
@@ -63,6 +65,13 @@ for (my $isub = 0; $isub < $maxsubmit; $isub++)
     my $outfile = sprintf("G4Hits_%s-%010d-%05d.root",$filetype, $runnumber,$njob);
     my $fulloutfile = sprintf("%s/%s",$outdir,$outfile);
     print "out: $fulloutfile\n";
+    if (defined $killexist)
+    {
+	if (-f $fulloutfile)
+	{
+	    unlink  $fulloutfile;
+	}
+    }
     if (! -f $fulloutfile)
     {
 	my $tstflag="";
@@ -93,5 +102,6 @@ for (my $isub = 0; $isub < $maxsubmit; $isub++)
     else
     {
 	print "output file already exists\n";
+	$njob++;
     }
 }
