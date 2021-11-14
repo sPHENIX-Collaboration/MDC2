@@ -160,7 +160,7 @@ foreach my $dcdir (keys  %topdcachedir)
     my $getsegsdc = $dbh->prepare("select lfn from files where lfn like '$type%' and lfn like '%$systemstring%' and full_file_path like '$dcdir/%/$type%'");
 if (defined $verbosity)
 {
-    print "select lfn from files where lfn like '$type%' and lfn like '%$systemstring%' and full_file_path like '$dcdir/$type/%/$type%'\n";
+    print "select lfn from files where lfn like '$type%' and lfn like '%$systemstring%' and full_file_path like '$dcdir/%/$type%'\n";
 }
     $getsegsdc->execute();
     my $rows = $getsegsdc->rows;
