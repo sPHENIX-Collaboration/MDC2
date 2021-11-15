@@ -54,7 +54,7 @@ while (my @res = $getfiles->fetchrow_array())
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_Tracks_pythia8_pp_mb_3MHz-%010d-%05d.root",$runnumber,$segment);
+	my $outfilename = sprintf("DST_TRACKS_pythia8_pp_mb_3MHz-%010d-%05d.root",$runnumber,$segment);
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
