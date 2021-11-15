@@ -31,11 +31,6 @@ if ($hostname !~ /phnxsub/)
 }
 
 my $maxsubmit = $ARGV[0];
-if (! -f "outdir.txt")
-{
-    print "could not find outdir.txt\n";
-    exit(1);
-}
 my $quarkfilter = $ARGV[1];
 if ($quarkfilter  ne "Charm" &&
     $quarkfilter  ne "CharmD0" &&
@@ -48,8 +43,14 @@ if ($quarkfilter  ne "Charm" &&
 }
 my $quarkfilterWithMHz = sprintf("%s_3MHz",$quarkfilter);
 
+if (! -f "outdir.txt")
+{
+    print "could not find outdir.txt\n";
+    exit(1);
+}
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
+$outdir = sprintf("%s/%s",$outdir,$quarkfilter);
 mkpath($outdir);
 
 
