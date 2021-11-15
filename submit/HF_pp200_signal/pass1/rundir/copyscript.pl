@@ -54,7 +54,7 @@ if ($outdir =~ /pnfs/)
 	print "no copying to dCache for $username, only sphnxpro can do that\n";
 	exit 0;
     }
-    $copycmd = sprintf("env LD_LIBRARY_PATH=/usr/lib64:%s xrdcp --nopbar --retry 3 %s root://dcsphdoor02.rcf.bnl.gov:1095%s",$LD_LIBRARY_PATH,$file,$outfile);
+    $copycmd = sprintf("env LD_LIBRARY_PATH=/usr/lib64:%s xrdcp --nopbar --retry 3  -DICPChunkSize 1048576 %s root://dcsphdoor02.rcf.bnl.gov:1095%s",$LD_LIBRARY_PATH,$file,$outfile);
     $outhost = 'dcache';
 }
 else

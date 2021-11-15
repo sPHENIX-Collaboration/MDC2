@@ -70,7 +70,7 @@ foreach my $file (keys %filemd5)
 #    }
 #    print "size: $res[2]\n";
 
-    my $copycmd = sprintf("env LD_LIBRARY_PATH=/usr/lib64:%s xrdcp --nopbar --retry 3 root://dcsphdoor02.rcf.bnl.gov:1095%s .", $LD_LIBRARY_PATH, $file);
+    my $copycmd = sprintf("env LD_LIBRARY_PATH=/usr/lib64:%s xrdcp --nopbar --retry 3 -DICPChunkSize 1048576 root://dcsphdoor02.rcf.bnl.gov:1095%s .", $LD_LIBRARY_PATH, $file);
     print "executing $copycmd\n";
 
     system($copycmd);
