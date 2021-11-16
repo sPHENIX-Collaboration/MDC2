@@ -41,7 +41,6 @@ if ($quarkfilter  ne "Charm" &&
     print "second argument has to be either Charm, CharmD0, Bottom, BottomD0 or MinBias\n";
     exit(1);
 }
-$quarkfilter = sprintf("%s_3MHz",$quarkfilter);
 if (! -f "outdir.txt")
 {
     print "could not find outdir.txt\n";
@@ -52,6 +51,7 @@ chomp $outdir;
 $outdir = sprintf("%s/%s",$outdir,$quarkfilter);
 mkpath($outdir);
 
+$quarkfilter = sprintf("%s_3MHz",$quarkfilter);
 
 my %calohash = ();
 my %vtxhash = ();
