@@ -58,6 +58,7 @@ print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
 print F "accounting_group = group_sphenix.prod\n";
 print F "request_memory = 1500MB\n";
 print F "Priority 	= 25\n";
+print F "concurrency_limits = PHENIX_100\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);
