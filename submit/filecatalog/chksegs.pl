@@ -146,7 +146,13 @@ my $getlastseg = $dbh->prepare("select max(segment) from datasets where dsttype 
 
 $getlastseg->execute($type)|| die $DBI::error;;
 my @res = $getlastseg->fetchrow_array();
+if (! defined $res[0])
+{
+    print "no entries for $type, $systemstring\n";
+    exit(0);
+}
 my $lastseg = $res[0];
+
 $getsegments->execute($type);
 my %seglist = ();
 while (my @res = $getsegments->fetchrow_array())
