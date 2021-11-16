@@ -24,6 +24,8 @@ then
     fi
 else
     echo condor scratch NOT set
+    hostname
+    exit -1
 fi
 
 # arguments 
