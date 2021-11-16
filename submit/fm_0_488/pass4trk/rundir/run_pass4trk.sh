@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 export HOME=/sphenix/u/${LOGNAME}
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc1.8
+source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.2
 
 echo running: run_pass4trk.sh $*
 
@@ -16,6 +16,8 @@ then
     fi
 else
     echo condor scratch NOT set
+    hostname
+    exit -1
 fi
 # arguments 
 # $1: number of events
