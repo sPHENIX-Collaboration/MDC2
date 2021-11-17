@@ -38,8 +38,8 @@ echo arg5 \(trk output dir\): $5
 echo arg6 \(quarkfilter\): $6
 echo running calo root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
 root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
-ls -l
+
 echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$5\",\"$6\"\)
 root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$5\",\"$6\"\)
-ls -l
+
 echo "script done"
