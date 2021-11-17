@@ -72,7 +72,6 @@ int Fun4All_G4_Pass3Trk(
   // about the number of layers used for the cell reco code
   Input::READHITS = true;
   INPUTREADHITS::filename[0] = inputFile0;
-  INPUTREADHITS::filename[1] = inputFile1;
   // if you use a filelist
   // INPUTREADHITS::listfile[0] = inputFile;
   // Or:
