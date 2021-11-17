@@ -161,13 +161,18 @@ while (my @res = $getsegments->fetchrow_array())
 }
 my $nsegs_gpfs = keys %seglist;
 print "number of segments processed:  $nsegs_gpfs\n";
+my $typeWithUnderscore = sprintf("%s",$type);
 foreach my $dcdir (keys  %topdcachedir)
 {
-    my $getsegsdc = $dbh->prepare("select lfn from files where lfn like '$type%' and lfn like '%$systemstring%' and full_file_path like '$dcdir/%/$type%'");
-if (defined $verbosity)
-{
-    print "select lfn from files where lfn like '$type%' and lfn like '%$systemstring%' and full_file_path like '$dcdir/%/$type%'\n";
-}
+    if ($type eq "DST_TRUTH")
+    {
+	$typeWithUnderscore = sprintf("%s_%s",$type,$systemstring);
+    }
+    my $getsegsdc = $dbh->prepare("select lfn from files where lfn like '$typeWithUnderscore%' and lfn like '%$systemstring%' and full_file_path like '$dcdir/%/$type%'");
+    if (defined $verbosity)
+    {
+	print "select lfn from files where lfn like '$typeWithUnderscore%' and lfn like '%$systemstring%' and full_file_path like '$dcdir/%/$type%'\n";
+    }
     $getsegsdc->execute();
     my $rows = $getsegsdc->rows;
     print "entries for $dcdir: $rows\n";
