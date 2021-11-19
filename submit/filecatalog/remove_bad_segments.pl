@@ -15,7 +15,9 @@ my $kill;
 my $system = 0;
 my $dsttype = "none";
 my $run = 2;
-GetOptions("kill"=>\$kill, "type:i"=>\$system, "dsttype:s"=>\$dsttype);
+my $nopileup;
+my $verbose;
+GetOptions("kill"=>\$kill, "type:i"=>\$system, "dsttype:s"=>\$dsttype, "nopileup"=>\$nopileup, "verbose" => \$verbose);
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
@@ -30,7 +32,8 @@ my %daughters = (
     "DST_TRKR_G4HIT" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRUTH_G4HIT", "DST_VERTEX", "DST_TRKR_CLUSTER" ],
     "DST_TRUTH_G4HIT" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_VERTEX", "DST_TRKR_CLUSTER" ],
     "DST_VERTEX" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_CALO_CLUSTER" ],
-    "DST_TRKR_CLUSTER" => [ "DST_TRACKS" ],
+    "DST_TRKR_CLUSTER" => [ "DST_TRUTH", "DST_TRACKS" ],
+    "DST_TRUTH" => [ "DST_TRKR_CLUSTER", "DST_TRACKS" ],
     "DST_TRACKS" => [ "" ],
     "DST_CALO_CLUSTER" => [ "" ],
     "DST_HF_CHARM" => [ "JET_EVAL_DST_HF_CHARM", "QA_DST_HF_CHARM"],
@@ -41,11 +44,33 @@ my %daughters = (
     "QA_DST_HF_BOTTOM" => [ "DST_HF_BOTTOM", "JET_EVAL_DST_HF_BOTTOM"]
     );
 
+if (defined $nopileup)
+{
+    push($daughters{"DST_TRKR_CLUSTER"},"DST_CALO_CLUSTER");
+    push($daughters{"DST_CALO_CLUSTER"},"DST_TRKR_CLUSTER");
+}
+if (defined $verbose)
+{
+    foreach my $ky (keys %daughters)
+    {
+	my @types = @{$daughters{$ky}};
+	if ($#types > 0)
+	{
+	    print "$ky has @types\n";
+	}
+	else
+	{
+	    print "$ky has no entries\n";
+	}
+    }
+}
+
 if ($#ARGV < 0)
 {
     print "usage: remove_bad_segments.pl -dsttype <type> <segment>\n";
     print "parameters:\n";
     print "-kill : remove files for real\n";
+    print "-nopileup : HF datasets without pileup\n";
     print "-type : production type\n";
     print "    1 : hijing (0-12fm) pileup 0-12fm\n";
     print "    2 : hijing (0-4.88fm) pileup 0-12fm\n";
@@ -55,6 +80,8 @@ if ($#ARGV < 0)
     print "    6 : hijing (0-4.88fm) pileup 0-20fm\n";
     print "    7 : HF pythia8 Charm\n";
     print "    8 : HF pythia8 Bottom\n";
+    print "    9 : HF pythia8 CharmD0\n";
+    print "   10 : HF pythia8 BottomD0\n";
     print "-dsttype:\n";
     foreach my $tp (sort keys %daughters)
     {
@@ -105,9 +132,17 @@ my %productionsubdir = (
     "DST_TRKR_CLUSTER" => "pass3trk",
     "DST_TRKR_G4HIT" => "pass2",
     "DST_TRUTH_G4HIT" => "pass2",
+    "DST_TRUTH" => "pass3trk",
     "DST_VERTEX" => "pass2",
     "G4Hits" => "pass1"
     );
+if (defined $nopileup)
+{
+    $productionsubdir{"DST_CALO_CLUSTER"} = "pass2_nopileup";
+    $productionsubdir{"DST_TRKR_CLUSTER"} = "pass2_nopileup";
+    $productionsubdir{"DST_TRUTH"} = "pass2_nopileup";
+    $productionsubdir{"DST_TRACKS"} = "pass3_nopileup";
+}
 if ($system == 1)
 {
     $systemstring = "sHijing_0_12fm_50kHz_bkg_0_12fm";
@@ -123,7 +158,6 @@ elsif ($system == 3)
     $specialsystemstring{"G4Hits"} = "pythia8_pp_mb-";
     $systemstring = "pythia8_pp_mb_3MHz";
     $topdir = sprintf("%s/pythia8_pp_mb",$topdir);
-    #$condornameprefix = sprintf("condor_3MHz");
 }
 elsif ($system == 4)
 {
@@ -155,6 +189,11 @@ elsif ($system == 7)
     $systemstring = "pythia8_Charm_";
     $topdir = sprintf("%s/HF_pp200_signal",$topdir);
     $condorfileadd = sprintf("Charm_3MHz");
+    if (defined $nopileup)
+    {
+	$condorfileadd = sprintf("Charm");
+        $systemstring = "pythia8_Charm";
+    }
     $specialcondorfileadd{"G4Hits"} = "Charm";
 }
 elsif ($system == 8)
@@ -205,6 +244,16 @@ $removethese{$dsttype} = 1;
 foreach my $rem (keys %removethese)
 {
     my $loopsystemstring = $systemstring;
+    #only pp runs samples without pileup
+    if (! defined $nopileup)
+    {
+	$loopsystemstring = sprintf("%s3MHz-",$loopsystemstring);
+    }
+else
+{
+	$loopsystemstring = sprintf("%s-",$loopsystemstring);
+    }
+
     if (exists $specialsystemstring{$rem})
     {
 	$loopsystemstring = $specialsystemstring{$rem};
@@ -240,6 +289,7 @@ foreach my $rem (keys %removethese)
     $removecondorfiles{sprintf("%s/%s-%010d-%05d.err",$condor_subdir,$condornameprefix,$run,$segment)} = 1;
     $removecondorfiles{sprintf("%s/%s-%010d-%05d.log",$condor_subdir,$condornameprefix,$run,$segment)} = 1;
     my $lfn = sprintf("%s_%s-%010d-%05d.root",$rem,$loopsystemstring,$run,$segment);
+    print "getfilename->execute($rem,'%'.$loopsystemstring.'%',$segment)\n";
     $getfilename->execute($rem,'%'.$loopsystemstring.'%',$segment);
     if ($getfilename->rows == 1)
     {
@@ -247,6 +297,16 @@ foreach my $rem (keys %removethese)
 	$getfiles->execute($res[0]);
 	while (my @res2 = $getfiles->fetchrow_array())
 	{
+	    if (! defined $nopileup && $res2[0] =~ /NoPileUp/)
+	    {
+		print "getfiles ($res[0]): trying to remove $res2[0]\n";
+		die;
+	    }
+	    if (defined $nopileup && $res2[0] !~ /NoPileUp/)
+	    {
+		print "nopileup getfiles ($res[0]): trying to remove $res2[0]\n";
+		die;
+	    }
 	    if (defined $kill)
 	    {
 		print "rm $res2[0], deleting from fcat\n";
