@@ -74,6 +74,11 @@ foreach my $file (keys %filemd5)
     print "executing $copycmd\n";
 
     system($copycmd);
+    my $exit_value  = $? >> 8;
+    my $thisdate = `date`;
+    chomp $thisdate;
+    print "$thisdate: xrdcp return code: $exit_value\n";
+
     my $lfn = basename($file);
     if (-f $lfn)
     {
