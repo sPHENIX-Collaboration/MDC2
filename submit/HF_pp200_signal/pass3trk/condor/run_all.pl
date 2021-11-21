@@ -89,7 +89,7 @@ foreach my $segment (sort keys %trkhash)
     }
 
     my $lfn = $trkhash{$segment};
-    print "found $lfn\n";
+#    print "found $lfn\n";
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
 	my $runnumber = int($2);
