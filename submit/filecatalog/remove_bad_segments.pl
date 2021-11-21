@@ -122,7 +122,7 @@ my $systemstring;
 my %specialsystemstring = ();
 my $pileupdir;
 my $condorfileadd;
-
+my $pileupstring;
 my %specialcondorfileadd = ();
 my %productionsubdir = (
     "DST_BBC_G4HIT" => "pass2",
@@ -170,6 +170,7 @@ elsif ($system == 4)
     {
 	$topdir = sprintf("%s/fm_0_20",$topdir);
     }
+    $pileupstring = "_50kHz_bkg_0_20fm";
 }
 elsif ($system == 5)
 {
@@ -179,9 +180,10 @@ elsif ($system == 5)
 }
 elsif ($system == 6)
 {
-    $systemstring = "sHijing_0_488fm_50kHz_bkg_0_20fm";
+    $systemstring = "sHijing_0_488fm";
     $topdir = sprintf("%s/fm_0_488",$topdir);
-    $pileupdir = "50kHz_0_20fm";
+#    $pileupdir = "50kHz_0_20fm";
+    $pileupstring = "_50kHz_bkg_0_20fm";
 }
 elsif ($system == 7)
 {
@@ -247,10 +249,18 @@ foreach my $rem (keys %removethese)
     #only pp runs samples without pileup
     if (! defined $nopileup)
     {
-	$loopsystemstring = sprintf("%s3MHz-",$loopsystemstring);
+	if (! defined $pileupstring)
+	{
+	    $loopsystemstring = sprintf("%s3MHz-",$loopsystemstring);
+	}
+	else
+	{
+	    $loopsystemstring = sprintf("%s%s-",$loopsystemstring,$pileupstring);
+	}
+
     }
-else
-{
+    else
+    {
 	$loopsystemstring = sprintf("%s-",$loopsystemstring);
     }
 
