@@ -78,7 +78,7 @@ $getfiles->execute() || die $DBI::error;
 while (my @res = $getfiles->fetchrow_array())
 {
     my $lfn = $res[0];
-    print "found $lfn\n";
+#    print "found $lfn\n";
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
 	my $runnumber = int($2);
@@ -87,7 +87,7 @@ while (my @res = $getfiles->fetchrow_array())
 	foreach my $type (sort keys %outfiletype)
 	{
             my $lfn =  sprintf("%s_pythia8_%s-%010d-%05d.root",$type,$quarkfilter,$runnumber,$segment);
-            print "checking for $lfn\n";
+#            print "checking for $lfn\n";
 	    $chkfile->execute($lfn);
 	    if ($chkfile->rows > 0)
 	    {
