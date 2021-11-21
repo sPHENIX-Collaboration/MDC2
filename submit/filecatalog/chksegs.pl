@@ -79,7 +79,6 @@ elsif ($system == 7)
 	$systemstring = sprintf("%s-",$systemstring_g4hits);
     }
     $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
-#    $systemstring_g4hits = "pythia8_Charm-";
     $gpfsdir = "HF_pp200_signal";
 }
 elsif ($system == 8)
@@ -87,10 +86,16 @@ elsif ($system == 8)
     $g4hits_exist = 1;
     $systemstring_g4hits = "pythia8_Bottom";
     $systemstring = sprintf("%s_3MHz",$systemstring_g4hits);
+    if (! defined $nopileup)
+    {
+	$systemstring = sprintf("%s_3MHz",$systemstring_g4hits);
+    }
+    else
+    {
+	$systemstring = sprintf("%s-",$systemstring_g4hits);
+    }
     $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
     $gpfsdir = "HF_pp200_signal";
-#    $systemstring = "DST_HF_BOTTOM_pythia8-";
-#    $gpfsdir = "HF_pp200_signal";
 }
 elsif ($system == 9)
 {
