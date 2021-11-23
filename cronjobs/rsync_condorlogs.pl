@@ -21,6 +21,7 @@ push(@passes,"pass1");
 push(@passes,"pass2");
 push(@passes,"pass2_50kHz_0_20fm");
 push(@passes,"pass2_nopileup");
+push(@passes,"pass3_nopileup");
 push(@passes,"pass3trk");
 push(@passes,"pass3trk_test");
 push(@passes,"pass3trk_50kHz_0_20fm");
