@@ -54,7 +54,7 @@ mkpath($outdir);
 
 
 my %outfiletype = ();
-$outfiletype{"DST_TRKR_CLUSTER"} = 1;
+$outfiletype{"DST_TRKR_HIT"} = 1;
 $outfiletype{"DST_TRUTH"} = 1;
 
 my %trkhash = ();
