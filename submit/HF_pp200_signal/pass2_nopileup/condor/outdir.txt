@@ -1,2 +1,2 @@
 /pnfs/rcf.bnl.gov/sphenix/disk/MDC2/HF_pp200_signal/CaloCluster/NoPileUp
-/pnfs/rcf.bnl.gov/sphenix/disk/MDC2/HF_pp200_signal/TrkrCluster/NoPileUp
+/pnfs/rcf.bnl.gov/sphenix/disk/MDC2/HF_pp200_signal/TrkrHit/NoPileUp
