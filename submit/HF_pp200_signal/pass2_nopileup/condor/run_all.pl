@@ -62,7 +62,7 @@ my $quarkfilterWithUnderScore = sprintf("%s-",$quarkfilter);
 
 my %outfiletype = ();
 $outfiletype{"DST_CALO_CLUSTER"} = $outdir[0];
-$outfiletype{"DST_TRKR_CLUSTER"} = $outdir[1];
+$outfiletype{"DST_TRKR_HIT"} = $outdir[1];
 $outfiletype{"DST_TRUTH"} = $outdir[1];
 	foreach my $type (sort keys %outfiletype)
 	{
