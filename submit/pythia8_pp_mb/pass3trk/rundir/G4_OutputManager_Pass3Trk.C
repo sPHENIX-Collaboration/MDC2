@@ -32,7 +32,7 @@ void CreateDstOutput(int runnumber, int segment)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "DST_TRKR_CLUSTER_pythia8_pp_mb" + string(segrun) + ".root";;
+  FullOutFile = "DST_TRKR_HIT_pythia8_pp_mb" + string(segrun) + ".root";;
   out = new Fun4AllDstOutputManager("TRKROUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("TRKR_HITSET");

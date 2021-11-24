@@ -33,7 +33,8 @@ my %daughters = (
     "DST_TRUTH_G4HIT" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_VERTEX", "DST_TRKR_CLUSTER" ],
     "DST_VERTEX" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_CALO_CLUSTER" ],
     "DST_TRKR_CLUSTER" => [ "DST_TRUTH", "DST_TRACKS" ],
-    "DST_TRUTH" => [ "DST_TRKR_CLUSTER", "DST_TRACKS" ],
+    "DST_TRKR_HIT" => [ "DST_TRUTH", "DST_TRACKS" ],
+    "DST_TRUTH" => [ "DST_TRKR_HIT", "DST_TRKR_CLUSTER", "DST_TRACKS" ],
     "DST_TRACKS" => [ "" ],
     "DST_CALO_CLUSTER" => [ "" ],
     "DST_HF_CHARM" => [ "JET_EVAL_DST_HF_CHARM", "QA_DST_HF_CHARM"],
@@ -46,6 +47,7 @@ my %daughters = (
 
 if (defined $nopileup)
 {
+    push($daughters{"DST_TRKR_HIT"},"DST_CALO_CLUSTER");
     push($daughters{"DST_TRKR_CLUSTER"},"DST_CALO_CLUSTER");
     push($daughters{"DST_CALO_CLUSTER"},"DST_TRKR_CLUSTER");
 }
@@ -129,6 +131,7 @@ my %productionsubdir = (
     "DST_CALO_CLUSTER" => "pass3calo",
     "DST_CALO_G4HIT"=> "pass2",
     "DST_TRACKS" => "pass4trk",
+    "DST_TRKR_HIT" => "pass3trk",
     "DST_TRKR_CLUSTER" => "pass3trk",
     "DST_TRKR_G4HIT" => "pass2",
     "DST_TRUTH_G4HIT" => "pass2",
