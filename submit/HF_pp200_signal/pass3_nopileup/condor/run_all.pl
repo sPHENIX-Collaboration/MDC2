@@ -56,7 +56,7 @@ mkpath($outdir);
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_CLUSTER' and filename like '%pythia8_$quarkfilterWithMHz%' and runnumber = $runnumber order by filename") || die $DBI::error;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_HIT' and filename like '%pythia8_$quarkfilterWithMHz%' and runnumber = $runnumber order by filename") || die $DBI::error;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::error;
