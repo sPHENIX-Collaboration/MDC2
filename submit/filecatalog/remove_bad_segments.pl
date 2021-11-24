@@ -207,6 +207,11 @@ elsif ($system == 8)
     $systemstring = "pythia8_Bottom_";
     $topdir = sprintf("%s/HF_pp200_signal",$topdir);
     $condorfileadd = sprintf("Bottom_3MHz");
+    if (defined $nopileup)
+    {
+	$condorfileadd = sprintf("Bottom");
+        $systemstring = "pythia8_Bottom";
+    }
     $specialcondorfileadd{"G4Hits"} = "Bottom";
 }
 elsif ($system == 9)
