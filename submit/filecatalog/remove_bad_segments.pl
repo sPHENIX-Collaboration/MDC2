@@ -159,7 +159,7 @@ elsif ($system == 2)
 elsif ($system == 3)
 {
     $specialsystemstring{"G4Hits"} = "pythia8_pp_mb-";
-    $systemstring = "pythia8_pp_mb_3MHz";
+    $systemstring = "pythia8_pp_mb_";
     $topdir = sprintf("%s/pythia8_pp_mb",$topdir);
 }
 elsif ($system == 4)
