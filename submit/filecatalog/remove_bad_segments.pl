@@ -49,7 +49,7 @@ if (defined $nopileup)
 {
     push($daughters{"DST_TRKR_HIT"},"DST_CALO_CLUSTER");
     push($daughters{"DST_TRKR_CLUSTER"},"DST_CALO_CLUSTER");
-    push($daughters{"DST_CALO_CLUSTER"},"DST_TRKR_CLUSTER");
+    push($daughters{"DST_CALO_CLUSTER"},"DST_TRKR_HIT");
 }
 if (defined $verbose)
 {
@@ -220,6 +220,11 @@ elsif ($system == 9)
     $systemstring = "pythia8_CharmD0_";
     $topdir = sprintf("%s/HF_pp200_signal",$topdir);
     $condorfileadd = sprintf("CharmD0_3MHz");
+    if (defined $nopileup)
+    {
+	$condorfileadd = sprintf("CharmD0");
+        $systemstring = "pythia8_CharmD0";
+    }
     $specialcondorfileadd{"G4Hits"} = "CharmD0";
 }
 elsif ($system == 10)
@@ -228,6 +233,11 @@ elsif ($system == 10)
     $systemstring = "pythia8_BottomD0_";
     $topdir = sprintf("%s/HF_pp200_signal",$topdir);
     $condorfileadd = sprintf("BottomD0_3MHz");
+    if (defined $nopileup)
+    {
+	$condorfileadd = sprintf("BottomD0");
+        $systemstring = "pythia8_BottomD0";
+    }
     $specialcondorfileadd{"G4Hits"} = "BottomD0";
 }
 else

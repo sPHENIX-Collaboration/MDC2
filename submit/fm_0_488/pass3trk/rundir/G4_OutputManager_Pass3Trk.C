@@ -32,7 +32,7 @@ void CreateDstOutput(int runnumber, int segment)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "DST_TRKR_CLUSTER_sHijing_0_488fm_50kHz_bkg_0_20fm-" + string(segrun) + ".root";;
+  FullOutFile = "DST_TRKR_HIT_sHijing_0_488fm_50kHz_bkg_0_20fm-" + string(segrun) + ".root";;
   out = new Fun4AllDstOutputManager("TRKROUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("TRKR_HITSET");

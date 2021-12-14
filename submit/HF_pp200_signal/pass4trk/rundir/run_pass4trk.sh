@@ -31,5 +31,6 @@ echo arg2 \(trkr cluster file\): $2
 echo arg3 \(output file\): $3
 echo arg4 \(output dir\): $4
 echo running root.exe -q -b Fun4All_G4_Trkr.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
-root.exe -q -b  Fun4All_G4_Trkr.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
+prmon --json-summary $3.json -- root.exe -q -b  Fun4All_G4_Trkr.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
+rsync -av $3.json /sphenix/user/sphnxpro/prmon
 echo "script done"

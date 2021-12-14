@@ -60,7 +60,7 @@ while (my @res = $getfiles->fetchrow_array())
     if (-f $fullfile)
     {
 	print "handling $fullfile\n";
-	my $copycmd = sprintf("env LD_LIBRARY_PATH=/usr/lib64:%s xrdcp --nopbar --retry 3 root://dcsphdoor02.rcf.bnl.gov:1095%s /tmp", $LD_LIBRARY_PATH, $fullfile);
+	my $copycmd = sprintf("env LD_LIBRARY_PATH==/cvmfs/sdcc.bnl.gov/software/x8664_sl7/xrootd:%s /cvmfs/sdcc.bnl.gov/software/x8664_sl7/xrootd/xrdcp --nopbar --retry 3 root://dcsphdoor02.rcf.bnl.gov:1095%s /tmp", $LD_LIBRARY_PATH, $fullfile);
 	system($copycmd);
 	my $localfile = sprintf("/tmp/%s",$lfn);
 #	print "handling $localfile\n";
