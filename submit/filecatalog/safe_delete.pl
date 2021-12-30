@@ -39,7 +39,7 @@ if (! defined $dokill)
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getinfo = $dbh->prepare("select lfn,size,full_file_path,full_host_name,md5 from files where lfn = ? and full_host_name = 'dcache' and full_file_path like '/pnfs/%' and md5 is not null");
+my $getinfo = $dbh->prepare("select lfn,size,full_file_path,full_host_name,md5 from files where lfn = ? and ((full_host_name = 'dcache' and full_file_path like '/pnfs/%') or (full_host_name = 'lustre' and full_file_path like '%lustre%')) and md5 is not null");
 my $getdataset = $dbh->prepare("select runnumber,segment from datasets where filename=?");
 my $checkdataset = $dbh->prepare("select filename from datasets where runnumber=? and segment = ? and dsttype=?");
 my $delfcat = $dbh->prepare("delete from files where lfn=? and full_file_path=?");
