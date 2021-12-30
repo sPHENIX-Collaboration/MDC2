@@ -287,6 +287,15 @@ int Fun4All_G4_Pass3TrkDistort(
 //  Enable::TPC_CLUSTER = Enable::TPC_CELL && true;
   Enable::TPC_QA = Enable::TPC_CLUSTER and Enable::QA && true;
 
+/// these turn on some modules in the TPC_Cells
+  G4TPC::ENABLE_STATIC_DISTORTIONS = true;
+  G4TPC::static_distortion_filename = "/phenix/u/hpereira/sphenix/work/g4simulations/distortion_maps-new/average_minus_static_distortion_converted.root";
+  G4TPC::ENABLE_CORRECTIONS = true;
+  G4TPC::correction_filename = "/phenix/u/hpereira/sphenix/work/g4simulations/distortion_maps-new/average_minus_static_distortion_inverted_4.root";
+
+/// This flag runs the tracking distortion workflow
+  G4TRACKING::SC_CALIBMODE = true;
+
   Enable::MICROMEGAS = true;
   Enable::MICROMEGAS_CELL = Enable::MICROMEGAS && true;
   //Enable::MICROMEGAS_CLUSTER = Enable::MICROMEGAS_CELL && true;
