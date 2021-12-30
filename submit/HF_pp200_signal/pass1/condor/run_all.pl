@@ -40,7 +40,7 @@ if ($quarkfilter  ne "Charm" &&
     exit(1);
 }
 $filetype=sprintf("%s_%s",$filetype,$quarkfilter);
-my $runnumber = 2;
+my $runnumber = 3;
 my $events = 1000;
 open(F,"outdir.txt");
 my $outdir=<F>;
