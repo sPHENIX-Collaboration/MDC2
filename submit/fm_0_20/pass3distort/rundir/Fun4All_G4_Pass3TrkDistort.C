@@ -13,7 +13,7 @@
 #include <G4_Input.C>
 #include <G4_Jets.C>
 #include <G4_KFParticle.C>
-#include <G4_OutputManager_Pass3Trk.C>
+#include <G4_OutputManager_Pass3Distort.C>
 #include <G4_ParticleFlow.C>
 #include <G4_Production.C>
 #include <G4_TopoClusterReco.C>
