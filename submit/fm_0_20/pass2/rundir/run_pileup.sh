@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 export HOME=/sphenix/u/${LOGNAME}
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.2
+source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.3
 echo running: run_pileup.sh $*
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
