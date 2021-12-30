@@ -38,7 +38,18 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-mkpath($outdir);
+if ($outdir =~ /lustre/)
+{
+    my $storedir = $outdir;
+    $storedir =~ s/\/sphenix\/lustre01\/sphnxpro\/dcsphst004/storage/;
+    my $makedircmd = sprintf("mcs3 mb %s",$storedir);
+    system($makedircmd);
+}
+else
+{
+  mkpath($outdir);
+}
+
 
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
