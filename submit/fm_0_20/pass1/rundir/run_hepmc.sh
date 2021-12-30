@@ -2,7 +2,7 @@
 
 export HOME=/sphenix/u/${LOGNAME}
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.2
+source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.3
 
 echo running: run_hepmc.sh $*
 
@@ -28,5 +28,9 @@ echo arg3 \(output file\): $3
 echo arg5 \(skip\): $4
 echo arg6 \(output dir\): $5
 echo running root.exe -q -b Fun4All_G4_Pass1.C\($1,\"$2\",\"$3\",\"\",$4,\"$5\"\)
-root.exe -q -b  Fun4All_G4_Pass1.C\($1,\"$2\",\"$3\",\"\",$4,\"$5\"\)
+prmon  --filename $3.txt --json-summary $3.json --  root.exe -q -b  Fun4All_G4_Pass1.C\($1,\"$2\",\"$3\",\"\",$4,\"$5\"\)
+
+rsync -av $3.txt /sphenix/user/sphnxpro/prmon/fm_0_20/pass1
+rsync -av $3.json /sphenix/user/sphnxpro/prmon/fm_0_20/pass1
+
 echo "script done"
