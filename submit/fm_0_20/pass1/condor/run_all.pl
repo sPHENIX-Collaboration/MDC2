@@ -32,15 +32,25 @@ my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::er
 
 my $maxsubmit = $ARGV[0];
 my $hijing_runnumber = 1;
-my $runnumber = 2;
-my $events = 100;
+my $runnumber = 3;
+my $events = 500;
 my $evtsperfile = 10000;
 my $nmax = $evtsperfile;
 open(F,"outdir.txt");
 my $outdir=<F>;
 chomp  $outdir;
 close(F);
-mkpath($outdir);
+if ($outdir =~ /lustre/)
+{
+    my $storedir = $outdir;
+    $storedir =~ s/\/sphenix\/lustre01\/sphnxpro\/dcsphst004/storage/;
+    my $makedircmd = sprintf("mcs3 mb %s",$storedir);
+    system($makedircmd);
+}
+else
+{
+  mkpath($outdir);
+}
 my $nsubmit = 0;
 for (my $segment=0; $segment<1000; $segment++)
 {
@@ -50,7 +60,7 @@ for (my $segment=0; $segment<1000; $segment++)
 	print "could not locate $hijingdatfile\n";
 	next;
     }
-    my $sequence = $segment*100;
+    my $sequence = $segment*$evtsperfile/$events;
     for (my $n=0; $n<$nmax; $n+=$events)
     {
 	my $outfile = sprintf("G4Hits_sHijing_0_20fm-%010d-%05d.root",$runnumber,$sequence);
