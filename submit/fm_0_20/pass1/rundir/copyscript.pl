@@ -20,7 +20,8 @@ my $backupdir = sprintf("/sphenix/sim/sim01/sphnxpro/MDC2/backup");
 
 my $outdir = ".";
 my $test;
-GetOptions("outdir:s"=>\$outdir, "test"=>\$test);
+my $use_rsync;
+GetOptions("outdir:s"=>\$outdir, "test"=>\$test, "rsync"=>\$use_rsync);
 
 
 my $file = $ARGV[0];
@@ -59,8 +60,16 @@ if ($outdir =~ /pnfs/)
 }
 else
 {
-    $copycmd = sprintf("rsync -av %s %s",$file,$outfile);
+    $copycmd = sprintf("cp %s %s",$file,$outfile);
+    if (defined $use_rsync)
+    {
+	$copycmd = sprintf("rsync -av %s %s",$file,$outfile);
+    }
     $outhost = 'gpfs';
+    if ($outdir =~ /lustre/)
+    {
+	$outhost = 'lustre';
+    }
 }
 
 # create output dir if it does not exist and if it is not a test
@@ -85,7 +94,7 @@ else
     print "unixtime begin: $thisdate cmd: $copycmd\n";
     system($copycmd);
     my $exit_value  = $? >> 8;
-    print "xrdcp return code: $exit_value\n";
+    print "copy return code: $exit_value\n";
     $thisdate = `date +%s`;
     chomp $thisdate;
     print "unixtime end: $thisdate cmd: $copycmd\n";
