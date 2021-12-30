@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 export HOME=/sphenix/u/${LOGNAME}
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.2
+source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.3
 
 echo running: run_hfprod.sh $*
 
@@ -25,5 +25,10 @@ echo arg2 \(charm or bottom\): $2
 echo arg3 \(output file\): $3
 echo arg4 \(output dir\): $4
 echo running root.exe -q -b Fun4All_G4_HF_pp_signal.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
-root.exe -q -b Fun4All_G4_HF_pp_signal.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
+prmon  --filename $3.txt --json-summary $3.json -- root.exe -q -b Fun4All_G4_HF_pp_signal.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
+
+mkdir -p /sphenix/user/sphnxpro/prmon/HF_pp200_signal/pass1
+rsync -av $3.txt /sphenix/user/sphnxpro/prmon/HF_pp200_signal/pass1
+rsync -av $3.json /sphenix/user/sphnxpro/prmon/HF_pp200_signal/pass1
+
 echo "script done"
