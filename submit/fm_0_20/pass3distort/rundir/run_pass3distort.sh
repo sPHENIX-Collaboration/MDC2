@@ -31,6 +31,8 @@ fi
 # $2: track g4hits input file
 # $3: truth g4hits input file
 # $4: output dir
+# $5: run number
+# $6: segment number
 
 echo 'here comes your environment'
 printenv
@@ -38,6 +40,22 @@ echo arg1 \(events\) : $1
 echo arg2 \(track g4hits file\): $2
 echo arg3 \(truth g4hits file\): $3
 echo arg4 \(output dir\): $4
+echo arg5 \(runnumber\): $5
+echo arg6 \(sequence\): $6
+
+runnumber=$(printf "%010d" $5)
+sequence=$(printf "%05d" $6)
+filename=fm_0_20_pass3distort
+
+txtfilename=${filename}-${runnumber}-${sequence}.txt
+jsonfilename=${filename}-${runnumber}-${sequence}.json
+
 echo running root.exe -q -b Fun4All_G4_Pass3TrkDistort.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\"\)
-root.exe -q -b  Fun4All_G4_Pass3TrkDistort.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\"\)
+prmon  --filename $txtfilename --json-summary $jsonfilename --  root.exe -q -b  Fun4All_G4_Pass3TrkDistort.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\"\)
+
+mkdir -p /sphenix/user/sphnxpro/prmon/fm_0_20/pass3distort
+
+rsync -av $txtfilename /sphenix/user/sphnxpro/prmon/fm_0_20/pass3distort
+rsync -av $jsonfilename /sphenix/user/sphnxpro/prmon/fm_0_20/pass3distort
+
 echo "script done"
