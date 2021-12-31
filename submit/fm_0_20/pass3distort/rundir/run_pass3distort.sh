@@ -32,7 +32,7 @@ fi
 # $3: truth g4hits input file
 # $4: output dir
 # $5: run number
-# $6: segment number
+# $6: sequence
 
 echo 'here comes your environment'
 printenv
