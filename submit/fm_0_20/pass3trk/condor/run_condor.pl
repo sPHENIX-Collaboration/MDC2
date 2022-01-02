@@ -56,7 +56,7 @@ print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
 print F "accounting_group = group_sphenix.mdc2\n";
 print F "accounting_group_user = sphnxpro\n";
 print F "Requirements = (CPU_Type == \"mdc2\")\n";
-print F "request_memory = 10GB\n";
+print F "request_memory = 9GB\n";
 print F "Priority 	= 26\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
