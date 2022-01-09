@@ -14,14 +14,14 @@ my $topdir = "/sphenix/u/sphnxpro/MDC2/submit";
 my $kill;
 my $system = 0;
 my $dsttype = "none";
-my $run = 2;
+my $runnumber = 2;
 my $nopileup;
 my $verbose;
-GetOptions("kill"=>\$kill, "type:i"=>\$system, "dsttype:s"=>\$dsttype, "nopileup"=>\$nopileup, "verbose" => \$verbose);
+GetOptions("kill"=>\$kill, "type:i"=>\$system, "dsttype:s"=>\$dsttype, "nopileup"=>\$nopileup, "runnumber:i" => \$runnumber, "verbose" => \$verbose);
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfilename = $dbh->prepare("select filename from datasets where dsttype = ? and filename like ? and segment = ? order by filename") || die $DBI::error;
+my $getfilename = $dbh->prepare("select filename from datasets where dsttype = ? and filename like ? and segment = ? and runnumber = ? order by filename") || die $DBI::error;
 my $getfiles = $dbh->prepare("select full_file_path from files where lfn = ?");
 my $deldataset = $dbh->prepare("delete from datasets where filename = ?");
 my $delfcat = $dbh->prepare("delete from files where full_file_path = ?");
@@ -312,13 +312,16 @@ foreach my $rem (keys %removethese)
 	    $condornameprefix = sprintf("%s_%s",$condornameprefix,$condorfileadd);
 	}
     }
-    $removecondorfiles{sprintf("%s/%s-%010d-%05d.job",$condor_subdir,$condornameprefix,$run,$segment)} = 1;
-    $removecondorfiles{sprintf("%s/%s-%010d-%05d.out",$condor_subdir,$condornameprefix,$run,$segment)} = 1;
-    $removecondorfiles{sprintf("%s/%s-%010d-%05d.err",$condor_subdir,$condornameprefix,$run,$segment)} = 1;
-    $removecondorfiles{sprintf("%s/%s-%010d-%05d.log",$condor_subdir,$condornameprefix,$run,$segment)} = 1;
-    my $lfn = sprintf("%s_%s-%010d-%05d.root",$rem,$loopsystemstring,$run,$segment);
-    print "getfilename->execute($rem,'%'.$loopsystemstring.'%',$segment)\n";
-    $getfilename->execute($rem,'%'.$loopsystemstring.'%',$segment);
+    $removecondorfiles{sprintf("%s/%s-%010d-%05d.job",$condor_subdir,$condornameprefix,$runnumber,$segment)} = 1;
+    $removecondorfiles{sprintf("%s/%s-%010d-%05d.out",$condor_subdir,$condornameprefix,$runnumber,$segment)} = 1;
+    $removecondorfiles{sprintf("%s/%s-%010d-%05d.err",$condor_subdir,$condornameprefix,$runnumber,$segment)} = 1;
+    $removecondorfiles{sprintf("%s/%s-%010d-%05d.log",$condor_subdir,$condornameprefix,$runnumber,$segment)} = 1;
+    my $lfn = sprintf("%s_%s-%010d-%05d.root",$rem,$loopsystemstring,$runnumber,$segment);
+ if (defined $verbose)
+ {
+    print "getfilename->execute($rem,'%'.$loopsystemstring.'%',$segment,$runnumber)\n";
+ }
+    $getfilename->execute($rem,'%'.$loopsystemstring.'%',$segment,$runnumber);
     if ($getfilename->rows == 1)
     {
 	my @res = $getfilename->fetchrow_array();

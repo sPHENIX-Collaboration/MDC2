@@ -10,7 +10,8 @@ use DBI;
 my $system = 0;
 my $verbosity;
 my $nopileup;
-GetOptions("type:i"=>\$system,"verbosity" => \$verbosity, "nopileup" => \$nopileup);
+my $runnumber = 3;
+GetOptions("run:i"=>\$runnumber, "type:i"=>\$system, "verbosity" => \$verbosity, "nopileup" => \$nopileup);
 
 if ($system < 1 || $system > 10)
 {
@@ -138,11 +139,11 @@ open(F,">missing.files");
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 
-my $getdsttypes = $dbh->prepare("select distinct(dsttype) from datasets where filename like '%$systemstring%' order by dsttype");
+my $getdsttypes = $dbh->prepare("select distinct(dsttype) from datasets where filename like '%$systemstring%' and runnumber = $runnumber order by dsttype");
 print "select distinct(dsttype) from datasets where filename like '%$systemstring%' order by dsttype\n";
 my %topdcachedir = ();
 $topdcachedir{sprintf("/pnfs/rcf.bnl.gov/sphenix/disk/MDC2/%s",$gpfsdir)} = 1;
-#$topdcachedir{"/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC2/sHijing_HepMC"} = 1;
+$topdcachedir{sprintf("/sphenix/lustre01/sphnxpro/dcsphst004/mdc2/%s",lc $gpfsdir)} = 1;
 
 if ($#ARGV < 0)
 {
@@ -166,9 +167,9 @@ if ($g4hits_exist == 1 && $type eq "G4Hits")
 {
     $systemstring = $systemstring_g4hits;
 }
-my $getsegments = $dbh->prepare("select segment,filename from datasets where dsttype = ? and  filename like '%$systemstring%' order by segment")|| die $DBI::error;
-print "select segment,filename from datasets where dsttype = '$type' and  filename like '%$systemstring%' order by segment\n";
-my $getlastseg = $dbh->prepare("select max(segment) from datasets where dsttype = ? and filename like '%$systemstring%'")|| die $DBI::error;
+my $getsegments = $dbh->prepare("select segment,filename from datasets where dsttype = ? and  filename like '%$systemstring%' and runnumber = $runnumber order by segment")|| die $DBI::error;
+print "select segment,filename from datasets where dsttype = '$type' and  filename like '%$systemstring%'  and runnumber = $runnumber order by segment\n";
+my $getlastseg = $dbh->prepare("select max(segment) from datasets where dsttype = ? and filename like '%$systemstring%' and runnumber=$runnumber")|| die $DBI::error;
 
 $getlastseg->execute($type)|| die $DBI::error;;
 my @res = $getlastseg->fetchrow_array();
@@ -204,7 +205,8 @@ foreach my $dcdir (keys  %topdcachedir)
     print "entries for $dcdir: $rows\n";
     $getsegsdc->finish();
 }
-my $chklfn = $dbh->prepare("select lfn from files where lfn = ? and full_file_path like '/pnfs/rcf.bnl.gov/sphenix/disk/MDC2/$gpfsdir/%'");
+my $lowercasegpfsdir = lc $gpfsdir;
+my $chklfn = $dbh->prepare("select lfn from files where lfn = ? and (full_file_path like '/pnfs/rcf.bnl.gov/sphenix/disk/MDC2/$gpfsdir/%' or full_file_path like '/sphenix/lustre01/sphnxpro/dcsphst004/mdc2/$lowercasegpfsdir/%')");
 #my $chklfn = $dbh->prepare("select lfn from files where lfn = ? and full_file_path like '/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC2/sHijing_HepMC/%'");
 for (my $iseg = 0; $iseg <= $lastseg; $iseg++)
 {
@@ -220,6 +222,7 @@ for (my $iseg = 0; $iseg <= $lastseg; $iseg++)
 	{
 	    print F "$seglist{$iseg}\n";
 	    print "$seglist{$iseg} missing\n";
+            die;
 	}
     }
 }
