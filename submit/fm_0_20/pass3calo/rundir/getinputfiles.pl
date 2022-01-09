@@ -15,7 +15,9 @@ sub getmd5;
 Env::import();
 my $test;
 my $filelist;
-GetOptions("test"=>\$test, "filelist" => \$filelist);
+my $use_dcache;
+my $use_xrdcp;
+GetOptions("dcache" => \$use_dcache, "filelist" => \$filelist, "test"=>\$test, "xrdcp"=>\$use_xrdcp);
 
 
 
@@ -38,7 +40,12 @@ else
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $filelocation = $dbh->prepare("select full_file_path,md5,size from files where lfn = ? and full_host_name = 'dcache'") || die $DBI::error;
+my $fullhostname = "lustre";
+if (defined $use_dcache)
+{
+  $fullhostname = "dcache";
+}
+my $filelocation = $dbh->prepare("select full_file_path,md5,size from files where lfn = ? and full_host_name = '$fullhostname'") || die $DBI::error;
 my $updatemd5 = $dbh->prepare("update files set md5=? where full_file_path = ?");
 my %filemd5 = ();
 my %filesizes = ();
@@ -70,14 +77,26 @@ foreach my $file (keys %filemd5)
 #    }
 #    print "size: $res[2]\n";
 
-    my $copycmd = sprintf("env LD_LIBRARY_PATH=/cvmfs/sdcc.bnl.gov/software/x8664_sl7/xrootd:%s /cvmfs/sdcc.bnl.gov/software/x8664_sl7/xrootd/xrdcp --nopbar --retry 3 -DICPChunkSize 1048576 root://dcsphdoor02.rcf.bnl.gov:1095%s .", $LD_LIBRARY_PATH, $file);
+#    my $copycmd = sprintf("rsync -av %s .",$file);
+    my $copycmd = sprintf("cp %s .",$file);
+    if (defined $use_dcache)
+    {
+	if (defined $use_xrdcp)
+	{
+	    $copycmd = sprintf("env LD_LIBRARY_PATH=/cvmfs/sdcc.bnl.gov/software/x8664_sl7/xrootd:%s /cvmfs/sdcc.bnl.gov/software/x8664_sl7/xrootd/xrdcp --nopbar --retry 3 -DICPChunkSize 1048576 root://dcsphdoor02.rcf.bnl.gov:1095%s .", $LD_LIBRARY_PATH, $file);
+	}
+	else
+	{
+	    $copycmd = sprintf("dccp %s .",$file);
+	}
+    }
     print "executing $copycmd\n";
 
     system($copycmd);
     my $exit_value  = $? >> 8;
     my $thisdate = `date`;
     chomp $thisdate;
-    print "$thisdate: xrdcp return code: $exit_value\n";
+    print "$thisdate: copy return code: $exit_value\n";
 
     my $lfn = basename($file);
     if (-f $lfn)

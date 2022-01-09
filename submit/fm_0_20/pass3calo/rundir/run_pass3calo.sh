@@ -29,6 +29,8 @@ fi
 # $3: vertex input file
 # $4: output file
 # $5: output dir
+# $6: run number
+# $7: sequence
 
 echo 'here comes your environment'
 printenv
@@ -37,6 +39,21 @@ echo arg2 \(calo g4hits file\): $2
 echo arg3 \(vertex file\): $3
 echo arg4 \(output file\): $4
 echo arg5 \(output dir\): $5
-echo running root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
-root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
+echo arg6 \(runnumber\): $6
+echo arg7 \(sequence\): $7
+
+runnumber=$(printf "%010d" $6)
+sequence=$(printf "%05d" $7)
+filename=fm_0_20_pass3calo
+
+txtfilename=${filename}-${runnumber}-${sequence}.txt
+jsonfilename=${filename}-${runnumber}-${sequence}.json
+
+echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
+prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
+mkdir -p /sphenix/user/sphnxpro/prmon/fm_0_20/pass3calo
+
+rsync -av $txtfilename /sphenix/user/sphnxpro/prmon/fm_0_20/pass3calo
+rsync -av $jsonfilename /sphenix/user/sphnxpro/prmon/fm_0_20/pass3calo
+
 echo "script done"

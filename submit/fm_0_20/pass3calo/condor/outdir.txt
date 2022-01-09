@@ -1,1 +1,1 @@
-/pnfs/rcf.bnl.gov/sphenix/disk/MDC2/sHijing_HepMC/fm_0_20/CaloCluster
+/sphenix/lustre01/sphnxpro/dcsphst004/mdc2/shijing_hepmc/fm_0_20/calocluster

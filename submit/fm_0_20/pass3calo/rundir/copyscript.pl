@@ -20,7 +20,9 @@ my $backupdir = sprintf("/sphenix/sim/sim01/sphnxpro/MDC2/backup");
 
 my $outdir = ".";
 my $test;
-GetOptions("outdir:s"=>\$outdir, "test"=>\$test);
+my $use_xrdcp;
+my $use_rsync;
+GetOptions("outdir:s"=>\$outdir, "rsync"=>\$use_rsync, "test"=>\$test, "xrdcp"=>\$use_xrdcp);
 
 
 my $file = $ARGV[0];
@@ -54,13 +56,28 @@ if ($outdir =~ /pnfs/)
 	print "no copying to dCache for $username, only sphnxpro can do that\n";
 	exit 0;
     }
-    $copycmd = sprintf("env LD_LIBRARY_PATH=/cvmfs/sdcc.bnl.gov/software/x8664_sl7/xrootd:%s /cvmfs/sdcc.bnl.gov/software/x8664_sl7/xrootd/xrdcp --nopbar --retry 3  -DICPChunkSize 1048576 %s root://dcsphdoor02.rcf.bnl.gov:1095%s",$LD_LIBRARY_PATH,$file,$outfile);
+    if (defined $use_xrdcp)
+    {
+	$copycmd = sprintf("env LD_LIBRARY_PATH=/cvmfs/sdcc.bnl.gov/software/x8664_sl7/xrootd:%s /cvmfs/sdcc.bnl.gov/software/x8664_sl7/xrootd/xrdcp --nopbar --retry 3  -DICPChunkSize 1048576 %s root://dcsphdoor02.rcf.bnl.gov:1095%s",$LD_LIBRARY_PATH,$file,$outfile);
+    }
+    else
+    {
+	$copycmd = sprintf("dccp %s %s",$file,$outfile);
+    }
     $outhost = 'dcache';
 }
 else
 {
-    $copycmd = sprintf("rsync -av %s %s",$file,$outfile);
+    $copycmd = sprintf("cp %s %s",$file,$outfile);
+    if (defined $use_rsync)
+    {
+	$copycmd = sprintf("rsync -av %s %s",$file,$outfile);
+    }
     $outhost = 'gpfs';
+    if ($outdir =~ /lustre/)
+    {
+      $outhost = 'lustre';
+    }
 }
 
 # create output dir if it does not exist and if it is not a test
@@ -85,7 +102,7 @@ else
     print "unixtime begin: $thisdate cmd: $copycmd\n";
     system($copycmd);
     my $exit_value  = $? >> 8;
-    print "xrdcp return code: $exit_value\n";
+    print "copy return code: $exit_value\n";
     $thisdate = `date +%s`;
     chomp $thisdate;
     print "unixtime end: $thisdate cmd: $copycmd\n";
