@@ -1,6 +1,8 @@
-#!/usr/bin/bash
-export HOME=/sphenix/u/${LOGNAME}
+#! /bin/bash
+export USER="$(id -u -n)"
+export HOME=/sphenix/u/${USER}
 source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.3
+hostname
 echo running: run_pileup.sh $*
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
