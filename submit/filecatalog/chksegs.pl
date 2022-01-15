@@ -140,7 +140,7 @@ my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 
 my $getdsttypes = $dbh->prepare("select distinct(dsttype) from datasets where filename like '%$systemstring%' and runnumber = $runnumber order by dsttype");
-print "select distinct(dsttype) from datasets where filename like '%$systemstring%' order by dsttype\n";
+print "select distinct(dsttype) from datasets where filename like '%$systemstring%' and runnumber = $runnumber order by dsttype\n";
 my %topdcachedir = ();
 $topdcachedir{sprintf("/pnfs/rcf.bnl.gov/sphenix/disk/MDC2/%s",$gpfsdir)} = 1;
 $topdcachedir{sprintf("/sphenix/lustre01/sphnxpro/dcsphst004/mdc2/%s",lc $gpfsdir)} = 1;
@@ -222,7 +222,7 @@ for (my $iseg = 0; $iseg <= $lastseg; $iseg++)
 	{
 	    print F "$seglist{$iseg}\n";
 	    print "$seglist{$iseg} missing\n";
-            die;
+#            die;
 	}
     }
 }
