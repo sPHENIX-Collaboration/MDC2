@@ -22,7 +22,8 @@ my $outdir = ".";
 my $test;
 my $use_xrdcp;
 my $use_rsync;
-GetOptions("outdir:s"=>\$outdir, "rsync"=>\$use_rsync, "test"=>\$test, "xrdcp"=>\$use_xrdcp);
+my $use_mcs3 = 1;
+GetOptions("mcs3" => \$use_mcs3, "outdir:s"=>\$outdir, "rsync"=>\$use_rsync, "test"=>\$test, "xrdcp"=>\$use_xrdcp);
 
 
 my $file = $ARGV[0];
@@ -41,11 +42,30 @@ my $size = stat($file)->size;
 
 my $copycmd;
 my $outfile = sprintf("%s/%s",$outdir,$file);
-if (-f $outfile)
+# set up minio output locations, only used when we deal with lustre
+my $mcs3outdir = $outdir;
+my $mcs3outfile = $outfile;
+if (defined $use_mcs3)
 {
-    if (! defined $test)
+    $mcs3outdir =~ s/\/sphenix\/lustre01\/sphnxpro/sphenixS3/;
+    $mcs3outfile = sprintf("%s/%s",$mcs3outdir,$file);
+    my $statcmd = sprintf("mcs3 stat %s", $mcs3outfile);
+    system($statcmd);
+    my $exit_value  = $? >> 8;
+    if ($exit_value == 0)
     {
-	unlink $outfile;
+	my $delcmd = sprintf("mcs3 rm  %s", $mcs3outfile);
+	system($delcmd);
+    }
+}
+else
+{
+    if (-f $outfile)
+    {
+	if (! defined $test)
+	{
+	    unlink $outfile;
+	}
     }
 }
 my $outhost;
@@ -76,18 +96,37 @@ else
     $outhost = 'gpfs';
     if ($outdir =~ /lustre/)
     {
-      $outhost = 'lustre';
+	$outhost = 'lustre';
+	if (defined $use_mcs3)
+	{
+	    $copycmd = sprintf("mcs3 cp %s %s",$file,$mcs3outfile);
+	}
     }
 }
 
 # create output dir if it does not exist and if it is not a test
 # user check for dCache is handled before so we do
 # not have to protect here against users trying to create a dir in dCache
-if (! -d $outdir)
+if (defined $use_mcs3)
 {
-    if (! defined $test)
+    my $statcmd = sprintf("mcs3 stat %s", $mcs3outdir);
+    system($statcmd);
+    my $exit_value  = $? >> 8;
+    if ($exit_value != 0)
     {
-	mkpath($outdir);
+	my $createcmd = sprintf("mcs3  mb %s", $mcs3outdir);
+	system($createcmd);
+    }
+
+}
+else
+{
+    if (! -d $outdir)
+    {
+	if (! defined $test)
+	{
+	    mkpath($outdir);
+	}
     }
 }
 
@@ -113,11 +152,29 @@ else
 # 2) get md5sum and number of entries and update file catalog
 if ($username ne "sphnxpro")
 {
-    print "no DB modifictions for $username\n";
+    print "no DB modifications for $username\n";
     exit 0;
 }
+my $outfileexists = 0;
 
-if (! -f $outfile)
+if (defined $use_mcs3)
+{
+    my $statcmd = sprintf("mcs3 stat %s", $mcs3outfile);
+    system($statcmd);
+    my $exit_value  = $? >> 8;
+    if ($exit_value == 0)
+    {
+	$outfileexists = 1;
+    }
+}
+else
+{
+    if (-f $outfile)
+    {
+	$outfileexists = 1;
+    }
+}
+if ($outfileexists == 0)
 {
     if (! -d $backupdir)
     {
@@ -129,9 +186,10 @@ if (! -f $outfile)
     $outhost = 'gpfs';
     system($copycmd);
 }
+
 my $outsize = 0;
 my $imax = 100;
-if (! defined $test)
+if (! defined $test && ! defined $use_mcs3)
 {
     $outsize = stat($outfile)->size;
     my $icnt = 0;
