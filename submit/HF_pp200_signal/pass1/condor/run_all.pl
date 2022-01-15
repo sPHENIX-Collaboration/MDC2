@@ -46,8 +46,18 @@ open(F,"outdir.txt");
 my $outdir=<F>;
 chomp  $outdir;
 close(F);
-$outdir = sprintf("%s/%s",$outdir,$quarkfilter);
-mkpath($outdir);
+$outdir = sprintf("%s/%s",$outdir,lc $quarkfilter);
+if ($outdir =~ /lustre/)
+{
+    my $storedir = $outdir;
+    $storedir =~ s/\/sphenix\/lustre01\/sphnxpro\/dcsphst004/storage/;
+    my $makedircmd = sprintf("mcs3 mb %s",$storedir);
+    system($makedircmd);
+}
+else
+{
+    mkpath($outdir);
+}
 my $localdir=`pwd`;
 chomp $localdir;
 my $logdir = sprintf("%s/log",$localdir);
