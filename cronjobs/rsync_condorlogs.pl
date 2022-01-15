@@ -19,6 +19,7 @@ push(@fmrange,"pythia8_pp_mb");
 my @passes = ();
 push(@passes,"pass1");
 push(@passes,"pass2");
+push(@passes,"pass2_25kHz");
 push(@passes,"pass2_50kHz_0_20fm");
 push(@passes,"pass2_nopileup");
 push(@passes,"pass3_nopileup");
