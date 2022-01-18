@@ -34,9 +34,9 @@ if ($quarkfilter  ne "Charm" &&
     $quarkfilter  ne "CharmD0" &&
     $quarkfilter  ne "Bottom" &&
     $quarkfilter  ne "BottomD0" &&
-    $quarkfilter  ne "MinBias")
+    $quarkfilter  ne "MB")
 {
-    print "second argument has to be either Charm, CharmD0, Bottom, BottomD0 or MinBias\n";
+    print "second argument has to be either Charm, CharmD0, Bottom, BottomD0 or MB\n";
     exit(1);
 }
 $filetype=sprintf("%s_%s",$filetype,$quarkfilter);
@@ -50,7 +50,7 @@ $outdir = sprintf("%s/%s",$outdir,lc $quarkfilter);
 if ($outdir =~ /lustre/)
 {
     my $storedir = $outdir;
-    $storedir =~ s/\/sphenix\/lustre01\/sphnxpro\/dcsphst004/storage/;
+    $storedir =~ s/\/sphenix\/lustre01\/sphnxpro/sphenixS3/;
     my $makedircmd = sprintf("mcs3 mb %s",$storedir);
     system($makedircmd);
 }
