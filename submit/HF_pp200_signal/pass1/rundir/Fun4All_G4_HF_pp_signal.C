@@ -40,7 +40,7 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_HF_pp_signal(
     const int nEvents = 1,
-    const string &HF_Q_filter = "Charm", // or "Bottom"  or "CharmD0"  or "BottomD0" or "MinBias"
+    const string &HF_Q_filter = "Charm", // or "Bottom"  or "CharmD0"  or "BottomD0" or "MB"
     const string &outputFile = "G4sPHENIX.root",
     const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
     const int skip = 0,
@@ -142,49 +142,39 @@ int Fun4All_G4_HF_pp_signal(
   {
     PHPy8ParticleTrigger * p8_hf_signal_trigger = new PHPy8ParticleTrigger();
 
-    if (HF_Q_filter == "CharmD0" or HF_Q_filter == "Charm")
+    if (HF_Q_filter == "CharmD0" || HF_Q_filter == "Charm")
     {
       p8_hf_signal_trigger -> AddParticles(4);
       p8_hf_signal_trigger -> AddParticles(-4);
     }
-    else if (HF_Q_filter == "BottomD0" or HF_Q_filter == "Bottom")
+    else if (HF_Q_filter == "BottomD0" || HF_Q_filter == "Bottom")
     {
       p8_hf_signal_trigger -> AddParticles(5);
       p8_hf_signal_trigger -> AddParticles(-5);
     }
-    else if (HF_Q_filter == "MinBias")
+    else if (HF_Q_filter == "MB")
     {
-    /*
-      for (int i = 1; i < 7; ++i)
-      { //Trigger on any quark
-        p8_hf_signal_trigger -> AddParticles(i);
-        p8_hf_signal_trigger -> AddParticles(-1*i);
-      } 
-
-      for (int i = 21; i < 25; ++i)
-      {//Trigger on gluons, photons and vector bosons (valence/sea annihilation?)
-        p8_hf_signal_trigger -> AddParticles(i);
-      }
-        p8_hf_signal_trigger -> AddParticles(-24); //Trigger on W-
-    */
+      // no triggering
     }
     else
     {
       cout <<"Fatal error on HF_Q_filter configuration = "<<HF_Q_filter<<endl;
       exit(1);
     }
-    p8_hf_signal_trigger->SetYHighLow(1.5, -1.5); // sample a rapidity range higher than the sPHENIX tracking psuedorapidity
+    p8_hf_signal_trigger->SetYHighLow(1.5, -1.5); // sample a rapidity range higher than the sPHENIX tracking pseudorapidity
     p8_hf_signal_trigger->SetStableParticleOnly(false); // process unstable particles that include quarks
     p8_hf_signal_trigger->PrintConfig();
 //    p8_hf_signal_trigger->Verbosity(10);
 
-    if (HF_Q_filter == "CharmD0" or HF_Q_filter == "BottomD0"
-        or HF_Q_filter == "Charm" or HF_Q_filter == "Bottom" )
+    if (HF_Q_filter == "CharmD0" || HF_Q_filter == "BottomD0" ||
+        HF_Q_filter == "Charm" || HF_Q_filter == "Bottom" )
+    {
       INPUTGENERATOR::Pythia8->register_trigger(p8_hf_signal_trigger);
+    }
 
     string pythia8_config_file = "./phpythia8_HF_MDC2.cfg";
 
-    if (HF_Q_filter == "CharmD0" or HF_Q_filter == "BottomD0")
+    if (HF_Q_filter == "CharmD0" || HF_Q_filter == "BottomD0")
     {
       pythia8_config_file = "./phpythia8_d02kpi_MDC2";
 
@@ -212,8 +202,6 @@ int Fun4All_G4_HF_pp_signal(
     PYTHIA8::config_file = pythia8_config_file;
     Input::ApplysPHENIXBeamParameter(INPUTGENERATOR::Pythia8);
 
-    // INPUTGENERATOR::Pythia8->set_vertex_distribution_function( PHHepMCGenHelper::Gaus, PHHepMCGenHelper::Gaus,PHHepMCGenHelper::Uniform ,PHHepMCGenHelper::Gaus);
-    // INPUTGENERATOR::Pythia8->set_vertex_distribution_width(0.1,0.1,10,0);
   }
 
   // Simple Input generator:
@@ -331,18 +319,18 @@ int Fun4All_G4_HF_pp_signal(
   Enable::MVTX = true;
 //  Enable::MVTX_CELL = Enable::MVTX && true;
   Enable::MVTX_CLUSTER = Enable::MVTX_CELL && true;
-  Enable::MVTX_QA = Enable::MVTX_CLUSTER and Enable::QA && true;
+  Enable::MVTX_QA = Enable::MVTX_CLUSTER && Enable::QA && true;
 
   Enable::INTT = true;
 //  Enable::INTT_CELL = Enable::INTT && true;
   Enable::INTT_CLUSTER = Enable::INTT_CELL && true;
-  Enable::INTT_QA = Enable::INTT_CLUSTER and Enable::QA && true;
+  Enable::INTT_QA = Enable::INTT_CLUSTER && Enable::QA && true;
 
   Enable::TPC = true;
 //  Enable::TPC_ABSORBER = false;
 //  Enable::TPC_CELL = Enable::TPC && true;
   Enable::TPC_CLUSTER = Enable::TPC_CELL && true;
-  Enable::TPC_QA = Enable::TPC_CLUSTER and Enable::QA && true;
+  Enable::TPC_QA = Enable::TPC_CLUSTER && Enable::QA && true;
 
   Enable::MICROMEGAS = true;
 //  Enable::MICROMEGAS_CELL = Enable::MICROMEGAS && true;
@@ -350,7 +338,7 @@ int Fun4All_G4_HF_pp_signal(
 
 //  Enable::TRACKING_TRACK = true;
   Enable::TRACKING_EVAL = Enable::TRACKING_TRACK && false;
-  Enable::TRACKING_QA = Enable::TRACKING_TRACK and Enable::QA && true;
+  Enable::TRACKING_QA = Enable::TRACKING_TRACK && Enable::QA && true;
 
   //  cemc electronics + thin layer of W-epoxy to get albedo from cemc
   //  into the tracking, cannot run together with CEMC
@@ -362,7 +350,7 @@ int Fun4All_G4_HF_pp_signal(
   Enable::CEMC_TOWER = Enable::CEMC_CELL && true;
   Enable::CEMC_CLUSTER = Enable::CEMC_TOWER && true;
   Enable::CEMC_EVAL = Enable::CEMC_CLUSTER && false;
-  Enable::CEMC_QA = Enable::CEMC_CLUSTER and Enable::QA && false;
+  Enable::CEMC_QA = Enable::CEMC_CLUSTER && Enable::QA && false;
 
   Enable::HCALIN = true;
 //  Enable::HCALIN_ABSORBER = false;
@@ -370,7 +358,7 @@ int Fun4All_G4_HF_pp_signal(
   Enable::HCALIN_TOWER = Enable::HCALIN_CELL && true;
   Enable::HCALIN_CLUSTER = Enable::HCALIN_TOWER && true;
   Enable::HCALIN_EVAL = Enable::HCALIN_CLUSTER && false;
-  Enable::HCALIN_QA = Enable::HCALIN_CLUSTER and Enable::QA && false;
+  Enable::HCALIN_QA = Enable::HCALIN_CLUSTER && Enable::QA && false;
 
   Enable::MAGNET = true;
 //  Enable::MAGNET_ABSORBER = false;
@@ -381,7 +369,7 @@ int Fun4All_G4_HF_pp_signal(
   Enable::HCALOUT_TOWER = Enable::HCALOUT_CELL && true;
   Enable::HCALOUT_CLUSTER = Enable::HCALOUT_TOWER && true;
   Enable::HCALOUT_EVAL = Enable::HCALOUT_CLUSTER && false;
-  Enable::HCALOUT_QA = Enable::HCALOUT_CLUSTER and Enable::QA && false;
+  Enable::HCALOUT_QA = Enable::HCALOUT_CLUSTER && Enable::QA && false;
 
   Enable::EPD = true;
 
@@ -413,7 +401,7 @@ int Fun4All_G4_HF_pp_signal(
 
 //  Enable::JETS = true;
   Enable::JETS_EVAL = Enable::JETS && true;
-  Enable::JETS_QA = Enable::JETS and Enable::QA && true;
+  Enable::JETS_QA = Enable::JETS && Enable::QA && true;
 
   // HI Jet Reco for p+Au / Au+Au collisions (default is false for
   // single particle / p+p-only simulations, or for p+Au / Au+Au
@@ -600,7 +588,7 @@ int Fun4All_G4_HF_pp_signal(
   if (Enable::TPC_QA) TPC_QA();
   if (Enable::TRACKING_QA) Tracking_QA();
 
-  if (Enable::TRACKING_QA and Enable::CEMC_QA and Enable::HCALIN_QA and Enable::HCALOUT_QA) QA_G4CaloTracking();
+  if (Enable::TRACKING_QA && Enable::CEMC_QA && Enable::HCALIN_QA && Enable::HCALOUT_QA) QA_G4CaloTracking();
 
   //--------------
   // Set up Input Managers
