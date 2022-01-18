@@ -21,6 +21,8 @@ fi
 # $2: charm or bottom production
 # $3: output file
 # $4: output dir
+# $5: runnumber
+# $6: sequence
 
 echo 'here comes your environment'
 
