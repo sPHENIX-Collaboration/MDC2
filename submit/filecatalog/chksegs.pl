@@ -144,6 +144,7 @@ print "select distinct(dsttype) from datasets where filename like '%$systemstrin
 my %topdcachedir = ();
 $topdcachedir{sprintf("/pnfs/rcf.bnl.gov/sphenix/disk/MDC2/%s",$gpfsdir)} = 1;
 $topdcachedir{sprintf("/sphenix/lustre01/sphnxpro/dcsphst004/mdc2/%s",lc $gpfsdir)} = 1;
+$topdcachedir{sprintf("/sphenix/lustre01/sphnxpro/mdc2/%s",lc $gpfsdir)} = 1;
 
 if ($#ARGV < 0)
 {
@@ -206,7 +207,7 @@ foreach my $dcdir (keys  %topdcachedir)
     $getsegsdc->finish();
 }
 my $lowercasegpfsdir = lc $gpfsdir;
-my $chklfn = $dbh->prepare("select lfn from files where lfn = ? and (full_file_path like '/pnfs/rcf.bnl.gov/sphenix/disk/MDC2/$gpfsdir/%' or full_file_path like '/sphenix/lustre01/sphnxpro/dcsphst004/mdc2/$lowercasegpfsdir/%')");
+my $chklfn = $dbh->prepare("select lfn from files where lfn = ? and (full_file_path like '/pnfs/rcf.bnl.gov/sphenix/disk/MDC2/$gpfsdir/%' or full_file_path like '/sphenix/lustre01/sphnxpro/dcsphst004/mdc2/$lowercasegpfsdir/%' or full_file_path like '/sphenix/lustre01/sphnxpro/mdc2/$lowercasegpfsdir/%')");
 #my $chklfn = $dbh->prepare("select lfn from files where lfn = ? and full_file_path like '/pnfs/rcf.bnl.gov/phenix/sphenixraw/MDC2/sHijing_HepMC/%'");
 for (my $iseg = 0; $iseg <= $lastseg; $iseg++)
 {
