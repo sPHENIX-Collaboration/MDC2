@@ -12,6 +12,7 @@ use Env;
 
 sub getmd5;
 sub getentries;
+sub islustremounted;
 
 Env::import();
 
@@ -22,7 +23,7 @@ my $outdir = ".";
 my $test;
 my $use_xrdcp;
 my $use_rsync;
-my $use_mcs3 = 1;
+my $use_mcs3;
 GetOptions("mcs3" => \$use_mcs3, "outdir:s"=>\$outdir, "rsync"=>\$use_rsync, "test"=>\$test, "xrdcp"=>\$use_xrdcp);
 
 
@@ -42,6 +43,15 @@ my $size = stat($file)->size;
 
 my $copycmd;
 my $outfile = sprintf("%s/%s",$outdir,$file);
+if ($outdir =~ /lustre/)
+{
+    my $iret = &islustremounted();
+    print "iret: $iret\n";
+    if ($iret == 0)
+    {
+	$use_mcs3 = 1;
+    }
+}
 # set up minio output locations, only used when we deal with lustre
 my $mcs3outdir = $outdir;
 my $mcs3outfile = $outfile;
@@ -343,5 +353,16 @@ sub getentries
     return $entries;
 }
 
+sub islustremounted
+{
+    my $mountcmd = sprintf("mount | grep lustre");
+    system($mountcmd);
+    my $exit_value  = $? >> 8;
+    if ($exit_value == 0)
+    {
+	return 1;
+    }
+    return 0;
+}
 
 #print "script is called\n";
