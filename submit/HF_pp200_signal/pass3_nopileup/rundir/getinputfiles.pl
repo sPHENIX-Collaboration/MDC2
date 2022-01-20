@@ -11,13 +11,29 @@ use Digest::MD5  qw(md5 md5_hex md5_base64);
 use Env;
 
 sub getmd5;
+sub islustremounted;
 
 Env::import();
 my $test;
 my $filelist;
-GetOptions("test"=>\$test, "filelist" => \$filelist);
+my $use_dcache;
+my $use_xrdcp;
+my $use_mcs3;
 
 
+GetOptions("dcache" => \$use_dcache, "filelist" => \$filelist, "mcs3" => \$use_mcs3, "test"=>\$test, "xrdcp"=>\$use_xrdcp);
+
+if ($#ARGV < 0)
+{
+    print "usage: getinputfiles.pl <file>\n";
+    print "parameters:\n";
+    print "--dcache: use dccp\n";
+    print "--filelist: argument is an ascii file with a list\n";
+    print "--mcs3: use mcs3 for lustre\n";
+    print "--test: do nothing, just test what we would do\n";
+    print "--xrdcp: (with --dcache) use xrdcp\n";
+    exit(1);
+}
 
 my %inputfiles = ();
 
@@ -38,22 +54,32 @@ else
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $filelocation = $dbh->prepare("select full_file_path,md5,size from files where lfn = ? and full_host_name = 'dcache'") || die $DBI::error;
+my $fullhostname = "lustre";
+if (defined $use_dcache)
+{
+    $fullhostname = "dcache";
+}
+my $filelocation = $dbh->prepare("select full_file_path,md5,size from files where lfn = ? and full_host_name = '$fullhostname'") || die $DBI::error;
 my $updatemd5 = $dbh->prepare("update files set md5=? where full_file_path = ?");
 my %filemd5 = ();
 my %filesizes = ();
 foreach my $file (keys %inputfiles)
 {
-  print "will copy $file\n";
-  $filelocation->execute($file);
+    print "will copy $file\n";
+    $filelocation->execute($file);
     my @res = $filelocation->fetchrow_array();
-  $filemd5{$res[0]} = $res[1];
-  $filesizes{$res[0]} = $res[2];
+    $filemd5{$res[0]} = $res[1];
+    $filesizes{$res[0]} = $res[2];
 }
 $filelocation->finish();
 $updatemd5->finish();
 $dbh->disconnect;
-
+my $lustremount;
+my $iret = &islustremounted();
+if ($iret == 0)
+{
+    $lustremount = 1;
+}
 foreach my $file (keys %filemd5)
 {
 #    $filelocation->execute($file);
@@ -70,14 +96,38 @@ foreach my $file (keys %filemd5)
 #    }
 #    print "size: $res[2]\n";
 
-    my $copycmd = sprintf("env LD_LIBRARY_PATH=/cvmfs/sdcc.bnl.gov/software/x8664_sl7/xrootd:%s /cvmfs/sdcc.bnl.gov/software/x8664_sl7/xrootd/xrdcp --nopbar --retry 3 -DICPChunkSize 1048576 root://dcsphdoor02.rcf.bnl.gov:1095%s .", $LD_LIBRARY_PATH, $file);
+#    my $copycmd = sprintf("rsync -av %s .",$file);
+    my $copycmd = sprintf("cp %s .",$file);
+    if ($file =~ /lustre/ && $lustremount)
+    {
+	$use_mcs3 = 1;
+    }
+    if (defined $use_mcs3)
+    {
+	if ($file =~ /\/sphenix\/lustre01\/sphnxpro/)
+	{
+	    my $mcs3file = $file;
+	    $mcs3file =~ s/\/sphenix\/lustre01\/sphnxpro/sphenixS3/;
+	    $copycmd = sprintf("mcs3 cp %s .",$mcs3file);
+	}
+    }
+    if (defined $use_dcache)
+    {
+	if (defined $use_xrdcp)
+	{
+	    $copycmd = sprintf("env LD_LIBRARY_PATH=/cvmfs/sdcc.bnl.gov/software/x8664_sl7/xrootd:%s /cvmfs/sdcc.bnl.gov/software/x8664_sl7/xrootd/xrdcp --nopbar --retry 3 -DICPChunkSize 1048576 root://dcsphdoor02.rcf.bnl.gov:1095%s .", $LD_LIBRARY_PATH, $file);
+	}
+	else
+	{
+	    $copycmd = sprintf("dccp %s .",$file);
+	}
+    }
     print "executing $copycmd\n";
-
     system($copycmd);
     my $exit_value  = $? >> 8;
     my $thisdate = `date`;
     chomp $thisdate;
-    print "$thisdate: xrdcp return code: $exit_value\n";
+    print "$thisdate: copy return code: $exit_value\n";
 
     my $lfn = basename($file);
     if (-f $lfn)
@@ -130,4 +180,16 @@ sub getmd5
 #	printf("md5_hex:%s\n",$hash);
     }
     return $hash;
+}
+
+sub islustremounted
+{
+    my $mountcmd = sprintf("mount | grep lustre");
+    system($mountcmd);
+    my $exit_value  = $? >> 8;
+    if ($exit_value == 0)
+    {
+	return 1;
+    }
+    return 0;
 }

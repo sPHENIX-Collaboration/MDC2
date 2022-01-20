@@ -11,6 +11,7 @@ use Digest::MD5  qw(md5 md5_hex md5_base64);
 use Env;
 
 sub getmd5;
+sub islustremounted;
 
 Env::import();
 my $test;
@@ -73,7 +74,12 @@ foreach my $file (keys %inputfiles)
 $filelocation->finish();
 $updatemd5->finish();
 $dbh->disconnect;
-
+my $lustremount;
+my $iret = &islustremounted();
+if ($iret == 0)
+{
+    $lustremount = 1;
+}
 foreach my $file (keys %filemd5)
 {
 #    $filelocation->execute($file);
@@ -92,6 +98,10 @@ foreach my $file (keys %filemd5)
 
 #    my $copycmd = sprintf("rsync -av %s .",$file);
     my $copycmd = sprintf("cp %s .",$file);
+    if ($file =~ /lustre/ && $lustremount)
+    {
+	$use_mcs3 = 1;
+    }
     if (defined $use_mcs3)
     {
 	if ($file =~ /\/sphenix\/lustre01\/sphnxpro/)
@@ -170,4 +180,16 @@ sub getmd5
 #	printf("md5_hex:%s\n",$hash);
     }
     return $hash;
+}
+
+sub islustremounted
+{
+    my $mountcmd = sprintf("mount | grep lustre");
+    system($mountcmd);
+    my $exit_value  = $? >> 8;
+    if ($exit_value == 0)
+    {
+	return 1;
+    }
+    return 0;
 }
