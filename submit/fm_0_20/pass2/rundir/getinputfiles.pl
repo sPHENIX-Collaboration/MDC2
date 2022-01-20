@@ -17,7 +17,7 @@ my $test;
 my $filelist;
 my $use_dcache;
 my $use_xrdcp;
-my $use_mcs3 = 1;
+my $use_mcs3;
 
 
 GetOptions("dcache" => \$use_dcache, "filelist" => \$filelist, "mcs3" => \$use_mcs3, "test"=>\$test, "xrdcp"=>\$use_xrdcp);

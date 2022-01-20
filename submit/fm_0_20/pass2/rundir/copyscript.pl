@@ -22,7 +22,7 @@ my $outdir = ".";
 my $test;
 my $use_xrdcp;
 my $use_rsync;
-my $use_mcs3 = 1;
+my $use_mcs3;
 GetOptions("mcs3" => \$use_mcs3, "outdir:s"=>\$outdir, "rsync"=>\$use_rsync, "test"=>\$test, "xrdcp"=>\$use_xrdcp);
 
 
