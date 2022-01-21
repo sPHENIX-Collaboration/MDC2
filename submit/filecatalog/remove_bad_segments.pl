@@ -317,11 +317,22 @@ foreach my $rem (keys %removethese)
     $removecondorfiles{sprintf("%s/%s-%010d-%05d.err",$condor_subdir,$condornameprefix,$runnumber,$segment)} = 1;
     $removecondorfiles{sprintf("%s/%s-%010d-%05d.log",$condor_subdir,$condornameprefix,$runnumber,$segment)} = 1;
     my $lfn = sprintf("%s_%s-%010d-%05d.root",$rem,$loopsystemstring,$runnumber,$segment);
- if (defined $verbose)
- {
-    print "getfilename->execute($rem,'%'.$loopsystemstring.'%',$segment,$runnumber)\n";
- }
-    $getfilename->execute($rem,'%'.$loopsystemstring.'%',$segment,$runnumber);
+    if (defined $verbose && $rem ne 'G4Hits')
+    {
+	print "getfilename->execute($rem,'%'.$loopsystemstring.'%',$segment,$runnumber)\n";
+    }
+    if ($rem eq 'G4Hits')
+    {
+	$getfilename->execute($rem,'%'.$systemstring.'%',$segment,$runnumber);
+    if (defined $verbose)
+    {
+	print "getfilename->execute($rem,'%'.$systemstring.'%',$segment,$runnumber)\n";
+    }
+    }
+    else
+    {
+	$getfilename->execute($rem,'%'.$loopsystemstring.'%',$segment,$runnumber);
+    }
     if ($getfilename->rows == 1)
     {
 	my @res = $getfilename->fetchrow_array();
