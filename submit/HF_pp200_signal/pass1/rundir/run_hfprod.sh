@@ -6,6 +6,7 @@ export HOME=/sphenix/u/${USER}
 source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.3
 
 hostname
+
 echo running: run_hfprod.sh $*
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
