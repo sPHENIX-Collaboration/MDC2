@@ -9,13 +9,13 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 2;
+my $runnumber = 3;
 my $test;
 my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Charm\", \"CharmD0\", \"Bottom\", \"BottomD0\" or \"MinBias\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Charm\", \"CharmD0\", \"Bottom\", \"BottomD0\" or \"MB\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--test : dryrun - create jobfiles\n";
@@ -36,7 +36,7 @@ if ($quarkfilter  ne "Charm" &&
     $quarkfilter  ne "CharmD0" &&
     $quarkfilter  ne "Bottom" &&
     $quarkfilter  ne "BottomD0" &&
-    $quarkfilter  ne "MinBias")
+    $quarkfilter  ne "MB")
 {
     print "second argument has to be either Charm, CharmD0, Bottom, BottomD0 or MinBias\n";
     exit(1);
@@ -50,7 +50,17 @@ if (! -f "outdir.txt")
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 $outdir = sprintf("%s/%s",$outdir,$quarkfilter);
-mkpath($outdir);
+if ($outdir =~ /lustre/)
+{
+    my $storedir = $outdir;
+    $storedir =~ s/\/sphenix\/lustre01\/sphnxpro/sphenixS3/;
+    my $makedircmd = sprintf("mcs3 mb %s",$storedir);
+    system($makedircmd);
+}
+else
+{
+  mkpath($outdir);
+}
 
 my %outfiletype = ();
 $outfiletype{"DST_BBC_G4HIT"} = 1;
@@ -70,7 +80,7 @@ $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like 'G4Hits_pythia8_$quarkfilterWithUnderScore%' and runnumber = $runnumber order by filename") || die $DBI::error;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
 
-my $getbkglastsegment = $dbh->prepare("select max(segment) from datasets where dsttype = 'G4Hits' and filename like '%pythia8_pp_mb%' and runnumber = $runnumber");
+my $getbkglastsegment = $dbh->prepare("select max(segment) from datasets where dsttype = 'G4Hits' and filename like '%pythia8_MB%' and runnumber = $runnumber");
 $getbkglastsegment->execute();
 my @res1 = $getbkglastsegment->fetchrow_array();
 my $lastsegment = $res1[0];
@@ -125,7 +135,7 @@ while (my @res = $getfiles->fetchrow_array())
 	    {
 		$currsegment = 0;
 	    }
-	    my $prefix_mb = sprintf("G4Hits_pythia8_pp_mb");
+	    my $prefix_mb = sprintf("G4Hits_pythia8_MB");
 	    my $bckfile = sprintf("%s-%010d-%05d.root",$prefix_mb,$runnumber,$currsegment);
 	    $chkfile->execute($bckfile);
 	    if ($chkfile->rows == 0)
