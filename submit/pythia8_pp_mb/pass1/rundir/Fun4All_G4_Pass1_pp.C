@@ -5,7 +5,7 @@
 
 #include <G4Setup_sPHENIX.C>
 #include <G4_Bbc.C>
-#include "G4_Input.C"
+#include <G4_Input.C>
 #include <G4_Production.C>
 
 #include <ffamodules/HeadReco.h>
