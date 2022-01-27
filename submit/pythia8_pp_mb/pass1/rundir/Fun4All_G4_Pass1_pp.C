@@ -5,7 +5,7 @@
 
 #include <G4Setup_sPHENIX.C>
 #include <G4_Bbc.C>
-#include <G4_Input.C>
+#include "G4_Input.C"
 #include <G4_Production.C>
 
 #include <ffamodules/HeadReco.h>
@@ -69,12 +69,13 @@ int Fun4All_G4_Pass1_pp(
   //===============
   // verbosity setting (applies to all input managers)
   Input::VERBOSITY = 1; // so we get prinouts of the event number
-  Input::HEPMC = true;
+  Input::PYTHIA8 = true;
+  PYTHIA8::config_file = string(getenv("CALIBRATIONROOT")) + "/Generators/HeavyFlavor_TG/phpythia8_minBias_MDC2.cfg";
   
-  INPUTHEPMC::filename = inputFile;
-//  INPUTHEPMC::FLOW = true;
-//  INPUTHEPMC::FLOW_VERBOSITY = 3;
-//  INPUTHEPMC::FERMIMOTION = true;
+  //INPUTHEPMC::filename = inputFile;
+  //INPUTHEPMC::FLOW = true;
+  //INPUTHEPMC::FLOW_VERBOSITY = 3;
+  //INPUTHEPMC::FERMIMOTION = true;
 
   // Event pile up simulation with collision rate in Hz MB collisions.
   //Input::PILEUPRATE = 100e3;
