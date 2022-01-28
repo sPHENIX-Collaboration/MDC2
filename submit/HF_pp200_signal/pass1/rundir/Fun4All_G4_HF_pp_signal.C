@@ -131,6 +131,21 @@ int Fun4All_G4_HF_pp_signal(
   // Initialize the selected Input/Event generation
   //-----------------
   // This creates the input generator(s)
+  string pythia8_config_file = string(getenv("CALIBRATIONROOT")) + "/Generators/HeavyFlavor_TG/";
+  if (HF_Q_filter == "CharmD0" || HF_Q_filter == "BottomD0") pythia8_config_file += "phpythia8_d02kpi_MDC2.cfg";
+  else if (HF_Q_filter == "CharmD+" || HF_Q_filter == "BottomD+") pythia8_config_file += "phpythia8_dplus2kkpi_MDC2.cfg";
+  else if (HF_Q_filter == "CharmLc" || HF_Q_filter == "BottomLc") pythia8_config_file += "phpythia8_lambdac2pkpi_MDC2.cfg";
+  else if (HF_Q_filter == "Charmonia") pythia8_config_file += "phpythia8_charmonium2ll_MDC2.cfg";
+  else if (HF_Q_filter == "b2JpsiX") pythia8_config_file += "phpythia8_b2JpsiX_MDC2.cfg";
+  else if (HF_Q_filter == "b2DX") pythia8_config_file += "phpythia8_b2DX_MDC2.cfg";
+  else if (HF_Q_filter == "Charm" || HF_Q_filter == "Bottom") pythia8_config_file += "phpythia8_minBias_MDC2.cfg";
+  else
+  {
+    std::cerr << "This macro is not to be used for generating min-bias samples, exiting now!" << std::endl;
+    exit(1);
+  } 
+  PYTHIA8::config_file = pythia8_config_file;
+
   InputInit();
 
   //--------------
@@ -142,17 +157,17 @@ int Fun4All_G4_HF_pp_signal(
   {
     PHPy8ParticleTrigger * p8_hf_signal_trigger = new PHPy8ParticleTrigger();
 
-    if (HF_Q_filter == "CharmD0" || HF_Q_filter == "Charm")
+    if (HF_Q_filter == "CharmD0" || HF_Q_filter == "CharmD+" || HF_Q_filter == "CharmLc" || HF_Q_filter == "Charm")
     {
-      p8_hf_signal_trigger -> AddParticles(4);
-      p8_hf_signal_trigger -> AddParticles(-4);
+      p8_hf_signal_trigger->AddParticles(4);
+      p8_hf_signal_trigger->AddParticles(-4);
     }
-    else if (HF_Q_filter == "BottomD0" || HF_Q_filter == "Bottom")
+    else if (HF_Q_filter == "BottomD0"  || HF_Q_filter == "BottomD+" || HF_Q_filter == "BottomLc" || HF_Q_filter == "b2JpsiX" || HF_Q_filter == "b2DX" || HF_Q_filter == "Bottom")
     {
-      p8_hf_signal_trigger -> AddParticles(5);
-      p8_hf_signal_trigger -> AddParticles(-5);
+      p8_hf_signal_trigger->AddParticles(5);
+      p8_hf_signal_trigger->AddParticles(-5);
     }
-    else if (HF_Q_filter == "MB")
+    else if (HF_Q_filter == "Charmonia" || HF_Q_filter == "MB")
     {
       // no triggering
     }
@@ -166,40 +181,8 @@ int Fun4All_G4_HF_pp_signal(
     p8_hf_signal_trigger->PrintConfig();
 //    p8_hf_signal_trigger->Verbosity(10);
 
-    if (HF_Q_filter == "CharmD0" || HF_Q_filter == "BottomD0" ||
-        HF_Q_filter == "Charm" || HF_Q_filter == "Bottom" )
-    {
-      INPUTGENERATOR::Pythia8->register_trigger(p8_hf_signal_trigger);
-    }
-
-    string pythia8_config_file = "./phpythia8_HF_MDC2.cfg";
-
-    if (HF_Q_filter == "CharmD0" || HF_Q_filter == "BottomD0")
-    {
-      pythia8_config_file = "./phpythia8_d02kpi_MDC2";
-
-      PHPy8ParticleTrigger * p8_d0pi_trigger = new PHPy8ParticleTrigger();
-      p8_d0pi_trigger->AddParents(421);
-      p8_d0pi_trigger->AddParticles(211);
-      p8_d0pi_trigger->AddParticles(-211);
-      p8_d0pi_trigger->SetEtaLow(-1.1);
-      p8_d0pi_trigger->SetEtaHigh(1.1);
-      p8_d0pi_trigger->SetStableParticleOnly(true);
-      INPUTGENERATOR::Pythia8->register_trigger(p8_d0pi_trigger);
-
-      PHPy8ParticleTrigger * p8_d0K_trigger = new PHPy8ParticleTrigger();
-      p8_d0K_trigger->AddParents(421);
-      p8_d0K_trigger->AddParticles(321);
-      p8_d0K_trigger->AddParticles(-321);
-      p8_d0K_trigger->SetEtaLow(-1.1);
-      p8_d0K_trigger->SetEtaHigh(1.1);
-      p8_d0K_trigger->SetStableParticleOnly(true);
-      INPUTGENERATOR::Pythia8->register_trigger(p8_d0K_trigger);
-
-      INPUTGENERATOR::Pythia8->set_trigger_AND ();
-    }
-
-    PYTHIA8::config_file = pythia8_config_file;
+    INPUTGENERATOR::Pythia8->register_trigger(p8_hf_signal_trigger);
+    INPUTGENERATOR::Pythia8->set_trigger_AND();
     Input::ApplysPHENIXBeamParameter(INPUTGENERATOR::Pythia8);
 
   }
