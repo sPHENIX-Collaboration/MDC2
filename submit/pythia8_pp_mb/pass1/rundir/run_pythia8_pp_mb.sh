@@ -6,9 +6,9 @@ export HOME=/sphenix/u/${USER}
 
 export HOME=/sphenix/u/${LOGNAME}
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.3
+source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.4
 
-echo running: run_hepmc_pp.sh $*
+echo running: run_pythia8_pp_mb.sh $*
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
