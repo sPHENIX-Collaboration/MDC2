@@ -1,1 +1,1 @@
-/pnfs/rcf.bnl.gov/sphenix/disk/MDC2/HF_pp200_signal/TrkrHit
+/sphenix/lustre01/sphnxpro/mdc2/hf_pp200_signal/trkrhit
