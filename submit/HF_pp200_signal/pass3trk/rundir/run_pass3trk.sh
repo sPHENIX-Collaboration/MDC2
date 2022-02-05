@@ -2,7 +2,7 @@
 
 export HOME=/sphenix/u/${LOGNAME}
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.2
+source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.4
 
 echo running: run_pass3trk.sh $*
 
@@ -31,6 +31,9 @@ fi
 # $2: track g4hits input file
 # $3: truth g4hits input file
 # $4: output dir
+# $5: quark filter
+# $6: run number
+# $7: sequence
 
 echo 'here comes your environment'
 printenv
@@ -39,6 +42,27 @@ echo arg2 \(track g4hits file\): $2
 echo arg3 \(truth g4hits file\): $3
 echo arg4 \(output dir\): $4
 echo arg5 \(quarkfilter\): $5
-echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\",\"$5\"\)
-root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\",\"$5\"\)
+echo arg6 \(runnumber\): $6
+echo arg7 \(sequence\): $7
+
+runnumber=$(printf "%010d" $6)
+sequence=$(printf "%05d" $7)
+filename=HF_pp200_signal_pass3trk_$5
+
+txtfilename=${filename}-${runnumber}-${sequence}.txt
+jsonfilename=${filename}-${runnumber}-${sequence}.json
+
+
+echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\",\"$5\"\)
+prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\",\"$5\"\)
+
+rsyncdirname=/sphenix/user/sphnxpro/prmon/HF_pp200_signal/pass3trk_$2
+if [ ! -d $rsyncdirname ]
+then
+mkdir -p $rsyncdirname
+fi
+
+rsync -av $txtfilename $rsyncdirname
+rsync -av $jsonfilename $rsyncdirname
+
 echo "script done"
