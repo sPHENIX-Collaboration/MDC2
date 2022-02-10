@@ -54,22 +54,22 @@ else
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $fullhostname = "lustre";
-if (defined $use_dcache)
-{
-    $fullhostname = "dcache";
-}
-my $filelocation = $dbh->prepare("select full_file_path,md5,size from files where lfn = ? and full_host_name = '$fullhostname'") || die $DBI::error;
+my $filelocation = $dbh->prepare("select full_file_path,md5,size,full_host_name from files where lfn = ?") || die $DBI::error;
 my $updatemd5 = $dbh->prepare("update files set md5=? where full_file_path = ?");
 my %filemd5 = ();
 my %filesizes = ();
 foreach my $file (keys %inputfiles)
 {
-    print "will copy $file\n";
     $filelocation->execute($file);
+    if ($filelocation->rows == 0)
+    {
+	print "could not retrieve $file from filecatalog\n";
+	exit(-1);
+    }
     my @res = $filelocation->fetchrow_array();
     $filemd5{$res[0]} = $res[1];
     $filesizes{$res[0]} = $res[2];
+    print "will copy $file from $res[3]\n";
 }
 $filelocation->finish();
 $updatemd5->finish();
@@ -111,7 +111,7 @@ foreach my $file (keys %filemd5)
 	    $copycmd = sprintf("mcs3 cp %s .",$mcs3file);
 	}
     }
-    if (defined $use_dcache)
+    if ($file =~ /pnfs/)
     {
 	if (defined $use_xrdcp)
 	{
