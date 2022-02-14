@@ -98,9 +98,16 @@ foreach my $file (keys %filemd5)
 
 #    my $copycmd = sprintf("rsync -av %s .",$file);
     my $copycmd = sprintf("cp %s .",$file);
-    if ($file =~ /lustre/ && $lustremount)
+    if ($file =~ /lustre/)
     {
-	$use_mcs3 = 1;
+	if ($lustremount)
+	{
+	    $use_mcs3 = 1;
+	}
+	else
+	{
+	    $copycmd = sprintf("dd if=%s of=%s bs=4M iflag=direct",$file,basename($file));
+	}
     }
     if (defined $use_mcs3)
     {
