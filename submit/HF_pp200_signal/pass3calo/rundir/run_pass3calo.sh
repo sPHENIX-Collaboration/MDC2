@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 export HOME=/sphenix/u/${LOGNAME}
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.2
+source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.5
 
 echo running: run_pass3calo.sh $*
 
@@ -31,6 +31,9 @@ fi
 # $3: vertex input file
 # $4: output file
 # $5: output dir
+# $6: quark filter
+# $7: run number
+# $8: sequence
 
 echo 'here comes your environment'
 printenv
@@ -39,6 +42,27 @@ echo arg2 \(calo g4hits file\): $2
 echo arg3 \(vertex file\): $3
 echo arg4 \(output file\): $4
 echo arg5 \(output dir\): $5
-echo running root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
-root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
+echo arg6 \(quarkfilter\): $6
+echo arg7 \(runnumber\): $7
+echo arg8 \(sequence\): $8
+
+runnumber=$(printf "%010d" $7)
+sequence=$(printf "%05d" $8)
+filename=HF_pp200_signal_pass2_$6
+
+txtfilename=${filename}-${runnumber}-${sequence}.txt
+jsonfilename=${filename}-${runnumber}-${sequence}.json
+
+echo running prmon --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
+prmon --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
+
+rsyncdirname=/sphenix/user/sphnxpro/prmon/HF_pp200_signal/pass3calo_$5
+if [ ! -d $rsyncdirname ]
+then
+mkdir -p $rsyncdirname
+fi
+
+rsync -av $txtfilename $rsyncdirname
+rsync -av $jsonfilename $rsyncdirname
+
 echo "script done"
