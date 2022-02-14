@@ -3,7 +3,7 @@ export USER="$(id -u -n)"
 export LOGNAME=${USER}
 export HOME=/sphenix/u/${USER}
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.3
+source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.4
 
 hostname
 
@@ -64,9 +64,14 @@ jsonfilename=${filename}-${runnumber}-${sequence}.json
 echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Pileup_pp.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
 prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Pileup_pp.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
 
-mkdir -p /sphenix/user/sphnxpro/prmon/HF_pp200_signal/pass2_$2
-rsync -av $txtfilename /sphenix/user/sphnxpro/prmon/HF_pp200_signal/pass2_$2
-rsync -av $jsonfilename /sphenix/user/sphnxpro/prmon/HF_pp200_signal/pass2_$2
+rsyncdirname=/sphenix/user/sphnxpro/prmon/HF_pp200_signal/pass2_$5
+if [ ! -d $rsyncdirname ]
+then
+mkdir -p $rsyncdirname
+fi
+
+rsync -av $txtfilename $rsyncdirname
+rsync -av $jsonfilename $rsyncdirname
 
 
 echo "script done"
