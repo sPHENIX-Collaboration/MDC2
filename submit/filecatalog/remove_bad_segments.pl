@@ -35,7 +35,10 @@ my %daughters = (
     "DST_TRKR_CLUSTER" => [ "DST_TRUTH", "DST_TRACKS" ],
     "DST_TRKR_HIT" => [ "DST_TRUTH", "DST_TRACKS" ],
     "DST_TRUTH" => [ "DST_TRKR_HIT", "DST_TRKR_CLUSTER", "DST_TRACKS" ],
+    "DST_TRKR_HIT_DISTORT" => [ "DST_TRUTH_DISTORT", "DST_TRACKS_DISTORT" ],
+    "DST_TRUTH_DISTORT" => [ "DST_TRKR_HIT_DISTORT", "DST_TRACKS_DISTORT" ],
     "DST_TRACKS" => [ "" ],
+    "DST_TRACKS_DISTORT" => [ "" ],
     "DST_CALO_CLUSTER" => [ "" ],
     "DST_HF_CHARM" => [ "JET_EVAL_DST_HF_CHARM", "QA_DST_HF_CHARM"],
     "JET_EVAL_DST_HF_CHARM" => [ "DST_HF_CHARM", "QA_DST_HF_CHARM"],
@@ -131,11 +134,14 @@ my %productionsubdir = (
     "DST_CALO_CLUSTER" => "pass3calo",
     "DST_CALO_G4HIT"=> "pass2",
     "DST_TRACKS" => "pass4trk",
+    "DST_TRACKS_DISTORT" => "pass4distort",
     "DST_TRKR_HIT" => "pass3trk",
+    "DST_TRKR_HIT_DISTORT" => "pass3distort",
     "DST_TRKR_CLUSTER" => "pass3trk",
     "DST_TRKR_G4HIT" => "pass2",
     "DST_TRUTH_G4HIT" => "pass2",
     "DST_TRUTH" => "pass3trk",
+    "DST_TRUTH_DISTORT" => "pass3distort",
     "DST_VERTEX" => "pass2",
     "G4Hits" => "pass1"
     );
@@ -259,6 +265,7 @@ if (defined $pileupdir)
 
 my %removecondorfiles = ();
 my %removethese = ();
+print "chk $dsttype\n";
 $removethese{$dsttype} = 1;
 &looparray($dsttype);
 foreach my $rem (keys %removethese)
@@ -397,6 +404,15 @@ foreach my $condorfile (keys %removecondorfiles)
 sub looparray
 {
     my $thistype = $_[0];
+    if (! exists $daughters{$thistype})
+    {
+	print "no entry for $thistype in daughter hash:\n";
+	foreach my $dghter (sort keys %daughters)
+	{
+	    print "$dghter\n";
+	}
+	die;
+    }
     my @types = @{$daughters{$thistype}};
     foreach my $entry (@types)
     {
