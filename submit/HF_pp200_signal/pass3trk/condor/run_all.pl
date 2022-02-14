@@ -49,9 +49,18 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/%s",$outdir,$quarkfilter);
-mkpath($outdir);
-
+$outdir = sprintf("%s/%s",$outdir,lc $quarkfilter);
+if ($outdir =~ /lustre/)
+{
+    my $storedir = $outdir;
+    $storedir =~ s/\/sphenix\/lustre01\/sphnxpro/sphenixS3/;
+    my $makedircmd = sprintf("mcs3 mb %s",$storedir);
+    system($makedircmd);
+}
+else
+{
+  mkpath($outdir);
+}
 
 my %outfiletype = ();
 $outfiletype{"DST_TRKR_HIT"} = 1;
