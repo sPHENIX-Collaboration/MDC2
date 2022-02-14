@@ -41,7 +41,7 @@ int Fun4All_G4_Trkr(
     const string &outdir = ".")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
-  se->Verbosity(0);
+  se->Verbosity(1);
 
   //Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
   PHRandomSeed::Verbosity(1);
@@ -273,9 +273,9 @@ int Fun4All_G4_Trkr(
   Enable::TPC_CLUSTER = Enable::TPC && true;
   //Enable::TPC_QA = Enable::TPC_CLUSTER and Enable::QA && true;
 
-  Enable::MICROMEGAS = true;
+//  Enable::MICROMEGAS = true;
   //Enable::MICROMEGAS_CELL = Enable::MICROMEGAS && true;
-  Enable::MICROMEGAS_CLUSTER = Enable::MICROMEGAS && true;
+//  Enable::MICROMEGAS_CLUSTER = Enable::MICROMEGAS && true;
 
   Enable::TRACKING_TRACK = true;
   // Enable::TRACKING_EVAL = Enable::TRACKING_TRACK && true;
