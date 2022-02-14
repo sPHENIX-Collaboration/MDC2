@@ -1,5 +1,8 @@
 #!/usr/bin/bash
-export HOME=/sphenix/u/${LOGNAME}
+export USER="$(id -u -n)"
+export LOGNAME=${USER}
+export HOME=/sphenix/u/${USER}
+
 source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.5
 
 echo running: run_pass3calo.sh $*
