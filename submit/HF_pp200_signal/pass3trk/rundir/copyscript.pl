@@ -46,10 +46,14 @@ my $outfile = sprintf("%s/%s",$outdir,$file);
 if ($outdir =~ /lustre/)
 {
     my $iret = &islustremounted();
-    print "iret: $iret\n";
     if ($iret == 0)
     {
+        print "lustre not mounted, use mcs3\n";
 	$use_mcs3 = 1;
+    }
+    else
+    {
+        print "lustre mounted, use direct access\n";
     }
 }
 # set up minio output locations, only used when we deal with lustre
