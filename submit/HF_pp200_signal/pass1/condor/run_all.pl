@@ -11,7 +11,7 @@ my $killexist;
 GetOptions("test"=>\$test, "increment"=>\$incremental, "killexist" => \$killexist);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Charm\", \"CharmD0\", \"Bottom\", \"BottomD0\" or \"MinBias\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Charm\", \"CharmD0\", \"Bottom\", \"BottomD0\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--killexist : delete output file if it already exists (but no jobfile)\n";
@@ -33,10 +33,9 @@ my $filetype="pythia8";
 if ($quarkfilter  ne "Charm" &&
     $quarkfilter  ne "CharmD0" &&
     $quarkfilter  ne "Bottom" &&
-    $quarkfilter  ne "BottomD0" &&
-    $quarkfilter  ne "MB")
+    $quarkfilter  ne "BottomD0")
 {
-    print "second argument has to be either Charm, CharmD0, Bottom, BottomD0 or MB\n";
+    print "second argument has to be either Charm, CharmD0, Bottom, BottomD0\n";
     exit(1);
 }
 $filetype=sprintf("%s_%s",$filetype,$quarkfilter);
