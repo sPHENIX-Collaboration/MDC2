@@ -107,6 +107,7 @@ else
     if ($outdir =~ /lustre/)
     {
 	$outhost = 'lustre';
+	$copycmd = sprintf("dd if=%s of=%s bs=4M oflag=direct",$file,$outfile);
 	if (defined $use_mcs3)
 	{
 	    $copycmd = sprintf("mcs3 cp %s %s",$file,$mcs3outfile);
