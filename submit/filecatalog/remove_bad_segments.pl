@@ -265,7 +265,6 @@ if (defined $pileupdir)
 
 my %removecondorfiles = ();
 my %removethese = ();
-print "chk $dsttype\n";
 $removethese{$dsttype} = 1;
 &looparray($dsttype);
 foreach my $rem (keys %removethese)
