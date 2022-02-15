@@ -9,13 +9,13 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=2;
+my $runnumber=3;
 my $test;
 my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Charm\", \"CharmD0\", \"Bottom\", \"BottomD0\" or \"MinBias\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Charm\", \"CharmD0\", \"Bottom\", \"BottomD0\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--test : dryrun - create jobfiles\n";
@@ -35,8 +35,7 @@ my $quarkfilter = $ARGV[1];
 if ($quarkfilter  ne "Charm" &&
     $quarkfilter  ne "CharmD0" &&
     $quarkfilter  ne "Bottom" &&
-    $quarkfilter  ne "BottomD0" &&
-    $quarkfilter  ne "MinBias")
+    $quarkfilter  ne "BottomD0")
 {
     print "second argument has to be either Charm, CharmD0, Bottom, BottomD0 or MinBias\n";
     exit(1);
@@ -50,8 +49,18 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/%s",$outdir,$quarkfilter);
-mkpath($outdir);
+$outdir = sprintf("%s/%s",$outdir,lc $quarkfilter);
+if ($outdir =~ /lustre/)
+{
+    my $storedir = $outdir;
+    $storedir =~ s/\/sphenix\/lustre01\/sphnxpro/sphenixS3/;
+    my $makedircmd = sprintf("mcs3 mb %s",$storedir);
+    system($makedircmd);
+}
+else
+{
+  mkpath($outdir);
+}
 
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
