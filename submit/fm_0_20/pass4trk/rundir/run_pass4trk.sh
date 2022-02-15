@@ -1,6 +1,9 @@
 #!/usr/bin/bash
-export HOME=/sphenix/u/${LOGNAME}
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.2
+export USER="$(id -u -n)"
+export LOGNAME=${USER}
+export HOME=/sphenix/u/${USER}
+
+source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.5
 
 echo running: run_pass4trk.sh $*
 
@@ -25,6 +28,8 @@ fi
 # $2: trkr cluster input file
 # $3: output file
 # $4: output dir
+# $5: run number
+# $6: sequence
 
 echo 'here comes your environment'
 printenv
@@ -32,6 +37,24 @@ echo arg1 \(events\) : $1
 echo arg2 \(trkr cluster file\): $2
 echo arg3 \(output file\): $3
 echo arg4 \(output dir\): $4
-echo running root.exe -q -b Fun4All_G4_Trkr.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
-root.exe -q -b  Fun4All_G4_Trkr.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
+echo arg5 \(runnumber\): $5
+echo arg6 \(sequence\): $6
+
+runnumber=$(printf "%010d" $5)
+sequence=$(printf "%05d" $6)
+filename=fm_0_20_pass4trk
+
+txtfilename=${filename}-${runnumber}-${sequence}.txt
+jsonfilename=${filename}-${runnumber}-${sequence}.json
+
+
+echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Trkr.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
+prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Trkr.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
+
+mkdir -p /sphenix/user/sphnxpro/prmon/fm_0_20/pass4trk
+
+rsync -av $txtfilename /sphenix/user/sphnxpro/prmon/fm_0_20/pass4trk
+rsync -av $jsonfilename /sphenix/user/sphnxpro/prmon/fm_0_20/pass4trk
+
+
 echo "script done"
