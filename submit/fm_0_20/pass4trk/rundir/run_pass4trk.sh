@@ -5,6 +5,8 @@ export HOME=/sphenix/u/${USER}
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.5
 
+hostname
+
 echo running: run_pass4trk.sh $*
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
