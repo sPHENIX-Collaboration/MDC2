@@ -5,15 +5,14 @@ use warnings;
 use Cwd;
 
 my $submittopdir = "/sphenix/u/sphnxpro/MDC2/submit";
-my @submitdir = ("fm_0_488/pass2_50kHz_0_20fm/condor",
-		 "fm_0_488/pass3calo_50kHz_0_20fm/condor",
-#		 "fm_0_488/pass3trk_50kHz_0_20fm/condor",
-		 "fm_0_488/pass4trk_50kHz_0_20fm/condor",
-		 "fm_0_20/pass2/condor",
-		 "fm_0_20/pass3trk/condor",
-		 "fm_0_20/pass3calo/condor",
-		 "fm_0_20/pass4trk/condor"
+my @submitdir = ("HF_pp200_signal/pass2/condor",
+"HF_pp200_signal/pass3trk/condor",
+"HF_pp200_signal/pass3calo/condor",
+"HF_pp200_signal/pass4trk/condor"
 );
+
+my @quarkfilters = ("Charm");
+
 foreach my $subdir (@submitdir)
 {
     my $newdir = sprintf("%s/%s",$submittopdir,$subdir);
@@ -28,7 +27,19 @@ foreach my $subdir (@submitdir)
 	print "run_all.pl does not exist in $newdir\n";
 	next;
     }
-    my $submitcmd = sprintf("perl run_all.pl 2000 -inc");
-    print "executing $submitcmd in $newdir\n";
-    system($submitcmd);
+    if ($newdir =~ /HF_pp200_signal/)
+    {
+	foreach my $qf (@quarkfilters)
+	{
+	    my $submitcmd = sprintf("perl run_all.pl 2000 %s -inc",$qf);
+	    print "executing $submitcmd in $newdir\n";
+	    system($submitcmd);
+	}
+    }
+    else
+    {
+	my $submitcmd = sprintf("perl run_all.pl 2000 -inc");
+	print "executing $submitcmd in $newdir\n";
+	system($submitcmd);
+    }
 }
