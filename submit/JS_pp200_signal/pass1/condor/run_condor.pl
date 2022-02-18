@@ -21,7 +21,7 @@ else
 my $localdir=`pwd`;
 chomp $localdir;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_hfprod.sh",$rundir);
+my $executable = sprintf("%s/run_jsprod.sh",$rundir);
 my $nevents = $ARGV[0];
 my $jettrigger = $ARGV[1];
 my $dstoutdir = $ARGV[2];
