@@ -54,7 +54,9 @@ elsif ($system == 3)
 }
 elsif ($system == 4)
 {
-    $systemstring = "sHijing_0_20fm";
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "sHijing_0_20fm";
+    $systemstring = sprintf("%s_50kHz_bkg_0_20fm",$systemstring_g4hits);
 }
 elsif ($system == 5)
 {
@@ -133,7 +135,7 @@ elsif ($system == 10)
 elsif ($system == 11)
 {
     $g4hits_exist = 1;
-    $systemstring_g4hits = "pythia8_MB";
+    $systemstring_g4hits = "pythia8_Jet04";
     if (! defined $nopileup)
     {
 	$systemstring = sprintf("%s_3MHz",$systemstring_g4hits);
@@ -143,7 +145,7 @@ elsif ($system == 11)
 	$systemstring = sprintf("%s-",$systemstring_g4hits);
     }
     $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
-    $gpfsdir = "HF_pp200_signal";
+    $gpfsdir = "JS_pp200_signal";
 #    $systemstring = "DST_HF_BOTTOM_pythia8-";
 #    $gpfsdir = "HF_pp200_signal";
 }
@@ -214,10 +216,11 @@ foreach my $dcdir (keys  %topdcachedir)
     {
 	$typeWithUnderscore = sprintf("%s_%s",$type,$systemstring);
     }
-    my $getsegsdc = $dbh->prepare("select lfn from files where lfn like '$typeWithUnderscore%' and lfn like '%$systemstring%' and full_file_path like '$dcdir/%/$type%'");
+    my $getsegsdc = $dbh->prepare("select files.lfn from files,datasets where datasets.runnumber = $runnumber and datasets.filename = files.lfn and files.lfn like '$typeWithUnderscore%' and files.lfn like '%$systemstring%' and files.full_file_path like '$dcdir/%/$type%'");
     if (defined $verbosity)
     {
-	print "select lfn from files where lfn like '$typeWithUnderscore%' and lfn like '%$systemstring%' and full_file_path like '$dcdir/%/$type%'\n";
+print "select files.lfn from files,datasets where datasets.runnumber = $runnumber and datasets.filename = files.lfn and files.lfn like '$typeWithUnderscore%' and files.lfn like '%$systemstring%' and files.full_file_path like '$dcdir/%/$type%'\n"
+#	print "select lfn from files where lfn like '$typeWithUnderscore%' and lfn like '%$systemstring%' and full_file_path like '$dcdir/%/$type%'\n";
     }
     $getsegsdc->execute();
     my $rows = $getsegsdc->rows;

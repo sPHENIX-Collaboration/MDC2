@@ -87,6 +87,7 @@ if ($#ARGV < 0)
     print "    8 : HF pythia8 Bottom\n";
     print "    9 : HF pythia8 CharmD0\n";
     print "   10 : HF pythia8 BottomD0\n";
+    print "   11 : JS pythia8 Jet R=.4\n";
     print "-dsttype:\n";
     foreach my $tp (sort keys %daughters)
     {
@@ -106,7 +107,7 @@ if( ! exists $daughters{$dsttype})
     }
     exit(0);
 }
-if ($system < 1 || $system > 10)
+if ($system < 1 || $system > 11)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
@@ -120,6 +121,7 @@ if ($system < 1 || $system > 10)
     print "    8 : HF pythia8 Bottom\n";
     print "    9 : HF pythia8 CharmD0\n";
     print "   10 : HF pythia8 BottomD0\n";
+    print "   11 : JS pythia8 Jet R=.4\n";
     exit(0);
 }
 
@@ -245,6 +247,19 @@ elsif ($system == 10)
         $systemstring = "pythia8_BottomD0";
     }
     $specialcondorfileadd{"G4Hits"} = "BottomD0";
+}
+elsif ($system == 11)
+{
+    $specialsystemstring{"G4Hits"} = "pythia8_Jet04-";
+    $systemstring = "pythia8_Jet04_";
+    $topdir = sprintf("%s/JS_pp200_signal",$topdir);
+    $condorfileadd = sprintf("Jet04_3MHz");
+    if (defined $nopileup)
+    {
+	$condorfileadd = sprintf("Jet04");
+        $systemstring = "pythia8_Jet04";
+    }
+    $specialcondorfileadd{"G4Hits"} = "Jet04";
 }
 else
 {
