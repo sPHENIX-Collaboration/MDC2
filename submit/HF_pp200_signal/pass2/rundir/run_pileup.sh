@@ -16,7 +16,7 @@ then
 # Lustre not mounted
 export GSEARCHPATH=${GSEARCHPATH}:MINIO
 else
-export GSEARCHPATH=${GSEARCHPATH}:LUSTRE
+export GSEARCHPATH=.:PG:LUSTRE:XROOTD:DCACHE
 fi
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
