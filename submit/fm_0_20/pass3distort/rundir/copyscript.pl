@@ -24,7 +24,8 @@ my $test;
 my $use_xrdcp;
 my $use_rsync;
 my $use_mcs3;
-GetOptions("mcs3" => \$use_mcs3, "outdir:s"=>\$outdir, "rsync"=>\$use_rsync, "test"=>\$test, "xrdcp"=>\$use_xrdcp);
+my $use_dd;
+GetOptions("dd" => \$use_dd, "mcs3" => \$use_mcs3, "outdir:s"=>\$outdir, "rsync"=>\$use_rsync, "test"=>\$test, "xrdcp"=>\$use_xrdcp);
 
 
 my $file = $ARGV[0];
@@ -111,7 +112,14 @@ else
     if ($outdir =~ /lustre/)
     {
 	$outhost = 'lustre';
-	$copycmd = sprintf("dd if=%s of=%s bs=4M oflag=direct",$file,$outfile);
+	if (defined $use_dd)
+	{
+	    $copycmd = sprintf("dd if=%s of=%s bs=4M oflag=direct",$file,$outfile);
+	}
+	else
+	{
+	    $copycmd = sprintf("cp %s %s",$file,$outfile);
+	}
 	if (defined $use_mcs3)
 	{
 	    $copycmd = sprintf("mcs3 cp %s %s",$file,$mcs3outfile);
