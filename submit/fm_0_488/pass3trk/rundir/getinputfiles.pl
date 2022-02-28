@@ -19,15 +19,16 @@ my $filelist;
 my $use_dcache;
 my $use_xrdcp;
 my $use_mcs3;
+my $use_dd;
 
-
-GetOptions("dcache" => \$use_dcache, "filelist" => \$filelist, "mcs3" => \$use_mcs3, "test"=>\$test, "xrdcp"=>\$use_xrdcp);
+GetOptions("dcache" => \$use_dcache, "dd" => \$use_dd, "filelist" => \$filelist, "mcs3" => \$use_mcs3, "test"=>\$test, "xrdcp"=>\$use_xrdcp);
 
 if ($#ARGV < 0)
 {
     print "usage: getinputfiles.pl <file>\n";
     print "parameters:\n";
     print "--dcache: use dccp\n";
+    print "--dd: use dd instead of cp for lustre\n";
     print "--filelist: argument is an ascii file with a list\n";
     print "--mcs3: use mcs3 for lustre\n";
     print "--test: do nothing, just test what we would do\n";
@@ -106,7 +107,14 @@ foreach my $file (keys %filemd5)
 	}
 	else
 	{
-	    $copycmd = sprintf("dd if=%s of=%s bs=4M iflag=direct",$file,basename($file));
+	    if (defined $use_dd)
+	    {
+		$copycmd = sprintf("dd if=%s of=%s bs=4M iflag=direct",$file,basename($file));
+	    }
+	    else
+	    {
+		$copycmd = sprintf("cp %s .",$file);
+	    }
 	}
     }
     if (defined $use_mcs3)
