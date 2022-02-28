@@ -148,6 +148,7 @@ int Fun4All_G4_JS_pp_signal(
     p8_js_signal_trigger->SetMinJetPt(30); // require a 30 GeV minimum pT jet in the event
 
     INPUTGENERATOR::Pythia8->register_trigger(p8_js_signal_trigger);
+    INPUTGENERATOR::Pythia8->set_trigger_AND();
     Input::ApplysPHENIXBeamParameter(INPUTGENERATOR::Pythia8);
   }
 
