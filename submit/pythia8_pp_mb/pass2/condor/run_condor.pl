@@ -61,7 +61,6 @@ print F "Requirements = (CPU_Type == \"mdc2\")\n";
 print F "request_memory = 1200MB\n";
 print F "Priority 	= 27\n";
 print F "concurrency_limits = PHENIX_1000\n";
-print F "Requirements = CPU_Experiment == \"sdcc\"\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);
