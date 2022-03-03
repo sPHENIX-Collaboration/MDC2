@@ -199,6 +199,8 @@ sub getmd5
 
 sub islustremounted
 {
+    my $lscmd = sprintf("ls /sphenix/lustre01/");
+    system($lscmd);
     my $mountcmd = sprintf("mount | grep lustre");
     system($mountcmd);
     my $exit_value  = $? >> 8;
