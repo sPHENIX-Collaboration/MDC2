@@ -1,1 +1,1 @@
-/pnfs/rcf.bnl.gov/sphenix/disk/MDC2/pythia8_pp_mb/TrkrHit
+/sphenix/lustre01/sphnxpro/mdc2/pythia8_pp_mb/trkrhit
