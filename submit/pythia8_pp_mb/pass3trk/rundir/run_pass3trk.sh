@@ -48,8 +48,8 @@ runnumber=$(printf "%010d" $5)
 sequence=$(printf "%05d" $6)
 filename=pythia8_pp_mb_pass3trk
 
-echo running running prmon --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\"\)
-running prmon --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\"\)
+echo running prmon --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\"\)
+prmon --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\"\)
 
 rsyncdirname=/sphenix/user/sphnxpro/prmon/pythia8_pp_mb/pass3trk
 if [ ! -d $rsyncdirname ]
