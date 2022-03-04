@@ -199,14 +199,19 @@ sub getmd5
 
 sub islustremounted
 {
-    my $lscmd = sprintf("ls /sphenix/lustre01/");
-    system($lscmd);
-    my $mountcmd = sprintf("mount | grep lustre");
-    system($mountcmd);
-    my $exit_value  = $? >> 8;
-    if ($exit_value == 0)
+    if (-f "/etc/auto.direct")
     {
-	return 1;
+	my $mountcmd = sprintf("cat /etc/auto.direct | grep lustre ");
+	system($mountcmd);
+	my $exit_value  = $? >> 8;
+	if ($exit_value == 0)
+	{
+	    return 1;
+	}
+    }
+    else
+    {
+	print "could not locate /etc/auto.direct\n";
     }
     return 0;
 }
