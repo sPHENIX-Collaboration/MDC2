@@ -8,6 +8,8 @@ use Getopt::Long;
 my $test;
 my $incremental;
 my $killexist;
+my $runnumber = 4;
+my $events = 1000;
 GetOptions("test"=>\$test, "increment"=>\$incremental, "killexist" => \$killexist);
 if ($#ARGV < 1)
 {
@@ -36,8 +38,6 @@ if ($jettrigger  ne "Jet04")
     exit(1);
 }
 $filetype=sprintf("%s_%s",$filetype,$jettrigger);
-my $runnumber = 3;
-my $events = 1000;
 open(F,"outdir.txt");
 my $outdir=<F>;
 chomp  $outdir;
