@@ -20,7 +20,7 @@ if ($#ARGV < 0)
 
 my $maxsubmit = $ARGV[0];
 my $pythia_runnumber = 1;
-my $runnumber = 3;
+my $runnumber = 4;
 my $events = 1000;
 my $evtsperfile = 100000;
 my $nmax = $evtsperfile;
