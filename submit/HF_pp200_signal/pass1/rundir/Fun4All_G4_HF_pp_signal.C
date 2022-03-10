@@ -37,6 +37,7 @@
 #include <stdlib.h>
 
 R__LOAD_LIBRARY(libfun4all.so)
+R__LOAD_LIBRARY(libffamodules.so)
 
 int Fun4All_G4_HF_pp_signal(
     const int nEvents = 1,
