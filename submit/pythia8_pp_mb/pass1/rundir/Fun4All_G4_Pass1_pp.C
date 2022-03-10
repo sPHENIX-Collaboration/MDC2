@@ -91,6 +91,10 @@ int Fun4All_G4_Pass1_pp(
   //--------------
   // can only be set after InputInit() is called
 
+  if (Input::PYTHIA8)
+  {
+    Input::ApplysPHENIXBeamParameter(INPUTGENERATOR::Pythia8);
+  }
   if (Input::HEPMC)
   {
     //! apply sPHENIX nominal beam parameter with 2mrad crossing as defined in sPH-TRG-2020-001
