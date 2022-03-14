@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $input_runnumber = 3;
+my $input_runnumber = 4;
 my $test;
 my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
