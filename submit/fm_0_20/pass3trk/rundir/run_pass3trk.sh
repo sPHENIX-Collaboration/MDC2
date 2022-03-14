@@ -56,7 +56,11 @@ jsonfilename=${filename}-${runnumber}-${sequence}.json
 echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\"\)
 prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\"\)
 
-mkdir -p /sphenix/user/sphnxpro/prmon/fm_0_20/pass3trk
+rsyncdirname=/sphenix/user/sphnxpro/prmon/fm_0_20/pass3trk
+if [ ! -d $rsyncdirname ]
+then
+  mkdir -p $rsyncdirname
+fi
 
 rsync -av $txtfilename /sphenix/user/sphnxpro/prmon/fm_0_20/pass3trk
 rsync -av $jsonfilename /sphenix/user/sphnxpro/prmon/fm_0_20/pass3trk
