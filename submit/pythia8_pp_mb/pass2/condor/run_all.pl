@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 3;
+my $runnumber = 4;
 my $test;
 my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
@@ -91,6 +91,21 @@ while (my @res = $getfiles->fetchrow_array())
 		}
 		else
 		{
+# the DST_TRUTH_G4HIT files are temporary, replace by DST_TRUTH later on
+		    if ($outfilename =~ /DST_TRUTH_G4HIT/)
+		    {
+			$outfilename =~ s/DST_TRUTH_G4HIT/DST_TRUTH/;
+#			print "checking for $outfilename\n";
+			if (! -f  $outfilename)
+			{
+			    my $outlfn = basename($outfilename);
+			    $chkfile->execute($outlfn);
+			    if ($chkfile->rows > 0)
+			    {
+				next;
+			    }
+			}
+		    }
 #		    print "missing $outlfn\n";
 		    $foundall = 0;
 		    last;
