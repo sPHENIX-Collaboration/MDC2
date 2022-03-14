@@ -6,9 +6,16 @@ export HOME=/sphenix/u/${USER}
 
 export HOME=/sphenix/u/${LOGNAME}
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.4
+source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.7
 
 echo running: run_pass3trk.sh $*
+
+# add to the GSEARCHPATH
+cat /etc/auto.direct | grep lustre
+if [ $? -ne 0 ]
+then
+  export GSEARCHPATH=.:PG:LUSTRE:XROOTD
+fi
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
