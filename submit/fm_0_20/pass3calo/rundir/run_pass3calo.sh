@@ -1,6 +1,6 @@
 #!/usr/bin/bash
 export HOME=/sphenix/u/${LOGNAME}
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.2
+source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.7
 
 echo running: run_pass3calo.sh $*
 
@@ -53,7 +53,13 @@ echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root
 prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
 mkdir -p /sphenix/user/sphnxpro/prmon/fm_0_20/pass3calo
 
-rsync -av $txtfilename /sphenix/user/sphnxpro/prmon/fm_0_20/pass3calo
-rsync -av $jsonfilename /sphenix/user/sphnxpro/prmon/fm_0_20/pass3calo
+rsyncdirname=/sphenix/user/sphnxpro/prmon/fm_0_20/pass3calo
+if [ ! -d $rsyncdirname ]
+then
+  mkdir -p $rsyncdirname
+fi
+
+rsync -av $txtfilename $rsyncdirname
+rsync -av $jsonfilename $rsyncdirname
 
 echo "script done"

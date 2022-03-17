@@ -1,6 +1,9 @@
 #!/usr/bin/bash
-export HOME=/sphenix/u/${LOGNAME}
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.2
+export USER="$(id -u -n)"
+export LOGNAME=${USER}
+export HOME=/sphenix/u/${USER}
+
+source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.7
 
 echo running: run_pass4trk.sh $*
 
@@ -23,6 +26,8 @@ fi
 # $3: vertex input file
 # $4: output file
 # $5: output dir
+# $6: run number
+# $7: sequence
 
 echo 'here comes your environment'
 printenv
@@ -30,6 +35,23 @@ echo arg1 \(events\) : $1
 echo arg2 \(trkr cluster file\): $2
 echo arg3 \(output file\): $3
 echo arg4 \(output dir\): $4
-echo running root.exe -q -b Fun4All_G4_Trkr.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
-root.exe -q -b  Fun4All_G4_Trkr.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
+echo arg6 \(runnumber\): $6
+echo arg7 \(sequence\): $7
+
+runnumber=$(printf "%010d" $6)
+sequence=$(printf "%05d" $7)
+filename=pythia8_pp_mb_pass4trk
+
+echo running running prmon --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Trkr.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
+prmon --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Trkr.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
+
+rsyncdirname=/sphenix/user/sphnxpro/prmon/pythia8_pp_mb/pass4trk
+if [ ! -d $rsyncdirname ]
+then
+  mkdir -p $rsyncdirname
+fi
+
+rsync -av $txtfilename $rsyncdirname
+rsync -av $jsonfilename $rsyncdirname
+
 echo "script done"

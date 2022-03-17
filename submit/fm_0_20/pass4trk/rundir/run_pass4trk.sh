@@ -3,7 +3,7 @@ export USER="$(id -u -n)"
 export LOGNAME=${USER}
 export HOME=/sphenix/u/${USER}
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.5
+source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.7
 
 hostname
 
