@@ -273,9 +273,9 @@ int Fun4All_G4_Trkr(
   Enable::TPC_CLUSTER = Enable::TPC && true;
   //Enable::TPC_QA = Enable::TPC_CLUSTER and Enable::QA && true;
 
-//  Enable::MICROMEGAS = true;
+  Enable::MICROMEGAS = true;
   //Enable::MICROMEGAS_CELL = Enable::MICROMEGAS && true;
-//  Enable::MICROMEGAS_CLUSTER = Enable::MICROMEGAS && true;
+  Enable::MICROMEGAS_CLUSTER = Enable::MICROMEGAS && true;
 
   Enable::TRACKING_TRACK = true;
   // Enable::TRACKING_EVAL = Enable::TRACKING_TRACK && true;
