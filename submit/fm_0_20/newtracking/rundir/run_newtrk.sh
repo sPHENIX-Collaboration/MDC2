@@ -1,6 +1,7 @@
 #!/usr/bin/bash
-export HOME=/sphenix/u/${LOGNAME}
-echo "running on"
+export USER="$(id -u -n)"
+export LOGNAME=${USER}
+export HOME=/sphenix/u/${USER}
 
 hostname
 
@@ -29,6 +30,8 @@ fi
 # $2: trkr cluster input file
 # $3: output file
 # $4: output dir
+# $5: run number
+# $6: sequence
 
 echo 'here comes your environment'
 printenv
@@ -36,9 +39,26 @@ echo arg1 \(events\) : $1
 echo arg2 \(trkr cluster file\): $2
 echo arg3 \(output file\): $3
 echo arg4 \(output dir\): $4
-echo running root.exe -q -b Fun4All_G4_Trkr.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
-prmon  --filename $3.txt -- root.exe -q -b  Fun4All_G4_Trkr.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
+echo arg5 \(runnumber\): $5
+echo arg6 \(sequence\): $6
 
-rsync -av $3.txt /sphenix/user/sphnxpro/prmon/fm_0_20/newtracking
+runnumber=$(printf "%010d" $5)
+sequence=$(printf "%05d" $6)
+filename=fm_0_20_newtracking
+
+txtfilename=${filename}-${runnumber}-${sequence}.txt
+jsonfilename=${filename}-${runnumber}-${sequence}.json
+
+echo running prmon --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Trkr.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
+prmon --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Trkr.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
+
+rsyncdirname=/sphenix/user/sphnxpro/prmon/fm_0_20/newtracking
+if [ ! -d $rsyncdirname ]
+then
+  mkdir -p $rsyncdirname
+fi
+
+rsync -av $txtfilename $rsyncdirname
+rsync -av $jsonfilename $rsyncdirname
 
 echo "script done"
