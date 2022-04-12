@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=2;
+my $runnumber=4;
 my $test;
 my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
@@ -41,7 +41,7 @@ chomp $outdir;
 if ($outdir =~ /lustre/)
 {
     my $storedir = $outdir;
-    $storedir =~ s/\/sphenix\/lustre01\/sphnxpro\/dcsphst004/storage/;
+    $storedir =~ s/\/sphenix\/lustre01\/sphnxpro/sphenixS3/;
     my $makedircmd = sprintf("mcs3 mb %s",$storedir);
     system($makedircmd);
 }

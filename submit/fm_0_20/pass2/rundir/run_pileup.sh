@@ -56,9 +56,13 @@ jsonfilename=${filename}-${runnumber}-${sequence}.json
 echo running root.exe -q -b Fun4All_G4_Pileup.C\($1,\"$2\",\"$3\",\"$4\"\)
 prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Pileup.C\($1,\"$2\",\"$3\",\"$4\"\)
 
-mkdir -p /sphenix/user/sphnxpro/prmon/fm_0_20/pass2
+rsyncdirname=/sphenix/user/sphnxpro/prmon/fm_0_20/pass2
+if [ ! -d $rsyncdirname ]
+then
+  mkdir -p $rsyncdirname
+fi
 
-rsync -av $txtfilename /sphenix/user/sphnxpro/prmon/fm_0_20/pass2
-rsync -av $jsonfilename /sphenix/user/sphnxpro/prmon/fm_0_20/pass2
+rsync -av $txtfilename $rsyncdirname
+rsync -av $jsonfilename $rsyncdirname
 
 echo "script done"

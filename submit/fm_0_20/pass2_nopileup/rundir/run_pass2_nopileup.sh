@@ -4,7 +4,7 @@ export USER="$(id -u -n)"
 export LOGNAME=${USER}
 export HOME=/sphenix/u/${USER}
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.3
+source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.6
 
 hostname
 
@@ -54,8 +54,6 @@ jsonfilename=${filename_calo}-${runnumber}-${sequence}.json
 echo running calo  prmon  --filename $txtfilename --json-summary $jsonfilename --  root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
 prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
 
-mkdir -p /sphenix/user/sphnxpro/prmon/fm_0_20/pass2_nopileup
-
 rsync -av $txtfilename /sphenix/user/sphnxpro/prmon/fm_0_20/pass2_nopileup
 rsync -av $jsonfilename /sphenix/user/sphnxpro/prmon/fm_0_20/pass2_nopileup
 
@@ -65,7 +63,13 @@ jsonfilename=${filename_trkr}-${runnumber}-${sequence}.json
 echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$5\"\)
 prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$5\"\)
 
-rsync -av $txtfilename /sphenix/user/sphnxpro/prmon/fm_0_20/pass2_nopileup
-rsync -av $jsonfilename /sphenix/user/sphnxpro/prmon/fm_0_20/pass2_nopileup
+rsyncdirname=/sphenix/user/sphnxpro/prmon/fm_0_20/pass2_nopileup
+if [ ! -d $rsyncdirname ]
+then
+  mkdir -p $rsyncdirname
+fi
+
+rsync -av $txtfilename $rsyncdirname
+rsync -av $jsonfilename $rsyncdirname
 
 echo "script done"

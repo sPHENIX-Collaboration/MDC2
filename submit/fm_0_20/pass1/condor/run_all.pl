@@ -52,7 +52,7 @@ else
   mkpath($outdir);
 }
 my $nsubmit = 0;
-for (my $segment=0; $segment<1000; $segment++)
+for (my $segment=0; $segment<2000; $segment++)
 {
     my $hijingdatfile = sprintf("/sphenix/sim/sim01/sphnxpro/MDC1/sHijing_HepMC/data/sHijing_0_20fm-%010d-%05d.dat",$hijing_runnumber, $segment);
     if (! -f $hijingdatfile)
@@ -60,6 +60,7 @@ for (my $segment=0; $segment<1000; $segment++)
 	print "could not locate $hijingdatfile\n";
 	next;
     }
+#    print "hijing: $hijingdatfile\n";
     my $sequence = $segment*$evtsperfile/$events;
     for (my $n=0; $n<$nmax; $n+=$events)
     {
