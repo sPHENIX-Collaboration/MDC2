@@ -27,7 +27,7 @@ if ($system < 1 || $system > 11)
     print "    8 : HF pythia8 Bottom\n";
     print "    9 : HF pythia8 CharmD0\n";
     print "   10 : HF pythia8 BottomD0\n";
-    print "   11 : HF pythia8 MB\n";
+    print "   11 : HF pythia8 Jet R=.4\n";
     exit(0);
 }
 
