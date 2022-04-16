@@ -9,13 +9,13 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 2;
+my $runnumber = 4;
 my $test;
 my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Charm\", \"CharmD0\", \"Bottom\", \"BottomD0\" or \"MinBias\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Charm\", \"CharmD0\", \"Bottom\", \"BottomD0\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--test : dryrun - create jobfiles\n";
@@ -34,10 +34,9 @@ my $quarkfilter = $ARGV[1];
 if ($quarkfilter  ne "Charm" &&
     $quarkfilter  ne "CharmD0" &&
     $quarkfilter  ne "Bottom" &&
-    $quarkfilter  ne "BottomD0" &&
-    $quarkfilter  ne "MinBias")
+    $quarkfilter  ne "BottomD0")
 {
-    print "second argument has to be either Charm, CharmD0, Bottom, BottomD0 or MinBias\n";
+    print "second argument has to be either Charm, CharmD0, Bottom or BottomD0\n";
     exit(1);
 }
 my $quarkfilterWithMHz = sprintf("%s_3MHz",$quarkfilter);
@@ -53,7 +52,17 @@ while (my $line = <F>)
 {
     chomp $line;
     $line = sprintf("%s/%s",$line,$quarkfilter);
-    mkpath($line);
+    if ($line =~ /lustre/)
+    {
+	my $storedir = $line;
+	$storedir =~ s/\/sphenix\/lustre01\/sphnxpro/sphenixS3/;
+	my $makedircmd = sprintf("mcs3 mb %s",$storedir);
+	system($makedircmd);
+    }
+    else
+    {
+	mkpath($line);
+    }
     push(@outdir,$line);
 }
 close(F);
@@ -64,9 +73,9 @@ my %outfiletype = ();
 $outfiletype{"DST_CALO_CLUSTER"} = $outdir[0];
 $outfiletype{"DST_TRKR_HIT"} = $outdir[1];
 $outfiletype{"DST_TRUTH"} = $outdir[1];
-	foreach my $type (sort keys %outfiletype)
-	{
-print "type $type, dir: $outfiletype{$type}\n";
+foreach my $type (sort keys %outfiletype)
+{
+    print "type $type, dir: $outfiletype{$type}\n";
 } 
 #die;
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;

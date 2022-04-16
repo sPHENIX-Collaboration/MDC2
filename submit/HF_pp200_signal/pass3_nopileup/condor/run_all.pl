@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=2;
+my $runnumber=4;
 my $test;
 my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
@@ -51,8 +51,17 @@ if (! -f "outdir.txt")
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 $outdir = sprintf("%s/%s",$outdir,$quarkfilter);
-mkpath($outdir);
-
+if ($outdir =~ /lustre/)
+{
+    my $storedir = $outdir;
+    $storedir =~ s/\/sphenix\/lustre01\/sphnxpro/sphenixS3/;
+    my $makedircmd = sprintf("mcs3 mb %s",$storedir);
+    system($makedircmd);
+}
+else
+{
+  mkpath($outdir);
+}
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here

@@ -1,13 +1,21 @@
 #!/usr/bin/bash
-export HOME=/sphenix/u/${LOGNAME}
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.2
+export USER="$(id -u -n)"
+export LOGNAME=${USER}
+export HOME=/sphenix/u/${USER}
 
-echo running: run_pass4trk.sh $*
+this_script=$BASH_SOURCE
+this_script=`readlink -f $this_script`
+this_dir=`dirname $this_script`
+echo rsyncing from $this_dir
+
+source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.7
+
+echo running: run_pass3_nopileup.sh $*
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
     cd $_CONDOR_SCRATCH_DIR
-    rsync -av /sphenix/u/sphnxpro/MDC2/submit/HF_pp200_signal/pass4trk/rundir/* .
+    rsync -av $this_dir/* .
     getinputfiles.pl $2
     if [ $? -ne 0 ]
     then
