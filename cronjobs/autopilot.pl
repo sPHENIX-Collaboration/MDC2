@@ -21,7 +21,8 @@ my @submitdir = (
 "JS_pp200_signal/pass2/condor",
 "JS_pp200_signal/pass3trk/condor",
 "JS_pp200_signal/pass3calo/condor",
-"JS_pp200_signal/pass4trk/condor"
+"JS_pp200_signal/pass4trk/condor",
+"JS_pp200_signal/pass5jet/condor"
 );
 
 my @quarkfilters = ("Charm");
