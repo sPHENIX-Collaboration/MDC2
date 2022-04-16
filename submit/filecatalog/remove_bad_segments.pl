@@ -34,7 +34,8 @@ my %daughters = (
     "DST_VERTEX" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_CALO_CLUSTER" ],
     "DST_TRKR_CLUSTER" => [ "DST_TRUTH", "DST_TRACKS" ],
     "DST_TRKR_HIT" => [ "DST_TRUTH", "DST_TRACKS", "DST_NEWTRACKS" ],
-    "DST_TRUTH" => [ "DST_TRKR_HIT", "DST_TRKR_CLUSTER", "DST_TRACKS", "DST_NEWTRACKS" ],
+    "DST_TRUTH" => [ "DST_TRKR_HIT", "DST_TRKR_CLUSTER", "DST_TRACKS", "DST_NEWTRACKS", "DST_TRUTH_JET" ],
+    "DST_TRUTH_JET" => [ "" ],
     "DST_TRKR_HIT_DISTORT" => [ "DST_TRUTH_DISTORT", "DST_TRACKS_DISTORT" ],
     "DST_TRUTH_DISTORT" => [ "DST_TRKR_HIT_DISTORT", "DST_TRACKS_DISTORT" ],
     "DST_NEWTRACKS" => [ "" ],
@@ -364,12 +365,12 @@ foreach my $rem (keys %removethese)
 	    if (! defined $nopileup && $res2[0] =~ /NoPileUp/)
 	    {
 		print "getfiles ($res[0]): trying to remove $res2[0]\n";
-		die;
+#		die;
 	    }
 	    if (defined $nopileup && $res2[0] !~ /NoPileUp/)
 	    {
 		print "nopileup getfiles ($res[0]): trying to remove $res2[0]\n";
-		die;
+#		die;
 	    }
 	    if (defined $kill)
 	    {
