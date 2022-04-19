@@ -26,7 +26,7 @@ my $dstoutfile = $ARGV[3];
 my $dstoutdir = $ARGV[4];
 my $runnumber = $ARGV[5];
 my $sequence = $ARGV[6];
-my $suffix = sprintf("_%s-%010d-%05d",$jettrigger,$runnumber,$sequence);
+my $suffix = sprintf("_%s_3MHz-%010d-%05d",$jettrigger,$runnumber,$sequence);
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
 my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass5jet");
