@@ -67,7 +67,7 @@ then
   mkdir -p $rsyncdirname
 fi
 
-rsync -av $txtfilename /sphenix/user/sphnxpro/prmon/fm_0_20/pass3trk
-rsync -av $jsonfilename /sphenix/user/sphnxpro/prmon/fm_0_20/pass3trk
+rsync -av $txtfilename $rsyncdirname
+rsync -av $jsonfilename $rsyncdirname
 
 echo "script done"
