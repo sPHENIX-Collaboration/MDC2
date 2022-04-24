@@ -8,14 +8,14 @@ use Getopt::Long;
 use DBI;
 
 
-my $outevents = 0;
-my $input_runnumber = 4;
+my $outevents = 400;
+my $runnumber = 4;
 my $test;
 my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
-if ($#ARGV < 0)
+if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet04\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--test : dryrun - create jobfiles\n";
@@ -29,8 +29,17 @@ if ($hostname !~ /phnxsub/)
     print "submit only from phnxsub01 or phnxsub02\n";
     exit(1);
 }
-
 my $maxsubmit = $ARGV[0];
+my $jettrigger = $ARGV[1];
+if ($jettrigger  ne "Jet04")
+{
+    print "second argument has to be Jet04\n";
+    exit(1);
+}
+
+my $embedfilelike = sprintf("sHijing_0_20fm_50kHz_bkg_0_20fm");
+my $outfilelike = sprintf("pythia8_%s_%s",$jettrigger,$embedfilelike);
+
 if (! -f "outdir.txt")
 {
     print "could not find outdir.txt\n";
@@ -38,6 +47,7 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
+$outdir = sprintf("%s/%s",$outdir,lc $jettrigger);
 if ($outdir =~ /lustre/)
 {
     my $storedir = $outdir;
@@ -50,6 +60,7 @@ else
   mkpath($outdir);
 }
 
+
 my %outfiletype = ();
 $outfiletype{"DST_BBC_G4HIT"} = 1;
 $outfiletype{"DST_CALO_G4HIT"} = 1;
@@ -57,37 +68,92 @@ $outfiletype{"DST_TRKR_G4HIT"} = 1;
 $outfiletype{"DST_TRUTH_G4HIT"} = 1;
 $outfiletype{"DST_VERTEX"} = 1;
 
-my $localdir=`pwd`;
-chomp $localdir;
-my $logdir = sprintf("%s/log",$localdir);
-mkpath($logdir);
-
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%sHijing_0_20fm%' and runnumber = $input_runnumber order by filename") || die $DBI::error;
-my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
-
-my $getbkglastsegment = $dbh->prepare("select max(segment) from datasets where dsttype = 'G4Hits' and filename like '%sHijing_0_20fm%' and runnumber = $input_runnumber");
-$getbkglastsegment->execute();
-my @res1 = $getbkglastsegment->fetchrow_array();
-my $lastsegment = $res1[0];
-$getbkglastsegment->finish();
-
 my $nsubmit = 0;
+
+my %trkhash = ();
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like '%$embedfilelike%' and runnumber = $runnumber order by filename") || die $DBI::error;
+my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
 $getfiles->execute() || die $DBI::error;
+my $ncal = $getfiles->rows;
 while (my @res = $getfiles->fetchrow_array())
 {
-    my $lfn = $res[0];
+    $trkhash{sprintf("%05d",$res[1])} = $res[0];
+}
+$getfiles->finish();
+
+my %truthhash = ();
+my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH_G4HIT' and filename like '%$embedfilelike%'and runnumber = $runnumber");
+$gettruthfiles->execute() || die $DBI::error;
+my $ntruth = $gettruthfiles->rows;
+while (my @res = $gettruthfiles->fetchrow_array())
+{
+    $truthhash{sprintf("%05d",$res[1])} = $res[0];
+}
+$gettruthfiles->finish();
+
+my %bbchash = ();
+my $getbbcfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_BBC_G4HIT' and filename like '%$embedfilelike%'and runnumber = $runnumber");
+$getbbcfiles->execute() || die $DBI::error;
+my $nbbc = $getbbcfiles->rows;
+while (my @res = $getbbcfiles->fetchrow_array())
+{
+    $bbchash{sprintf("%05d",$res[1])} = $res[0];
+}
+$getbbcfiles->finish();
+
+my %calohash = ();
+my $getcalofiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_G4HIT' and filename like '%$embedfilelike%'and runnumber = $runnumber");
+$getcalofiles->execute() || die $DBI::error;
+my $ncalo = $getcalofiles->rows;
+while (my @res = $getcalofiles->fetchrow_array())
+{
+    $calohash{sprintf("%05d",$res[1])} = $res[0];
+}
+$getcalofiles->finish();
+
+my %vertexhash = ();
+my $getvertexfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_VERTEX' and filename like '%$embedfilelike%'and runnumber = $runnumber");
+$getvertexfiles->execute() || die $DBI::error;
+my $nvertex = $getvertexfiles->rows;
+while (my @res = $getvertexfiles->fetchrow_array())
+{
+    $vertexhash{sprintf("%05d",$res[1])} = $res[0];
+}
+$getvertexfiles->finish();
+
+
+#print "input files: $ncal, truth: $ntruth\n";
+foreach my $segment (sort keys %trkhash)
+{
+    if (! exists $bbchash{$segment})
+    {
+	next;
+    }
+    if (! exists $calohash{$segment})
+    {
+	next;
+    }
+    if (! exists $truthhash{$segment})
+    {
+	next;
+    }
+    if (! exists $vertexhash{$segment})
+    {
+	next;
+    }
+
+    my $lfn = $trkhash{$segment};
 #    print "found $lfn\n";
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
-        my $prefix=$1;
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $foundall = 1;
+        my $foundall = 1;
 	foreach my $type (sort keys %outfiletype)
 	{
-            my $lfn =  sprintf("%s_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%05d.root",$type,$runnumber,$segment);
+            my $lfn =  sprintf("%s_%s-%010d-%05d.root",$type,$outfilelike,$runnumber,$segment);
 	    $chkfile->execute($lfn);
 	    if ($chkfile->rows > 0)
 	    {
@@ -103,43 +169,12 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    next;
 	}
-# output file does not exist yet, check for 2 MB background files (n to n+1)
-	$foundall = 1;
-	my @bkgfiles = ();
-
-	for (my $cnt = $segment+1; $cnt <=$segment+3; $cnt++)
-	{
-	    my $bkgseg = $cnt;
-	    while ($bkgseg > $lastsegment)
-	    {
-		$bkgseg = $bkgseg - $lastsegment;
-	    }
-	    my $bckfile = sprintf("%s-%010d-%05d.root",$prefix,$runnumber,$bkgseg);
-	    $chkfile->execute($bckfile);
-	    if ($chkfile->rows == 0)
-	    {
-		$foundall = 0;
-		last;
-	    }
-	    push(@bkgfiles,$bckfile);
-	}
-	if ($foundall == 0)
-	{
-	    next;
-	}
-	my $bkglistfile = sprintf("%s/condor-%010d-%05d.bkglist",$logdir,$runnumber,$segment);
-	open(F1,">$bkglistfile");
-	foreach my $bf (@bkgfiles)
-	{
-	    print F1 "$bf\n";
-	}
-	close(F1);
 	my $tstflag="";
 	if (defined $test)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %d %s", $outevents, $lfn, $bkglistfile, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $bbchash{sprintf("%05d",$segment)}, $calohash{sprintf("%05d",$segment)}, $truthhash{sprintf("%05d",$segment)}, $vertexhash{sprintf("%05d",$segment)}, $outdir, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
@@ -163,6 +198,5 @@ while (my @res = $getfiles->fetchrow_array())
     }
 }
 
-$getfiles->finish();
 $chkfile->finish();
 $dbh->disconnect;
