@@ -8,7 +8,7 @@ use Getopt::Long;
 use DBI;
 
 
-my $outevents = 400;
+my $outevents = 0;
 my $runnumber = 4;
 my $test;
 my $incremental;
