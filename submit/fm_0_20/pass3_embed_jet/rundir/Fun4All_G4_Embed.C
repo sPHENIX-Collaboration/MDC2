@@ -90,6 +90,9 @@ int Fun4All_G4_Embed(
   INPUTEMBED::filename[2] = embed_input_file2;
   INPUTEMBED::filename[3] = embed_input_file3;
   INPUTEMBED::filename[4] = embed_input_file4;
+// no repeating of embedding background, stop processing when end of file reached
+  INPUTEMBED::REPEAT = false; 
+
   // if you use a filelist
   //INPUTEMBED::listfile[0] = embed_input_file;
 
@@ -291,7 +294,7 @@ int Fun4All_G4_Embed(
     return 0;
   }
   // if we run the particle generator and use 0 it'll run forever
-  if (nEvents == 0 && !Input::HEPMC && !Input::READHITS)
+  if (nEvents == 0 && !Input::HEPMC && !Input::READHITS && !INPUTEMBED::REPEAT)
   {
     cout << "using 0 for number of events is a bad idea when using particle generators" << endl;
     cout << "it will run forever, so I just return without running anything" << endl;
