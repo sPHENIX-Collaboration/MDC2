@@ -5,7 +5,6 @@
 
 #include <G4Setup_sPHENIX.C>
 #include <G4_Bbc.C>
-//#include <G4_Global.C>
 #include <G4_Input.C>
 #include <G4_Jets.C>
 #include <G4_OutputManager_Embed.C>
@@ -87,10 +86,10 @@ int Fun4All_G4_Embed(
   // E.g. /sphenix/sim//sim01/production/2016-07-21/single_particle/spacal2d/
   Input::EMBED = true;
   INPUTEMBED::filename[0] = embed_input_file0;
-  INPUTEMBED::filename[0] = embed_input_file1;
-  INPUTEMBED::filename[0] = embed_input_file2;
-  INPUTEMBED::filename[0] = embed_input_file3;
-  INPUTEMBED::filename[0] = embed_input_file4;
+  INPUTEMBED::filename[1] = embed_input_file1;
+  INPUTEMBED::filename[2] = embed_input_file2;
+  INPUTEMBED::filename[3] = embed_input_file3;
+  INPUTEMBED::filename[4] = embed_input_file4;
   // if you use a filelist
   //INPUTEMBED::listfile[0] = embed_input_file;
 
