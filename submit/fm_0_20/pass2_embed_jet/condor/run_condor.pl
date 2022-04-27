@@ -32,7 +32,7 @@ my $sequence = $ARGV[9];
 my $suffix = sprintf("%s-%010d-%05d",$jettrigger,$runnumber,$sequence);
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/fm_0_20/pass3_embed_jet");
+my $condorlogdir = sprintf("/tmp/fm_0_20/pass2_embed_jet");
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
 if (-f $jobfile)

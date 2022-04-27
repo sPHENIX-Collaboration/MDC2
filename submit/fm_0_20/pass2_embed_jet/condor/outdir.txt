@@ -1,1 +1,1 @@
-/sphenix/lustre01/sphnxpro/mdc2/shijing_hepmc/fm_0_20/pass2_embed_jet
+/sphenix/lustre01/sphnxpro/mdc2/shijing_hepmc/fm_0_20/pileup_embed_jet
