@@ -21,6 +21,7 @@ push(@passes,"pass1");
 push(@passes,"pass2");
 push(@passes,"pass2_25kHz");
 push(@passes,"pass2_50kHz_0_20fm");
+push(@passes,"pass2_embed_jet");
 push(@passes,"pass2_nopileup");
 push(@passes,"pass3_nopileup");
 push(@passes,"pass3distort");
@@ -31,6 +32,7 @@ push(@passes,"pass3calo");
 push(@passes,"pass3calo_50kHz_0_20fm");
 push(@passes,"pass4trk");
 push(@passes,"pass4trk_50kHz_0_20fm");
+push(@passes,"run_pass3trk_embed");
 push(@passes,"newtracking");
 push(@passes,"pass5trk");
 
