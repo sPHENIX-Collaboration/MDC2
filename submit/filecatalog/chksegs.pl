@@ -10,8 +10,9 @@ use DBI;
 my $system = 0;
 my $verbosity;
 my $nopileup;
-my $runnumber = 3;
-GetOptions("run:i"=>\$runnumber, "type:i"=>\$system, "verbosity" => \$verbosity, "nopileup" => \$nopileup);
+my $runnumber = 4;
+my $embed;
+GetOptions("embed" => \$embed, "run:i"=>\$runnumber, "type:i"=>\$system, "verbosity" => \$verbosity, "nopileup" => \$nopileup);
 
 if ($system < 1 || $system > 11)
 {
@@ -27,7 +28,7 @@ if ($system < 1 || $system > 11)
     print "    8 : HF pythia8 Bottom\n";
     print "    9 : HF pythia8 CharmD0\n";
     print "   10 : HF pythia8 BottomD0\n";
-    print "   11 : HF pythia8 Jet R=.4\n";
+    print "   11 : HF pythia8 Jet R=0.4\n";
     exit(0);
 }
 
@@ -138,14 +139,21 @@ elsif ($system == 11)
     $systemstring_g4hits = "pythia8_Jet04";
     if (! defined $nopileup)
     {
-	$systemstring = sprintf("%s_3MHz",$systemstring_g4hits);
+	    if (defined $embed)
+	    {
+		$systemstring = sprintf("%s_sHijing_0_20fm_50kHz_bkg_0_20fm",$systemstring_g4hits);
+	    }
+	    else
+	    {
+		$systemstring = sprintf("%s_3MHz",$systemstring_g4hits);
+	    }
     }
     else
     {
 	$systemstring = sprintf("%s-",$systemstring_g4hits);
     }
     $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
-    $gpfsdir = "JS_pp200_signal";
+    $gpfsdir = "js_pp200_signal";
 #    $systemstring = "DST_HF_BOTTOM_pythia8-";
 #    $gpfsdir = "HF_pp200_signal";
 }
@@ -158,9 +166,9 @@ else
 open(F,">missing.files");
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-
-my $getdsttypes = $dbh->prepare("select distinct(dsttype) from datasets where filename like '%$systemstring%' and runnumber = $runnumber order by dsttype");
-print "select distinct(dsttype) from datasets where filename like '%$systemstring%' and runnumber = $runnumber order by dsttype\n";
+my $sqlcmd =  sprintf("select distinct(dsttype) from datasets where filename like \'\%%%s%\%\' and runnumber = %s order by dsttype",$systemstring,$runnumber);
+my $getdsttypes = $dbh->prepare($sqlcmd);
+print "$sqlcmd\n";
 my %topdcachedir = ();
 $topdcachedir{sprintf("/pnfs/rcf.bnl.gov/sphenix/disk/MDC2/%s",$gpfsdir)} = 1;
 $topdcachedir{sprintf("/sphenix/lustre01/sphnxpro/dcsphst004/mdc2/%s",lc $gpfsdir)} = 1;
@@ -219,7 +227,7 @@ foreach my $dcdir (keys  %topdcachedir)
     my $getsegsdc = $dbh->prepare("select files.lfn from files,datasets where datasets.runnumber = $runnumber and datasets.filename = files.lfn and files.lfn like '$typeWithUnderscore%' and files.lfn like '%$systemstring%' and files.full_file_path like '$dcdir/%/$type%'");
     if (defined $verbosity)
     {
-print "select files.lfn from files,datasets where datasets.runnumber = $runnumber and datasets.filename = files.lfn and files.lfn like '$typeWithUnderscore%' and files.lfn like '%$systemstring%' and files.full_file_path like '$dcdir/%/$type%'\n"
+	print "select files.lfn from files,datasets where datasets.runnumber = $runnumber and datasets.filename = files.lfn and files.lfn like '$typeWithUnderscore%' and files.lfn like '%$systemstring%' and files.full_file_path like '$dcdir/%/$type%'\n"
 #	print "select lfn from files where lfn like '$typeWithUnderscore%' and lfn like '%$systemstring%' and full_file_path like '$dcdir/%/$type%'\n";
     }
     $getsegsdc->execute();
