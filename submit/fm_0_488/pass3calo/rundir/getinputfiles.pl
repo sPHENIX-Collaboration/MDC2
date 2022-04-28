@@ -201,7 +201,7 @@ sub islustremounted
 {
     if (-f "/etc/auto.direct")
     {
-	my $mountcmd = sprintf("cat /etc/auto.direct | grep lustre ");
+	my $mountcmd = sprintf("cat /etc/auto.direct | grep lustre | grep sphenix");
 	system($mountcmd);
 	my $exit_value  = $? >> 8;
 	if ($exit_value == 0)
