@@ -10,6 +10,8 @@ echo rsyncing from $this_dir
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.8
 
+hostname
+
 echo running: run_pass3calo.sh $*
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
