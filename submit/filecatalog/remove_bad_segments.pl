@@ -168,7 +168,7 @@ if (defined $embed)
     $productionsubdir{"DST_TRUTH"} = "pass3trk_embed";
     $productionsubdir{"DST_TRUTH_G4HIT"} = "pass2_embed";
     $productionsubdir{"DST_TRACKS"} = "pass4trk_embed";
-    $productionsubdir{"DST_TRKR_CLUSTER"} = "pass3trk_embed";
+    $productionsubdir{"DST_TRKR_HIT"} = "pass3trk_embed";
     $productionsubdir{"DST_TRKR_G4HIT"} = "pass2_embed";
     $productionsubdir{"DST_VERTEX"} = "pass2_embed";
 }
@@ -419,7 +419,10 @@ foreach my $rem (keys %removethese)
 }
 foreach my $condorfile (keys %removecondorfiles)
 {
-#    print "condorfile: $condorfile\n";
+    if (defined $verbose)
+    {
+	print "condorfile: $condorfile\n";
+    }
     if (-f $condorfile)
     {
 	if (defined $kill)
