@@ -33,7 +33,8 @@ int Fun4All_G4_Embed(
     const string &embed_input_file3 = "DST_TRUTH_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000004-00000.root",
     const string &embed_input_file4 = "DST_VERTEX_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000004-00000.root",
     const int skip = 0,
-    const string &outdir = ".")
+    const string &outdir = ".",
+    const string &jettrigger = "Jet04")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -103,7 +104,22 @@ int Fun4All_G4_Embed(
   //  Input::PYTHIA6 = true;
 
   Input::PYTHIA8 = true;
-
+  if (Input::PYTHIA8)
+  {
+    if (jettrigger == "Jet04")
+    {
+      PYTHIA8::config_file = "phpythia8_JS_MDC2.cfg";
+    }
+    else if (jettrigger == "Jet15")
+    {
+      PYTHIA8::config_file = "phpythia8_15GeV_JS_MDC2.cfg";
+    }
+    else
+    {
+      cout << "invalid jettrigger: " << jettrigger << endl;
+      gSystem->Exit(1);
+    }
+  }
   //  Input::GUN = true;
   //  Input::GUN_NUMBER = 3; // if you need 3 of them
   // Input::GUN_VERBOSITY = 1;
@@ -128,8 +144,6 @@ int Fun4All_G4_Embed(
   //-----------------
   // Initialize the selected Input/Event generation
   //-----------------
-  // This creates the input generator(s)
-  PYTHIA8::config_file = "phpythia8_JS_MDC2.cfg";
   InputInit();
 
   //--------------
@@ -143,7 +157,19 @@ int Fun4All_G4_Embed(
     PHPy8JetTrigger * p8_js_signal_trigger = new PHPy8JetTrigger();
     p8_js_signal_trigger->SetEtaHighLow(1.5,-1.5); // Set eta acceptance for particles into the jet between +/- 1.5
     p8_js_signal_trigger->SetJetR(0.4);      //Set the radius for the trigger jet
-    p8_js_signal_trigger->SetMinJetPt(30); // require a 30 GeV minimum pT jet in the event
+    if (jettrigger == "Jet04")
+    {
+      p8_js_signal_trigger->SetMinJetPt(30); // require a 30 GeV minimum pT jet in the event
+    }
+    else if (jettrigger == "Jet15")
+    {
+      p8_js_signal_trigger->SetMinJetPt(10); // require a 10 GeV minimum pT jet in the event
+    }
+    else
+    {
+      cout << "invalid jettrigger: " << jettrigger << endl;
+      gSystem->Exit(1);
+    }
 
     INPUTGENERATOR::Pythia8->register_trigger(p8_js_signal_trigger);
     INPUTGENERATOR::Pythia8->set_trigger_AND();
@@ -159,7 +185,7 @@ int Fun4All_G4_Embed(
   InputRegister();
 
   // set up production relatedstuff
-     Enable::PRODUCTION = true;
+  Enable::PRODUCTION = true;
 
   //======================
   // Write the DST
