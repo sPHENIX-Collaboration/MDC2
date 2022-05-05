@@ -15,7 +15,7 @@ my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet04\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet04\", \"Jet15\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--test : dryrun - create jobfiles\n";
@@ -31,9 +31,10 @@ if ($hostname !~ /phnxsub/)
 }
 my $maxsubmit = $ARGV[0];
 my $jettrigger = $ARGV[1];
-if ($jettrigger  ne "Jet04")
+if ($jettrigger  ne "Jet04" &&
+    $jettrigger  ne "Jet15")
 {
-    print "second argument has to be Jet04\n";
+    print "second argument has to be Jet04 or Jet15\n";
     exit(1);
 }
 
@@ -73,7 +74,7 @@ $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $nsubmit = 0;
 
 my %trkhash = ();
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like '%$embedfilelike%' and runnumber = $runnumber order by filename") || die $DBI::error;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like '%$embedfilelike%' and filename not like '%pythia8%' and runnumber = $runnumber order by filename") || die $DBI::error;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
 $getfiles->execute() || die $DBI::error;
 my $ncal = $getfiles->rows;
@@ -84,7 +85,7 @@ while (my @res = $getfiles->fetchrow_array())
 $getfiles->finish();
 
 my %truthhash = ();
-my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH_G4HIT' and filename like '%$embedfilelike%'and runnumber = $runnumber");
+my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH_G4HIT' and filename like '%$embedfilelike%' and filename not like '%pythia8%' and runnumber = $runnumber");
 $gettruthfiles->execute() || die $DBI::error;
 my $ntruth = $gettruthfiles->rows;
 while (my @res = $gettruthfiles->fetchrow_array())
@@ -94,7 +95,7 @@ while (my @res = $gettruthfiles->fetchrow_array())
 $gettruthfiles->finish();
 
 my %bbchash = ();
-my $getbbcfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_BBC_G4HIT' and filename like '%$embedfilelike%'and runnumber = $runnumber");
+my $getbbcfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_BBC_G4HIT' and filename like '%$embedfilelike%' and filename not like '%pythia8%' and runnumber = $runnumber");
 $getbbcfiles->execute() || die $DBI::error;
 my $nbbc = $getbbcfiles->rows;
 while (my @res = $getbbcfiles->fetchrow_array())
@@ -104,7 +105,7 @@ while (my @res = $getbbcfiles->fetchrow_array())
 $getbbcfiles->finish();
 
 my %calohash = ();
-my $getcalofiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_G4HIT' and filename like '%$embedfilelike%'and runnumber = $runnumber");
+my $getcalofiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_G4HIT' and filename like '%$embedfilelike%' and filename not like '%pythia8%' and runnumber = $runnumber");
 $getcalofiles->execute() || die $DBI::error;
 my $ncalo = $getcalofiles->rows;
 while (my @res = $getcalofiles->fetchrow_array())
@@ -114,7 +115,7 @@ while (my @res = $getcalofiles->fetchrow_array())
 $getcalofiles->finish();
 
 my %vertexhash = ();
-my $getvertexfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_VERTEX' and filename like '%$embedfilelike%'and runnumber = $runnumber");
+my $getvertexfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_VERTEX' and filename like '%$embedfilelike%' and filename not like '%pythia8%' and runnumber = $runnumber");
 $getvertexfiles->execute() || die $DBI::error;
 my $nvertex = $getvertexfiles->rows;
 while (my @res = $getvertexfiles->fetchrow_array())

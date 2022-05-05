@@ -308,7 +308,7 @@ int Fun4All_G4_Embed(
   if (Enable::PRODUCTION)
   {
     PRODUCTION::SaveOutputDir = DstOut::OutputDir;
-    CreateDstOutput(runnumber, segment);
+    CreateDstOutput(runnumber, segment, jettrigger);
   }
 
   //-----------------
