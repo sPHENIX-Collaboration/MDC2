@@ -84,8 +84,8 @@ filename=fm_0_20_pass3_embed_$8
 txtfilename=${filename}-${runnumber}-${sequence}.txt
 jsonfilename=${filename}-${runnumber}-${sequence}.json
 
-echo running root.exe -q -b Fun4All_G4_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",0,\"$7\"\)
-prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",0,\"$7\"\)
+echo running root.exe -q -b Fun4All_G4_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",0,\"$7\",\"$8\"\)
+prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",0,\"$7\",\"$8\"\)
 
 rsyncdirname=/sphenix/user/sphnxpro/prmon/fm_0_20/pass3_embed_jet
 if [ ! -d $rsyncdirname ]
