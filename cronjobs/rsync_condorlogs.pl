@@ -15,9 +15,11 @@ push(@fmrange,"HF_pp200_signal");
 push(@fmrange,"JS_pp200_signal");
 push(@fmrange,"pythia8_pp_mb");
 #push(@fmrange,"FixDST");
+push(@fmrange,"rawdata");
 
 
 my @passes = ();
+push(@passes,"eventcombine");
 push(@passes,"pass1");
 push(@passes,"pass2");
 push(@passes,"pass2_25kHz");
