@@ -36,7 +36,7 @@ int Fun4All_G4_sPHENIX_job0(
   std::cout << "Fun4All_G4_sPHENIX_job0 - outputFile: " << outputFile << std::endl;
 
   // set up production relatedstuff
-     Enable::PRODUCTION = true;
+  Enable::PRODUCTION = true;
   Enable::DSTOUT = true;
   DstOut::OutputDir = outdir;
   DstOut::OutputFile = outputFile;
@@ -77,10 +77,6 @@ int Fun4All_G4_sPHENIX_job0(
   // make sure to printout random seeds for reproducibility
   PHRandomSeed::Verbosity(1);
 
-  // reco const
-  auto rc = recoConsts::instance();
-  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
-  
   // clustering
   Mvtx_Clustering();
   Intt_Clustering();
