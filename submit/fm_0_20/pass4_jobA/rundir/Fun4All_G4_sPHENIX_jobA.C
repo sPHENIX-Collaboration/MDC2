@@ -91,9 +91,10 @@ int Fun4All_G4_sPHENIX_jobA(
    */
   out->AddNode("TRKR_CLUSTER");
   out->AddNode("TRKR_CLUSTERCROSSINGASSOC");
-  out->AddNode("TpcSeedTrackMap");
+  out->AddNode("SiliconTrackSeedContainer");
+  out->AddNode("TpcTrackSeedContainer");
+  out->AddNode("SvtxTrackSeedContainer");
   out->AddNode("SvtxTrackMap");
-  out->AddNode("SvtxVertexMap");
   se->registerOutputManager(out);
 
   // skip events if any specified
