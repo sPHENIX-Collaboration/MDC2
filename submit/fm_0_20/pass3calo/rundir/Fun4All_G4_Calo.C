@@ -32,8 +32,8 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_Calo(
     const int nEvents = 1,
-    const string &inputFile0 = "DST_CALO_G4HIT_sHijing_0_12fm-0000000001-00000.root",
-    const string &inputFile1 = "DST_VERTEX_sHijing_0_12fm-0000000001-00000.root",
+    const string &inputFile0 = "DST_CALO_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000004-00000.root",
+    const string &inputFile1 = "DST_VERTEX_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000004-00000.root",
     const string &outputFile = "G4sPHENIX_calo.root",
     const string &outdir = ".")
 {
@@ -142,6 +142,17 @@ int Fun4All_G4_Calo(
 //  Enable::TOPOCLUSTER = true && Enable::CEMC_TOWER && Enable::HCALIN_TOWER && Enable::HCALOUT_TOWER;
   // particle flow jet reconstruction - needs topoClusters!
 //  Enable::PARTICLEFLOW = true && Enable::TOPOCLUSTER;
+
+  //===============
+  // conditions DB flags
+  //===============
+  Enable::XPLOAD = true;
+  // tag
+  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
+  // database config
+  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
+  // 64 bit timestamp
+  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
 
   //---------------
   // Magnet Settings
