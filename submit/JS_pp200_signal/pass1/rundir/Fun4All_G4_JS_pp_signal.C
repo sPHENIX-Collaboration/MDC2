@@ -40,12 +40,12 @@ R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
 
 int Fun4All_G4_JS_pp_signal(
-    const int nEvents = 1,
-    const string &Jet_Trigger = "Jet04", // or "Bottom"  or "CharmD0"  or "BottomD0" or "MB"
-    const string &outputFile = "G4sPHENIX.root",
-    const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
-    const int skip = 0,
-    const string &outdir = ".")
+  const int nEvents = 1,
+  const string &Jet_Trigger = "Jet04", // or "PhotonJet"
+  const string &outputFile = "G4Hits_pythia8_PhotonJet-0000004-00000.root",
+  const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
+  const int skip = 0,
+  const string &outdir = ".")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -132,7 +132,14 @@ int Fun4All_G4_JS_pp_signal(
   // Initialize the selected Input/Event generation
   //-----------------
   // This creates the input generator(s)
-  PYTHIA8::config_file = "phpythia8_JS_MDC2.cfg";
+  if (Jet_Trigger == "PhtonJet")
+  {
+    PYTHIA8::config_file = "phpythia8_JS_GJ_MDC2.cfg";
+  }
+  else
+  {
+    PYTHIA8::config_file = "phpythia8_JS_MDC2.cfg";
+  }
 
   InputInit();
 
@@ -143,13 +150,16 @@ int Fun4All_G4_JS_pp_signal(
 
   if (Input::PYTHIA8)
   {
-    PHPy8JetTrigger * p8_js_signal_trigger = new PHPy8JetTrigger();
-    p8_js_signal_trigger->SetEtaHighLow(1.5,-1.5); // Set eta acceptance for particles into the jet between +/- 1.5
-    p8_js_signal_trigger->SetJetR(0.4);      //Set the radius for the trigger jet
-    p8_js_signal_trigger->SetMinJetPt(30); // require a 30 GeV minimum pT jet in the event
+    if (Jet_Trigger == "Jet04")
+    {
+      PHPy8JetTrigger * p8_js_signal_trigger = new PHPy8JetTrigger();
+      p8_js_signal_trigger->SetEtaHighLow(1.5,-1.5); // Set eta acceptance for particles into the jet between +/- 1.5
+      p8_js_signal_trigger->SetJetR(0.4);      //Set the radius for the trigger jet
+      p8_js_signal_trigger->SetMinJetPt(30); // require a 30 GeV minimum pT jet in the event
 
-    INPUTGENERATOR::Pythia8->register_trigger(p8_js_signal_trigger);
-    INPUTGENERATOR::Pythia8->set_trigger_AND();
+      INPUTGENERATOR::Pythia8->register_trigger(p8_js_signal_trigger);
+      INPUTGENERATOR::Pythia8->set_trigger_AND();
+    }
     Input::ApplysPHENIXBeamParameter(INPUTGENERATOR::Pythia8);
   }
 
@@ -554,10 +564,10 @@ int Fun4All_G4_JS_pp_signal(
     string FullOutFile = DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     if (Enable::DSTOUT_COMPRESS)
-      {
-        ShowerCompress();
-        DstCompress(out);
-      }
+    {
+      ShowerCompress();
+      DstCompress(out);
+    }
     se->registerOutputManager(out);
   }
   //-----------------
