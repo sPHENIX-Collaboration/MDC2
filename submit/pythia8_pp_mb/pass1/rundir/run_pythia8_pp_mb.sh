@@ -6,7 +6,7 @@ export HOME=/sphenix/u/${USER}
 
 export HOME=/sphenix/u/${LOGNAME}
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.7
+source /opt/sphenix/core/bin/sphenix_setup.sh -n new
 
 echo running: run_pythia8_pp_mb.sh $*
 
