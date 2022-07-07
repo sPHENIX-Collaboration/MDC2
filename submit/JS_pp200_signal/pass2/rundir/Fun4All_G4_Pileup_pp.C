@@ -21,6 +21,7 @@
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
 
+R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libg4testbench.so)
 
