@@ -8,6 +8,7 @@
 #include <G4_Input.C>
 #include <G4_Production.C>
 
+#include <ffamodules/FlagHandler.h>
 #include <ffamodules/HeadReco.h>
 #include <ffamodules/SyncReco.h>
 
@@ -35,7 +36,7 @@ int Fun4All_G4_Pass1_pp(
     const string &outdir = ".")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
-  se->Verbosity(0);
+  se->Verbosity(1);
 
   //Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
   PHRandomSeed::Verbosity(1);
@@ -124,6 +125,9 @@ int Fun4All_G4_Pass1_pp(
 
   HeadReco *head = new HeadReco();
   se->registerSubsystem(head);
+
+  FlagHandler *flag = new FlagHandler();
+  se->registerSubsystem(flag);
 
   // set up production relatedstuff
     Enable::PRODUCTION = true;
