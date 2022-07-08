@@ -21,6 +21,8 @@
 #include <G4_User.C>
 #include <QA.C>
 
+#include <ffamodules/FlagHandler.h>
+
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
@@ -29,6 +31,7 @@
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
 
+R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 
 // For HepMC Hijing
@@ -36,8 +39,8 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_Pass3Trk(
     const int nEvents = 1,
-    const string &inputFile0 = "DST_TRKR_G4HIT_sHijing_0_488fm_50kHz_bkg_0_20fm-0000000002-00003.root",
-    const string &inputFile1 = "DST_TRUTH_G4HIT_sHijing_0_488fm_50kHz_bkg_0_20fm-0000000002-00003.root",
+    const string &inputFile0 = "DST_TRKR_G4HIT_pythia8_PhotonJet_3MHz-0000000040-00000.root",
+    const string &inputFile1 = "DST_TRUTH_G4HIT_pythia8_PhotonJet_3MHz-0000000040-00000.root",
     const string &outputFile = "G4sPHENIX.root",
     const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
     const int skip = 0,
@@ -224,6 +227,9 @@ int Fun4All_G4_Pass3Trk(
   }
   // register all input generators with Fun4All
   InputRegister();
+
+  FlagHandler *flag = new FlagHandler();
+  se->registerSubsystem(flag);
 
   // set up production relatedstuff
     Enable::PRODUCTION = true;
