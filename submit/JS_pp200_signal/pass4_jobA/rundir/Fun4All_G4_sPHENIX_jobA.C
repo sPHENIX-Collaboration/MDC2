@@ -1,18 +1,24 @@
 #include <G4_Magnet.C>
+#include <G4_Micromegas.C>
 #include <G4_Production.C>
 #include <G4_Tracking.C>
 
-#include <fun4all/SubsysReco.h>
-#include <fun4all/Fun4AllServer.h>
-#include <fun4all/Fun4AllDstInputManager.h>
-#include <fun4all/Fun4AllDstOutputManager.h>
-#include <phool/PHRandomSeed.h>
-#include <phool/recoConsts.h>
 #include <qa_modules/QAG4SimulationIntt.h>
 #include <qa_modules/QAG4SimulationMvtx.h>
 #include <qa_modules/QAG4SimulationTracking.h>
 #include <qa_modules/QAHistManagerDef.h>
 
+#include <ffamodules/FlagHandler.h>
+
+#include <fun4all/SubsysReco.h>
+#include <fun4all/Fun4AllServer.h>
+#include <fun4all/Fun4AllDstInputManager.h>
+#include <fun4all/Fun4AllDstOutputManager.h>
+
+#include <phool/PHRandomSeed.h>
+#include <phool/recoConsts.h>
+
+R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libqa_modules.so)
 
@@ -20,8 +26,8 @@ R__LOAD_LIBRARY(libqa_modules.so)
 int Fun4All_G4_sPHENIX_jobA(
   const int nEvents = 0,
   const int nSkipEvents = 0,
-  const string &inputFile = "DST_TRKR_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000004-00000.root",
-  const string &outputFile = "DST_TRACKSEEDS_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000004-00000.root",
+  const string &inputFile = "DST_TRKR_CLUSTER_pythia8_PhotonJet_3MHz-0000000040-00000.root",
+  const string &outputFile = "DST_TRACKSEEDS_pythia8_PhotonJet_3MHz-0000000040-00000.root",
   const string &outdir = "."
   )
 {
@@ -64,6 +70,9 @@ int Fun4All_G4_sPHENIX_jobA(
 
   // make sure to printout random seeds for reproducibility
   PHRandomSeed::Verbosity(1);
+
+  FlagHandler *flag = new FlagHandler();
+  se->registerSubsystem(flag);
 
   MagnetFieldInit();
   TrackingInit();
