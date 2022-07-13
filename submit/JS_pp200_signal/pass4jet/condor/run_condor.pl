@@ -18,7 +18,7 @@ if ($#ARGV < 3)
 my $localdir=`pwd`;
 chomp $localdir;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_pass5jet.sh",$rundir);
+my $executable = sprintf("%s/run_pass4jet.sh",$rundir);
 my $nevents = $ARGV[0];
 my $jettrigger = $ARGV[1];
 my $infile = $ARGV[2];
@@ -29,7 +29,7 @@ my $sequence = $ARGV[6];
 my $suffix = sprintf("_%s_3MHz-%010d-%05d",$jettrigger,$runnumber,$sequence);
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass5jet");
+my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass4jet");
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor%s.job",$logdir,$suffix);
 if (-f $jobfile)
