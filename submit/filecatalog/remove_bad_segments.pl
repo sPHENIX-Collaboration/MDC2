@@ -31,11 +31,12 @@ my %daughters = (
     "DST_BBC_G4HIT" => [ "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_VERTEX" ],
     "DST_CALO_G4HIT" => [ "DST_BBC_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_VERTEX", "DST_CALO_CLUSTER" ],
     "DST_TRKR_G4HIT" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRUTH_G4HIT", "DST_VERTEX", "DST_TRKR_CLUSTER" ],
-    "DST_TRUTH_G4HIT" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_VERTEX", "DST_TRKR_CLUSTER" ],
+    "DST_TRUTH_G4HIT" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_VERTEX", "DST_TRUTH" ],
     "DST_VERTEX" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_CALO_CLUSTER" ],
-    "DST_TRKR_CLUSTER" => [ "DST_TRUTH", "DST_TRACKS" ],
-    "DST_TRKR_HIT" => [ "DST_TRUTH", "DST_TRACKS", "DST_NEWTRACKS" ],
-    "DST_TRUTH" => [ "DST_TRKR_HIT", "DST_TRKR_CLUSTER", "DST_TRACKS", "DST_NEWTRACKS", "DST_TRUTH_JET" ],
+    "DST_TRKR_CLUSTER" => [ "DST_TRACKSEEDS" ],
+    "DST_TRACKSEEDS" => [ "DST_TRACKS"],
+    "DST_TRKR_HIT" => [ "DST_TRUTH", "DST_TRKR_CLUSTER", "DST_NEWTRACKS" ],
+    "DST_TRUTH" => [ "DST_TRKR_HIT", "DST_NEWTRACKS", "DST_TRUTH_JET" ],
 #    "DST_TRKR_HIT" => [ "DST_TRUTH" ],
 #    "DST_TRUTH" => [ "DST_TRKR_HIT" ],
     "DST_TRUTH_JET" => [ "" ],
@@ -93,6 +94,8 @@ if ($#ARGV < 0)
     print "    9 : HF pythia8 CharmD0\n";
     print "   10 : HF pythia8 BottomD0\n";
     print "   11 : JS pythia8 Jet R=0.4\n";
+    print "   12 : JS pythia8 Jet > 15GeV\n";
+    print "   13 : JS pythia8 Photon Jet\n";
     print "-dsttype:\n";
     foreach my $tp (sort keys %daughters)
     {
@@ -112,7 +115,7 @@ if( ! exists $daughters{$dsttype})
     }
     exit(0);
 }
-if ($system < 1 || $system > 11)
+if ($system < 1 || $system > 13)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
@@ -127,6 +130,8 @@ if ($system < 1 || $system > 11)
     print "    9 : HF pythia8 CharmD0\n";
     print "   10 : HF pythia8 BottomD0\n";
     print "   11 : JS pythia8 Jet R=0.4\n";
+    print "   12 : JS pythia8 Jet > 15GeV\n";
+    print "   13 : JS pythia8 Jet Photon Jet\n";
     exit(0);
 }
 
@@ -284,6 +289,44 @@ elsif ($system == 11)
         $pileupstring = "_sHijing_0_20fm_50kHz_bkg_0_20fm";
     }
     $specialcondorfileadd{"G4Hits"} = "Jet04";
+}
+elsif ($system == 12)
+{
+    $specialsystemstring{"G4Hits"} = "pythia8_Jet15-";
+    $systemstring = "pythia8_Jet15_";
+    $topdir = sprintf("%s/JS_pp200_signal",$topdir);
+    $condorfileadd = sprintf("Jet15_3MHz");
+    if (defined $nopileup)
+    {
+	$condorfileadd = sprintf("Jet15");
+        $systemstring = "pythia8_Jet15";
+    }
+    if (defined $embed)
+    {
+	$condorfileadd = sprintf("Jet15");
+        $systemstring = "pythia8_Jet15";
+        $pileupstring = "_sHijing_0_20fm_50kHz_bkg_0_20fm";
+    }
+    $specialcondorfileadd{"G4Hits"} = "Jet15";
+}
+elsif ($system == 13)
+{
+    $specialsystemstring{"G4Hits"} = "pythia8_PhotonJet-";
+    $systemstring = "pythia8_PhotonJet_";
+    $topdir = sprintf("%s/JS_pp200_signal",$topdir);
+    $condorfileadd = sprintf("PhotonJet_3MHz");
+    if (defined $nopileup)
+    {
+	$condorfileadd = sprintf("PhotonJet");
+        $systemstring = "pythia8_PhotonJet";
+    }
+    if (defined $embed)
+    {
+	$condorfileadd = sprintf("PhotonJet");
+        $systemstring = "pythia8_PhotonJet";
+        $pileupstring = "_sHijing_0_20fm_50kHz_bkg_0_20fm";
+    }
+    $specialcondorfileadd{"G4Hits"} = "PhotonJet";
 }
 else
 {
