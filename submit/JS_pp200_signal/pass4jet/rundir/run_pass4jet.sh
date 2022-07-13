@@ -11,7 +11,7 @@ echo rsyncing from $this_dir
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n new
 
-echo running: run_pass5jet.sh $*
+echo running: $this_script $*
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
