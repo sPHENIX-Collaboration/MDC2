@@ -10,6 +10,8 @@
 #include <g4main/Fun4AllDstPileupInputManager.h>
 #include <g4main/PHG4VertexSelection.h>
 
+#include <ffamodules/FlagHandler.h>
+
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
@@ -19,13 +21,14 @@
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
 
+R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libg4testbench.so)
 
 //________________________________________________________________________________________________
 int Fun4All_G4_Pileup(
     const int nEvents = 0,
-    const string &inputFile = "G4Hits_sHijing_0_20fm-0000000001-00000.root",
+    const string &inputFile = "G4Hits_sHijing_0_20fm-0000000040-00000.root",
     const string &backgroundList = "pileupbkg.list",
     const string &outdir = ".")
 
@@ -36,6 +39,9 @@ int Fun4All_G4_Pileup(
   se->Verbosity(1);
 
   auto rc = recoConsts::instance();
+
+  FlagHandler *flag = new FlagHandler();
+  se->registerSubsystem(flag);
 
   // set up production relatedstuff
   Enable::PRODUCTION = true;
