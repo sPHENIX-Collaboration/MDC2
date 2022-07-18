@@ -22,6 +22,7 @@
 
 #include <phpythia8/PHPy8ParticleTrigger.h>
 
+#include <ffamodules/FlagHandler.h>
 #include <ffamodules/HeadReco.h>
 #include <ffamodules/SyncReco.h>
 
@@ -262,6 +263,9 @@ int Fun4All_G4_HF_pp_signal(
 
   HeadReco *head = new HeadReco();
   se->registerSubsystem(head);
+
+  FlagHandler *flag = new FlagHandler();
+  se->registerSubsystem(flag);
 
   // set up production relatedstuff
   Enable::PRODUCTION = true;
