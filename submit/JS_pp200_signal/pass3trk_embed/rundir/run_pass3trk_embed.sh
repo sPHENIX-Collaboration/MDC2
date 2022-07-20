@@ -8,11 +8,11 @@ this_script=`readlink -f $this_script`
 this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.8
+source /opt/sphenix/core/bin/sphenix_setup.sh -n new
 
 hostname
 
-echo running: run_pass3trk_embed.sh $*
+echo running: $this_script $*
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
