@@ -10,7 +10,10 @@
 #include <G4_OutputManager_Embed.C>
 #include <G4_Production.C>
 #include <G4_User.C>
+
 #include <phpythia8/PHPy8JetTrigger.h>
+
+#include <ffamodules/FlagHandler.h>
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
@@ -21,6 +24,7 @@
 #include <phool/recoConsts.h>
 
 R__LOAD_LIBRARY(libfun4all.so)
+R__LOAD_LIBRARY(libffamodules.so)
 
 // For HepMC Hijing
 // try inputFile = /sphenix/sim/sim01/sphnxpro/sHijing_HepMC/sHijing_0-12fm.dat
@@ -114,6 +118,10 @@ int Fun4All_G4_Embed(
     {
       PYTHIA8::config_file = "phpythia8_15GeV_JS_MDC2.cfg";
     }
+    else if (jettrigger == "PhotonJet")
+    {
+      PYTHIA8::config_file = "phpythia8_JS_GJ_MDC2.cfg";
+    }
     else
     {
       cout << "invalid jettrigger: " << jettrigger << endl;
@@ -165,6 +173,10 @@ int Fun4All_G4_Embed(
     {
       p8_js_signal_trigger->SetMinJetPt(10); // require a 10 GeV minimum pT jet in the event
     }
+    else if (jettrigger == "PhotonJet")
+    {
+      cout << "no cut for PhotonJet" << endl;
+    }
     else
     {
       cout << "invalid jettrigger: " << jettrigger << endl;
@@ -183,6 +195,9 @@ int Fun4All_G4_Embed(
 
   // register all input generators with Fun4All
   InputRegister();
+
+  FlagHandler *flag = new FlagHandler();
+  se->registerSubsystem(flag);
 
   // set up production relatedstuff
   Enable::PRODUCTION = true;
