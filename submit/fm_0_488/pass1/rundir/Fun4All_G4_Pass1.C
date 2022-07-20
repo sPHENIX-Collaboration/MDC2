@@ -8,6 +8,7 @@
 #include <G4_Input.C>
 #include <G4_Production.C>
 
+#include <ffamodules/FlagHandler.h>
 #include <ffamodules/HeadReco.h>
 #include <ffamodules/SyncReco.h>
 
@@ -116,6 +117,9 @@ int Fun4All_G4_Pass1(
 
   SyncReco *sync = new SyncReco();
   se->registerSubsystem(sync);
+
+  FlagHandler *flag = new FlagHandler();
+  se->registerSubsystem(flag);
 
   HeadReco *head = new HeadReco();
   se->registerSubsystem(head);

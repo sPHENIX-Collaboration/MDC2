@@ -32,15 +32,27 @@ my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::er
 
 my $maxsubmit = $ARGV[0];
 my $hijing_runnumber = 1;
-my $runnumber = 2;
+my $runnumber = 40;
 my $events = 50;
 my $evtsperfile = 10000;
 my $nmax = $evtsperfile;
+
 open(F,"outdir.txt");
 my $outdir=<F>;
 chomp  $outdir;
 close(F);
-mkpath($outdir);
+if ($outdir =~ /lustre/)
+{
+    my $storedir = $outdir;
+    $storedir =~ s/\/sphenix\/lustre01\/sphnxpro/sphenixS3/;
+    my $makedircmd = sprintf("mcs3 mb %s",$storedir);
+    system($makedircmd);
+}
+else
+{
+  mkpath($outdir);
+}
+
 my $nsubmit = 0;
 for (my $segment=0; $segment<1000; $segment++)
 {
