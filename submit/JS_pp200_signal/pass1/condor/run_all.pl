@@ -35,7 +35,7 @@ my $filetype="pythia8";
 if ($jettrigger  ne "Jet04" &&
     $jettrigger  ne "PhotonJet")
 {
-    print "second argument has to be Jet04 or PhotonJet";
+    print "second argument has to be Jet04 or PhotonJet\n";
     exit(1);
 }
 $filetype=sprintf("%s_%s",$filetype,$jettrigger);
