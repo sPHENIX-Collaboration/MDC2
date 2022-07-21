@@ -2,20 +2,19 @@
 #include <G4_Production.C>
 #include <G4_Tracking.C>
 
+#include <ffamodules/FlagHandler.h>
+
 #include <fun4all/SubsysReco.h>
 #include <fun4all/Fun4AllServer.h>
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
+
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
-#include <qa_modules/QAG4SimulationIntt.h>
-#include <qa_modules/QAG4SimulationMvtx.h>
-#include <qa_modules/QAG4SimulationTracking.h>
-#include <qa_modules/QAHistManagerDef.h>
 
 
+R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
-R__LOAD_LIBRARY(libqa_modules.so)
 
 //________________________________________________________________________________________________
 int Fun4All_G4_sPHENIX_jobC(
@@ -64,6 +63,12 @@ int Fun4All_G4_sPHENIX_jobC(
   // make sure to printout random seeds for reproducibility
   PHRandomSeed::Verbosity(1);
 
+  //------------------
+  // New Flag Handling
+  //------------------
+  FlagHandler *flg = new FlagHandler();
+  se->registerSubsystem(flg);
+
   MagnetFieldInit();
   TrackingInit();
   
@@ -85,6 +90,8 @@ int Fun4All_G4_sPHENIX_jobC(
   /* 
    * in principle one would not need to store the clusters and cluster crossing node, as they are already in the output from Job0
    */
+  out->AddNode("Sync");
+  out->AddNode("EventHeader");
   out->AddNode("TRKR_CLUSTER");
   out->AddNode("TRKR_CLUSTERCROSSINGASSOC");
   out->AddNode("SvtxTrackMap");

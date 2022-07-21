@@ -9,8 +9,8 @@ use DBI;
 
 
 my $outevents = 0;
-my $inrunnumber=4;
-my $outrunnumber=5;
+my $inrunnumber=40;
+my $outrunnumber=$inrunnumber;
 my $test;
 my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
