@@ -1,1 +1,1 @@
-/pnfs/rcf.bnl.gov/sphenix/disk/MDC2/sHijing_HepMC/fm_0_488/PileUp
+/sphenix/lustre01/sphnxpro/mdc2/shijing_hepmc/fm_0_488/pileup

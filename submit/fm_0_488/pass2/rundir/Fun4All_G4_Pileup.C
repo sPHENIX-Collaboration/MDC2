@@ -10,6 +10,8 @@
 #include <g4main/Fun4AllDstPileupInputManager.h>
 #include <g4main/PHG4VertexSelection.h>
 
+#include <ffamodules/FlagHandler.h>
+
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
@@ -19,6 +21,7 @@
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
 
+R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libg4testbench.so)
 
@@ -36,6 +39,9 @@ int Fun4All_G4_Pileup(
   se->Verbosity(1);
 
   auto rc = recoConsts::instance();
+
+  FlagHandler *flag = new FlagHandler();
+  se->registerSubsystem(flag);
 
   // set up production relatedstuff
   Enable::PRODUCTION = true;
@@ -66,6 +72,12 @@ int Fun4All_G4_Pileup(
 
   // background input manager
   auto inpile = new Fun4AllDstPileupInputManager("DST_background");
+  inpile->setDetectorActiveCrossings("BBC",1);
+  inpile->setDetectorActiveCrossings("HCALIN",1);
+  inpile->setDetectorActiveCrossings("HCALOUT",1);
+  inpile->setDetectorActiveCrossings("EPD",1);
+  inpile->setDetectorActiveCrossings("CEMC",1);
+  inpile->setDetectorActiveCrossings("BH_1",1);
 
   // open file
   inpile->AddListFile(backgroundList);
