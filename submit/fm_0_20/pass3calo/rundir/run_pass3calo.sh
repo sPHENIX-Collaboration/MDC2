@@ -3,14 +3,20 @@ export USER="$(id -u -n)"
 export LOGNAME=${USER}
 export HOME=/sphenix/u/${USER}
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.7
+hostname
 
-echo running: run_pass3calo.sh $*
+this_script=$BASH_SOURCE
+this_script=`readlink -f $this_script`
+this_dir=`dirname $this_script`
+
+source /opt/sphenix/core/bin/sphenix_setup.sh -n new
+
+echo running: $this_script $*
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
     cd $_CONDOR_SCRATCH_DIR
-    rsync -av /sphenix/u/sphnxpro/MDC2/submit/fm_0_20/pass3calo/rundir/* .
+    rsync -av $this_dir/* .
     getinputfiles.pl $2
     if [ $? -ne 0 ]
     then
@@ -54,7 +60,6 @@ jsonfilename=${filename}-${runnumber}-${sequence}.json
 
 echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
 prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
-mkdir -p /sphenix/user/sphnxpro/prmon/fm_0_20/pass3calo
 
 rsyncdirname=/sphenix/user/sphnxpro/prmon/fm_0_20/pass3calo
 if [ ! -d $rsyncdirname ]
