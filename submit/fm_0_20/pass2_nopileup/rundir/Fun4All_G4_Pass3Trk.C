@@ -21,6 +21,8 @@
 #include <G4_User.C>
 #include <QA.C>
 
+#include <ffamodules/FlagHandler.h>
+
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
@@ -29,14 +31,12 @@
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
 
+R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
-
-// For HepMC Hijing
-// try inputFile = /sphenix/sim/sim01/sphnxpro/sHijing_HepMC/sHijing_0-12fm.dat
 
 int Fun4All_G4_Pass3Trk(
     const int nEvents = 1,
-    const string &inputFile0 = "DST_TRKR_G4HIT_sHijing_0_488fm_50kHz_bkg_0_20fm-0000000002-00003.root",
+    const string &inputFile0 = "DST_TRKR_G4HIT_sHijing_0_20fm-0000000040-00003.root",
     const string &outdir = ".")
 {
   const string outputFile = "G4sPHENIX.root";
@@ -220,6 +220,9 @@ int Fun4All_G4_Pass3Trk(
   }
   // register all input generators with Fun4All
   InputRegister();
+
+  FlagHandler *flag = new FlagHandler();
+  se->registerSubsystem(flag);
 
   // set up production relatedstuff
     Enable::PRODUCTION = true;
