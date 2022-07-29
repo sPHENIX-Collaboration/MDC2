@@ -60,7 +60,14 @@ elsif ($system == 4)
 {
     $g4hits_exist = 1;
     $systemstring_g4hits = "sHijing_0_20fm";
-    $systemstring = sprintf("%s_50kHz_bkg_0_20fm",$systemstring_g4hits);
+    if (! defined $nopileup)
+    {
+	$systemstring = sprintf("%s_50kHz_bkg_0_20fm",$systemstring_g4hits);
+    }
+    else
+    {
+	$systemstring = sprintf("%s-",$systemstring_g4hits);
+    }
     $notlike{$systemstring} = "pythia8";
 }
 elsif ($system == 5)
@@ -260,6 +267,10 @@ if (exists $notlike{$systemstring})
     $conds = sprintf("%s and filename not like \'\%%%s%\%\' ",$conds,$notlike{$systemstring});
 }
 $conds = sprintf("select segment,filename from datasets where %s order by segment",$conds);
+if (defined $verbosity)
+    {
+        print "$conds\n";
+    }
 my $getsegments = $dbh->prepare($conds)|| die $DBI::error;
 
 $conds = sprintf("dsttype = ? and  filename like \'\%%%s%\%\' and runnumber = %d",$systemstring,$runnumber);
@@ -291,7 +302,7 @@ print "number of segments processed:  $nsegs_gpfs\n";
 my $typeWithUnderscore = sprintf("%s",$type);
 foreach my $dcdir (keys  %topdcachedir)
 {
-    if ($type eq "DST_TRUTH")
+#    if ($type eq "DST_TRUTH" || $type eq "G4Hits")
     {
 	$typeWithUnderscore = sprintf("%s_%s",$type,$systemstring);
     }
@@ -302,7 +313,7 @@ if (exists $notlike{$systemstring})
 }
 
     $conds = sprintf("select files.lfn from files,datasets where %s",$conds);
-    #print "$conds\n";
+#    print "$conds\n";
     my $getsegsdc = $dbh->prepare($conds);
     if (defined $verbosity)
     {
