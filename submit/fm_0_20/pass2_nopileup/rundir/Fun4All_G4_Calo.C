@@ -32,7 +32,7 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_Calo(
     const int nEvents = 1,
-    const string &inputFile0 = "DST_CALO_G4HIT_sHijing_0_20fm-0000000040-00000.root",
+    const string &inputFile0 = "G4Hits_sHijing_0_20fm-0000000040-00000.root",
     const string &outputFile = "G4sPHENIX_calo.root",
     const string &outdir = ".")
 {
@@ -127,7 +127,7 @@ int Fun4All_G4_Calo(
 //  Enable::EPD = false;
 
 //  Enable::GLOBAL_RECO = true;
-  //  Enable::GLOBAL_FASTSIM = true;
+  Enable::GLOBAL_FASTSIM = true;
 
 //  Enable::CALOTRIGGER = Enable::CEMC_TOWER && Enable::HCALIN_TOWER && Enable::HCALOUT_TOWER && false;
 
