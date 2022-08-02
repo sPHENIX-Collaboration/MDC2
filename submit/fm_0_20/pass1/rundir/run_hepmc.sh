@@ -4,7 +4,14 @@ export USER="$(id -u -n)"
 export LOGNAME=${USER}
 export HOME=/sphenix/u/${USER}
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.6
+hostname
+
+this_script=$BASH_SOURCE
+this_script=`readlink -f $this_script`
+this_dir=`dirname $this_script`
+echo rsyncing from $this_dir
+
+source /opt/sphenix/core/bin/sphenix_setup.sh -n new
 
 hostname
 
@@ -12,10 +19,11 @@ echo running: run_hepmc.sh $*
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
-  cd $_CONDOR_SCRATCH_DIR
-  rsync -av /sphenix/u/sphnxpro/MDC2/submit/fm_0_20/pass1/rundir/* .
+    cd $_CONDOR_SCRATCH_DIR
+    rsync -av $this_dir/* .
 else
- echo condor scratch NOT set
+   echo condor scratch NOT set
+   exit -1
 fi
 
 # arguments 
@@ -46,7 +54,13 @@ jsonfilename=${filename}-${runnumber}-${sequence}.json
 echo running root.exe -q -b Fun4All_G4_Pass1.C\($1,\"$2\",\"$3\",\"\",$4,\"$5\"\)
 prmon  --filename $txtfilename --json-summary $jsonfilename --  root.exe -q -b  Fun4All_G4_Pass1.C\($1,\"$2\",\"$3\",\"\",$4,\"$5\"\)
 
-rsync -av $txtfilename /sphenix/user/sphnxpro/prmon/fm_0_20/pass1
-rsync -av $jsonfilename /sphenix/user/sphnxpro/prmon/fm_0_20/pass1
+rsyncdirname=/sphenix/user/sphnxpro/prmon/fm_0_20/pass1
+if [ ! -d $rsyncdirname ]
+then
+  mkdir -p $rsyncdirname
+fi
+
+rsync -av $txtfilename $rsyncdirname
+rsync -av $jsonfilename $rsyncdirname
 
 echo "script done"
