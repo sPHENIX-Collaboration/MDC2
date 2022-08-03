@@ -9,9 +9,9 @@ this_script=`readlink -f $this_script`
 this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.8
+source /opt/sphenix/core/bin/sphenix_setup.sh -n new
 
-echo running: run_pass3trk.sh $*
+echo running: $this_script $*
 
 # add to the GSEARCHPATH
 cat /etc/auto.direct | grep lustre
