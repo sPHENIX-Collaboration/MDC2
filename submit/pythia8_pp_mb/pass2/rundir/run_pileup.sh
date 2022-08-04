@@ -3,11 +3,18 @@ export USER="$(id -u -n)"
 export LOGNAME=${USER}
 export HOME=/sphenix/u/${USER}
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.7
 
 hostname
 
-echo running: run_pileup.sh $*
+this_script=$BASH_SOURCE
+this_script=`readlink -f $this_script`
+this_dir=`dirname $this_script`
+echo rsyncing from $this_dir
+
+echo running: $this_script $*
+
+source /opt/sphenix/core/bin/sphenix_setup.sh -n new
+
 
 # add to the GSEARCHPATH
 cat /etc/auto.direct | grep lustre
@@ -22,7 +29,7 @@ fi
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
     cd $_CONDOR_SCRATCH_DIR
-    rsync -av /sphenix/u/sphnxpro/MDC2/submit/pythia8_pp_mb/pass2/rundir/* .
+    rsync -av $this_dir/* .
     getinputfiles.pl $2
     if [ $? -ne 0 ]
     then
