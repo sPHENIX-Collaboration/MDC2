@@ -72,6 +72,12 @@ int Fun4All_G4_Pileup(
 
   // background input manager
   auto inpile = new Fun4AllDstPileupInputManager("DST_background");
+  inpile->setDetectorActiveCrossings("BBC",1);
+  inpile->setDetectorActiveCrossings("HCALIN",1);
+  inpile->setDetectorActiveCrossings("HCALOUT",1);
+  inpile->setDetectorActiveCrossings("EPD",1);
+  inpile->setDetectorActiveCrossings("CEMC",1);
+  inpile->setDetectorActiveCrossings("BH_1",1);
 
   // open file
   inpile->AddListFile(backgroundList);
