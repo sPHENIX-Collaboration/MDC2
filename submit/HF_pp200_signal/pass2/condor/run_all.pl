@@ -66,7 +66,7 @@ my %outfiletype = ();
 $outfiletype{"DST_BBC_G4HIT"} = 1;
 $outfiletype{"DST_CALO_G4HIT"} = 1;
 $outfiletype{"DST_TRKR_G4HIT"} = 1;
-$outfiletype{"DST_TRUTH_G4HIT"} = 1;
+$outfiletype{"DST_TRUTH_G4HIT"} = "DST_TRUTH";
 $outfiletype{"DST_VERTEX"} = 1;
 
 my $localdir=`pwd`;
@@ -112,22 +112,16 @@ while (my @res = $getfiles->fetchrow_array())
 		}
 		else
 		{
-# the DST_TRUTH_G4HIT files are temporary, replace by DST_TRUTH later on
-		    if ($outfilename =~ /DST_TRUTH_G4HIT/)
+		    my $newlfn = $outfiletype{$type};
+		    if ($newlfn ne "1")
 		    {
-			$outfilename =~ s/DST_TRUTH_G4HIT/DST_TRUTH/;
-#			print "checking for $outfilename\n";
-			if (! -f  $outfilename)
+			$lfn =~ s/$type/$outfiletype{$type}/;
+			$chkfile->execute($lfn);
+			if ($chkfile->rows > 0)
 			{
-			    my $outlfn = basename($outfilename);
-			    $chkfile->execute($outlfn);
-			    if ($chkfile->rows > 0)
-			    {
-				next;
-			    }
+			    next;
 			}
 		    }
-		    print "missing $outlfn\n";
 		    $foundall = 0;
 		    last;
 		}
