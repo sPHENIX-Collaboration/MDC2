@@ -54,7 +54,7 @@ my %outfiletype = ();
 $outfiletype{"DST_BBC_G4HIT"} = 1;
 $outfiletype{"DST_CALO_G4HIT"} = 1;
 $outfiletype{"DST_TRKR_G4HIT"} = 1;
-$outfiletype{"DST_TRUTH_G4HIT"} = 1;
+$outfiletype{"DST_TRUTH_G4HIT"} = "DST_TRUTH";
 $outfiletype{"DST_VERTEX"} = 1;
 
 my $localdir=`pwd`;
@@ -95,6 +95,16 @@ while (my @res = $getfiles->fetchrow_array())
 	    }
 	    else
 	    {
+		my $newlfn = $outfiletype{$type};
+		if ($newlfn ne "1")
+		{
+		    $lfn =~ s/$type/$outfiletype{$type}/;
+		    $chkfile->execute($lfn);
+		    if ($chkfile->rows > 0)
+		    {
+			next;
+		    }
+		}
 		$foundall = 0;
 		last;
 	    }
