@@ -141,6 +141,10 @@ int Fun4All_G4_JS_pp_signal(
   {
     PYTHIA8::config_file = "phpythia8_JS_MDC2.cfg";
   }
+  else if (jettrigger == "Jet15")
+  {
+    PYTHIA8::config_file = "phpythia8_15GeV_JS_MDC2.cfg";
+  }
   else
   {
     std::cout << "Invalid jet trigger " << Jet_Trigger << std::endl;
@@ -156,16 +160,28 @@ int Fun4All_G4_JS_pp_signal(
 
   if (Input::PYTHIA8)
   {
+    PHPy8JetTrigger * p8_js_signal_trigger = new PHPy8JetTrigger();
+    p8_js_signal_trigger->SetEtaHighLow(1.5,-1.5); // Set eta acceptance for particles into the jet between +/- 1.5
+    p8_js_signal_trigger->SetJetR(0.4);      //Set the radius for the trigger jet
     if (Jet_Trigger == "Jet04")
     {
-      PHPy8JetTrigger * p8_js_signal_trigger = new PHPy8JetTrigger();
-      p8_js_signal_trigger->SetEtaHighLow(1.5,-1.5); // Set eta acceptance for particles into the jet between +/- 1.5
-      p8_js_signal_trigger->SetJetR(0.4);      //Set the radius for the trigger jet
       p8_js_signal_trigger->SetMinJetPt(30); // require a 30 GeV minimum pT jet in the event
-
-      INPUTGENERATOR::Pythia8->register_trigger(p8_js_signal_trigger);
-      INPUTGENERATOR::Pythia8->set_trigger_AND();
     }
+    else if (Jet_Trigger == "Jet15")
+    {
+      p8_js_signal_trigger->SetMinJetPt(10); // require a 30 GeV minimum pT jet in the event
+    }
+    else if (Jet_Trigger == "PhotonJet")
+    {
+      cout << "no cut for PhotonJet" << endl;
+    }
+    else
+    {
+      cout << "invalid jettrigger: " << jettrigger << endl;
+      gSystem->Exit(1);
+    }
+    INPUTGENERATOR::Pythia8->register_trigger(p8_js_signal_trigger);
+    INPUTGENERATOR::Pythia8->set_trigger_AND();
     Input::ApplysPHENIXBeamParameter(INPUTGENERATOR::Pythia8);
   }
 
