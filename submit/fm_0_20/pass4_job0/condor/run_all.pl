@@ -9,16 +9,18 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=4;
+my $runnumber=40;
 my $test;
 my $incremental;
-GetOptions("test"=>\$test, "increment"=>\$incremental);
+my $overwrite;
+GetOptions("test"=>\$test, "increment"=>\$incremental, "overwrite"=>\$overwrite);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--test : dryrun - create jobfiles\n";
+    print "--overwrite : overwrite existing jobfiles and restart\n";
     exit(1);
 }
 
@@ -75,6 +77,10 @@ while (my @res = $getfiles->fetchrow_array())
 	if (defined $test)
 	{
 	    $tstflag="--test";
+	}
+        elsif (defined $overwrite)
+	{
+	    $tstflag="--overwrite";
 	}
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %d %s", $outevents, $lfn, $outfilename, $outdir, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";

@@ -6,12 +6,14 @@ use Getopt::Long;
 use File::Path;
 
 my $test;
-GetOptions("test"=>\$test);
+my $overwrite;
+GetOptions("test"=>\$test, "overwrite"=>\$overwrite);
 if ($#ARGV < 3)
 {
     print "usage: run_condor.pl <events> <trk clusters> <outfile> <outdir> <runnumber> <sequence>\n";
     print "options:\n";
     print "-test: testmode - no condor submission\n";
+    print "--overwrite : overwrite existing jobfiles\n";
     exit(-2);
 }
 
@@ -31,7 +33,7 @@ mkpath($logdir);
 my $condorlogdir = sprintf("/tmp/fm_0_20/pass4_job0");
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor-%s.job",$logdir,$suffix);
-if (-f $jobfile)
+if (-f $jobfile && ! defined $overwrite)
 {
     print "jobfile $jobfile exists, possible overlapping names\n";
     exit(1);
@@ -57,8 +59,9 @@ print F "accounting_group = group_sphenix.mdc2\n";
 print F "accounting_group_user = sphnxpro\n";
 print F "Requirements = (CPU_Type == \"mdc2\")&& (TARGET.Machine != \"spool1011.sdcc.bnl.gov\")\n";
 #print F "Requirements = (CPU_Type == \"mdc2\")\n";
-print F "request_memory = 4000MB\n";
-print F "Priority 	= 25\n";
+#print F "request_memory = 3700MB\n";
+print F "request_memory = 4096MB\n";
+print F "Priority 	= 1004\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);
