@@ -5,27 +5,26 @@
 #include <G4_Production.C>
 #include <G4_Tracking.C>
 
+#include <ffamodules/FlagHandler.h>
+
 #include <fun4all/SubsysReco.h>
 #include <fun4all/Fun4AllServer.h>
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
+
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
-#include <qa_modules/QAG4SimulationIntt.h>
-#include <qa_modules/QAG4SimulationMvtx.h>
-#include <qa_modules/QAG4SimulationTracking.h>
-#include <qa_modules/QAHistManagerDef.h>
 
 
+R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
-R__LOAD_LIBRARY(libqa_modules.so)
 
 //________________________________________________________________________________________________
 int Fun4All_G4_sPHENIX_job0(
   const int nEvents = 0,
   const int nSkipEvents = 0,
   const char* inputFile = "DST_TRKR_HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000004-00000.root",
-  const char* outputFile = "DST_TRKR_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000004-00000_test.root",
+  const char* outputFile = "DST_TRKR_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000004-00000.root",
     const string &outdir = ".")
 {
 
@@ -77,6 +76,12 @@ int Fun4All_G4_sPHENIX_job0(
   // make sure to printout random seeds for reproducibility
   PHRandomSeed::Verbosity(1);
 
+  //------------------
+  // New Flag Handling
+  //------------------
+  FlagHandler *flg = new FlagHandler();
+  se->registerSubsystem(flg);
+
   // clustering
   Mvtx_Clustering();
   Intt_Clustering();
@@ -100,6 +105,8 @@ int Fun4All_G4_sPHENIX_job0(
   /* all the nodes from DST and RUN are saved to the output */
     string FullOutFile = DstOut::OutputFile;
   auto out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
+  out->AddNode("Sync");
+  out->AddNode("EventHeader");
   out->AddNode("TRKR_CLUSTER"); 
   out->AddNode("TRKR_CLUSTERCROSSINGASSOC");
   se->registerOutputManager(out);
