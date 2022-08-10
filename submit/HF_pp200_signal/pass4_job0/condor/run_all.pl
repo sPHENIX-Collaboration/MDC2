@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=4;
+my $runnumber=40;
 my $test;
 my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
@@ -80,6 +80,7 @@ while (my @res = $getfiles->fetchrow_array())
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
+
 	    next;
 	}
 	my $tstflag="";
