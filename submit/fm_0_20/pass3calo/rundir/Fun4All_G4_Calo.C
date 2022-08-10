@@ -18,6 +18,8 @@
 #include <G4_Tracking.C>
 #include <G4_User.C>
 
+#include <ffamodules/FlagHandler.h>
+
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
@@ -25,6 +27,7 @@
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
 
+R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 
 // For HepMC Hijing
@@ -38,7 +41,7 @@ int Fun4All_G4_Calo(
     const string &outdir = ".")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
-  se->Verbosity(0);
+  se->Verbosity(1);
 
   //Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
   PHRandomSeed::Verbosity(1);
@@ -77,6 +80,9 @@ int Fun4All_G4_Calo(
 
   // register all input generators with Fun4All
   InputRegister();
+
+  FlagHandler *flag = new FlagHandler();
+  se->registerSubsystem(flag);
 
   // set up production relatedstuff
    Enable::PRODUCTION = true;
@@ -358,7 +364,7 @@ int Fun4All_G4_Calo(
 
   se->End();
   se->PrintTimer();
-  se->PrintMemoryTracker();
+//  se->PrintMemoryTracker();
   std::cout << "All done" << std::endl;
   delete se;
   if (Enable::PRODUCTION)

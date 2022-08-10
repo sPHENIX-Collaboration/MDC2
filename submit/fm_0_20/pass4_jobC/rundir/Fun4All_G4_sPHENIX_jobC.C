@@ -1,4 +1,5 @@
 #include <G4_Magnet.C>
+#include <G4_Micromegas.C>
 #include <G4_Production.C>
 #include <G4_Tracking.C>
 

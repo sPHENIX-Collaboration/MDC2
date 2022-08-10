@@ -62,7 +62,7 @@ print F "accounting_group_user = sphnxpro\n";
 print F "Requirements = (CPU_Type == \"mdc2\")\n";
 # FTFP_BERT
 print F "request_memory = 8184MB\n";
-print F "Priority 	= 20\n";
+print F "Priority 	= 1001\n";
 #FTFP_BERT_HP
 #print F "request_memory = 12288MB\n";
 #print F "Priority 	= 30\n";

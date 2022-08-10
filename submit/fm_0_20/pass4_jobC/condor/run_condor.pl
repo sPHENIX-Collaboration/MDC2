@@ -60,7 +60,7 @@ print F "Requirements = (CPU_Type == \"mdc2\")\n";
 #print F "Requirements = (CPU_Type == \"mdc2_2gb\")\n";
 print F "request_memory = 2048MB\n";
 #print F "request_memory = 2000MB\n";
-print F "Priority 	= 25\n";
+print F "Priority 	= 1006\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);
