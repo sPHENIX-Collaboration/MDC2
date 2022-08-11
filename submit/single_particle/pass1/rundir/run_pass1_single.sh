@@ -37,8 +37,8 @@ printenv
 
 echo arg1 \(events\) : $1
 echo arg2 \(particle\): $2
-echo arg3 \(pmin (MeV)\): $3
-echo arg4 \(pmax (MeV)\): $4
+echo arg3 \(pmin \(MeV\)\): $3
+echo arg4 \(pmax \(MeV\)\): $4
 echo arg5 \(output file\): $5
 echo arg6 \(output dir\): $6
 echo arg7 \(runnumber\): $7
