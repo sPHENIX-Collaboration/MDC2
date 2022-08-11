@@ -47,6 +47,7 @@ int Fun4All_G4_Single(
   const string &outputFile = "G4Hits_single_pi-_10000_10000MeV-0000000040-00000.root",
   const string &outdir = ".")
 {
+  int skip = 0;
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
 
@@ -153,33 +154,6 @@ int Fun4All_G4_Single(
 
   if (Input::PYTHIA8)
   {
-    PHPy8JetTrigger *p8_js_signal_trigger = new PHPy8JetTrigger();
-    p8_js_signal_trigger->SetEtaHighLow(1.5,-1.5); // Set eta acceptance for particles into the jet between +/- 1.5
-    p8_js_signal_trigger->SetJetR(0.4);      //Set the radius for the trigger jet
-    if (Jet_Trigger == "Jet10")
-    {
-      p8_js_signal_trigger->SetMinJetPt(10); // require a 10 GeV minimum pT jet in the event
-    }
-    else if (Jet_Trigger == "Jet30")
-    {
-      p8_js_signal_trigger->SetMinJetPt(30); // require a 30 GeV minimum pT jet in the event
-    }
-    else if (Jet_Trigger == "PhotonJet")
-    {
-      delete p8_js_signal_trigger;
-      p8_js_signal_trigger = nullptr;
-      cout << "no cut for PhotonJet" << endl;
-    }
-    else
-    {
-      cout << "invalid jettrigger: " << Jet_Trigger << endl;
-      gSystem->Exit(1);
-    }
-    if (p8_js_signal_trigger)
-    {
-      INPUTGENERATOR::Pythia8->register_trigger(p8_js_signal_trigger);
-      INPUTGENERATOR::Pythia8->set_trigger_AND();
-    }
     Input::ApplysPHENIXBeamParameter(INPUTGENERATOR::Pythia8);
   }
 
@@ -535,17 +509,17 @@ int Fun4All_G4_Single(
     outputroot.erase(pos, remove_this.length());
   }
 
-  if (Enable::TRACKING_EVAL) Tracking_Eval(outputroot + "_" + Jet_Trigger + "_g4svtx_eval.root");
+  if (Enable::TRACKING_EVAL) Tracking_Eval(outputroot + "_g4svtx_eval.root");
 
-  if (Enable::CEMC_EVAL) CEMC_Eval(outputroot + "_" + Jet_Trigger + "_g4cemc_eval.root");
+  if (Enable::CEMC_EVAL) CEMC_Eval(outputroot + "_g4cemc_eval.root");
 
-  if (Enable::HCALIN_EVAL) HCALInner_Eval(outputroot + "_" + Jet_Trigger + "_g4hcalin_eval.root");
+  if (Enable::HCALIN_EVAL) HCALInner_Eval(outputroot + "_g4hcalin_eval.root");
 
-  if (Enable::HCALOUT_EVAL) HCALOuter_Eval(outputroot + "_" + Jet_Trigger + "_g4hcalout_eval.root");
+  if (Enable::HCALOUT_EVAL) HCALOuter_Eval(outputroot + "_g4hcalout_eval.root");
 
-  if (Enable::JETS_EVAL) Jet_Eval(outputroot + "_" + Jet_Trigger + "_jet_eval.root");
+  if (Enable::JETS_EVAL) Jet_Eval(outputroot + "_jet_eval.root");
 
-  if (Enable::DSTREADER) G4DSTreader(outputroot + "_" + Jet_Trigger + "_DSTReader.root");
+  if (Enable::DSTREADER) G4DSTreader(outputroot + "_DSTReader.root");
 
   if (Enable::USER) UserAnalysisInit();
 
