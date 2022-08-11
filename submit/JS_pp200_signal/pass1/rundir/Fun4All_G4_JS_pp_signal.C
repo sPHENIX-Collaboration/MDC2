@@ -25,6 +25,7 @@
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/HeadReco.h>
 #include <ffamodules/SyncReco.h>
+#include <ffamodules/XploadInterface.h>
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
@@ -42,7 +43,7 @@ R__LOAD_LIBRARY(libffamodules.so)
 
 int Fun4All_G4_JS_pp_signal(
   const int nEvents = 1,
-  const string &Jet_Trigger = "Jet04", // or "PhotonJet"
+  const string &Jet_Trigger = "Jet30", // or "PhotonJet"
   const string &outputFile = "G4Hits_pythia8_PhotonJet-0000004-00000.root",
   const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
   const int skip = 0,
@@ -67,6 +68,17 @@ int Fun4All_G4_JS_pp_signal(
   //  rc->set_IntFlag("RANDOMSEED", 12345);
   //int seedValue = 491258969;
   //rc->set_IntFlag("RANDOMSEED", seedValue);
+
+  //===============
+  // conditions DB flags
+  //===============
+  Enable::XPLOAD = true;
+  // tag
+  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
+  // database config
+  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
+  // 64 bit timestamp
+  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
 
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
   int runnumber=runseg.first;
@@ -137,13 +149,13 @@ int Fun4All_G4_JS_pp_signal(
   {
     PYTHIA8::config_file = "phpythia8_JS_GJ_MDC2.cfg";
   }
-  else if (Jet_Trigger == "Jet04")
-  {
-    PYTHIA8::config_file = "phpythia8_JS_MDC2.cfg";
-  }
-  else if (jettrigger == "Jet15")
+  else if (Jet_Trigger == "Jet10")
   {
     PYTHIA8::config_file = "phpythia8_15GeV_JS_MDC2.cfg";
+  }
+  else if (Jet_Trigger == "Jet30")
+  {
+    PYTHIA8::config_file = "phpythia8_JS_MDC2.cfg";
   }
   else
   {
@@ -160,28 +172,33 @@ int Fun4All_G4_JS_pp_signal(
 
   if (Input::PYTHIA8)
   {
-    PHPy8JetTrigger * p8_js_signal_trigger = new PHPy8JetTrigger();
+    PHPy8JetTrigger *p8_js_signal_trigger = new PHPy8JetTrigger();
     p8_js_signal_trigger->SetEtaHighLow(1.5,-1.5); // Set eta acceptance for particles into the jet between +/- 1.5
     p8_js_signal_trigger->SetJetR(0.4);      //Set the radius for the trigger jet
-    if (Jet_Trigger == "Jet04")
+    if (Jet_Trigger == "Jet10")
+    {
+      p8_js_signal_trigger->SetMinJetPt(10); // require a 10 GeV minimum pT jet in the event
+    }
+    else if (Jet_Trigger == "Jet30")
     {
       p8_js_signal_trigger->SetMinJetPt(30); // require a 30 GeV minimum pT jet in the event
     }
-    else if (Jet_Trigger == "Jet15")
-    {
-      p8_js_signal_trigger->SetMinJetPt(10); // require a 30 GeV minimum pT jet in the event
-    }
     else if (Jet_Trigger == "PhotonJet")
     {
+      delete p8_js_signal_trigger;
+      p8_js_signal_trigger = nullptr;
       cout << "no cut for PhotonJet" << endl;
     }
     else
     {
-      cout << "invalid jettrigger: " << jettrigger << endl;
+      cout << "invalid jettrigger: " << Jet_Trigger << endl;
       gSystem->Exit(1);
     }
-    INPUTGENERATOR::Pythia8->register_trigger(p8_js_signal_trigger);
-    INPUTGENERATOR::Pythia8->set_trigger_AND();
+    if (p8_js_signal_trigger)
+    {
+      INPUTGENERATOR::Pythia8->register_trigger(p8_js_signal_trigger);
+      INPUTGENERATOR::Pythia8->set_trigger_AND();
+    }
     Input::ApplysPHENIXBeamParameter(INPUTGENERATOR::Pythia8);
   }
 
@@ -640,6 +657,7 @@ int Fun4All_G4_JS_pp_signal(
   // Exit
   //-----
 
+  XploadInterface::instance()->Print(); // print used DB files
   se->End();
   std::cout << "All done" << std::endl;
   delete se;
