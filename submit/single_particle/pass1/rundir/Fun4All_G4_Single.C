@@ -178,7 +178,7 @@ int Fun4All_G4_Single(
     }
     INPUTGENERATOR::SimpleEventGenerator[0]->set_eta_range(-1.2, 1.2);
     INPUTGENERATOR::SimpleEventGenerator[0]->set_phi_range(-M_PI, M_PI);
-    INPUTGENERATOR::SimpleEventGenerator[0]->set_pt_range(pmin/1000., pmax/1000.);
+    INPUTGENERATOR::SimpleEventGenerator[0]->set_p_range(pmin/1000., pmax/1000.);
   }
   // Upsilons
   // if you run more than one of these Input::UPSILON_NUMBER > 1
