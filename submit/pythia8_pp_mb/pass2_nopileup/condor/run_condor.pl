@@ -59,7 +59,7 @@ print F "accounting_group = group_sphenix.mdc2\n";
 print F "accounting_group_user = sphnxpro\n";
 print F "Requirements = (CPU_Type == \"mdc2\")\n";
 print F "request_memory = 2GB\n";
-print F "Priority 	= 902\n";
+print F "Priority 	= 952\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);

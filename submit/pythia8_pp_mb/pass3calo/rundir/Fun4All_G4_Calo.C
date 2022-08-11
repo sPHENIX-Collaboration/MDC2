@@ -18,6 +18,8 @@
 #include <G4_Tracking.C>
 #include <G4_User.C>
 
+#include <ffamodules/FlagHandler.h>
+
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
@@ -25,6 +27,7 @@
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
 
+R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 
 // For HepMC Hijing
@@ -77,6 +80,20 @@ int Fun4All_G4_Calo(
 
   // register all input generators with Fun4All
   InputRegister();
+
+
+// register the flag handling
+  FlagHandler *flag = new FlagHandler();
+  se->registerSubsystem(flag);
+
+  //===============
+  // conditions DB flags
+  //===============
+  // tag
+  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
+  // database
+  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
+  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
 
   // set up production relatedstuff
    Enable::PRODUCTION = true;
