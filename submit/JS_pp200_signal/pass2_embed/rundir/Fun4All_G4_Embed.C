@@ -38,7 +38,7 @@ int Fun4All_G4_Embed(
     const string &embed_input_file4 = "DST_VERTEX_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000004-00000.root",
     const int skip = 0,
     const string &outdir = ".",
-    const string &jettrigger = "Jet04")
+    const string &jettrigger = "Jet30")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -110,13 +110,13 @@ int Fun4All_G4_Embed(
   Input::PYTHIA8 = true;
   if (Input::PYTHIA8)
   {
-    if (jettrigger == "Jet04")
-    {
-      PYTHIA8::config_file = "phpythia8_JS_MDC2.cfg";
-    }
-    else if (jettrigger == "Jet15")
+    if (jettrigger == "Jet10")
     {
       PYTHIA8::config_file = "phpythia8_15GeV_JS_MDC2.cfg";
+    }
+    else if (jettrigger == "Jet30")
+    {
+      PYTHIA8::config_file = "phpythia8_JS_MDC2.cfg";
     }
     else if (jettrigger == "PhotonJet")
     {
@@ -162,19 +162,21 @@ int Fun4All_G4_Embed(
   if (Input::PYTHIA8)
   {
     //! apply sPHENIX nominal beam parameter with 2mrad crossing as defined in sPH-TRG-2020-001
-    PHPy8JetTrigger * p8_js_signal_trigger = new PHPy8JetTrigger();
+    PHPy8JetTrigger *p8_js_signal_trigger = new PHPy8JetTrigger();
     p8_js_signal_trigger->SetEtaHighLow(1.5,-1.5); // Set eta acceptance for particles into the jet between +/- 1.5
     p8_js_signal_trigger->SetJetR(0.4);      //Set the radius for the trigger jet
-    if (jettrigger == "Jet04")
-    {
-      p8_js_signal_trigger->SetMinJetPt(30); // require a 30 GeV minimum pT jet in the event
-    }
-    else if (jettrigger == "Jet15")
+    if (jettrigger == "Jet10")
     {
       p8_js_signal_trigger->SetMinJetPt(10); // require a 10 GeV minimum pT jet in the event
     }
+    else if (jettrigger == "Jet30")
+    {
+      p8_js_signal_trigger->SetMinJetPt(30); // require a 30 GeV minimum pT jet in the event
+    }
     else if (jettrigger == "PhotonJet")
     {
+      delete p8_js_signal_trigger;
+      p8_js_signal_trigger = nullptr;
       cout << "no cut for PhotonJet" << endl;
     }
     else
@@ -182,9 +184,11 @@ int Fun4All_G4_Embed(
       cout << "invalid jettrigger: " << jettrigger << endl;
       gSystem->Exit(1);
     }
-
-    INPUTGENERATOR::Pythia8->register_trigger(p8_js_signal_trigger);
-    INPUTGENERATOR::Pythia8->set_trigger_AND();
+    if (p8_js_signal_trigger)
+    {
+      INPUTGENERATOR::Pythia8->register_trigger(p8_js_signal_trigger);
+      INPUTGENERATOR::Pythia8->set_trigger_AND();
+    }
     Input::ApplysPHENIXBeamParameter(INPUTGENERATOR::Pythia8);
   }
 
