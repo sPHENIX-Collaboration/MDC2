@@ -5,11 +5,6 @@
 #include <G4_Production.C>
 #include <G4_Tracking.C>
 
-#include <qa_modules/QAG4SimulationIntt.h>
-#include <qa_modules/QAG4SimulationMvtx.h>
-#include <qa_modules/QAG4SimulationTracking.h>
-#include <qa_modules/QAHistManagerDef.h>
-
 #include <ffamodules/FlagHandler.h>
 
 #include <fun4all/SubsysReco.h>
@@ -23,7 +18,6 @@
 
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
-R__LOAD_LIBRARY(libqa_modules.so)
 
 //________________________________________________________________________________________________
 int Fun4All_G4_sPHENIX_job0(
