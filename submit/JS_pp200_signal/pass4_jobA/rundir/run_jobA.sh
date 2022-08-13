@@ -9,7 +9,7 @@ this_script=$BASH_SOURCE
 this_script=`readlink -f $this_script`
 this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
-echo running: run_jobA.sh $*
+echo running: $this_script $*
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n new
 
