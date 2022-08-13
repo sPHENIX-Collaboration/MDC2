@@ -32,7 +32,8 @@ if ($hostname !~ /phnxsub/)
 
 my $maxsubmit = $ARGV[0];
 my $jettrigger = $ARGV[1];
-if ($jettrigger  ne "Jet04" &&
+if ($jettrigger  ne "Jet10" &&
+    $jettrigger  ne "Jet30" &&
     $jettrigger  ne "PhotonJet")
 {
     print "second argument has to be Jet04 or PhotonJet\n";
