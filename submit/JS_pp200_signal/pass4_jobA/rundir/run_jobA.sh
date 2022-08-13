@@ -9,10 +9,9 @@ this_script=$BASH_SOURCE
 this_script=`readlink -f $this_script`
 this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
+echo running: run_jobA.sh $*
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n new
-
-echo running: run_jobA.sh $*
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
