@@ -18,6 +18,7 @@
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
+#include <fun4all/Fun4AllSyncManager.h>
 #include <fun4all/Fun4AllUtils.h>
 
 #include <phool/PHRandomSeed.h>
@@ -31,11 +32,11 @@ R__LOAD_LIBRARY(libffamodules.so)
 
 int Fun4All_G4_Embed(
     const int nEvents = 1,
-    const string &embed_input_file0 = "DST_BBC_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000004-00000.root",
-    const string &embed_input_file1 = "DST_CALO_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000004-00000.root",
-    const string &embed_input_file2 = "DST_TRKR_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000004-00000.root",
-    const string &embed_input_file3 = "DST_TRUTH_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000004-00000.root",
-    const string &embed_input_file4 = "DST_VERTEX_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000004-00000.root",
+    const string &embed_input_file0 = "DST_BBC_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000040-00000.root",
+    const string &embed_input_file1 = "DST_CALO_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000040-00000.root",
+    const string &embed_input_file2 = "DST_TRKR_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000040-00000.root",
+    const string &embed_input_file3 = "DST_TRUTH_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000040-00000.root",
+    const string &embed_input_file4 = "DST_VERTEX_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000040-00000.root",
     const int skip = 0,
     const string &outdir = ".",
     const string &jettrigger = "Jet30")
@@ -61,13 +62,23 @@ int Fun4All_G4_Embed(
   //===============
   // conditions DB flags
   //===============
+  Enable::XPLOAD = true;
   // tag
-  rc->set_StringFlag("XPLOAD_TAG","sPHENIX_ExampleGT_1");
+  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
   // database config
-  rc->set_StringFlag("XPLOAD_CONFIG","sPHENIX_cdb");
+  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
   // 64 bit timestamp
-  //rc->set_uint64Flag("TIMESTAMP",12345678912345);
+  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
 
+  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(embed_input_file0);
+  int runnumber=runseg.first;
+  int segment=runseg.second;
+  if (runnumber != 0)
+  {
+    rc->set_IntFlag("RUNNUMBER",runnumber);
+    Fun4AllSyncManager *syncman = se->getSyncManager();
+    syncman->SegmentNumber(segment);
+  }
 
   //===============
   // Input options
@@ -200,6 +211,7 @@ int Fun4All_G4_Embed(
   // register all input generators with Fun4All
   InputRegister();
 
+
   FlagHandler *flag = new FlagHandler();
   se->registerSubsystem(flag);
 
@@ -214,9 +226,6 @@ int Fun4All_G4_Embed(
   Enable::DSTOUT_COMPRESS = false;
   DstOut::OutputDir = outdir;
 
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(embed_input_file0);
-  int runnumber = runseg.first;
-  int segment = abs(runseg.second);
   if (Enable::PRODUCTION)
   {
     PRODUCTION::SaveOutputDir = DstOut::OutputDir;
@@ -348,6 +357,8 @@ int Fun4All_G4_Embed(
 
   se->skip(skip);
   se->run(nEvents);
+
+  XploadInterface::instance()->Print(); // print used DB files
 
   //-----
   // Exit
