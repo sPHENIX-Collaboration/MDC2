@@ -224,9 +224,6 @@ int Fun4All_G4_Pass3Trk(
   // register all input generators with Fun4All
   InputRegister();
 
-  FlagHandler *flag = new FlagHandler();
-  se->registerSubsystem(flag);
-
   // set up production relatedstuff
     Enable::PRODUCTION = true;
 
