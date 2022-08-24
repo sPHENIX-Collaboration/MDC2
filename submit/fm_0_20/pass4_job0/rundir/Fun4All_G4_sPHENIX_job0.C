@@ -33,7 +33,7 @@ int Fun4All_G4_sPHENIX_job0(
   std::cout << "Fun4All_G4_sPHENIX_job0 - nSkipEvents: " << nSkipEvents << std::endl;
   std::cout << "Fun4All_G4_sPHENIX_job0 - inputFile: " << inputFile << std::endl;
   std::cout << "Fun4All_G4_sPHENIX_job0 - outputFile: " << outputFile << std::endl;
-
+  
   // set up production relatedstuff
   Enable::PRODUCTION = true;
   Enable::DSTOUT = true;
@@ -82,14 +82,16 @@ int Fun4All_G4_sPHENIX_job0(
   FlagHandler *flg = new FlagHandler();
   se->registerSubsystem(flg);
 
+  // needed for makeActsGeometry, used in clustering
+  TrackingInit();
+
   // clustering
   Mvtx_Clustering();
   Intt_Clustering();
   TPC_Clustering();
   Micromegas_Clustering();
 
-  // needed for makeActsGeometry, used in clustering
-  TrackingInit();
+
   
   // input manager
   auto in = new Fun4AllDstInputManager("DSTin");
