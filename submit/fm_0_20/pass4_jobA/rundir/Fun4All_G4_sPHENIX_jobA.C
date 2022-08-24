@@ -75,7 +75,7 @@ int Fun4All_G4_sPHENIX_jobA(
   TrackingInit();
   
   // tracking
-  Tracking_Reco();
+  Tracking_Reco_TrackSeed();
 
   // input manager
   auto in = new Fun4AllDstInputManager("DSTin");
