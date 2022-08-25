@@ -40,22 +40,11 @@ int Fun4All_G4_sPHENIX_job0(
   DstOut::OutputDir = outdir;
   DstOut::OutputFile = outputFile;
 
-  // options
-  Enable::PIPE = true;
-  Enable::BBC = true;
-  Enable::MAGNET = true;
-  Enable::PLUGDOOR = false;
-
-  // enable all absorbers
-  // this is equivalent to the old "absorberactive" flag
-  Enable::ABSORBER = true;
-
   // central tracking
   Enable::MVTX = true;
   Enable::INTT = true;
   Enable::TPC = true;
   Enable::MICROMEGAS = true;
-  Enable::BLACKHOLE = true;
 
   // TPC
   G4TPC::ENABLE_STATIC_DISTORTIONS = false;
