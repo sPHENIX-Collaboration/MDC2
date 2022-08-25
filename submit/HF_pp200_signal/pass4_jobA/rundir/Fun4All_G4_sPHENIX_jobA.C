@@ -20,8 +20,8 @@ R__LOAD_LIBRARY(libfun4all.so)
 int Fun4All_G4_sPHENIX_jobA(
   const int nEvents = 0,
   const int nSkipEvents = 0,
-  const string &inputFile = "DST_TRKR_CLUSTER_pythia8_PhotonJet_3MHz-0000000040-00000.root",
-  const string &outputFile = "DST_TRACKSEEDS_pythia8_PhotonJet_3MHz-0000000040-00000.root",
+  const string &inputFile = "DST_TRKR_CLUSTER_pythia8_Charm_3MHz-0000000040-00000.root",
+  const string &outputFile = "DST_TRACKSEEDS__pythia8_Charm_3MHz-0000000040-00000.root",
   const string &outdir = "."
   )
 {
@@ -65,6 +65,9 @@ int Fun4All_G4_sPHENIX_jobA(
   // make sure to printout random seeds for reproducibility
   PHRandomSeed::Verbosity(1);
 
+  //------------------
+  // New Flag Handling
+  //------------------
   FlagHandler *flag = new FlagHandler();
   se->registerSubsystem(flag);
 
@@ -72,7 +75,7 @@ int Fun4All_G4_sPHENIX_jobA(
   TrackingInit();
   
   // tracking
-  Tracking_Reco();
+  Tracking_Reco_TrackSeed();
 
   // input manager
   auto in = new Fun4AllDstInputManager("DSTin");
