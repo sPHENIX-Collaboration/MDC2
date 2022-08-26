@@ -2,7 +2,6 @@
 #include <G4Setup_sPHENIX.C>
 #include <G4_Bbc.C>
 #include <G4_Global.C>
-#include <G4_Micromegas.C>
 #include <G4_Production.C>
 #include <G4_Tracking.C>
 
@@ -24,9 +23,9 @@ R__LOAD_LIBRARY(libfun4all.so)
 int Fun4All_G4_sPHENIX_job0(
   const int nEvents = 0,
   const int nSkipEvents = 0,
-  const char* inputFile = "DST_TRKR_HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000004-00000.root",
-  const char* outputFile = "DST_TRKR_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000004-00000.root",
-    const string &outdir = ".")
+  const string &inputFile = "DST_TRKR_HIT_pythia8_PhotonJet_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000040-00000.root",
+  const string &outputFile = "DST_TRKR_CLUSTER_pythia8_PhotonJet_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000040-00000.root",
+  const string &outdir = ".")
 {
 
   // print inputs
@@ -41,22 +40,11 @@ int Fun4All_G4_sPHENIX_job0(
   DstOut::OutputDir = outdir;
   DstOut::OutputFile = outputFile;
 
-  // options
-  Enable::PIPE = true;
-  Enable::BBC = true;
-  Enable::MAGNET = true;
-  Enable::PLUGDOOR = false;
-
-  // enable all absorbers
-  // this is equivalent to the old "absorberactive" flag
-  Enable::ABSORBER = true;
-
   // central tracking
   Enable::MVTX = true;
   Enable::INTT = true;
   Enable::TPC = true;
   Enable::MICROMEGAS = true;
-  Enable::BLACKHOLE = true;
 
   // TPC
   G4TPC::ENABLE_STATIC_DISTORTIONS = false;
@@ -80,15 +68,15 @@ int Fun4All_G4_sPHENIX_job0(
   FlagHandler *flag = new FlagHandler();
   se->registerSubsystem(flag);
 
+  // needed for makeActsGeometry, used in clustering
+  TrackingInit();
+
   // clustering
   Mvtx_Clustering();
   Intt_Clustering();
   TPC_Clustering();
   Micromegas_Clustering();
 
-  // needed for makeActsGeometry, used in clustering
-  TrackingInit();
-  
   // input manager
   auto in = new Fun4AllDstInputManager("DSTin");
   in->fileopen(inputFile);
