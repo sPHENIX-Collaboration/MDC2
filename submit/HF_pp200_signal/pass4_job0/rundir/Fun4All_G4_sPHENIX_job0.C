@@ -23,8 +23,8 @@ R__LOAD_LIBRARY(libfun4all.so)
 int Fun4All_G4_sPHENIX_job0(
   const int nEvents = 0,
   const int nSkipEvents = 0,
-  const char* inputFile = "DST_TRKR_HIT_pythia8_Charm_3MHz-0000000040-00000.root",
-  const char* outputFile = "DST_TRKR_CLUSTER_pythia8_Charm_3MHz-0000000040-00000.root",
+  const string &inputFile = "DST_TRKR_HIT_pythia8_Charm_3MHz-0000000040-00000.root",
+  const string &outputFile = "DST_TRKR_CLUSTER_pythia8_Charm_3MHz-0000000040-00000.root",
   const string &outdir = ".")
 {
 
