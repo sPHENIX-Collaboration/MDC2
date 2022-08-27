@@ -9,13 +9,13 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=4;
+my $runnumber=40;
 my $test;
 my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet04\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"PhotonJet\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--test : dryrun - create jobfiles\n";
@@ -32,9 +32,11 @@ if ($hostname !~ /phnxsub/)
 
 my $maxsubmit = $ARGV[0];
 my $jettrigger = $ARGV[1];
-if ($jettrigger  ne "Jet04")
+if ($jettrigger  ne "Jet10" &&
+    $jettrigger  ne "Jet30" &&
+    $jettrigger  ne "PhotonJet")
 {
-    print "second argument has to be either Charm, CharmD0, Bottom, BottomD0\n";
+    print "second argument has to be Jet10, Jet30 or PhotonJet\n";
     exit(1);
 }
 if (! -f "outdir.txt")

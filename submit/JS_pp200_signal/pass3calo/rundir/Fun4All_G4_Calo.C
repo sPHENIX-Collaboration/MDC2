@@ -18,6 +18,9 @@
 #include <G4_Tracking.C>
 #include <G4_User.C>
 
+#include <ffamodules/FlagHandler.h>
+#include <ffamodules/XploadInterface.h>
+
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
@@ -25,6 +28,7 @@
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
 
+R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 
 // For HepMC Hijing
@@ -54,6 +58,10 @@ int Fun4All_G4_Calo(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
+  Enable::XPLOAD = true;
+  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
+  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
+  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
 
   //===============
   // Input options
@@ -77,6 +85,10 @@ int Fun4All_G4_Calo(
 
   // register all input generators with Fun4All
   InputRegister();
+
+// register the flag handling
+  FlagHandler *flag = new FlagHandler();
+  se->registerSubsystem(flag);
 
   // set up production relatedstuff
    Enable::PRODUCTION = true;
@@ -345,9 +357,9 @@ int Fun4All_G4_Calo(
   // Exit
   //-----
 
+  XploadInterface::instance()->Print(); // print used DB files
   se->End();
   se->PrintTimer();
-  se->PrintMemoryTracker();
   std::cout << "All done" << std::endl;
   delete se;
   if (Enable::PRODUCTION)
