@@ -28,8 +28,8 @@ if ($system < 1 || $system > 13)
     print "    8 : HF pythia8 Bottom\n";
     print "    9 : HF pythia8 CharmD0\n";
     print "   10 : HF pythia8 BottomD0\n";
-    print "   11 : HF pythia8 Jet R=0.4\n";
-    print "   12 : HF pythia8 Jet >15GeV\n";
+    print "   11 : HF pythia8 Jet >30GeV\n";
+    print "   12 : HF pythia8 Jet >10GeV\n";
     print "   13 : HF pythia8 Photon Jet\n";
     exit(0);
 }
@@ -147,7 +147,7 @@ elsif ($system == 10)
 elsif ($system == 11)
 {
     $g4hits_exist = 1;
-    $systemstring_g4hits = "pythia8_Jet04";
+    $systemstring_g4hits = "pythia8_Jet30";
     if (! defined $nopileup)
     {
 	    if (defined $embed)
@@ -171,7 +171,7 @@ elsif ($system == 11)
 elsif ($system == 12)
 {
     $g4hits_exist = 1;
-    $systemstring_g4hits = "pythia8_Jet15";
+    $systemstring_g4hits = "pythia8_Jet10";
     if (! defined $nopileup)
     {
 	    if (defined $embed)
