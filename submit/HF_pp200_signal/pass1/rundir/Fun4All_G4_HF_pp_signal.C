@@ -25,6 +25,7 @@
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/HeadReco.h>
 #include <ffamodules/SyncReco.h>
+#include <ffamodules/XploadInterface.h>
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
@@ -67,6 +68,17 @@ int Fun4All_G4_HF_pp_signal(
   //  rc->set_IntFlag("RANDOMSEED", 12345);
   //int seedValue = 491258969;
   //rc->set_IntFlag("RANDOMSEED", seedValue);
+
+  //===============
+  // conditions DB flags
+  //===============
+  Enable::XPLOAD = true;
+  // tag
+  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
+  // database config
+  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
+  // 64 bit timestamp
+  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
 
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
   int runnumber=runseg.first;
@@ -640,6 +652,8 @@ int Fun4All_G4_HF_pp_signal(
   //-----
 
   if (Enable::QA) QA_Output("QA_" + outputroot + ".root");
+
+  XploadInterface::instance()->Print(); // print used DB files
 
   //-----
   // Exit
