@@ -22,7 +22,6 @@ GetOptions("dsttype:s"=>\$dsttype, "embed"=>\$embed, "kill"=>\$kill, "nopileup"=
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfilename = $dbh->prepare("select filename from datasets where dsttype = ? and filename like ? and segment = ? and runnumber = ? order by filename") || die $DBI::error;
 my $getfiles = $dbh->prepare("select full_file_path from files where lfn = ?");
 my $deldataset = $dbh->prepare("delete from datasets where filename = ?");
 my $delfcat = $dbh->prepare("delete from files where full_file_path = ?");
@@ -178,6 +177,8 @@ if (defined $embed)
     $productionsubdir{"DST_TRKR_G4HIT"} = "pass2_embed";
     $productionsubdir{"DST_VERTEX"} = "pass2_embed";
 }
+
+my %notlike = ();
 if ($system == 1)
 {
     $systemstring = "sHijing_0_12fm_50kHz_bkg_0_12fm";
@@ -206,6 +207,7 @@ elsif ($system == 4)
 	$topdir = sprintf("%s/fm_0_20",$topdir);
     }
     $pileupstring = "_50kHz_bkg_0_20fm";
+    $notlike{$systemstring} = "pythia8";
 }
 elsif ($system == 5)
 {
@@ -274,41 +276,41 @@ elsif ($system == 10)
 }
 elsif ($system == 11)
 {
-    $specialsystemstring{"G4Hits"} = "pythia8_Jet04-";
-    $systemstring = "pythia8_Jet04_";
+    $specialsystemstring{"G4Hits"} = "pythia8_Jet30-";
+    $systemstring = "pythia8_Jet30_";
     $topdir = sprintf("%s/JS_pp200_signal",$topdir);
-    $condorfileadd = sprintf("Jet04_3MHz");
+    $condorfileadd = sprintf("Jet30_3MHz");
     if (defined $nopileup)
     {
-	$condorfileadd = sprintf("Jet04");
-        $systemstring = "pythia8_Jet04";
+	$condorfileadd = sprintf("Jet30");
+        $systemstring = "pythia8_Jet30";
     }
     if (defined $embed)
     {
-	$condorfileadd = sprintf("Jet04");
-        $systemstring = "pythia8_Jet04";
+	$condorfileadd = sprintf("Jet30");
+        $systemstring = "pythia8_Jet30";
         $pileupstring = "_sHijing_0_20fm_50kHz_bkg_0_20fm";
     }
-    $specialcondorfileadd{"G4Hits"} = "Jet04";
+    $specialcondorfileadd{"G4Hits"} = "Jet30";
 }
 elsif ($system == 12)
 {
-    $specialsystemstring{"G4Hits"} = "pythia8_Jet15-";
-    $systemstring = "pythia8_Jet15_";
+    $specialsystemstring{"G4Hits"} = "pythia8_Jet10-";
+    $systemstring = "pythia8_Jet10_";
     $topdir = sprintf("%s/JS_pp200_signal",$topdir);
-    $condorfileadd = sprintf("Jet15_3MHz");
+    $condorfileadd = sprintf("Jet10_3MHz");
     if (defined $nopileup)
     {
-	$condorfileadd = sprintf("Jet15");
-        $systemstring = "pythia8_Jet15";
+	$condorfileadd = sprintf("Jet10");
+        $systemstring = "pythia8_Jet10";
     }
     if (defined $embed)
     {
-	$condorfileadd = sprintf("Jet15");
-        $systemstring = "pythia8_Jet15";
+	$condorfileadd = sprintf("Jet10");
+        $systemstring = "pythia8_Jet10";
         $pileupstring = "_sHijing_0_20fm_50kHz_bkg_0_20fm";
     }
-    $specialcondorfileadd{"G4Hits"} = "Jet15";
+    $specialcondorfileadd{"G4Hits"} = "Jet10";
 }
 elsif ($system == 13)
 {
@@ -333,6 +335,14 @@ else
 {
     die "bad type $system\n";
 }
+my $conds = sprintf("dsttype = ? and filename like ? and segment = ? and runnumber = ?");
+if (exists $notlike{$systemstring})
+{
+    $conds = sprintf("%s and filename not like \'\%%%s%\%\' ",$conds,$notlike{$systemstring});
+}
+my $sqlcmd = sprintf("select filename from datasets where %s  order by filename",$conds);
+#my $getfilename = $dbh->prepare("select filename from datasets where dsttype = ? and filename like ? and segment = ? and runnumber = ? order by filename") || die $DBI::error;
+my $getfilename = $dbh->prepare($sqlcmd) || die $DBI::error;
 if (defined $pileupdir)
 {
     $productionsubdir{"DST_BBC_G4HIT"} = sprintf("%s_%s",$productionsubdir{"DST_BBC_G4HIT"},$pileupdir);
