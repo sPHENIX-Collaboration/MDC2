@@ -59,7 +59,7 @@ print F "Initialdir  	= $rundir\n";
 print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
 print F "accounting_group = group_sphenix.prod\n";
 print F "request_memory = 12288MB\n";
-print F "Priority 	= 20\n";
+print F "Priority 	= 40\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);

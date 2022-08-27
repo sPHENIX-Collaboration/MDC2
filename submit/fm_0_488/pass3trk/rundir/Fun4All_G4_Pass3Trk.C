@@ -21,6 +21,8 @@
 #include <G4_User.C>
 #include <QA.C>
 
+#include <ffamodules/FlagHandler.h>
+
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
@@ -30,14 +32,15 @@
 #include <phool/recoConsts.h>
 
 R__LOAD_LIBRARY(libfun4all.so)
+R__LOAD_LIBRARY(libffamodules.so)
 
 // For HepMC Hijing
 // try inputFile = /sphenix/sim/sim01/sphnxpro/sHijing_HepMC/sHijing_0-12fm.dat
 
 int Fun4All_G4_Pass3Trk(
     const int nEvents = 1,
-    const string &inputFile0 = "DST_TRKR_G4HIT_sHijing_0_488fm_50kHz_bkg_0_20fm-0000000002-00003.root",
-    const string &inputFile1 = "DST_TRUTH_G4HIT_sHijing_0_488fm_50kHz_bkg_0_20fm-0000000002-00003.root",
+    const string &inputFile0 = "DST_TRKR_G4HIT_sHijing_0_488fm_50kHz_bkg_0_20fm-0000000040-00003.root",
+    const string &inputFile1 = "DST_TRUTH_G4HIT_sHijing_0_488fm_50kHz_bkg_0_20fm-0000000040-00003.root",
     const string &outputFile = "G4sPHENIX.root",
     const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
     const int skip = 0,
@@ -385,7 +388,7 @@ int Fun4All_G4_Pass3Trk(
 
   //  const string magfield = "1.5"; // alternatively to specify a constant magnetic field, give a float number, which will be translated to solenoidal field in T, if string use as fieldmap name (including path)
   //  G4MAGNET::magfield =  string(getenv("CALIBRATIONROOT"))+ string("/Field/Map/sphenix3dbigmapxyz.root");  // default map from the calibration database
-  G4MAGNET::magfield_rescale = 1.;  // make consistent with expected Babar field strength of 1.4T
+//  G4MAGNET::magfield_rescale = 1.;  // make consistent with expected Babar field strength of 1.4T
 
   //---------------
   // Pythia Decayer
@@ -405,6 +408,12 @@ int Fun4All_G4_Pass3Trk(
   {
     G4Setup();
   }
+
+  //------------------
+  // New Flag Handling
+  //------------------
+  FlagHandler *flg = new FlagHandler();
+  se->registerSubsystem(flg);
 
   //------------------
   // Detector Division

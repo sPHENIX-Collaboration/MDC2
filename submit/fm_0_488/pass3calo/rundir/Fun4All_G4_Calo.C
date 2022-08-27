@@ -18,6 +18,8 @@
 #include <G4_Tracking.C>
 #include <G4_User.C>
 
+#include <ffamodules/FlagHandler.h>
+
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
@@ -25,6 +27,7 @@
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
 
+R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 
 // For HepMC Hijing
@@ -32,13 +35,13 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_Calo(
     const int nEvents = 1,
-    const string &inputFile0 = "DST_CALO_G4HIT_sHijing_0_12fm-0000000001-00000.root",
-    const string &inputFile1 = "DST_VERTEX_sHijing_0_12fm-0000000001-00000.root",
+    const string &inputFile0 = "DST_CALO_G4HIT_sHijing_0_488fm_50kHz_bkg_0_20fm-0000000040-00000.root",
+    const string &inputFile1 = "DST_VERTEX_sHijing_0_488fm_50kHz_bkg_0_20fm-0000000040-00000.root",
     const string &outputFile = "G4sPHENIX_calo.root",
     const string &outdir = ".")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
-  se->Verbosity(0);
+  se->Verbosity(1);
 
   //Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
   PHRandomSeed::Verbosity(1);
@@ -77,6 +80,9 @@ int Fun4All_G4_Calo(
 
   // register all input generators with Fun4All
   InputRegister();
+
+  FlagHandler *flag = new FlagHandler();
+  se->registerSubsystem(flag);
 
   // set up production relatedstuff
    Enable::PRODUCTION = true;
@@ -142,6 +148,17 @@ int Fun4All_G4_Calo(
 //  Enable::TOPOCLUSTER = true && Enable::CEMC_TOWER && Enable::HCALIN_TOWER && Enable::HCALOUT_TOWER;
   // particle flow jet reconstruction - needs topoClusters!
 //  Enable::PARTICLEFLOW = true && Enable::TOPOCLUSTER;
+
+  //===============
+  // conditions DB flags
+  //===============
+  Enable::XPLOAD = true;
+  // tag
+  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
+  // database config
+  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
+  // 64 bit timestamp
+  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
 
   //---------------
   // Magnet Settings
@@ -347,7 +364,7 @@ int Fun4All_G4_Calo(
 
   se->End();
   se->PrintTimer();
-  se->PrintMemoryTracker();
+//  se->PrintMemoryTracker();
   std::cout << "All done" << std::endl;
   delete se;
   if (Enable::PRODUCTION)
