@@ -9,24 +9,38 @@ my @submitdir = (
 "fm_0_20/pass2/condor",
 "fm_0_20/pass3trk/condor",
 "fm_0_20/pass3calo/condor",
-"fm_0_20/pass4trk/condor",
+"fm_0_20/pass4_job0/condor",
+"fm_0_20/pass4_jobA/condor",
+"fm_0_20/pass4_jobC/condor",
+"fm_0_488/pass2/condor",
+"fm_0_488/pass3trk/condor",
+"fm_0_488/pass3calo/condor",
+"fm_0_488/pass4_job0/condor",
+"fm_0_488/pass4_jobA/condor",
+"fm_0_488/pass4_jobC/condor",
 "pythia8_pp_mb/pass2/condor",
 "pythia8_pp_mb/pass3trk/condor",
-"pythia8_pp_mb/pass3calo/condor",
-"pythia8_pp_mb/pass4trk/condor",
+#"pythia8_pp_mb/pass3calo/condor",
+"pythia8_pp_mb/pass4_job0/condor",
+"pythia8_pp_mb/pass4_jobA/condor",
+"pythia8_pp_mb/pass4_jobC/condor",
 "HF_pp200_signal/pass2/condor",
 "HF_pp200_signal/pass3trk/condor",
 "HF_pp200_signal/pass3calo/condor",
-"HF_pp200_signal/pass4trk/condor",
+"HF_pp200_signal/pass4_job0/condor",
+"HF_pp200_signal/pass4_jobA/condor",
+"HF_pp200_signal/pass4_jobC/condor",
 "JS_pp200_signal/pass2/condor",
 "JS_pp200_signal/pass3trk/condor",
 "JS_pp200_signal/pass3calo/condor",
-"JS_pp200_signal/pass4trk/condor",
-"JS_pp200_signal/pass5jet/condor"
+"JS_pp200_signal/pass4_job0/condor",
+"JS_pp200_signal/pass4_jobA/condor",
+"JS_pp200_signal/pass4_jobC/condor",
+"JS_pp200_signal/pass4jet/condor"
 );
 
 my @quarkfilters = ("Charm");
-my @jettriggers = ("Jet04");
+my @jettriggers = ("Jet10", "Jet30", "PhotonJet");
 
 foreach my $subdir (@submitdir)
 {
