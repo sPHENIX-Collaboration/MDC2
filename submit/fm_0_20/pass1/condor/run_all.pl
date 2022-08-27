@@ -32,7 +32,7 @@ my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::er
 
 my $maxsubmit = $ARGV[0];
 my $hijing_runnumber = 1;
-my $runnumber = 40;
+my $runnumber = 43;
 my $events = 500;
 #$events = 100; # for ftfp_bert_hp
 my $evtsperfile = 10000;
