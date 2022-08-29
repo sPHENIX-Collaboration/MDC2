@@ -22,6 +22,7 @@
 #include <QA.C>
 
 #include <ffamodules/FlagHandler.h>
+#include <ffamodules/XploadInterface.h>
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
@@ -34,18 +35,15 @@
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
 
-// For HepMC Hijing
-// try inputFile = /sphenix/sim/sim01/sphnxpro/sHijing_HepMC/sHijing_0-12fm.dat
-
 int Fun4All_G4_Pass3Trk(
     const int nEvents = 1,
-    const string &inputFile0 = "DST_TRKR_G4HIT_pythia8_Jet04_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000004-00003.root",
-    const string &inputFile1 = "DST_TRUTH_G4HIT_pythia8_Jet04_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000004-00003.root",
+    const string &inputFile0 = "DST_TRKR_G4HIT_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000004-00003.root",
+    const string &inputFile1 = "DST_TRUTH_G4HIT_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000004-00003.root",
     const string &outputFile = "G4sPHENIX.root",
     const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
     const int skip = 0,
     const string &outdir = ".",
-    const string &jettrigger = "Jet04")
+    const string &jettrigger = "Jet30")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -64,6 +62,10 @@ int Fun4All_G4_Pass3Trk(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
+  Enable::XPLOAD = true;
+  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
+  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
+  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
 
   //===============
   // Input options
@@ -611,13 +613,14 @@ int Fun4All_G4_Pass3Trk(
   // Exit
   //-----
 
+  XploadInterface::instance()->Print(); // print used DB files
   se->End();
+  se->PrintTimer();
   std::cout << "All done" << std::endl;
   if (Enable::PRODUCTION)
   {
     DstOutput_move();
   }
-  se->PrintTimer();
 
   delete se;
   gSystem->Exit(0);
