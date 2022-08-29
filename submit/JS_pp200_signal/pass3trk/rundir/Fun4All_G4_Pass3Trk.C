@@ -22,6 +22,7 @@
 #include <QA.C>
 
 #include <ffamodules/FlagHandler.h>
+#include <ffamodules/XploadInterface.h>
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
@@ -31,11 +32,8 @@
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
 
-R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
-
-// For HepMC Hijing
-// try inputFile = /sphenix/sim/sim01/sphnxpro/sHijing_HepMC/sHijing_0-12fm.dat
+R__LOAD_LIBRARY(libffamodules.so)
 
 int Fun4All_G4_Pass3Trk(
     const int nEvents = 1,
@@ -45,7 +43,7 @@ int Fun4All_G4_Pass3Trk(
     const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
     const int skip = 0,
     const string &outdir = ".",
-    const string &quarkfilter = "NONE")
+    const string &jettrigger = "Jet30")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -64,6 +62,10 @@ int Fun4All_G4_Pass3Trk(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
+  Enable::XPLOAD = true;
+  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
+  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
+  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
 
   //===============
   // Input options
@@ -228,9 +230,6 @@ int Fun4All_G4_Pass3Trk(
   // register all input generators with Fun4All
   InputRegister();
 
-  FlagHandler *flag = new FlagHandler();
-  se->registerSubsystem(flag);
-
   // set up production relatedstuff
     Enable::PRODUCTION = true;
 
@@ -392,7 +391,7 @@ int Fun4All_G4_Pass3Trk(
 
   //  const string magfield = "1.5"; // alternatively to specify a constant magnetic field, give a float number, which will be translated to solenoidal field in T, if string use as fieldmap name (including path)
   //  G4MAGNET::magfield =  string(getenv("CALIBRATIONROOT"))+ string("/Field/Map/sphenix3dbigmapxyz.root");  // default map from the calibration database
-  G4MAGNET::magfield_rescale = 1.;  // make consistent with expected Babar field strength of 1.4T
+//  G4MAGNET::magfield_rescale = 1.;  // make consistent with expected Babar field strength of 1.4T
 
   //---------------
   // Pythia Decayer
@@ -412,6 +411,12 @@ int Fun4All_G4_Pass3Trk(
   {
     G4Setup();
   }
+
+  //------------------
+  // New Flag Handling
+  //------------------
+  FlagHandler *flg = new FlagHandler();
+  se->registerSubsystem(flg);
 
   //------------------
   // Detector Division
@@ -559,7 +564,7 @@ int Fun4All_G4_Pass3Trk(
 
   if (Enable::PRODUCTION)
   {
-    CreateDstOutput(runnumber, segment, quarkfilter);
+    CreateDstOutput(runnumber, segment,jettrigger);
 //    Production_CreateOutputDir();
   }
 
@@ -608,13 +613,14 @@ int Fun4All_G4_Pass3Trk(
   // Exit
   //-----
 
+  XploadInterface::instance()->Print(); // print used DB files
   se->End();
+  se->PrintTimer();
   std::cout << "All done" << std::endl;
   if (Enable::PRODUCTION)
   {
     DstOutput_move();
   }
-  se->PrintTimer();
 
   delete se;
   gSystem->Exit(0);
