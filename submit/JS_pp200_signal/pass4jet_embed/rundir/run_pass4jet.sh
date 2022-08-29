@@ -8,10 +8,9 @@ this_script=$BASH_SOURCE
 this_script=`readlink -f $this_script`
 this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
+echo running: run_pass4jet.sh $*
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n mdc2.8
-
-echo running: run_pass4jet.sh $*
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
