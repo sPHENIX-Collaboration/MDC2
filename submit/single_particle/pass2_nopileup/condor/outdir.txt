@@ -1,0 +1,2 @@
+/sphenix/lustre01/sphnxpro/mdc2/single_particle/nopileup/calocluster
+/sphenix/lustre01/sphnxpro/mdc2/single_particle/nopileup/trkrhit
