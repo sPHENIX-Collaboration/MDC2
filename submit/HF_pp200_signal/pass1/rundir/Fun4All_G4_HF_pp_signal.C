@@ -353,17 +353,18 @@ int Fun4All_G4_HF_pp_signal(
   Enable::CEMC_QA = Enable::CEMC_CLUSTER && Enable::QA && false;
 
   Enable::HCALIN = true;
+  Enable::HCALIN_OLD = true;
 //  Enable::HCALIN_ABSORBER = false;
 //  Enable::HCALIN_CELL = Enable::HCALIN && true;
   Enable::HCALIN_TOWER = Enable::HCALIN_CELL && true;
   Enable::HCALIN_CLUSTER = Enable::HCALIN_TOWER && true;
   Enable::HCALIN_EVAL = Enable::HCALIN_CLUSTER && false;
   Enable::HCALIN_QA = Enable::HCALIN_CLUSTER && Enable::QA && false;
-
   Enable::MAGNET = true;
 //  Enable::MAGNET_ABSORBER = false;
 
   Enable::HCALOUT = true;
+  Enable::HCALOUT_OLD = true;
 //  Enable::HCALOUT_ABSORBER = false;
 //  Enable::HCALOUT_CELL = Enable::HCALOUT && true;
   Enable::HCALOUT_TOWER = Enable::HCALOUT_CELL && true;
