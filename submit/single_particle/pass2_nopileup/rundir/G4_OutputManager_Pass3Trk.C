@@ -32,7 +32,7 @@ void CreateDstOutput(int runnumber, int segment, const string &filetype)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "DST_TRKR_HIT" + string(segrun) + ".root";;
+  FullOutFile = "DST_TRKR_HIT_" + string(segrun) + ".root";;
   out = new Fun4AllDstOutputManager("TRKROUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("TRKR_HITSET");
