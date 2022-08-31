@@ -94,6 +94,7 @@ int Fun4All_G4_sPHENIX_job0(
   out->AddNode("Sync");
   out->AddNode("EventHeader");
   out->AddNode("TRKR_CLUSTER"); 
+  out->AddNode("TRKR_CLUSTERHITASSOC");
   out->AddNode("TRKR_CLUSTERCROSSINGASSOC");
   se->registerOutputManager(out);
 
