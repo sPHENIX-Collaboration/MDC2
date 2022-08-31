@@ -19,6 +19,8 @@
 #include <G4_User.C>
 
 #include <ffamodules/FlagHandler.h>
+#include <ffamodules/XploadInterface.h>
+
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
@@ -53,6 +55,10 @@ int Fun4All_G4_Calo(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
+  Enable::XPLOAD = true;
+  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
+  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
+  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
 
   //===============
   // Input options
@@ -346,9 +352,9 @@ int Fun4All_G4_Calo(
   // Exit
   //-----
 
+  XploadInterface::instance()->Print(); // print used DB files
   se->End();
   se->PrintTimer();
-  se->PrintMemoryTracker();
   std::cout << "All done" << std::endl;
   delete se;
   if (Enable::PRODUCTION)

@@ -21,6 +21,9 @@
 #include <G4_User.C>
 #include <QA.C>
 
+#include <ffamodules/FlagHandler.h>
+#include <ffamodules/XploadInterface.h>
+
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
@@ -30,9 +33,7 @@
 #include <phool/recoConsts.h>
 
 R__LOAD_LIBRARY(libfun4all.so)
-
-// For HepMC Hijing
-// try inputFile = /sphenix/sim/sim01/sphnxpro/sHijing_HepMC/sHijing_0-12fm.dat
+R__LOAD_LIBRARY(libffamodules.so)
 
 int Fun4All_G4_Pass3Trk(
     const int nEvents = 1,
@@ -59,6 +60,10 @@ int Fun4All_G4_Pass3Trk(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
+  Enable::XPLOAD = true;
+  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
+  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
+  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
 
   //===============
   // Input options
@@ -599,13 +604,14 @@ int Fun4All_G4_Pass3Trk(
   // Exit
   //-----
 
+  XploadInterface::instance()->Print(); // print used DB files
   se->End();
+  se->PrintTimer();
   std::cout << "All done" << std::endl;
   if (Enable::PRODUCTION)
   {
     DstOutput_move();
   }
-  se->PrintTimer();
 
   delete se;
   gSystem->Exit(0);
