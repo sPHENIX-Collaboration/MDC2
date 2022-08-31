@@ -12,6 +12,9 @@ my @submitdir = (
 "fm_0_20/pass4_job0/condor",
 "fm_0_20/pass4_jobA/condor",
 "fm_0_20/pass4_jobC/condor",
+"fm_0_20/pass4_nopileup_job0/condor",
+"fm_0_20/pass4_nopileup_jobA/condor",
+"fm_0_20/pass4_nopileup_jobC/condor",
 "fm_0_488/pass2/condor",
 "fm_0_488/pass3trk/condor",
 "fm_0_488/pass3calo/condor",
@@ -32,14 +35,20 @@ my @submitdir = (
 "HF_pp200_signal/pass4_jobC/condor",
 "JS_pp200_signal/pass2/condor",
 "JS_pp200_signal/pass3trk/condor",
+"JS_pp200_signal/pass3trk_embed/condor",
 "JS_pp200_signal/pass3calo/condor",
+"JS_pp200_signal/pass3calo_embed/condor",
 "JS_pp200_signal/pass4_job0/condor",
 "JS_pp200_signal/pass4_jobA/condor",
 "JS_pp200_signal/pass4_jobC/condor",
-"JS_pp200_signal/pass4jet/condor"
+"JS_pp200_signal/pass4_job0_embed/condor",
+"JS_pp200_signal/pass4_jobA_embed/condor",
+"JS_pp200_signal/pass4_jobC_embed/condor",
+"JS_pp200_signal/pass4jet/condor",
+"JS_pp200_signal/pass4jet_embed/condor"
 );
 
-my @quarkfilters = ("Charm");
+my @quarkfilters = ("Charm", "Bottom");
 my @jettriggers = ("Jet10", "Jet30", "PhotonJet");
 
 foreach my $subdir (@submitdir)
@@ -60,7 +69,7 @@ foreach my $subdir (@submitdir)
     {
 	foreach my $qf (@quarkfilters)
 	{
-	    my $submitcmd = sprintf("perl run_all.pl 20000 %s -inc",$qf);
+	    my $submitcmd = sprintf("perl run_all.pl 5000 %s -inc",$qf);
 	    print "executing $submitcmd in $newdir\n";
 	    system($submitcmd);
 	}
@@ -69,14 +78,14 @@ foreach my $subdir (@submitdir)
     {
 	foreach my $qf (@jettriggers)
 	{
-	    my $submitcmd = sprintf("perl run_all.pl 20000 %s -inc",$qf);
+	    my $submitcmd = sprintf("perl run_all.pl 5000 %s -inc",$qf);
 	    print "executing $submitcmd in $newdir\n";
 	    system($submitcmd);
 	}
     }
     else
     {
-	my $submitcmd = sprintf("perl run_all.pl 20000 -inc");
+	my $submitcmd = sprintf("perl run_all.pl 5000 -inc");
 	print "executing $submitcmd in $newdir\n";
 	system($submitcmd);
     }
