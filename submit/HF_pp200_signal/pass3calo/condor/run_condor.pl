@@ -63,7 +63,7 @@ print F "Requirements = (CPU_Type == \"mdc2\")\n";
 #print F "request_memory = 1500MB\n";
 print F "request_memory = 2048MB\n";
 print F "Priority 	= 903\n";
-print F "concurrency_limits = PHENIX_100\n";
+#print F "concurrency_limits = PHENIX_100\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);
