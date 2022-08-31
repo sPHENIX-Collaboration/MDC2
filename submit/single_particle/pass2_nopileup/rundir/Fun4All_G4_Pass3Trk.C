@@ -39,7 +39,7 @@ int Fun4All_G4_Pass3Trk(
     const int nEvents = 1,
     const string &inputFile0 = "G4Hits_single_pi0_2000_20000MeV-0000000040-00000.root",
     const string &outdir = ".",
-    const string &filetype = "NONE")
+    const string &filetype = "single_pi0_2000_20000MeV")
 {
   const string outputFile = "G4sPHENIX.root";
   int skip = 0;
