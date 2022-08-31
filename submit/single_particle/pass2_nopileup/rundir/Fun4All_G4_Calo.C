@@ -134,6 +134,11 @@ int Fun4All_G4_Calo(
 
 //  Enable::GLOBAL_RECO = true;
   Enable::GLOBAL_FASTSIM = true;
+// turn off smearing
+  G4GLOBAL::x_smearing = 0;
+  G4GLOBAL::y_smearing = 0;
+  G4GLOBAL::z_smearing = 0;
+  G4GLOBAL::t_smearing = 0;
 
 //  Enable::CALOTRIGGER = Enable::CEMC_TOWER && Enable::HCALIN_TOWER && Enable::HCALOUT_TOWER && false;
 
