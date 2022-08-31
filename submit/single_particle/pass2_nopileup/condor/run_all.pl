@@ -112,7 +112,7 @@ while (my @res = $getfiles->fetchrow_array())
 	    $tstflag="--test";
 	}
 	my $calooutfilename = sprintf("DST_CALO_CLUSTER_%s-%010d-%05d.root",$filetype,$runnumber,$segment);
-	my $subcmd = sprintf("perl run_condor.pl %d %s  %s %s %s %d %d %s", $outevents, $filetype, $lfn, $calooutfilename, $outdir[0], $outdir[1],$runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %d %d %s", $outevents, $filetype, $lfn, $calooutfilename, $outdir[0], $outdir[1],$runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
