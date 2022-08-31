@@ -275,6 +275,10 @@ if ($lfn =~ /pythia8/)
 {
     $splitstring = "_pythia8";
 }
+if ($lfn =~ /single/)
+{
+    $splitstring = "_single";
+}
 my @sp1 = split(/$splitstring/,$lfn);
 if (! defined $test)
 {
