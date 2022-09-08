@@ -14,6 +14,7 @@
 #include <phpythia8/PHPy8JetTrigger.h>
 
 #include <ffamodules/FlagHandler.h>
+#include <ffamodules/XploadInterface.h>
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
