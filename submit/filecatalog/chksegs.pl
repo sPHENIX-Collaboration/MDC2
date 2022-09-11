@@ -10,7 +10,7 @@ use DBI;
 my $system = 0;
 my $verbosity;
 my $nopileup;
-my $runnumber = 4;
+my $runnumber = 40;
 my $embed;
 GetOptions("embed" => \$embed, "run:i"=>\$runnumber, "type:i"=>\$system, "verbosity" => \$verbosity, "nopileup" => \$nopileup);
 
