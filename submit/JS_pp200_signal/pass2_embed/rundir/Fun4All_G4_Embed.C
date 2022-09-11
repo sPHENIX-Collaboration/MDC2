@@ -270,10 +270,12 @@ int Fun4All_G4_Embed(
   Enable::CEMC = true;
 
   Enable::HCALIN = true;
+  Enable::HCALIN_OLD = true;
 
   Enable::MAGNET = true;
 
   Enable::HCALOUT = true;
+  Enable::HCALOUT_OLD = true;
 
   Enable::EPD = true;
 
