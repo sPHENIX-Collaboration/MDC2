@@ -92,8 +92,8 @@ if ($#ARGV < 0)
     print "    8 : HF pythia8 Bottom\n";
     print "    9 : HF pythia8 CharmD0\n";
     print "   10 : HF pythia8 BottomD0\n";
-    print "   11 : JS pythia8 Jet R=0.4\n";
-    print "   12 : JS pythia8 Jet > 15GeV\n";
+    print "   11 : JS pythia8 Jet > 30GeV\n";
+    print "   12 : JS pythia8 Jet > 10GeV\n";
     print "   13 : JS pythia8 Photon Jet\n";
     print "-dsttype:\n";
     foreach my $tp (sort keys %daughters)
@@ -172,7 +172,9 @@ if (defined $embed)
     $productionsubdir{"DST_CALO_G4HIT"} = "pass2_embed";
     $productionsubdir{"DST_TRUTH"} = "pass3trk_embed";
     $productionsubdir{"DST_TRUTH_G4HIT"} = "pass2_embed";
-    $productionsubdir{"DST_TRACKS"} = "pass4trk_embed";
+    $productionsubdir{"DST_TRACKS"} = "pass4_jobC_embed";
+    $productionsubdir{"DST_TRACKSEEDS"} = "pass4_jobA_embed";
+    $productionsubdir{"DST_TRKR_CLUSTER"} = "pass4_job0_embed";
     $productionsubdir{"DST_TRKR_HIT"} = "pass3trk_embed";
     $productionsubdir{"DST_TRKR_G4HIT"} = "pass2_embed";
     $productionsubdir{"DST_VERTEX"} = "pass2_embed";
