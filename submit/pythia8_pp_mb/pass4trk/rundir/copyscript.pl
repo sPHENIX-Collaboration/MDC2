@@ -279,6 +279,10 @@ if ($lfn =~ /single/)
 {
     $splitstring = "_single";
 }
+if ($lfn =~ /special/)
+{
+    $splitstring = "_special";
+}
 my @sp1 = split(/$splitstring/,$lfn);
 if (! defined $test)
 {

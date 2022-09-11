@@ -11,6 +11,7 @@
 #include <g4main/PHG4VertexSelection.h>
 
 #include <ffamodules/FlagHandler.h>
+#include <ffamodules/XploadInterface.h>
 
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
@@ -40,6 +41,17 @@ int Fun4All_G4_Pileup_pp(
   se->Verbosity(1);
 
   auto rc = recoConsts::instance();
+
+  //===============
+  // conditions DB flags
+  //===============
+  Enable::XPLOAD = true;
+  // tag
+  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
+  // database config
+  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
+  // 64 bit timestamp
+  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
 
   FlagHandler *flag = new FlagHandler();
   se->registerSubsystem(flag);
@@ -97,14 +109,15 @@ int Fun4All_G4_Pileup_pp(
   se->run(nEvents);
 
   // terminate
+  XploadInterface::instance()->Print(); // print used DB files
   se->End();
+  se->PrintTimer();
+  std::cout << "All done" << std::endl;
+  delete se;
   if (Enable::PRODUCTION)
   {
     DstOutput_move();
   }
-  se->PrintTimer();
-  std::cout << "All done" << std::endl;
-  delete se;
   gSystem->Exit(0);
   return 0;
 }
