@@ -1,9 +1,12 @@
+#include <GlobalVariables.C>
+
 #include <G4_Magnet.C>
 #include <G4_Micromegas.C>
 #include <G4_Production.C>
 #include <G4_Tracking.C>
 
 #include <ffamodules/FlagHandler.h>
+#include <ffamodules/XploadInterface.h>
 
 #include <fun4all/SubsysReco.h>
 #include <fun4all/Fun4AllServer.h>
@@ -31,6 +34,19 @@ int Fun4All_G4_sPHENIX_jobA(
   std::cout << "Fun4All_G4_sPHENIX_jobA - nSkipEvents: " << nSkipEvents << std::endl;
   std::cout << "Fun4All_G4_sPHENIX_jobA - inputFile: " << inputFile << std::endl;
   std::cout << "Fun4All_G4_sPHENIX_jobA - outputFile: " << outputFile << std::endl;
+
+  recoConsts *rc = recoConsts::instance();
+
+  //===============
+  // conditions DB flags
+  //===============
+  Enable::XPLOAD = true;
+  // tag
+  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
+  // database config
+  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
+  // 64 bit timestamp
+  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
 
   // set up production relatedstuff
   Enable::PRODUCTION = true;
@@ -68,8 +84,8 @@ int Fun4All_G4_sPHENIX_jobA(
   //------------------
   // New Flag Handling
   //------------------
-  FlagHandler *flg = new FlagHandler();
-  se->registerSubsystem(flg);
+  FlagHandler *flag = new FlagHandler();
+  se->registerSubsystem(flag);
 
   MagnetFieldInit();
   TrackingInit();
@@ -116,6 +132,7 @@ int Fun4All_G4_sPHENIX_jobA(
   se->run(nEvents);
 
   // terminate
+  XploadInterface::instance()->Print(); // print used DB files
   se->End();
   se->PrintTimer();
   std::cout << "All done" << std::endl;
