@@ -20,6 +20,7 @@
 #include <G4_User.C>
 #include <QA.C>
 
+#include <phpythia8/PHPy8JetTrigger.h>
 #include <phpythia8/PHPy8ParticleTrigger.h>
 
 #include <ffamodules/FlagHandler.h>
@@ -152,6 +153,7 @@ int Fun4All_G4_HF_pp_signal(
   else if (HF_Q_filter == "Charmonia") pythia8_config_file += "phpythia8_charmonium2ll_MDC2.cfg";
   else if (HF_Q_filter == "b2JpsiX") pythia8_config_file += "phpythia8_b2JpsiX_MDC2.cfg";
   else if (HF_Q_filter == "b2DX") pythia8_config_file += "phpythia8_b2DX_MDC2.cfg";
+  else if (HF_Q_filter == "JetD0") pythia8_config_file += "phpythia8_jets_d02kpi_MDC2.cfg";
   else if (HF_Q_filter == "Charm" || HF_Q_filter == "Bottom") pythia8_config_file += "phpythia8_minBias_MDC2.cfg";
   else
   {
@@ -171,7 +173,7 @@ int Fun4All_G4_HF_pp_signal(
   {
     PHPy8ParticleTrigger * p8_hf_signal_trigger = new PHPy8ParticleTrigger();
 
-    if (HF_Q_filter == "CharmD0" || HF_Q_filter == "CharmD+" || HF_Q_filter == "CharmLc" || HF_Q_filter == "Charm")
+    if (HF_Q_filter == "JetD0" || HF_Q_filter == "CharmD0" || HF_Q_filter == "CharmD+" || HF_Q_filter == "CharmLc" || HF_Q_filter == "Charm")
     {
       p8_hf_signal_trigger->AddParticles(4);
       p8_hf_signal_trigger->AddParticles(-4);
@@ -193,12 +195,20 @@ int Fun4All_G4_HF_pp_signal(
     p8_hf_signal_trigger->SetYHighLow(1.5, -1.5); // sample a rapidity range higher than the sPHENIX tracking pseudorapidity
     p8_hf_signal_trigger->SetStableParticleOnly(false); // process unstable particles that include quarks
     p8_hf_signal_trigger->PrintConfig();
-//    p8_hf_signal_trigger->Verbosity(10);
+    //p8_hf_signal_trigger->Verbosity(10);
+
+    if (HF_Q_filter == "JetD0")
+    {
+      PHPy8JetTrigger *p8_jet_signal_trigger = new PHPy8JetTrigger();
+      p8_jet_signal_trigger->SetEtaHighLow(1.1, -1.1);
+      p8_jet_signal_trigger->SetMinJetPt(10.);
+      p8_jet_signal_trigger->PrintConfig();
+      INPUTGENERATOR::Pythia8->register_trigger(p8_jet_signal_trigger);
+    }
 
     INPUTGENERATOR::Pythia8->register_trigger(p8_hf_signal_trigger);
     INPUTGENERATOR::Pythia8->set_trigger_AND();
     Input::ApplysPHENIXBeamParameter(INPUTGENERATOR::Pythia8);
-
   }
 
   // Simple Input generator:
