@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 40;
+my $runnumber = 44;
 my $test;
 my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
@@ -90,7 +90,7 @@ while (my @res = $getfiles->fetchrow_array())
 	foreach my $type (sort keys %outfiletype)
 	{
             my $lfn =  sprintf("%s_%s-%010d-%05d.root",$type,$filetype,$runnumber,$segment);
-            print "checking for $lfn\n";
+#            print "checking for $lfn\n";
 	    $chkfile->execute($lfn);
 	    if ($chkfile->rows > 0)
 	    {
