@@ -19,6 +19,7 @@
 #include <G4_User.C>
 
 #include <ffamodules/FlagHandler.h>
+#include <ffamodules/XploadInterface.h>
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
@@ -89,6 +90,7 @@ int Fun4All_G4_Calo(
   //===============
   // conditions DB flags
   //===============
+  Enable::XPLOAD = true;
   // tag
   rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
   // database
@@ -362,9 +364,9 @@ int Fun4All_G4_Calo(
   // Exit
   //-----
 
+  XploadInterface::instance()->Print(); // print used DB files
   se->End();
   se->PrintTimer();
-  se->PrintMemoryTracker();
   std::cout << "All done" << std::endl;
   delete se;
   if (Enable::PRODUCTION)
