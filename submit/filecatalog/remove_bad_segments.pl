@@ -14,7 +14,7 @@ my $topdir = "/sphenix/u/sphnxpro/MDC2/submit";
 my $kill;
 my $system = 0;
 my $dsttype = "none";
-my $runnumber = 2;
+my $runnumber = 40;
 my $nopileup;
 my $verbose;
 my $embed;
@@ -163,7 +163,9 @@ if (defined $nopileup)
     $productionsubdir{"DST_CALO_CLUSTER"} = "pass2_nopileup";
     $productionsubdir{"DST_TRKR_CLUSTER"} = "pass2_nopileup";
     $productionsubdir{"DST_TRUTH"} = "pass2_nopileup";
-    $productionsubdir{"DST_TRACKS"} = "pass3_nopileup";
+    $productionsubdir{"DST_TRACKS"} = "pass4_jobC_nopileup";
+    $productionsubdir{"DST_TRACKSEEDS"} = "pass4_jobA_nopileup";
+    $productionsubdir{"DST_TRKR_CLUSTER"} = "pass4_job0_nopileup";
 }
 if (defined $embed)
 {
