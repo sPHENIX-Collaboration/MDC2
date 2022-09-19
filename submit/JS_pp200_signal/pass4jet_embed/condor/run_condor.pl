@@ -17,6 +17,7 @@ if ($#ARGV < 3)
 
 my $localdir=`pwd`;
 chomp $localdir;
+my $baseprio = 44;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_pass4jet.sh",$rundir);
 my $nevents = $ARGV[0];
@@ -26,6 +27,10 @@ my $dstoutfile = $ARGV[3];
 my $dstoutdir = $ARGV[4];
 my $runnumber = $ARGV[5];
 my $sequence = $ARGV[6];
+if ($sequence < 100)
+{
+    $baseprio = 90;
+}
 my $suffix = sprintf("_%s-%010d-%05d",$jettrigger,$runnumber,$sequence);
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
@@ -59,7 +64,7 @@ print F "accounting_group = group_sphenix.mdc2\n";
 print F "accounting_group_user = sphnxpro\n";
 print F "Requirements = (CPU_Type == \"mdc2\")\n";
 print F "request_memory = 6144MB\n";
-print F "Priority 	= 29\n";
+print F "Priority = $baseprio\n";
 #print F "concurrency_limits = PHENIX_2000\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
