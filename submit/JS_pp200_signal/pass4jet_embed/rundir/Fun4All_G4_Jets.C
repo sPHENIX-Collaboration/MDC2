@@ -23,7 +23,7 @@ R__LOAD_LIBRARY(libfun4all.so)
 void Fun4All_G4_Jets(
     const int nEvents = 10,
     const string &inputFile = "DST_TRUTH_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000040-00000.root",
-    const string &outputFile = "DST_TRUTH_JETS_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000040-00000.root",
+    const string &outputFile = "DST_TRUTH_JET_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000040-00000.root",
     const string &outdir = ".")
 {
   // this convenience library knows all our i/o objects so you don't
