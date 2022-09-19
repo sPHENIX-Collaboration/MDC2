@@ -20,6 +20,7 @@ else
 }
 my $localdir=`pwd`;
 chomp $localdir;
+my $baseprio = 41;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_hfprod.sh",$rundir);
 my $nevents = $ARGV[0];
@@ -28,6 +29,10 @@ my $dstoutdir = $ARGV[2];
 my $dstoutfile = $ARGV[3];
 my $runnumber = $ARGV[4];
 my $sequence = $ARGV[5];
+if ($sequence < 100)
+{
+    $baseprio = 90;
+}
 my $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
@@ -62,7 +67,7 @@ print F "accounting_group_user = sphnxpro\n";
 print F "Requirements = (CPU_Type == \"mdc2\")\n";
 #print F "request_memory = 4000MB\n";
 print F "request_memory = 4096MB\n";
-print F "Priority 	= 11\n";
+print F "Priority = $baseprio\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);

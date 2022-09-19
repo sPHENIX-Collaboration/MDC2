@@ -17,6 +17,7 @@ if ($#ARGV < 3)
 
 my $localdir=`pwd`;
 chomp $localdir;
+my $baseprio = 42;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_pileup.sh",$rundir);
 my $outevents = $ARGV[0];
@@ -26,6 +27,10 @@ my $backgroundlist = $ARGV[3];
 my $dstoutdir = $ARGV[4];
 my $runnumber = $ARGV[5];
 my $sequence = $ARGV[6];
+if ($sequence < 100)
+{
+    $baseprio = 90;
+}
 my $suffix = sprintf("%s_3MHz-%010d-%05d",$quarkfilter,$runnumber,$sequence);
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
@@ -60,7 +65,7 @@ print F "accounting_group_user = sphnxpro\n";
 print F "Requirements = (CPU_Type == \"mdc2\")\n";
 #print F "Requirements = (CPU_Type == \"mdc2_minio\")\n";
 print F "request_memory = 2048MB\n";
-print F "Priority 	= 42\n";
+print F "Priority = $baseprio\n";
 #print F "concurrency_limits = PHENIX_1000\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";

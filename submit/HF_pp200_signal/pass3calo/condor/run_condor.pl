@@ -17,6 +17,7 @@ if ($#ARGV < 3)
 
 my $localdir=`pwd`;
 chomp $localdir;
+my $baseprio = 43;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_pass3calo.sh",$rundir);
 my $nevents = $ARGV[0];
@@ -27,6 +28,10 @@ my $dstoutfile = $ARGV[4];
 my $dstoutdir = $ARGV[5];
 my $runnumber = $ARGV[6];
 my $sequence = $ARGV[7];
+if ($sequence < 100)
+{
+    $baseprio = 90;
+}
 my $suffix = sprintf("_%s-%010d-%05d",$quarkfilter,$runnumber,$sequence);
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
@@ -62,7 +67,7 @@ print F "Requirements = (CPU_Type == \"mdc2\")\n";
 #print F "Requirements = (CPU_Type == \"mdc2_minio\")\n";
 #print F "request_memory = 1500MB\n";
 print F "request_memory = 2048MB\n";
-print F "Priority 	= 903\n";
+print F "Priority = $baseprio\n";
 #print F "concurrency_limits = PHENIX_100\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
