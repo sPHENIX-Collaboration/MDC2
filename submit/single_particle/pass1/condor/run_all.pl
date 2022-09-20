@@ -8,7 +8,7 @@ use Getopt::Long;
 my $test;
 my $incremental;
 my $killexist;
-my $runnumber = 44;
+my $runnumber = 40;
 my $events = 1000;
 GetOptions("test"=>\$test, "increment"=>\$incremental, "killexist" => \$killexist);
 if ($#ARGV < 3)
@@ -36,10 +36,21 @@ my $pmax = $ARGV[3];
 my $filetype="single";
 my $partprop = sprintf("%s_%d_%d",$particle,$pmin,$pmax);
 $filetype=sprintf("%s_%sMeV",$filetype,$partprop);
-open(F,"outdir.txt");
-my $outdir=<F>;
-chomp  $outdir;
-close(F);
+
+my $condorlistfile =  sprintf("condor.list");
+if (-f $condorlistfile)
+{
+    unlink $condorlistfile;
+}
+
+
+if (! -f "outdir.txt")
+{
+    print "could not find outdir.txt\n";
+    exit(1);
+}
+my $outdir = `cat outdir.txt`;
+chomp $outdir;
 $outdir = sprintf("%s/%s",$outdir,$partprop);
 if ($outdir =~ /lustre/)
 {
@@ -100,12 +111,24 @@ for (my $isub = 0; $isub < $maxsubmit; $isub++)
 	if ($nsubmit >= $maxsubmit)
 	{
 	    print "maximum number of submissions reached, exiting\n";
-	    exit(0);
+	    last;
 	}
     }
     else
     {
 	print "output file already exists\n";
 	$njob++;
+    }
+}
+
+if (-f $condorlistfile)
+{
+    if (defined $test)
+    {
+	print "would submit condor.job\n";
+    }
+    else
+    {
+	system("condor_submit condor.job");
     }
 }

@@ -20,6 +20,7 @@ else
 }
 my $localdir=`pwd`;
 chomp $localdir;
+my $baseprio = 80;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_pass1_single.sh",$rundir);
 my $nevents = $ARGV[0];
@@ -30,6 +31,12 @@ my $dstoutdir = $ARGV[4];
 my $dstoutfile = $ARGV[5];
 my $runnumber = $ARGV[6];
 my $sequence = $ARGV[7];
+
+if ($sequence < 100)
+{
+    $baseprio = 90;
+}
+my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
@@ -63,16 +70,20 @@ print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
 print F "accounting_group = group_sphenix.mdc2\n";
 print F "accounting_group_user = sphnxpro\n";
 print F "Requirements = (CPU_Type == \"mdc2\")\n";
-print F "request_memory = 6144MB\n";
-print F "Priority 	= 91\n";
+print F "request_memory = 4096MB\n";
+print F "Priority = $baseprio\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);
-if (defined $test)
-{
-    print "would submit $jobfile\n";
-}
-else
-{
-    system("condor_submit $jobfile");
-}
+#if (defined $test)
+#{
+#    print "would submit $jobfile\n";
+#}
+#else
+#{
+#    system("condor_submit $jobfile");
+#}
+
+open(F,">>$condorlistfile");
+print F "$executable, $nevents, $particle, $pmin, $pmax, $dstoutfile, $dstoutdir, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+close(F);
