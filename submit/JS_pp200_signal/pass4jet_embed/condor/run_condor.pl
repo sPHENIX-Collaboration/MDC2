@@ -7,7 +7,7 @@ use File::Path;
 
 my $test;
 GetOptions("test"=>\$test);
-if ($#ARGV < 3)
+if ($#ARGV < 5)
 {
     print "usage: run_condor.pl <events> <jettrigger> <truth infile> <outfile> <outdir> <runnumber> <sequence>\n";
     print "options:\n";
@@ -17,7 +17,7 @@ if ($#ARGV < 3)
 
 my $localdir=`pwd`;
 chomp $localdir;
-my $baseprio = 44;
+my $baseprio = 84;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_pass4jet.sh",$rundir);
 my $nevents = $ARGV[0];
@@ -31,6 +31,7 @@ if ($sequence < 100)
 {
     $baseprio = 90;
 }
+my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("_%s-%010d-%05d",$jettrigger,$runnumber,$sequence);
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
@@ -69,11 +70,14 @@ print F "Priority = $baseprio\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);
-if (defined $test)
-{
-    print "would submit $jobfile\n";
-}
-else
-{
-    system("condor_submit $jobfile");
-}
+#if (defined $test)
+#{
+#    print "would submit $jobfile\n";
+#}
+#else
+#{
+#    system("condor_submit $jobfile");
+#}
+open(F,">>$condorlistfile");
+print F "$executable, $nevents, $infile, $dstoutfile, $dstoutdir, $jettrigger, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+close(F);
