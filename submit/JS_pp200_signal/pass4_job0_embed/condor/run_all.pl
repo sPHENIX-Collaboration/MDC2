@@ -40,6 +40,12 @@ if ($jettrigger  ne "Jet10" &&
     exit(1);
 }
 
+my $condorlistfile =  sprintf("condor.list");
+if (-f $condorlistfile)
+{
+    unlink $condorlistfile;
+}
+
 my $outfilelike = sprintf("pythia8_%s_sHijing_0_20fm_50kHz_bkg_0_20fm",$jettrigger);
 
 if (! -f "outdir.txt")
@@ -103,13 +109,24 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $nsubmit++;
 	}
-	if ($nsubmit >= $maxsubmit)
+	if ($maxsubmit != 0 && $nsubmit >= $maxsubmit)
 	{
 	    print "maximum number of submissions reached, exiting\n";
-	    exit(0);
+	    last;
 	}
     }
 }
 $getfiles->finish();
 $chkfile->finish();
 $dbh->disconnect;
+if (-f $condorlistfile)
+{
+    if (defined $test)
+    {
+	print "would submit condor.job\n";
+    }
+    else
+    {
+	system("condor_submit condor.job");
+    }
+}
