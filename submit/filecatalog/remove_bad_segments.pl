@@ -393,6 +393,11 @@ foreach my $rem (keys %removethese)
     if (exists $productionsubdir{$rem})
     {
 	$condor_subdir = sprintf("%s/%s/condor/log",$condor_subdir,$productionsubdir{$rem});
+	my $condorsubdir = sprintf("%s/%s",$condor_subdir,$condorfileadd);
+	if (-d $condorsubdir)
+	{
+	    $condor_subdir = sprintf("%s",$condorsubdir);
+	}
     }
     else
     {
