@@ -41,6 +41,13 @@ if ($quarkfilter  ne "Charm" &&
     print "second argument has to be either Charm, CharmD0, Bottom, BottomD0, JetD0\n";
     exit(1);
 }
+
+my $condorlistfile =  sprintf("condor.list");
+if (-f $condorlistfile)
+{
+    unlink $condorlistfile;
+}
+
 if (! -f "outdir.txt")
 {
     print "could not find outdir.txt\n";
@@ -128,12 +135,23 @@ foreach my $segment (sort keys %calohash)
 	{
 	    $nsubmit++;
 	}
-	if ($nsubmit >= $maxsubmit)
+	if ($maxsubmit != 0 && $nsubmit >= $maxsubmit)
 	{
 	    print "maximum number of submissions reached, exiting\n";
-	    exit(0);
+	    last;
 	}
     }
 }
 $chkfile->finish();
 $dbh->disconnect;
+if (-f $condorlistfile)
+{
+    if (defined $test)
+    {
+	print "would submit condor.job\n";
+    }
+    else
+    {
+	system("condor_submit condor.job");
+    }
+}
