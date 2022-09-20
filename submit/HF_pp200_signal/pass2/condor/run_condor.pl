@@ -31,10 +31,11 @@ if ($sequence < 100)
 {
     $baseprio = 90;
 }
-my $suffix = sprintf("%s_3MHz-%010d-%05d",$quarkfilter,$runnumber,$sequence);
-my $logdir = sprintf("%s/log",$localdir);
+my $condorlistfile = sprintf("condor.list");
+my $suffix = sprintf("%s-%010d-%05d",$quarkfilter,$runnumber,$sequence);
+my $logdir = sprintf("%s/log/%s",$localdir,$quarkfilter);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/HF_pp200_signal/pass2");
+my $condorlogdir = sprintf("/tmp/HF_pp200_signal/pass2/%s",$quarkfilter);
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
 if (-f $jobfile)
@@ -70,11 +71,16 @@ print F "Priority = $baseprio\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);
-if (defined $test)
-{
-    print "would submit $jobfile\n";
-}
-else
-{
-    system("condor_submit $jobfile");
-}
+
+#if (defined $test)
+#{
+#    print "would submit $jobfile\n";
+#}
+#else
+#{
+#    system("condor_submit $jobfile");
+#}
+
+open(F,">>$condorlistfile");
+print F "$executable, $outevents, $infile, $backgroundlist, $dstoutdir, $quarkfilter, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+close(F);
