@@ -15,7 +15,7 @@ my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet04\", \"PhotonJet\" production>\n";
+    print "usage: run_all.pl <number of jobs>  <\"Jet10\", \"Jet30\" or \"PhotonJet\"> production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--test : dryrun - create jobfiles\n";
@@ -36,8 +36,14 @@ if ($jettrigger  ne "Jet10" &&
     $jettrigger  ne "Jet30" &&
     $jettrigger  ne "PhotonJet")
 {
-    print "second argument has to be Jet04 or PhotonJet\n";
+    print "second argument has to be Jet10, Jet30 or PhotonJet\n";
     exit(1);
+}
+
+my $condorlistfile =  sprintf("condor.list");
+if (-f $condorlistfile)
+{
+    unlink $condorlistfile;
 }
 
 my $jettriggerWithMHz = sprintf("%s_3MHz",$jettrigger);
@@ -103,13 +109,24 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $nsubmit++;
 	}
-	if ($nsubmit >= $maxsubmit)
+	if ($maxsubmit != 0 && $nsubmit >= $maxsubmit)
 	{
 	    print "maximum number of submissions reached, exiting\n";
-	    exit(0);
+	    last;
 	}
     }
 }
 $getfiles->finish();
 $chkfile->finish();
 $dbh->disconnect;
+if (-f $condorlistfile)
+{
+    if (defined $test)
+    {
+	print "would submit condor.job\n";
+    }
+    else
+    {
+	system("condor_submit condor.job");
+    }
+}
