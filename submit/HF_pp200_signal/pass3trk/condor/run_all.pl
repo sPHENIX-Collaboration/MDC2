@@ -40,7 +40,12 @@ if ($quarkfilter  ne "Charm" &&
     print "second argument has to be either Charm, CharmD0, Bottom, BottomD0 or JetD0\n";
     exit(1);
 }
-my $quarkfilterWithMHz = sprintf("%s_3MHz",$quarkfilter);
+
+my $condorlistfile =  sprintf("condor.list");
+if (-f $condorlistfile)
+{
+    unlink $condorlistfile;
+}
 
 if (! -f "outdir.txt")
 {
@@ -62,6 +67,8 @@ else
   mkpath($outdir);
 }
 
+$quarkfilter = sprintf("%s_3MHz",$quarkfilter);
+
 my %outfiletype = ();
 $outfiletype{"DST_TRKR_HIT"} = 1;
 $outfiletype{"DST_TRUTH"} = 1;
@@ -71,9 +78,9 @@ my %truthhash = ();
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like '%pythia8_$quarkfilterWithMHz%' and runnumber = $runnumber order by filename") || die $DBI::error;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like '%pythia8_$quarkfilter%' and runnumber = $runnumber order by filename") || die $DBI::error;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
-my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH_G4HIT' and filename like '%pythia8_$quarkfilterWithMHz%'and runnumber = $runnumber");
+my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH_G4HIT' and filename like '%pythia8_$quarkfilter%'and runnumber = $runnumber");
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::error;
 my $ncal = $getfiles->rows;
@@ -106,7 +113,7 @@ foreach my $segment (sort keys %trkhash)
         my $foundall = 1;
 	foreach my $type (sort keys %outfiletype)
 	{
-            my $lfn =  sprintf("%s_pythia8_%s-%010d-%05d.root",$type,$quarkfilterWithMHz,$runnumber,$segment);
+            my $lfn =  sprintf("%s_pythia8_%s-%010d-%05d.root",$type,$quarkfilter,$runnumber,$segment);
 	    $chkfile->execute($lfn);
 	    if ($chkfile->rows > 0)
 	    {
@@ -143,13 +150,24 @@ foreach my $segment (sort keys %trkhash)
 	{
 	    $nsubmit++;
 	}
-	if ($nsubmit >= $maxsubmit)
+	if ($maxsubmit != 0 && $nsubmit >= $maxsubmit)
 	{
 	    print "maximum number of submissions reached, exiting\n";
-	    exit(0);
+	    last;
 	}
     }
 }
 
 $chkfile->finish();
 $dbh->disconnect;
+if (-f $condorlistfile)
+{
+    if (defined $test)
+    {
+	print "would submit condor.job\n";
+    }
+    else
+    {
+	system("condor_submit condor.job");
+    }
+}

@@ -68,7 +68,7 @@ else
   mkpath($outdir);
 }
 
-my $quarkfilter = sprintf("%s_3MHz",$quarkfilter);
+$quarkfilter = sprintf("%s_3MHz",$quarkfilter);
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here

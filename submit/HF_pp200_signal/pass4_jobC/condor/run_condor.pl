@@ -31,6 +31,7 @@ if ($sequence < 100)
 {
     $baseprio = 90;
 }
+my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s-%010d-%05d",$quarkfilter,$runnumber,$sequence);
 my $logdir = sprintf("%s/log/%s",$localdir,$quarkfilter);
 mkpath($logdir);

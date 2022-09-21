@@ -75,12 +75,14 @@ $outfiletype{"DST_TRKR_G4HIT"} = 1;
 $outfiletype{"DST_TRUTH_G4HIT"} = "DST_TRUTH";
 $outfiletype{"DST_VERTEX"} = 1;
 
-my $localdir=`pwd`;
-chomp $localdir;
-my $logdir = sprintf("%s/log",$localdir);
-mkpath($logdir);
 my $quarkfilterWithUnderScore = sprintf("%s-",$quarkfilter);
 $quarkfilter = sprintf("%s_3MHz",$quarkfilter);
+
+my $localdir=`pwd`;
+chomp $localdir;
+my $logdir = sprintf("%s/log/%s",$localdir,$quarkfilter);
+mkpath($logdir);
+
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like 'G4Hits_pythia8_$quarkfilterWithUnderScore%' and runnumber = $runnumber order by filename") || die $DBI::error;
