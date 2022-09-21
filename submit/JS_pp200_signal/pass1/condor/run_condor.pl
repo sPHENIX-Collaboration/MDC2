@@ -28,10 +28,15 @@ my $dstoutdir = $ARGV[2];
 my $dstoutfile = $ARGV[3];
 my $runnumber = $ARGV[4];
 my $sequence = $ARGV[5];
+if ($sequence < 100)
+{
+    $baseprio = 90;
+}
+my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
-my $logdir = sprintf("%s/log",$localdir);
+my $logdir = sprintf("%s/log/%s",$localdir,$jettrigger);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass1");
+my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass1/%s",$jettrigger);
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor_%s-%s.job",$logdir,$jettrigger,$suffix);
 if (-f $jobfile)
@@ -65,11 +70,15 @@ print F "Priority 	= 22\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);
-if (defined $test)
-{
-    print "would submit $jobfile\n";
-}
-else
-{
-    system("condor_submit $jobfile");
-}
+#if (defined $test)
+#{
+#    print "would submit $jobfile\n";
+#}
+#else
+#{
+#    system("condor_submit $jobfile");
+#}
+
+open(F,">>$condorlistfile");
+print F "$executable, $nevents, $jettrigger, $dstoutfile, $dstoutdir, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+close(F);
