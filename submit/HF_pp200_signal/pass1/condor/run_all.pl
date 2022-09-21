@@ -42,10 +42,20 @@ if ($quarkfilter  ne "Charm" &&
 $filetype=sprintf("%s_%s",$filetype,$quarkfilter);
 my $runnumber = 40;
 my $events = 1000;
-open(F,"outdir.txt");
-my $outdir=<F>;
-chomp  $outdir;
-close(F);
+
+my $condorlistfile =  sprintf("condor.list");
+if (-f $condorlistfile)
+{
+    unlink $condorlistfile;
+}
+
+if (! -f "outdir.txt")
+{
+    print "could not find outdir.txt\n";
+    exit(1);
+}
+my $outdir = `cat outdir.txt`;
+chomp $outdir;
 $outdir = sprintf("%s/%s",$outdir,lc $quarkfilter);
 if ($outdir =~ /lustre/)
 {
@@ -60,7 +70,7 @@ else
 }
 my $localdir=`pwd`;
 chomp $localdir;
-my $logdir = sprintf("%s/log",$localdir);
+my $logdir = sprintf("%s/log/%s",$localdir,$quarkfilter);
 my $nsubmit = 0;
 my $njob = 0;
 for (my $isub = 0; $isub < $maxsubmit; $isub++)
@@ -106,12 +116,24 @@ for (my $isub = 0; $isub < $maxsubmit; $isub++)
 	if ($nsubmit >= $maxsubmit)
 	{
 	    print "maximum number of submissions reached, exiting\n";
-	    exit(0);
+	    last;
 	}
     }
     else
     {
 	print "output file already exists\n";
 	$njob++;
+    }
+}
+
+if (-f $condorlistfile)
+{
+    if (defined $test)
+    {
+	print "would submit condor.job\n";
+    }
+    else
+    {
+	system("condor_submit condor.job");
     }
 }
