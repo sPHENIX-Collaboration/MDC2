@@ -14,7 +14,7 @@ my $runnumber = 40;
 my $embed;
 GetOptions("embed" => \$embed, "run:i"=>\$runnumber, "type:i"=>\$system, "verbosity" => \$verbosity, "nopileup" => \$nopileup);
 
-if ($system < 1 || $system > 13)
+if ($system < 1 || $system > 16)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
@@ -28,9 +28,10 @@ if ($system < 1 || $system > 13)
     print "    8 : HF pythia8 Bottom\n";
     print "    9 : HF pythia8 CharmD0\n";
     print "   10 : HF pythia8 BottomD0\n";
-    print "   11 : HF pythia8 Jet >30GeV\n";
-    print "   12 : HF pythia8 Jet >10GeV\n";
-    print "   13 : HF pythia8 Photon Jet\n";
+    print "   11 : JS pythia8 Jet >30GeV\n";
+    print "   12 : JS pythia8 Jet >10GeV\n";
+    print "   13 : JS pythia8 Photon Jet\n";
+    print "   16 : HF D0 Jet\n";
     exit(0);
 }
 
@@ -215,6 +216,21 @@ elsif ($system == 13)
     $gpfsdir = "js_pp200_signal";
 #    $systemstring = "DST_HF_BOTTOM_pythia8-";
 #    $gpfsdir = "HF_pp200_signal";
+}
+elsif ($system == 16)
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "pythia8_JetD0";
+    if (! defined $nopileup)
+    {
+	$systemstring = sprintf("%s_3MHz",$systemstring_g4hits);
+    }
+    else
+    {
+	$systemstring = sprintf("%s-",$systemstring_g4hits);
+    }
+    $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
+    $gpfsdir = "HF_pp200_signal";
 }
 
 else

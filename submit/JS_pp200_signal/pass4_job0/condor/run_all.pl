@@ -15,7 +15,7 @@ my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs>  <\"Jet10\", \"Jet30\" or \"PhotonJet\"> production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\" or \"PhotonJet\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--test : dryrun - create jobfiles\n";

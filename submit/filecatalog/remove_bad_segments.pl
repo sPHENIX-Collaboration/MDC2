@@ -95,6 +95,7 @@ if ($#ARGV < 0)
     print "   11 : JS pythia8 Jet > 30GeV\n";
     print "   12 : JS pythia8 Jet > 10GeV\n";
     print "   13 : JS pythia8 Photon Jet\n";
+    print "   16 : HF D0 Jet\n";
     print "-dsttype:\n";
     foreach my $tp (sort keys %daughters)
     {
@@ -114,7 +115,7 @@ if( ! exists $daughters{$dsttype})
     }
     exit(0);
 }
-if ($system < 1 || $system > 13)
+if ($system < 1 || $system > 16)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
@@ -131,6 +132,7 @@ if ($system < 1 || $system > 13)
     print "   11 : JS pythia8 Jet R=0.4\n";
     print "   12 : JS pythia8 Jet > 15GeV\n";
     print "   13 : JS pythia8 Jet Photon Jet\n";
+    print "   16 : HF D0 Jet\n";
     exit(0);
 }
 
@@ -334,6 +336,19 @@ elsif ($system == 13)
         $pileupstring = "_sHijing_0_20fm_50kHz_bkg_0_20fm";
     }
     $specialcondorfileadd{"G4Hits"} = "PhotonJet";
+}
+elsif ($system == 16)
+{
+    $specialsystemstring{"G4Hits"} = "pythia8_JetD0-";
+    $systemstring = "pythia8_JetD0_";
+    $topdir = sprintf("%s/HF_pp200_signal",$topdir);
+    $condorfileadd = sprintf("JetD0_3MHz");
+    if (defined $nopileup)
+    {
+	$condorfileadd = sprintf("JetD0");
+        $systemstring = "pythia8_JetD0";
+    }
+    $specialcondorfileadd{"G4Hits"} = "JetD0";
 }
 else
 {

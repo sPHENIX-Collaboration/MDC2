@@ -8,6 +8,8 @@ use Getopt::Long;
 my $test;
 my $incremental;
 my $killexist;
+my $runnumber = 40;
+my $events = 1000;
 GetOptions("test"=>\$test, "increment"=>\$incremental, "killexist" => \$killexist);
 if ($#ARGV < 1)
 {
@@ -40,8 +42,6 @@ if ($quarkfilter  ne "Charm" &&
     exit(1);
 }
 $filetype=sprintf("%s_%s",$filetype,$quarkfilter);
-my $runnumber = 40;
-my $events = 1000;
 
 my $condorlistfile =  sprintf("condor.list");
 if (-f $condorlistfile)
