@@ -70,7 +70,7 @@ chomp $localdir;
 my $logdir = sprintf("%s/log",$localdir);
 my $nsubmit = 0;
 my $njob = 0;
-for (my $isub = 0; $isub < $maxsubmit; $isub++)
+OUTER: for (my $isub = 0; $isub < $maxsubmit; $isub++)
 {
     my $jobfile = sprintf("%s/condor_%s-%010d-%05d.job",$logdir,$jettrigger,$runnumber,$njob);
     while (-f $jobfile)
@@ -113,7 +113,7 @@ for (my $isub = 0; $isub < $maxsubmit; $isub++)
 	if ($nsubmit >= $maxsubmit)
 	{
 	    print "maximum number of submissions reached, exiting\n";
-	    last;
+	    last OUTER;
 	}
     }
     else
