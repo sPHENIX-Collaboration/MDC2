@@ -27,10 +27,7 @@ R__LOAD_LIBRARY(libffamodules.so)
 
 int Fun4All_G4_Pass1_pp(
     const int nEvents = 1,
-    const string &inputFile = "/sphenix/sim/sim01/sphnxpro/MDC1/pythia8_HepMC/data/pythia8_mb-0000000001-00099.dat",
-    const string &outputFile = "G4Hits_pythia8_pp_mb-0000000042-00000.root",
-    const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
-    const int skip = 0,
+    const string &outputFile = "G4Hits_pythia8_pp_mb-0000000050-00000.root",
     const string &outdir = ".")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
@@ -177,10 +174,12 @@ int Fun4All_G4_Pass1_pp(
   Enable::CEMC = true;
 
   Enable::HCALIN = true;
+  G4HCALIN::light_scint_model = 20;
 
   Enable::MAGNET = true;
 
   Enable::HCALOUT = true;
+  G4HCALOUT::light_scint_model = 20;
 
   Enable::EPD = true;
 
@@ -268,7 +267,6 @@ int Fun4All_G4_Pass1_pp(
     return 0;
   }
 
-  se->skip(skip);
   se->run(nEvents);
 
   //-----
