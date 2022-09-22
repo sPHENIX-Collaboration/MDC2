@@ -11,6 +11,7 @@
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/HeadReco.h>
 #include <ffamodules/SyncReco.h>
+#include <ffamodules/XploadInterface.h>
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
@@ -29,8 +30,8 @@ R__LOAD_LIBRARY(libffamodules.so)
 
 int Fun4All_G4_Pass1(
     const int nEvents = 1,
-    const string &inputFile = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
-    const string &outputFile = "G4sPHENIX.root",
+    const string &inputFile = "/sphenix/sim/sim01/sphnxpro/MDC1/sHijing_HepMC/data/sHijing_0_20fm-0000000001-00000.dat",
+    const string &outputFile = "G4Hits_sHijing_0_20fm-0000000050-00000.root",
     const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
     const int skip = 0,
     const string &outdir = ".")
@@ -52,6 +53,17 @@ int Fun4All_G4_Pass1(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
+
+  //===============
+  // conditions DB flags
+  //===============
+  Enable::XPLOAD = true;
+  // tag
+  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
+  // database config
+  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
+  // 64 bit timestamp
+  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
 
 // this extracts the runnumber and segment from the output filename
 // and sets this so the server can pick it up
@@ -160,10 +172,12 @@ int Fun4All_G4_Pass1(
   Enable::CEMC = true;
 
   Enable::HCALIN = true;
+  G4HCALIN::light_scint_model = 20;
 
   Enable::MAGNET = true;
 
   Enable::HCALOUT = true;
+  G4HCALOUT::light_scint_model = 20;
 
   Enable::EPD = true;
 
@@ -257,7 +271,9 @@ int Fun4All_G4_Pass1(
   // Exit
   //-----
 
+  XploadInterface::instance()->Print(); // print used DB files
   se->End();
+  se->PrintTimer();
   std::cout << "All done" << std::endl;
   delete se;
   if (Enable::PRODUCTION)
