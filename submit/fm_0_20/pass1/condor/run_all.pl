@@ -32,15 +32,26 @@ my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::er
 
 my $maxsubmit = $ARGV[0];
 my $hijing_runnumber = 1;
-my $runnumber = 43;
-my $events = 500;
+my $runnumber = 50;
+my $events = 400;
 #$events = 100; # for ftfp_bert_hp
 my $evtsperfile = 10000;
 my $nmax = $evtsperfile;
-open(F,"outdir.txt");
-my $outdir=<F>;
-chomp  $outdir;
-close(F);
+
+my $condorlistfile =  sprintf("condor.list");
+if (-f $condorlistfile)
+{
+    unlink $condorlistfile;
+}
+
+if (! -f "outdir.txt")
+{
+    print "could not find outdir.txt\n";
+    exit(1);
+}
+my $outdir = `cat outdir.txt`;
+chomp $outdir;
+
 if ($outdir =~ /lustre/)
 {
     my $storedir = $outdir;
@@ -53,7 +64,7 @@ else
   mkpath($outdir);
 }
 my $nsubmit = 0;
-for (my $segment=0; $segment<2000; $segment++)
+OUTER: for (my $segment=0; $segment<2000; $segment++)
 {
     my $hijingdatfile = sprintf("/sphenix/sim/sim01/sphnxpro/MDC1/sHijing_HepMC/data/sHijing_0_20fm-%010d-%05d.dat",$hijing_runnumber, $segment);
     if (! -f $hijingdatfile)
@@ -91,9 +102,21 @@ for (my $segment=0; $segment<2000; $segment++)
 	    if ($nsubmit >= $maxsubmit)
 	    {
 		print "maximum number of submissions reached, exiting\n";
-		exit(0);
+		last OUTER;
 	    }
 	}
         $sequence++;
+    }
+}
+
+if (-f $condorlistfile)
+{
+    if (defined $test)
+    {
+	print "would submit condor.job\n";
+    }
+    else
+    {
+	system("condor_submit condor.job");
     }
 }
