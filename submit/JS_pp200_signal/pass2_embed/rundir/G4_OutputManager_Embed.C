@@ -75,6 +75,11 @@ void AddCommonNodes(Fun4AllOutputManager *out)
 
 void DstOutput_move()
 {
+  if (PRODUCTION::SaveOutputDir == ".")
+  {
+    cout << "not copying files to themselves" << endl;
+    return;
+  }
   string copyscript = "copyscript.pl";
   ifstream f(copyscript);
   bool scriptexists = f.good();
@@ -83,11 +88,9 @@ void DstOutput_move()
   {
     for (auto iter = OUTPUTMANAGER::outfiles.begin(); iter != OUTPUTMANAGER::outfiles.end(); ++iter)
     {
-//   string mvcmd = "mv " + *iter + " " + PRODUCTION::SaveOutputDir;
       string mvcmd;
       if (scriptexists)
       {
-//        mvcmd = copyscript + " -outdir " + PRODUCTION::SaveOutputDir + " " + *iter + " --test";
         mvcmd = copyscript + " -outdir " + PRODUCTION::SaveOutputDir + " " + *iter;
       }
       else
