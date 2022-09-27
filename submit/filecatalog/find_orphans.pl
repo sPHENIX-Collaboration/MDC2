@@ -30,7 +30,7 @@ $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $checkfcat = $dbh->prepare("select full_file_path from files where lfn = ?");
 
 my %orphans = ();
-open(F,"find $topdir -type f -name '*.root' |");
+open(F,"find $topdir -type f -name '*.root' -mmin 60 |");
 while (my $fullfile = <F>)
 {
     chomp $fullfile;
