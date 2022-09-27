@@ -34,18 +34,15 @@
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
 
-// For HepMC Hijing
-// try inputFile = /sphenix/sim/sim01/sphnxpro/sHijing_HepMC/sHijing_0-12fm.dat
-
 int Fun4All_G4_Pass3Trk(
     const int nEvents = 1,
-    const string &inputFile0 = "DST_TRKR_G4HIT_sHijing_0_488fm_50kHz_bkg_0_20fm-0000000002-00003.root",
-    const string &inputFile1 = "DST_TRUTH_G4HIT_sHijing_0_488fm_50kHz_bkg_0_20fm-0000000002-00003.root",
+    const string &inputFile0 = "DST_TRKR_G4HIT_pythia8_Charm_3MHz-0000000040-00000.root",
+    const string &inputFile1 = "DST_TRUTH_G4HIT_pythia8_Charm_3MHz-0000000040-00000.root",
     const string &outputFile = "G4sPHENIX.root",
     const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
     const int skip = 0,
     const string &outdir = ".",
-    const string &quarkfilter = "NONE")
+    const string &quarkfilter = "Charm_3MHz")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -612,12 +609,12 @@ int Fun4All_G4_Pass3Trk(
   //-----
 
   se->End();
-  std::cout << "All done" << std::endl;
   if (Enable::PRODUCTION)
   {
     DstOutput_move();
   }
   se->PrintTimer();
+  std::cout << "All done" << std::endl;
 
   delete se;
   gSystem->Exit(0);
