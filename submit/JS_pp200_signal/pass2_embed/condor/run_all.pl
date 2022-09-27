@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 40;
+my $runnumber = 50;
 my $test;
 my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
@@ -41,6 +41,12 @@ if ($jettrigger  ne "Jet10" &&
 
 my $embedfilelike = sprintf("sHijing_0_20fm_50kHz_bkg_0_20fm");
 my $outfilelike = sprintf("pythia8_%s_%s",$jettrigger,$embedfilelike);
+
+my $condorlistfile =  sprintf("condor.list");
+if (-f $condorlistfile)
+{
+    unlink $condorlistfile;
+}
 
 if (! -f "outdir.txt")
 {
@@ -192,13 +198,25 @@ foreach my $segment (sort keys %trkhash)
 	{
 	    $nsubmit++;
 	}
-	if ($nsubmit >= $maxsubmit)
+	if ($maxsubmit != 0 && $nsubmit >= $maxsubmit)
 	{
 	    print "maximum number of submissions reached, exiting\n";
-	    exit(0);
+	    last;
 	}
     }
 }
 
 $chkfile->finish();
 $dbh->disconnect;
+
+if (-f $condorlistfile)
+{
+    if (defined $test)
+    {
+	print "would submit condor.job\n";
+    }
+    else
+    {
+	system("condor_submit condor.job");
+    }
+}

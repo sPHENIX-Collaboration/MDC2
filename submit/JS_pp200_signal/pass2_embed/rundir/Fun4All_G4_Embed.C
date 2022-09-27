@@ -270,12 +270,14 @@ int Fun4All_G4_Embed(
   Enable::CEMC = true;
 
   Enable::HCALIN = true;
-  Enable::HCALIN_OLD = true;
+//  Enable::HCALIN_OLD = true;
+  G4HCALIN::light_scint_model = 20;
 
   Enable::MAGNET = true;
 
   Enable::HCALOUT = true;
-  Enable::HCALOUT_OLD = true;
+//  Enable::HCALOUT_OLD = true;
+  G4HCALOUT::light_scint_model = 20;
 
   Enable::EPD = true;
 
@@ -361,12 +363,11 @@ int Fun4All_G4_Embed(
   se->skip(skip);
   se->run(nEvents);
 
-  XploadInterface::instance()->Print(); // print used DB files
-
   //-----
   // Exit
   //-----
 
+  XploadInterface::instance()->Print(); // print used DB files
   se->End();
   std::cout << "All done" << std::endl;
   delete se;

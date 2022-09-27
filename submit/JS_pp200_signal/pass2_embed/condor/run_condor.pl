@@ -17,6 +17,7 @@ if ($#ARGV < 3)
 
 my $localdir=`pwd`;
 chomp $localdir;
+my $baseprio = 52;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_embed.sh",$rundir);
 my $nevents = $ARGV[0];
@@ -29,10 +30,15 @@ my $infile4 = $ARGV[6];
 my $dstoutdir = $ARGV[7];
 my $runnumber = $ARGV[8];
 my $sequence = $ARGV[9];
+if ($sequence < 100)
+{
+    $baseprio = 90;
+}
+my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s-%010d-%05d",$jettrigger,$runnumber,$sequence);
-my $logdir = sprintf("%s/log",$localdir);
+my $logdir = sprintf("%s/log/%s",$localdir,$jettrigger);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass2_embed");
+my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass2_embed/%s",$jettrigger);
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
 if (-f $jobfile)
@@ -63,15 +69,19 @@ print F "accounting_group_user = sphnxpro\n";
 print F "Requirements = (CPU_Type == \"mdc2\")\n";
 #print F "request_memory = 11000MB\n";
 print F "request_memory = 12288MB\n";
-print F "Priority 	= 22\n";
+print F "Priority = $baseprio\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);
-if (defined $test)
-{
-    print "would submit $jobfile\n";
-}
-else
-{
-    system("condor_submit $jobfile");
-}
+#if (defined $test)
+#{
+#    print "would submit $jobfile\n";
+#}
+#else
+#{
+#    system("condor_submit $jobfile");
+#}
+
+open(F,">>$condorlistfile");
+print F "$executable, $nevents, $infile0,  $infile1, $infile2, $infile3, $infile4, $dstoutdir, $jettrigger, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+close(F);
