@@ -67,7 +67,7 @@ int Fun4All_G4_sPHENIX_jobC(
   G4TPC::ENABLE_TIME_ORDERED_DISTORTIONS = false;
 
   /* distortion corrections */
-  G4TPC::ENABLE_CORRECTIONS = true;
+//  G4TPC::ENABLE_CORRECTIONS = true;
   G4TPC::correction_filename = string(getenv("CALIBRATIONROOT")) + "/distortion_maps/distortion_corrections_empty.root";
   
   // tracking configuration
