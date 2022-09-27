@@ -315,7 +315,7 @@ int Fun4All_G4_Single(
   Enable::HCALIN_CLUSTER = Enable::HCALIN_TOWER && true;
   Enable::HCALIN_EVAL = Enable::HCALIN_CLUSTER && false;
   Enable::HCALIN_QA = Enable::HCALIN_CLUSTER && Enable::QA && false;
-  Enable::HCALIN_OLD = true;
+//  Enable::HCALIN_OLD = true;
 
   Enable::MAGNET = true;
 //  Enable::MAGNET_ABSORBER = false;
@@ -327,7 +327,7 @@ int Fun4All_G4_Single(
   Enable::HCALOUT_CLUSTER = Enable::HCALOUT_TOWER && true;
   Enable::HCALOUT_EVAL = Enable::HCALOUT_CLUSTER && false;
   Enable::HCALOUT_QA = Enable::HCALOUT_CLUSTER && Enable::QA && false;
-  Enable::HCALOUT_OLD = true;
+//  Enable::HCALOUT_OLD = true;
 
   Enable::EPD = true;
 
