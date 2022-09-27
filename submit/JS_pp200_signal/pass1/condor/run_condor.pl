@@ -7,7 +7,7 @@ use File::Path;
 
 my $test;
 GetOptions("test"=>\$test);
-if ($#ARGV < 6)
+if ($#ARGV < 5)
 {
     print "usage: run_condor.pl <events> <jettrigger> <outdir> <outfile> <skip> <runnumber> <sequence>\n";
     print "options:\n";
@@ -20,6 +20,7 @@ else
 }
 my $localdir=`pwd`;
 chomp $localdir;
+my $baseprio = 41;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_jsprod.sh",$rundir);
 my $nevents = $ARGV[0];
@@ -65,8 +66,8 @@ print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
 print F "accounting_group = group_sphenix.mdc2\n";
 print F "accounting_group_user = sphnxpro\n";
 print F "Requirements = (CPU_Type == \"mdc2\")\n";
-print F "request_memory = 4500MB\n";
-print F "Priority 	= 22\n";
+print F "request_memory = 4096MB\n";
+print F "Priority = $baseprio\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);

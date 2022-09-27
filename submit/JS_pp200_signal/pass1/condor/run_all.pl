@@ -8,12 +8,12 @@ use Getopt::Long;
 my $test;
 my $incremental;
 my $killexist;
-my $runnumber = 40;
+my $runnumber = 50;
 my $events = 1000;
 GetOptions("test"=>\$test, "increment"=>\$incremental, "killexist" => \$killexist);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet15\", \"Jet30\", \"PhotonJet\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"PhotonJet\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--killexist : delete output file if it already exists (but no jobfile)\n";
@@ -67,7 +67,7 @@ else
 }
 my $localdir=`pwd`;
 chomp $localdir;
-my $logdir = sprintf("%s/log",$localdir);
+my $logdir = sprintf("%s/log/%s",$localdir,$jettrigger);
 my $nsubmit = 0;
 my $njob = 0;
 OUTER: for (my $isub = 0; $isub < $maxsubmit; $isub++)
