@@ -7,7 +7,7 @@ use File::Path;
 
 my $test;
 GetOptions("test"=>\$test);
-if ($#ARGV <67)
+if ($#ARGV <5)
 {
     print "usage: run_condor.pl <events> <quarkfilter> <outdir> <outfile> <skip> <runnumber> <sequence>\n";
     print "options:\n";
