@@ -106,8 +106,8 @@ int Fun4All_G4_sPHENIX_jobC(
    */
   out->AddNode("Sync");
   out->AddNode("EventHeader");
-  out->AddNode("TRKR_CLUSTER");
-  out->AddNode("TRKR_CLUSTERCROSSINGASSOC");
+  // out->AddNode("TRKR_CLUSTER");
+  // out->AddNode("TRKR_CLUSTERCROSSINGASSOC");
   out->AddNode("SvtxTrackMap");
   out->AddNode("SvtxVertexMap");
   se->registerOutputManager(out);
