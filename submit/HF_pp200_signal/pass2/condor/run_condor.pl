@@ -7,9 +7,9 @@ use File::Path;
 
 my $test;
 GetOptions("test"=>\$test);
-if ($#ARGV < 3)
+if ($#ARGV < 4)
 {
-    print "usage: run_condor.pl <inevents> <quarkfilter> <infile> <bkglist> <outdir> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <nevents> <quarkfilter> <infile> <bkglist> <outdir> <runnumber> <sequence>\n";
     print "options:\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
@@ -20,7 +20,7 @@ chomp $localdir;
 my $baseprio = 42;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_pileup.sh",$rundir);
-my $outevents = $ARGV[0];
+my $nevents = $ARGV[0];
 my $quarkfilter = $ARGV[1];
 my $infile = $ARGV[2];
 my $backgroundlist = $ARGV[3];
@@ -54,7 +54,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$outevents $infile $backgroundlist $dstoutdir $quarkfilter $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $infile $backgroundlist $dstoutdir $quarkfilter $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -82,5 +82,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $outevents, $infile, $backgroundlist, $dstoutdir, $quarkfilter, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $infile, $backgroundlist, $dstoutdir, $quarkfilter, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);
