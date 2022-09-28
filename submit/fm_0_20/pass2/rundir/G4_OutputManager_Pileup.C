@@ -81,6 +81,11 @@ void DstOutput_move()
   f.close();
   if (Enable::DSTOUT)
   {
+    // if run locally it will try to copy output file to itself wiping it out
+    if (PRODUCTION::SaveOutputDir == ".")
+    {
+      return;
+    }
     for (auto iter = OUTPUTMANAGER::outfiles.begin(); iter != OUTPUTMANAGER::outfiles.end(); ++iter)
     {
 //   string mvcmd = "mv " + *iter + " " + PRODUCTION::SaveOutputDir;
