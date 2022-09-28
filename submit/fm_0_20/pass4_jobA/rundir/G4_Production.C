@@ -35,6 +35,11 @@ void Production_MoveOutput()
 {
   if (Enable::DSTOUT)
   {
+    // if run locally it will try to copy output file to itself wiping it out
+    if (PRODUCTION::SaveOutputDir == ".")
+    {
+      return;
+    }
     string copyscript = "copyscript.pl";
     ifstream f(copyscript);
     bool scriptexists = f.good();
