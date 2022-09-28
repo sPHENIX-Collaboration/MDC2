@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 40;
+my $runnumber = 50;
 my $test;
 my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
@@ -40,6 +40,12 @@ if ($jettrigger  ne "Jet10" &&
     exit(1);
 }
 
+my $condorlistfile =  sprintf("condor.list");
+if (-f $condorlistfile)
+{
+    unlink $condorlistfile;
+}
+
 if (! -f "outdir.txt")
 {
     print "could not find outdir.txt\n";
@@ -67,12 +73,14 @@ $outfiletype{"DST_TRKR_G4HIT"} = 1;
 $outfiletype{"DST_TRUTH_G4HIT"} = "DST_TRUTH";
 $outfiletype{"DST_VERTEX"} = 1;
 
+my $jettriggerWithUnderScore = sprintf("%s-",$jettrigger);
+$jettrigger = sprintf("%s_3MHz",$jettrigger);
+
 my $localdir=`pwd`;
 chomp $localdir;
-my $logdir = sprintf("%s/log",$localdir);
+my $logdir = sprintf("%s/log/%s",$localdir,$jettrigger);
 mkpath($logdir);
-my $jettriggerWithMHz = sprintf("%s_3MHz",$jettrigger);
-my $jettriggerWithUnderScore = sprintf("%s-",$jettrigger);
+
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like 'G4Hits_pythia8_$jettriggerWithUnderScore%' and runnumber = $runnumber order by filename") || die $DBI::error;
@@ -98,7 +106,7 @@ while (my @res = $getfiles->fetchrow_array())
 	my $foundall = 1;
 	foreach my $type (sort keys %outfiletype)
 	{
-	    my $outfilename = sprintf("%s/%s_pythia8_%s-%010d-%05d.root",$outdir,$type,$jettriggerWithMHz,$runnumber,$segment);
+	    my $outfilename = sprintf("%s/%s_pythia8_%s-%010d-%05d.root",$outdir,$type,$jettrigger,$runnumber,$segment);
 #	    print "checking for $outfilename\n";
 	    if (! -f  $outfilename)
 	    {
@@ -158,7 +166,7 @@ while (my @res = $getfiles->fetchrow_array())
 		push(@bkgfiles,$bckfile);
 	    }
 	}
-	my $bkglistfile = sprintf("%s/condor_%s-%010d-%05d.bkglist",$logdir,$jettriggerWithMHz,$runnumber,$segment);
+	my $bkglistfile = sprintf("%s/condor_%s-%010d-%05d.bkglist",$logdir,$jettrigger,$runnumber,$segment);
 	open(F1,">$bkglistfile");
 	foreach my $bf (@bkgfiles)
 	{
@@ -186,10 +194,10 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $nsubmit++;
 	}
-	if ($nsubmit >= $maxsubmit)
+	if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit > 20000)
 	{
 	    print "maximum number of submissions reached, exiting\n";
-	    exit(0);
+	    last;
 	}
     }
 }
@@ -197,3 +205,15 @@ while (my @res = $getfiles->fetchrow_array())
 $getfiles->finish();
 $chkfile->finish();
 $dbh->disconnect;
+
+if (-f $condorlistfile)
+{
+    if (defined $test)
+    {
+	print "would submit condor.job\n";
+    }
+    else
+    {
+	system("condor_submit condor.job");
+    }
+}

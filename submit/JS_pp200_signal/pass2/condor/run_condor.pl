@@ -17,19 +17,25 @@ if ($#ARGV < 3)
 
 my $localdir=`pwd`;
 chomp $localdir;
+my $baseprio = 42;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_pileup.sh",$rundir);
-my $outevents = $ARGV[0];
+my $nevents = $ARGV[0];
 my $jettrigger = $ARGV[1];
 my $infile = $ARGV[2];
 my $backgroundlist = $ARGV[3];
 my $dstoutdir = $ARGV[4];
 my $runnumber = $ARGV[5];
 my $sequence = $ARGV[6];
-my $suffix = sprintf("%s_3MHz-%010d-%05d",$jettrigger,$runnumber,$sequence);
-my $logdir = sprintf("%s/log",$localdir);
+if ($sequence < 100)
+{
+    $baseprio = 90;
+}
+my $condorlistfile = sprintf("condor.list");
+my $suffix = sprintf("%s-%010d-%05d",$jettrigger,$runnumber,$sequence);
+my $logdir = sprintf("%s/log/%s",$localdir,$jettrigger);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass2");
+my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass2/%s",$jettrigger);
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
 if (-f $jobfile)
@@ -48,7 +54,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$outevents $infile $backgroundlist $dstoutdir $jettrigger $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $infile $backgroundlist $dstoutdir $jettrigger $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -59,17 +65,21 @@ print F "accounting_group = group_sphenix.mdc2\n";
 print F "accounting_group_user = sphnxpro\n";
 print F "Requirements = (CPU_Type == \"mdc2\")\n";
 #print F "Requirements = (CPU_Type == \"mdc2_minio\")\n";
-print F "request_memory = 2500MB\n";
-print F "Priority 	= 22\n";
+print F "request_memory = 2048MB\n";
+print F "Priority = $baseprio\n";
 #print F "concurrency_limits = PHENIX_1000\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);
-if (defined $test)
-{
-    print "would submit $jobfile\n";
-}
-else
-{
-    system("condor_submit $jobfile");
-}
+#if (defined $test)
+#{
+#    print "would submit $jobfile\n";
+#}
+#else
+#{
+#    system("condor_submit $jobfile");
+#}
+
+open(F,">>$condorlistfile");
+print F "$executable, $nevents, $infile, $backgroundlist, $dstoutdir, $jettrigger, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+close(F);
