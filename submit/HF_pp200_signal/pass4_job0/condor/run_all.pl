@@ -12,7 +12,8 @@ my $outevents = 0;
 my $runnumber=40;
 my $test;
 my $incremental;
-GetOptions("test"=>\$test, "increment"=>\$incremental);
+my $shared;
+GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Charm\", \"CharmD0\", \"Bottom\", \"BottomD0\", \"JetD0\" production>\n";
@@ -122,14 +123,19 @@ $getfiles->finish();
 $chkfile->finish();
 $dbh->disconnect;
 
+my $jobfile = sprintf("condor.job");
+if (defined $shared)
+{
+ $jobfile = sprintf("condor.job.shared");
+}
 if (-f $condorlistfile)
 {
     if (defined $test)
     {
-	print "would submit condor.job\n";
+	print "would submit $jobfile\n";
     }
     else
     {
-	system("condor_submit condor.job");
+	system("condor_submit $jobfile");
     }
 }
