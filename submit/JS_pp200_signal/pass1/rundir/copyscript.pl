@@ -25,7 +25,8 @@ my $use_xrdcp;
 my $use_rsync;
 my $use_mcs3;
 my $use_dd;
-GetOptions("dd" => \$use_dd, "mcs3" => \$use_mcs3, "outdir:s"=>\$outdir, "rsync"=>\$use_rsync, "test"=>\$test, "xrdcp"=>\$use_xrdcp);
+my $verbosity;
+GetOptions("dd" => \$use_dd, "mcs3" => \$use_mcs3, "outdir:s"=>\$outdir, "rsync"=>\$use_rsync, "test"=>\$test, "verbosity" => \$verbosity, "xrdcp"=>\$use_xrdcp);
 
 
 my $file = $ARGV[0];
@@ -49,8 +50,8 @@ if ($outdir =~ /lustre/)
     my $iret = &islustremounted();
     if ($iret == 0)
     {
-        print "lustre not mounted, use mcs3\n";
-	$use_mcs3 = 1;
+        print "lustre not mounted, use xrdcp\n";
+	$use_xrdcp = 1;
     }
     else
     {
@@ -61,7 +62,7 @@ if ($outdir =~ /lustre/)
 # set up minio output locations, only used when we deal with lustre
 my $mcs3outdir = $outdir;
 my $mcs3outfile = $outfile;
-if (defined $use_mcs3)
+if (defined $use_mcs3 || defined $use_xrdcp)
 {
     $mcs3outdir =~ s/\/sphenix\/lustre01\/sphnxpro/sphenixS3/;
     $mcs3outfile = sprintf("%s/%s",$mcs3outdir,$file);
@@ -125,13 +126,21 @@ else
 	{
 	    $copycmd = sprintf("mcs3 cp %s %s",$file,$mcs3outfile);
 	}
+	if (defined $use_xrdcp)
+	{
+	    $copycmd = sprintf("env LD_LIBRARY_PATH=/usr/lib64:$LD_LIBRARY_PATH xrdcp -f %s root://xrdsphenix.rcf.bnl.gov/%s",$file,$outfile);
+	}
     }
+}
+if (defined $verbosity)
+{
+    print "copy command: $copycmd\n";
 }
 
 # create output dir if it does not exist and if it is not a test
 # user check for dCache is handled before so we do
 # not have to protect here against users trying to create a dir in dCache
-if (defined $use_mcs3)
+if (defined $use_mcs3 || defined $use_xrdcp)
 {
     my $statcmd = sprintf("mcs3 stat %s", $mcs3outdir);
     system($statcmd);
@@ -181,7 +190,7 @@ if ($username ne "sphnxpro")
 }
 my $outfileexists = 0;
 
-if (defined $use_mcs3)
+if (defined $use_mcs3 || defined $use_xrdcp)
 {
     my $statcmd = sprintf("mcs3 stat %s", $mcs3outfile);
     system($statcmd);
@@ -213,7 +222,7 @@ if ($outfileexists == 0)
 
 my $outsize = 0;
 my $imax = 100;
-if (! defined $test && ! defined $use_mcs3)
+if (! defined $test && ! defined $use_mcs3 && ! defined $use_xrdcp)
 {
     $outsize = stat($outfile)->size;
     my $icnt = 0;
