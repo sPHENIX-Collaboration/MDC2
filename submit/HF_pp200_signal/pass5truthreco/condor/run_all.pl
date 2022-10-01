@@ -143,7 +143,7 @@ foreach my $segment (sort keys %trackhash)
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-        my $outfilename =  sprintf("DST_TRUTH_RECO_%s-%010d-%05d.root",$quarkfilter,$runnumber,$segment);
+        my $outfilename =  sprintf("DST_TRUTH_RECO_pythia8_%s-%010d-%05d.root",$quarkfilter,$runnumber,$segment);
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
