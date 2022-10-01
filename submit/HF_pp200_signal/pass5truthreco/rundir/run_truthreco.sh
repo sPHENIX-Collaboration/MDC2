@@ -56,6 +56,7 @@ fi
 # $7: output directory
 # $8: run number
 # $9: sequence
+# $10" quarkfilter
 
 echo 'here comes your environment'
 printenv
@@ -68,10 +69,11 @@ echo arg6 \(output file\): $6
 echo arg7 \(output dir\): $7
 echo arg8 \(runnumber\): $8
 echo arg9 \(sequence\): $9
+echo arg10 \(quarkfilter\): $10
 
 runnumber=$(printf "%010d" $8)
 sequence=$(printf "%05d" $9)
-filename=HF_pp200_signal_pass5_truthreco
+filename=HF_pp200_signal_pass5_truthreco_$10
 
 txtfilename=${filename}-${runnumber}-${sequence}.txt
 jsonfilename=${filename}-${runnumber}-${sequence}.json
@@ -79,7 +81,7 @@ jsonfilename=${filename}-${runnumber}-${sequence}.json
 echo running root.exe -q -b Fun4All_TruthReco.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\"\)
 prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_TruthReco.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\"\)
 
-rsyncdirname=/sphenix/user/sphnxpro/prmon/HF_pp200_signal/pass5_truthreco
+rsyncdirname=/sphenix/user/sphnxpro/prmon/HF_pp200_signal/pass5_truthreco_$10
 if [ ! -d $rsyncdirname ]
 then
   mkdir -p $rsyncdirname
