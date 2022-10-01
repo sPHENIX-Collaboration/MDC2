@@ -28,11 +28,14 @@ void Fun4All_TruthReco(
   const std::string &dst_tracks = "DST_TRACKS_pythia8_Charm_3MHz-0000000040-00000.root",
   const std::string &dst_truth = "DST_TRUTH_pythia8_Charm_3MHz-0000000040-00000.root",
   const std::string &outputFile = "DST_TRUTH_RECO_pythia8_Charm_3MHz-0000000040-00000.root",
-  const std::string &outdir = ".",
+  const std::string &outdir = "."
 )
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
+
+  // make sure to printout random seeds for reproducibility
+  PHRandomSeed::Verbosity(1);
 
   recoConsts *rc = recoConsts::instance();
 
@@ -52,13 +55,6 @@ void Fun4All_TruthReco(
   Enable::DSTOUT = true;
   DstOut::OutputDir = outdir;
   DstOut::OutputFile = outputFile;
-
-  // server
-  auto se = Fun4AllServer::instance();
-  se->Verbosity(1);
-
-  // make sure to printout random seeds for reproducibility
-  PHRandomSeed::Verbosity(1);
 
   FlagHandler *flag = new FlagHandler();
   se->registerSubsystem(flag);
