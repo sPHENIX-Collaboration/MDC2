@@ -139,13 +139,12 @@ foreach my $segment (sort keys %trackhash)
     }
 
     my $lfn = $trackhash{$segment};
-#    print "found $lfn\n";
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
         my $outfilename =  sprintf("DST_TRUTH_RECO_%s-%010d-%05d.root",$quarkfilter,$runnumber,$segment);
-	$chkfile->execute($lfn);
+	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
 	    next;
@@ -155,7 +154,7 @@ foreach my $segment (sort keys %trackhash)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %s %s %d %d %s", $outevents, $quarkfilter, $lfn, $g4hithash{sprintf("%05d",$segment)}, $clusterhash{sprintf("%05d",$segment)}, $trackhash{sprintf("%05d",$segment)}, $truthhash{sprintf("%05d",$segment)}, $outfilename, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %s %d %d %s", $outevents, $quarkfilter, $g4hithash{sprintf("%05d",$segment)}, $clusterhash{sprintf("%05d",$segment)}, $trackhash{sprintf("%05d",$segment)}, $truthhash{sprintf("%05d",$segment)}, $outfilename, $outdir, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
@@ -171,9 +170,9 @@ foreach my $segment (sort keys %trackhash)
 	{
 	    $nsubmit++;
 	}
-	if ($maxsubmit != 0 && $nsubmit >= $maxsubmit)
+	if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit >=20000)
 	{
-	    print "maximum number of submissions reached, exiting\n";
+	    print "maximum number of submissions $nsubmit reached, exiting\n";
 	    last;
 	}
     }

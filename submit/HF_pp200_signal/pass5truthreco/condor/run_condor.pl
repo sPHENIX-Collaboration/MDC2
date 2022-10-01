@@ -26,7 +26,7 @@ my $infile0 = $ARGV[2];
 my $infile1 = $ARGV[3];
 my $infile2 = $ARGV[4];
 my $infile3 = $ARGV[5];
-my $outfile = $ARGV[6];
+my $outfilename = $ARGV[6];
 my $dstoutdir = $ARGV[7];
 my $runnumber = $ARGV[8];
 my $sequence = $ARGV[9];
@@ -57,7 +57,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $infile0 $infile1 $infile2 $infile3 $outfile $dstoutdir $runnumber $sequence $quarkfilter\"\n";
+print F "Arguments       = \"$nevents $infile0 $infile1 $infile2 $infile3 $outfilename $dstoutdir $runnumber $sequence $quarkfilter\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -82,5 +82,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile0,  $infile1, $infile2, $infile3, $outfile, $dstoutdir, $runnumber, $sequence, $quarkfilter, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $infile0,  $infile1, $infile2, $infile3, $outfilename, $dstoutdir, $runnumber, $sequence, $quarkfilter, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);
