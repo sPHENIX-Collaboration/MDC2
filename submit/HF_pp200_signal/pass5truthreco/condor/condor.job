@@ -12,4 +12,4 @@ Requirements = (CPU_Type == "mdc2")
 request_memory = 4096MB
 Priority = $(baseprio)
 job_lease_duration = 3600
-Queue executable, nevents, infile0, infile1, infile2, infile3, outfilename, dstoutdir, jettrigger, runnumber, sequence, quarkfilter, outfile, errfile, condorlogfile, rundir, baseprio from condor.list
+Queue executable, nevents, infile0, infile1, infile2, infile3, outfilename, dstoutdir, runnumber, sequence, quarkfilter, outfile, errfile, condorlogfile, rundir, baseprio from condor.list
