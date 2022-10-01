@@ -73,7 +73,6 @@ my $outfilelike = sprintf("pythia8_%s",$quarkfilter);
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $nsubmit = 0;
 
 my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like '%$outfilelike%' and filename not like '%hijing%' and runnumber = $runnumber") || die $DBI::error;
 my $getclusterfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_CLUSTER' and filename like '%$outfilelike%' and filename not like '%hijing%' and runnumber = $runnumber") || die $DBI::error;
@@ -82,11 +81,10 @@ my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where d
 
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
 
-my $nsubmit = 0;
 
 my %g4hithash = ();
 $getfiles->execute() || die $DBI::error;
-my $ncal = $getfiles->rows;
+my $ng4hit = $getfiles->rows;
 while (my @res = $getfiles->fetchrow_array())
 {
     $g4hithash{sprintf("%05d",$res[1])} = $res[0];
@@ -121,7 +119,9 @@ while (my @res = $gettruthfiles->fetchrow_array())
 $gettruthfiles->finish();
 
 
-#print "input files: $ncal, truth: $ntruth\n";
+print "input files g4hit: $ng4hit, cluster: $ncluster, track: $ntrack, truth: $ntruth\n";
+
+my $nsubmit = 0;
 
 foreach my $segment (sort keys %trackhash)
 {
