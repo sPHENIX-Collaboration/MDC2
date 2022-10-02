@@ -9,11 +9,13 @@ use DBI;
 
 
 my $outevents = 0;
-my $inrunnumber=40;
-my $outrunnumber=40;
+my $inrunnumber=50;
+#my $outrunnumber=40;
+my $outrunnumber=$inrunnumber;
 my $test;
 my $incremental;
-GetOptions("test"=>\$test, "increment"=>\$incremental);
+my $shared;
+GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
@@ -37,6 +39,13 @@ if (! -f "outdir.txt")
     print "could not find outdir.txt\n";
     exit(1);
 }
+
+my $condorlistfile =  sprintf("condor.list");
+if (-f $condorlistfile)
+{
+    unlink $condorlistfile;
+}
+
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 if ($outdir =~ /lustre/)
@@ -115,12 +124,29 @@ foreach my $segment (sort keys %calohash)
 	{
 	    $nsubmit++;
 	}
-	if ($nsubmit >= $maxsubmit)
+	if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit >=20000)
 	{
-	    print "maximum number of submissions reached, exiting\n";
-	    exit(0);
+	    print "maximum number of submissions $nsubmit reached, exiting\n";
+	    last;
 	}
     }
 }
 $chkfile->finish();
 $dbh->disconnect;
+
+my $jobfile = sprintf("condor.job");
+if (defined $shared)
+{
+ $jobfile = sprintf("condor.job.shared");
+}
+if (-f $condorlistfile)
+{
+    if (defined $test)
+    {
+	print "would submit $jobfile\n";
+    }
+    else
+    {
+	system("condor_submit $jobfile");
+    }
+}
