@@ -9,10 +9,11 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 40;
+my $runnumber = 50;
 my $test;
 my $incremental;
-GetOptions("test"=>\$test, "increment"=>\$incremental);
+my $shared;
+GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
@@ -30,6 +31,13 @@ if ($hostname !~ /phnxsub/)
     exit(1);
 }
 my $maxsubmit = $ARGV[0];
+
+my $condorlistfile =  sprintf("condor.list");
+if (-f $condorlistfile)
+{
+    unlink $condorlistfile;
+}
+
 if (! -f "outdir.txt")
 {
     print "could not find outdir.txt\n";
@@ -59,9 +67,9 @@ my %truthhash = ();
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like '%sHijing_0_20fm_50kHz_bkg_0_20fm%' and runnumber = $runnumber order by filename") || die $DBI::error;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like '%sHijing_0_20fm_50kHz_bkg_0_20fm%' and filename not like '%pythia8%' and runnumber = $runnumber order by filename") || die $DBI::error;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
-my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH_G4HIT' and filename like '%sHijing_0_20fm_50kHz_bkg_0_20fm%'and runnumber = $runnumber");
+my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH_G4HIT' and filename like '%sHijing_0_20fm_50kHz_bkg_0_20fm%'and filename not like '%pythia8%' and runnumber = $runnumber");
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::error;
 my $ncal = $getfiles->rows;
@@ -131,13 +139,30 @@ foreach my $segment (sort keys %trkhash)
 	{
 	    $nsubmit++;
 	}
-	if ($nsubmit >= $maxsubmit)
+	if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit > 20000)
 	{
-	    print "maximum number of submissions reached, exiting\n";
-	    exit(0);
+	    print "maximum number of submissions $nsubmit reached, exiting\n";
+	    last;
 	}
     }
 }
 
 $chkfile->finish();
 $dbh->disconnect;
+
+my $jobfile = sprintf("condor.job");
+if (defined $shared)
+{
+ $jobfile = sprintf("condor.job.shared");
+}
+if (-f $condorlistfile)
+{
+    if (defined $test)
+    {
+	print "would submit $jobfile\n";
+    }
+    else
+    {
+	system("condor_submit $jobfile");
+    }
+}
