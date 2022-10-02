@@ -46,7 +46,6 @@ if (-f $condorlistfile)
     unlink $condorlistfile;
 }
 
-my $jettriggerWithMHz = sprintf("%s_3MHz",$jettrigger);
 
 if (! -f "outdir.txt")
 {
@@ -68,10 +67,11 @@ else
   mkpath($outdir);
 }
 
+$jettrigger = sprintf("%s_3MHz",$jettrigger);
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_HIT' and filename like '%pythia8_$jettriggerWithMHz%' and runnumber = $runnumber order by filename") || die $DBI::error;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_HIT' and filename like '%pythia8_$jettrigger%' and runnumber = $runnumber order by filename") || die $DBI::error;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::error;
@@ -82,7 +82,7 @@ while (my @res = $getfiles->fetchrow_array())
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_TRKR_CLUSTER_pythia8_%s-%010d-%05d.root",$jettriggerWithMHz,$runnumber,$segment);
+	my $outfilename = sprintf("DST_TRKR_CLUSTER_pythia8_%s-%010d-%05d.root",$jettrigger,$runnumber,$segment);
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
@@ -109,9 +109,9 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $nsubmit++;
 	}
-	if ($maxsubmit != 0 && $nsubmit >= $maxsubmit)
+	if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit >= 20000)
 	{
-	    print "maximum number of submissions reached, exiting\n";
+	    print "maximum number of submissions $nsubmit reached, submitting\n";
 	    last;
 	}
     }
@@ -119,14 +119,26 @@ while (my @res = $getfiles->fetchrow_array())
 $getfiles->finish();
 $chkfile->finish();
 $dbh->disconnect;
+
+my $jobfile = sprintf("condor.job");
+if (defined $shared)
+{
+ $jobfile = sprintf("condor.job.shared");
+}
+if (! -f $jobfile)
+{
+    print "could not find $jobfile\n";
+    exit(1);
+}
+
 if (-f $condorlistfile)
 {
     if (defined $test)
     {
-	print "would submit condor.job\n";
+	print "would submit $jobfile\n";
     }
     else
     {
-	system("condor_submit condor.job");
+	system("condor_submit $jobfile");
     }
 }
