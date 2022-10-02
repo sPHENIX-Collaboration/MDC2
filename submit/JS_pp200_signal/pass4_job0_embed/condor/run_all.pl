@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=40;
+my $runnumber=50;
 my $test;
 my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
@@ -119,6 +119,7 @@ while (my @res = $getfiles->fetchrow_array())
 $getfiles->finish();
 $chkfile->finish();
 $dbh->disconnect;
+
 if (-f $condorlistfile)
 {
     if (defined $test)
