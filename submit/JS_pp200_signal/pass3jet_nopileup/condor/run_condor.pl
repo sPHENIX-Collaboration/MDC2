@@ -19,7 +19,7 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 54;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_pass5jet.sh",$rundir);
+my $executable = sprintf("%s/run_pass3jet_nopileup.sh",$rundir);
 my $nevents = $ARGV[0];
 my $jettrigger = $ARGV[1];
 my $infile = $ARGV[2];
@@ -35,7 +35,7 @@ my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("_%s-%010d-%05d",$jettrigger,$runnumber,$sequence);
 my $logdir = sprintf("%s/log/%s",$localdir,$jettrigger);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass4jet_nopileup/%s",$jettrigger);
+my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass3jet_nopileup/%s",$jettrigger);
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor%s.job",$logdir,$suffix);
 if (-f $jobfile)
