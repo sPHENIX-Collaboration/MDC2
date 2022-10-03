@@ -1,9 +1,12 @@
+#include <GlobalVariables.C>
+
 #include <G4_Magnet.C>
 #include <G4_Micromegas.C>
 #include <G4_Production.C>
 #include <G4_Tracking.C>
 
 #include <ffamodules/FlagHandler.h>
+#include <ffamodules/XploadInterface.h>
 
 #include <fun4all/SubsysReco.h>
 #include <fun4all/Fun4AllServer.h>
@@ -13,24 +16,38 @@
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
 
+
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 
 //________________________________________________________________________________________________
-int Fun4All_G4_sPHENIX_jobA(
+int Fun4All_G4_sPHENIX_jobC(
   const int nEvents = 0,
   const int nSkipEvents = 0,
-  const string &inputFile = "DST_TRKR_CLUSTER_pythia8_Jet10-0000000040-00000.root",
-  const string &outputFile = "DST_TRACKSEEDS_pythia8_Jet10-0000000040-00000.root",
-  const string &outdir = "."
+  const std::string &inputFile = "DST_TRACKSEEDS_pythia8_Jet10-0000000050-00000.root",
+  const std::string &outputFile = "DST_TRACKS_pythia8_Jet10-0000000050-00000.root",
+  const std::string &outdir = "."
   )
 {
 
   // print inputs
-  std::cout << "Fun4All_G4_sPHENIX_jobA - nEvents: " << nEvents << std::endl;
-  std::cout << "Fun4All_G4_sPHENIX_jobA - nSkipEvents: " << nSkipEvents << std::endl;
-  std::cout << "Fun4All_G4_sPHENIX_jobA - inputFile: " << inputFile << std::endl;
-  std::cout << "Fun4All_G4_sPHENIX_jobA - outputFile: " << outputFile << std::endl;
+  std::cout << "Fun4All_G4_sPHENIX_jobC - nEvents: " << nEvents << std::endl;
+  std::cout << "Fun4All_G4_sPHENIX_jobC - nSkipEvents: " << nSkipEvents << std::endl;
+  std::cout << "Fun4All_G4_sPHENIX_jobC - inputFile: " << inputFile << std::endl;
+  std::cout << "Fun4All_G4_sPHENIX_jobC - outputFile: " << outputFile << std::endl;
+
+  recoConsts *rc = recoConsts::instance();
+
+  //===============
+  // conditions DB flags
+  //===============
+  Enable::XPLOAD = true;
+  // tag
+  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
+  // database config
+  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
+  // 64 bit timestamp
+  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
 
   // set up production relatedstuff
   Enable::PRODUCTION = true;
@@ -46,7 +63,6 @@ int Fun4All_G4_sPHENIX_jobA(
   Enable::MICROMEGAS = true;
  
   // TPC configuration
-  /* distortions - irrelevant, only matter when running from G4Hits */
   G4TPC::ENABLE_STATIC_DISTORTIONS = false;
   G4TPC::ENABLE_TIME_ORDERED_DISTORTIONS = false;
 
@@ -54,10 +70,9 @@ int Fun4All_G4_sPHENIX_jobA(
   G4TPC::ENABLE_CORRECTIONS = false;
   G4TPC::correction_filename = string(getenv("CALIBRATIONROOT")) + "/distortion_maps/distortion_corrections_empty.root";
   
-  // tracking
-  /* turn on special fit with silicium and TPOT alone */
-  G4TRACKING::SC_CALIBMODE = true;
-  
+  // tracking configuration
+  G4TRACKING::use_full_truth_track_seeding = false;
+
   // server
   auto se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -65,9 +80,6 @@ int Fun4All_G4_sPHENIX_jobA(
   // make sure to printout random seeds for reproducibility
   PHRandomSeed::Verbosity(1);
 
-  //------------------
-  // New Flag Handling
-  //------------------
   FlagHandler *flag = new FlagHandler();
   se->registerSubsystem(flag);
 
@@ -75,8 +87,9 @@ int Fun4All_G4_sPHENIX_jobA(
   TrackingInit();
   
   // tracking
-  Tracking_Reco_TrackSeed();
-
+  /* we only run the track fit, starting with seed from JobA */
+  Tracking_Reco_TrackFit();
+  
   // input manager
   auto in = new Fun4AllDstInputManager("DSTin");
   in->fileopen(inputFile);
@@ -86,26 +99,17 @@ int Fun4All_G4_sPHENIX_jobA(
   {
     Production_CreateOutputDir();
   }
-
   // output manager
-  /* only save clusters, tracks and vertices */
   auto out = new Fun4AllDstOutputManager("DSTOUT", outputFile);
-
   /* 
    * in principle one would not need to store the clusters and cluster crossing node, as they are already in the output from Job0
-   * for JobC it should be enough to read the cluster file in sync with the track file 
    */
   out->AddNode("Sync");
   out->AddNode("EventHeader");
-  out->AddNode("TRKR_CLUSTER");
-  out->AddNode("TRKR_CLUSTERCROSSINGASSOC");
-  out->AddNode("SiliconTrackSeedContainer");
-  out->AddNode("TpcTrackSeedContainer");
-  out->AddNode("SvtxTrackSeedContainer");
+//  out->AddNode("TRKR_CLUSTER");
+//  out->AddNode("TRKR_CLUSTERCROSSINGASSOC");
   out->AddNode("SvtxTrackMap");
-  out->AddNode("SvtxSiliconTrackMap");
-  out->AddNode("TpcSeedTrackMap");
-  out->AddNode("SvtxSiliconMMTrackMap");
+  out->AddNode("SvtxVertexMap");
   se->registerOutputManager(out);
 
   // skip events if any specified
@@ -116,6 +120,7 @@ int Fun4All_G4_sPHENIX_jobA(
   se->run(nEvents);
 
   // terminate
+  XploadInterface::instance()->Print(); // print used DB files
   se->End();
   se->PrintTimer();
   std::cout << "All done" << std::endl;
