@@ -9,15 +9,17 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=40;
+my $runnumber=50;
 my $test;
 my $incremental;
-GetOptions("test"=>\$test, "increment"=>\$incremental);
+my $shared;
+GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", <\"Jet30\", \"PhotonJet\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
+    print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
@@ -40,7 +42,11 @@ if ($jettrigger  ne "Jet10" &&
     exit(1);
 }
 
-my $jettriggerWithUnderScore = sprintf("%s-",$jettrigger);
+my $condorlistfile =  sprintf("condor.list");
+if (-f $condorlistfile)
+{
+    unlink $condorlistfile;
+}
 
 if (! -f "outdir.txt")
 {
@@ -62,10 +68,12 @@ else
   mkpath($outdir);
 }
 
+my $jettriggerWithDash = sprintf("%s-",$jettrigger);
+
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_CLUSTER' and filename like '%pythia8_$jettriggerWithUnderScore%' and runnumber = $runnumber order by filename") || die $DBI::error;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_CLUSTER' and filename like '%pythia8_$jettriggerWithDash%' and runnumber = $runnumber order by filename") || die $DBI::error;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::error;
@@ -103,13 +111,36 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $nsubmit++;
 	}
-	if ($nsubmit >= $maxsubmit)
+	if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit >= 20000)
 	{
-	    print "maximum number of submissions reached, exiting\n";
-	    exit(0);
+	    print "maximum number of submissions $nsubmit reached, submitting\n";
+	    last;
 	}
     }
 }
 $getfiles->finish();
 $chkfile->finish();
 $dbh->disconnect;
+
+my $jobfile = sprintf("condor.job");
+if (defined $shared)
+{
+ $jobfile = sprintf("condor.job.shared");
+}
+if (! -f $jobfile)
+{
+    print "could not find $jobfile\n";
+    exit(1);
+}
+
+if (-f $condorlistfile)
+{
+    if (defined $test)
+    {
+	print "would submit $jobfile\n";
+    }
+    else
+    {
+	system("condor_submit $jobfile");
+    }
+}
