@@ -32,7 +32,7 @@ if ($sequence < 100)
     $baseprio = 90;
 }
 my $condorlistfile = sprintf("condor.list");
-my $suffix = sprintf("%s_3MHz-%010d-%05d",$jettrigger,$runnumber,$sequence);
+my $suffix = sprintf("%s-%010d-%05d",$jettrigger,$runnumber,$sequence);
 my $logdir = sprintf("%s/log/%s",$localdir,$jettrigger);
 mkpath($logdir);
 my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass3_jobA_nopileup/%s",$jettrigger);
