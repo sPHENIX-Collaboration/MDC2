@@ -44,11 +44,12 @@ echo arg1 \(events\) : $1
 echo arg2 \(trkr seed file\): $2
 echo arg3 \(output file\): $3
 echo arg4 \(output dir\): $4
-echo arg5 \(runnumber\): $5
-echo arg6 \(sequence\): $6
+echo arg5 \(quarkfilter\): $5
+echo arg6 \(runnumber\): $6
+echo arg7 \(sequence\): $7
 
-runnumber=$(printf "%010d" $5)
-sequence=$(printf "%05d" $6)
+runnumber=$(printf "%010d" $6)
+sequence=$(printf "%05d" $7)
 filename=HF_pp200_signal_pass4_jobC_$5
 
 txtfilenameC=${filename}-${runnumber}-${sequence}_C.txt

@@ -19,6 +19,7 @@ if ($#ARGV < 1)
     print "usage: run_all.pl <number of jobs> <\"Charm\", \"CharmD0\", \"Bottom\", \"BottomD0\", \"JetD0\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
+    print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
