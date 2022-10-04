@@ -19,6 +19,7 @@ if ($#ARGV < 0)
     print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
+    print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
@@ -153,7 +154,8 @@ $dbh->disconnect;
 my $jobfile = sprintf("condor.job");
 if (defined $shared)
 {
- $jobfile = sprintf("condor.job.shared");
+# $jobfile = sprintf("condor.job.shared");
+ $jobfile = sprintf("condor.job");
 }
 if (-f $condorlistfile)
 {
