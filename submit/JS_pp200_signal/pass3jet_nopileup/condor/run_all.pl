@@ -65,7 +65,7 @@ if ($outdir =~ /lustre/)
 }
 else
 {
-  mkpath($outdir);
+    mkpath($outdir);
 }
 
 my $jettriggerWithDash = sprintf("%s-",$jettrigger);
@@ -81,40 +81,40 @@ while (my @res = $getfiles->fetchrow_array())
     my $lfn = $res[0];
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
-	my $runnumber = int($2);
-	my $segment = int($3);
-	my $outfilename = sprintf("DST_TRUTH_JET_pythia8_%s-%010d-%05d.root",$jettrigger,$runnumber,$segment);
-	$chkfile->execute($outfilename);
-	if ($chkfile->rows > 0)
-	{
-	    next;
-	}
-	my $tstflag="";
-	if (defined $test)
-	{
-	    $tstflag="--test";
-	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $outfilename, $outdir, $runnumber, $segment, $tstflag);
-	print "cmd: $subcmd\n";
-	system($subcmd);
-	my $exit_value  = $? >> 8;
-	if ($exit_value != 0)
-	{
-	    if (! defined $incremental)
-	    {
-		print "error from run_condor.pl\n";
-		exit($exit_value);
-	    }
-	}
-	else
-	{
-	    $nsubmit++;
-	}
-	if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit >= 20000)
-	{
-	    print "maximum number of submissions $nsubmit reached, submitting\n";
-	    last;
-	}
+        my $runnumber = int($2);
+        my $segment = int($3);
+        my $outfilename = sprintf("DST_TRUTH_JET_pythia8_%s-%010d-%05d.root",$jettrigger,$runnumber,$segment);
+        $chkfile->execute($outfilename);
+        if ($chkfile->rows > 0)
+        {
+            next;
+        }
+        my $tstflag="";
+        if (defined $test)
+        {
+            $tstflag="--test";
+        }
+        my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $outfilename, $outdir, $runnumber, $segment, $tstflag);
+        print "cmd: $subcmd\n";
+        system($subcmd);
+        my $exit_value  = $? >> 8;
+        if ($exit_value != 0)
+        {
+            if (! defined $incremental)
+            {
+                print "error from run_condor.pl\n";
+                exit($exit_value);
+            }
+        }
+        else
+        {
+            $nsubmit++;
+        }
+        if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit >= 20000)
+        {
+            print "maximum number of submissions $nsubmit reached, submitting\n";
+            last;
+        }
     }
 }
 $getfiles->finish();
@@ -124,7 +124,7 @@ $dbh->disconnect;
 my $jobfile = sprintf("condor.job");
 if (defined $shared)
 {
- $jobfile = sprintf("condor.job.shared");
+    $jobfile = sprintf("condor.job.shared");
 }
 if (! -f $jobfile)
 {
@@ -136,10 +136,10 @@ if (-f $condorlistfile)
 {
     if (defined $test)
     {
-	print "would submit $jobfile\n";
+        print "would submit $jobfile\n";
     }
     else
     {
-	system("condor_submit $jobfile");
+        system("condor_submit $jobfile");
     }
 }
