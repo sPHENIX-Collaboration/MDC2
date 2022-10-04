@@ -9,7 +9,7 @@ my $test;
 GetOptions("test"=>\$test);
 if ($#ARGV < 5)
 {
-    print "usage: run_condor.pl <events> <jettrigger> <truth infile> <outfile> <outdir> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <trackseeds> <outfile> <outdir> <runnumber> <sequence>\n";
     print "options:\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
@@ -17,9 +17,9 @@ if ($#ARGV < 5)
 
 my $localdir=`pwd`;
 chomp $localdir;
-my $baseprio = 54;
+my $baseprio = 55;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_pass5jet.sh",$rundir);
+my $executable = sprintf("%s/run_pass3_jobC_nopileup.sh",$rundir);
 my $nevents = $ARGV[0];
 my $jettrigger = $ARGV[1];
 my $infile = $ARGV[2];
@@ -32,24 +32,24 @@ if ($sequence < 100)
     $baseprio = 90;
 }
 my $condorlistfile = sprintf("condor.list");
-my $suffix = sprintf("_%s-%010d-%05d",$jettrigger,$runnumber,$sequence);
+my $suffix = sprintf("%s-%010d-%05d",$jettrigger,$runnumber,$sequence);
 my $logdir = sprintf("%s/log/%s",$localdir,$jettrigger);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass4jet_nopileup/%s",$jettrigger);
+my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass3_jobC_nopileup/%s",$jettrigger);
 mkpath($condorlogdir);
-my $jobfile = sprintf("%s/condor%s.job",$logdir,$suffix);
+my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
 if (-f $jobfile)
 {
     print "jobfile $jobfile exists, possible overlapping names\n";
     exit(1);
 }
-my $condorlogfile = sprintf("%s/condor%s.log",$condorlogdir,$suffix);
+my $condorlogfile = sprintf("%s/condor_%s.log",$condorlogdir,$suffix);
 if (-f $condorlogfile)
 {
     unlink $condorlogfile;
 }
-my $errfile = sprintf("%s/condor%s.err",$logdir,$suffix);
-my $outfile = sprintf("%s/condor%s.out",$logdir,$suffix);
+my $errfile = sprintf("%s/condor_%s.err",$logdir,$suffix);
+my $outfile = sprintf("%s/condor_%s.out",$logdir,$suffix);
 print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
@@ -66,7 +66,6 @@ print F "accounting_group_user = sphnxpro\n";
 print F "Requirements = (CPU_Type == \"mdc2\")\n";
 print F "request_memory = 2048MB\n";
 print F "Priority = $baseprio\n";
-#print F "concurrency_limits = PHENIX_2000\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);

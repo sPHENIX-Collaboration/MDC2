@@ -17,7 +17,7 @@ if ($#ARGV < 5)
 
 my $localdir=`pwd`;
 chomp $localdir;
-my $baseprio = 84;
+my $baseprio = 54;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_pass4jet.sh",$rundir);
 my $nevents = $ARGV[0];
@@ -78,6 +78,7 @@ close(F);
 #{
 #    system("condor_submit $jobfile");
 #}
+
 open(F,">>$condorlistfile");
 print F "$executable, $nevents, $infile, $dstoutfile, $dstoutdir, $jettrigger, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);

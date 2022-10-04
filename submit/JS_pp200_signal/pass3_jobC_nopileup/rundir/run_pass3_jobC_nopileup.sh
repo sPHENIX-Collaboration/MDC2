@@ -3,6 +3,7 @@ export USER="$(id -u -n)"
 export LOGNAME=${USER}
 export HOME=/sphenix/u/${USER}
 
+hostname
 
 this_script=$BASH_SOURCE
 this_script=`readlink -f $this_script`
@@ -16,8 +17,6 @@ source /opt/sphenix/core/bin/sphenix_setup.sh -n ana.322
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
     cd $_CONDOR_SCRATCH_DIR
-    echo begin copy input files
-    date +%s
     rsync -av $this_dir/* .
     getinputfiles.pl $2
     if [ $? -ne 0 ]
@@ -25,31 +24,48 @@ then
 	echo error from getinputfiles.pl $2, exiting
 	exit -1
     fi
-    echo end copy input files
-    date +%s
 else
     echo condor scratch NOT set
+    hostname
+    exit -1
 fi
 
 # arguments 
 # $1: number of events
-# $2: truth input file
+# $2: trkr seed input file
 # $3: output file
 # $4: output dir
 # $5: jet trigger
-# $6: runnumber
+# $6: run number
 # $7: sequence
 
 echo 'here comes your environment'
 printenv
 echo arg1 \(events\) : $1
-echo arg2 \(truth input file\): $2
+echo arg2 \(trkr seed file\): $2
 echo arg3 \(output file\): $3
 echo arg4 \(output dir\): $4
-echo arg5 \(jettrigger\): $5
+echo arg5 \(jet trigger\): $5
 echo arg6 \(runnumber\): $6
 echo arg7 \(sequence\): $7
 
-echo running root.exe -q -b Fun4All_G4_Jets.C\($1,\"$2\",\"$3\",\"$4\"\)
-root.exe -q -b  Fun4All_G4_Jets.C\($1,\"$2\",\"$3\",\"$4\"\)
+runnumber=$(printf "%010d" $6)
+sequence=$(printf "%05d" $7)
+filename=JS_pp200_signal_pass4_jobC_nopileup_$5
+
+txtfilenameC=${filename}-${runnumber}-${sequence}_C.txt
+jsonfilenameC=${filename}-${runnumber}-${sequence}_C.json
+
+echo running prmon --filename $txtfilenameC --json-summary $jsonfilenameC -- root.exe -q -b Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\"\)
+prmon --filename $txtfilenameC --json-summary $jsonfilenameC -- root.exe -q -b  Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\"\)
+
+rsyncdirname=/sphenix/user/sphnxpro/prmon/JS_pp200_signal/pass4_jobC_nopileup_$5
+if [ ! -d $rsyncdirname ]
+then
+  mkdir -p $rsyncdirname
+fi
+
+rsync -av $txtfilenameC $rsyncdirname
+rsync -av $jsonfilenameC $rsyncdirname
+
 echo "script done"

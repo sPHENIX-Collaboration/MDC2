@@ -17,7 +17,7 @@ if ($#ARGV < 5)
 
 my $localdir=`pwd`;
 chomp $localdir;
-my $baseprio = 84;
+my $baseprio = 54;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_job0.sh",$rundir);
 my $nevents = $ARGV[0];
