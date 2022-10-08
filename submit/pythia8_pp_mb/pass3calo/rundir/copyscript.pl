@@ -250,7 +250,25 @@ if ($outsize != $size)
     print STDERR "filesize mismatch between origin $file ($size) and copy $outfile ($outsize)\n";
     die;
 }
-my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
+my $dbh;
+my $attempts = 0;
+
+CONNECTAGAIN:
+if ($attempts > 0)
+{
+    sleep(int(rand(21) + 10)); # sleep 10-30 seconds before retrying
+}
+$attempts++;
+if ($attempts > 20)
+{
+    print "giving up connecting to DB after $attempts attempts\n";
+    exit(1);
+}
+$dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || goto CONNECTAGAIN;
+if ($attempts > 0)
+{
+    print "connections succeded after $attempts attempts\n";
+}
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $chkfile = $dbh->prepare("select size,full_file_path from files where full_file_path = ?") || die $DBI::error;
 my $insertfile = $dbh->prepare("insert into files (lfn,full_host_name,full_file_path,time,size,md5) values (?,?,?,'now',?,?)");
