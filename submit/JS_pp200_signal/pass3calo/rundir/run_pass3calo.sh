@@ -26,7 +26,7 @@ then
     getinputfiles.pl $3
     if [ $? -ne 0 ]
     then
-	echo error from getinputfiles.pl $2, exiting
+	echo error from getinputfiles.pl $3, exiting
 	exit -1
     fi
 else

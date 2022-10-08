@@ -12,7 +12,8 @@ my $outevents = 0;
 my $runnumber = 46;
 my $test;
 my $incremental;
-GetOptions("test"=>\$test, "increment"=>\$incremental);
+my $shared;
+GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
 if ($#ARGV < 3)
 {
     print "usage: run_all.pl <number of jobs> <particle> <pmin> <pmax>\n";
@@ -145,14 +146,25 @@ while (my @res = $getfiles->fetchrow_array())
 $chkfile->finish();
 $dbh->disconnect;
 
+my $jobfile = sprintf("condor.job");
+if (defined $shared)
+{
+ $jobfile = sprintf("condor.job.shared");
+}
+if (! -f $jobfile)
+{
+    print "could not find $jobfile\n";
+    exit(1);
+}
+
 if (-f $condorlistfile)
 {
     if (defined $test)
     {
-	print "would submit condor.job\n";
+	print "would submit $jobfile\n";
     }
     else
     {
-	system("condor_submit condor.job");
+	system("condor_submit $jobfile");
     }
 }

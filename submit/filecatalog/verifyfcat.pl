@@ -50,15 +50,17 @@ while (my @res = $getfiles->fetchrow_array())
     }
 }
 print "number of failures: $nfail\n";
+open(F1,">dataset_remove_missing.sql");
 if ($nfail > 0)
 {
     print "missing files:\n";
     foreach my $i (sort keys %failfiles)
     {
 	print "$i\n";
+        print F1 "psql -h sphnxdbmaster FileCatalog -c \"delete from datasets where filename = \'$i\'\"\n";
     }
 }
-
+close(F1);
 $getfiles->finish();
 $getfullfile->finish();
 $dbh->disconnect;

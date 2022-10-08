@@ -45,6 +45,7 @@ my %daughters = (
     "DST_TRACKS" => [ "" ],
     "DST_TRACKS_DISTORT" => [ "" ],
     "DST_CALO_CLUSTER" => [ "" ],
+    "DST_JETS" => [ "" ],
     "DST_HF_CHARM" => [ "JET_EVAL_DST_HF_CHARM", "QA_DST_HF_CHARM"],
     "JET_EVAL_DST_HF_CHARM" => [ "DST_HF_CHARM", "QA_DST_HF_CHARM"],
     "QA_DST_HF_CHARM" => [ "DST_HF_CHARM", "JET_EVAL_DST_HF_CHARM"],
@@ -146,6 +147,7 @@ my %productionsubdir = (
     "DST_BBC_G4HIT" => "pass2",
     "DST_CALO_CLUSTER" => "pass3calo",
     "DST_CALO_G4HIT"=> "pass2",
+    "DST_JETS"=> "pass5jetreco",
     "DST_TRACKS" => "pass4_jobC",
     "DST_TRACKSEEDS" => "pass4_jobA",
     "DST_TRACKS_DISTORT" => "pass4distort",
@@ -408,10 +410,13 @@ foreach my $rem (keys %removethese)
     if (exists $productionsubdir{$rem})
     {
 	$condor_subdir = sprintf("%s/%s/condor/log",$condor_subdir,$productionsubdir{$rem});
-	my $condorsubdir = sprintf("%s/%s",$condor_subdir,$condorfileadd);
-	if (-d $condorsubdir)
+	if (defined $condorfileadd)
 	{
-	    $condor_subdir = sprintf("%s",$condorsubdir);
+	    my $condorsubdir = sprintf("%s/%s",$condor_subdir,$condorfileadd);
+	    if (-d $condorsubdir)
+	    {
+		$condor_subdir = sprintf("%s",$condorsubdir);
+	    }
 	}
     }
     else

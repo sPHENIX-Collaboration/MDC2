@@ -9,18 +9,16 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=50;
+my $runnumber=40;
 my $test;
 my $incremental;
-my $overwrite;
 my $shared;
-GetOptions("test"=>\$test, "increment"=>\$incremental,  "overwrite"=>\$overwrite,"shared" => \$shared);
-if ($#ARGV < 1)
+GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
+if ($#ARGV < 0)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"PhotonJet\" production>\n";
+    print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
-    print "--overwrite : overwrite existing jobfiles and restart\n";
     print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
@@ -35,16 +33,6 @@ if ($hostname !~ /phnxsub/)
 }
 
 my $maxsubmit = $ARGV[0];
-my $jettrigger = $ARGV[1];
-if ($jettrigger  ne "Jet10" &&
-    $jettrigger  ne "Jet30" &&
-    $jettrigger  ne "PhotonJet")
-{
-    print "second argument has to be Jet10, Jet30 or PhotonJet\n";
-    exit(1);
-}
-
-my $outfilelike = sprintf("pythia8_%s_sHijing_0_20fm_50kHz_bkg_0_20fm",$jettrigger);
 
 my $condorlistfile =  sprintf("condor.list");
 if (-f $condorlistfile)
@@ -59,7 +47,6 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/%s",$outdir,lc $jettrigger);
 if ($outdir =~ /lustre/)
 {
     my $storedir = $outdir;
@@ -72,10 +59,11 @@ else
   mkpath($outdir);
 }
 
+my $outfilestring = sprintf("pythia8_pp_mb_3MHz");
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRACKSEEDS' and filename like '%$outfilelike%' and runnumber = $runnumber order by filename") || die $DBI::error;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH' and filename like '%$outfilestring%' and runnumber = $runnumber order by filename") || die $DBI::error;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::error;
@@ -86,7 +74,7 @@ while (my @res = $getfiles->fetchrow_array())
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_TRACKS_%s-%010d-%05d.root",$outfilelike,$runnumber,$segment);
+	my $outfilename = sprintf("DST_TRUTH_JET_%s-%010d-%05d.root",$outfilestring,$runnumber,$segment);
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
@@ -97,11 +85,7 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $tstflag="--test";
 	}
-        elsif (defined $overwrite)
-	{
-	    $tstflag="--overwrite";
-	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $outfilename, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %d %s", $outevents, $lfn, $outfilename, $outdir, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
@@ -117,9 +101,9 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $nsubmit++;
 	}
-	if ($maxsubmit != 0 && $nsubmit >= $maxsubmit)
+	if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit >= 20000)
 	{
-	    print "maximum number of submissions reached, exiting\n";
+	    print "maximum number of submissions $nsubmit reached, submitting\n";
 	    last;
 	}
     }
@@ -128,14 +112,25 @@ $getfiles->finish();
 $chkfile->finish();
 $dbh->disconnect;
 
+my $jobfile = sprintf("condor.job");
+if (defined $shared)
+{
+ $jobfile = sprintf("condor.job.shared");
+}
+if (! -f $jobfile)
+{
+    print "could not find $jobfile\n";
+    exit(1);
+}
+
 if (-f $condorlistfile)
 {
     if (defined $test)
     {
-	print "would submit condor.job\n";
+	print "would submit $jobfile\n";
     }
     else
     {
-	system("condor_submit condor.job");
+	system("condor_submit $jobfile");
     }
 }

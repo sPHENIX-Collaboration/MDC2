@@ -320,7 +320,7 @@ foreach my $dcdir (keys  %topdcachedir)
 {
 #    if ($type eq "DST_TRUTH" || $type eq "G4Hits")
     {
-	$typeWithUnderscore = sprintf("%s_%s",$type,$systemstring);
+	$typeWithUnderscore = sprintf("%s_%s-%010d",$type,$systemstring,$runnumber);
     }
     $conds = sprintf("datasets.runnumber = %d and datasets.filename = files.lfn and files.lfn like \'%s%\%\' and files.full_file_path like \'%s/\%%%s%\%\'",$runnumber,$typeWithUnderscore,$dcdir,$type);
 if (exists $notlike{$systemstring})

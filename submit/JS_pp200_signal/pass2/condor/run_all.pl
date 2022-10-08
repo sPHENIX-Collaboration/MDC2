@@ -12,12 +12,14 @@ my $outevents = 0;
 my $runnumber = 50;
 my $test;
 my $incremental;
-GetOptions("test"=>\$test, "increment"=>\$incremental);
+my $shared;
+GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"PhotonJet\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
+    print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
@@ -206,14 +208,25 @@ $getfiles->finish();
 $chkfile->finish();
 $dbh->disconnect;
 
+my $jobfile = sprintf("condor.job");
+if (defined $shared)
+{
+ $jobfile = sprintf("condor.job.shared");
+}
+if (! -f $jobfile)
+{
+    print "could not find $jobfile\n";
+    exit(1);
+}
+
 if (-f $condorlistfile)
 {
     if (defined $test)
     {
-	print "would submit condor.job\n";
+	print "would submit $jobfile\n";
     }
     else
     {
-	system("condor_submit condor.job");
+	system("condor_submit $jobfile");
     }
 }

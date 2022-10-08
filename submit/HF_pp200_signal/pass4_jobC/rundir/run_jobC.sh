@@ -35,8 +35,9 @@ fi
 # $2: trkr seed input file
 # $3: output file
 # $4: output dir
-# $5: run number
-# $6: sequence
+# $5: quarkfilter
+# $6: run number
+# $7: sequence
 
 echo 'here comes your environment'
 printenv
