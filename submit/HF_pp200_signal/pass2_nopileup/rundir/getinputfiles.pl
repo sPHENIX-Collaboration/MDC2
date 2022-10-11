@@ -53,7 +53,25 @@ else
     $inputfiles{$ARGV[0]} = 1;
 }
 
-my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
+my $dbh;
+my $attempts = 0;
+
+CONNECTAGAIN:
+if ($attempts > 0)
+{
+    sleep(int(rand(21) + 10)); # sleep 10-30 seconds before retrying
+}
+$attempts++;
+if ($attempts > 20)
+{
+    print "giving up connecting to DB after $attempts attempts\n";
+    exit(1);
+}
+$dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || goto CONNECTAGAIN;
+if ($attempts > 0)
+{
+    print "connections succeded after $attempts attempts\n";
+}
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $filelocation = $dbh->prepare("select full_file_path,md5,size,full_host_name from files where lfn = ?") || die $DBI::error;
 my $updatemd5 = $dbh->prepare("update files set md5=? where full_file_path = ?");
