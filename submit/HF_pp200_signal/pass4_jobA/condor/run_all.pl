@@ -12,8 +12,9 @@ my $outevents = 0;
 my $runnumber=40;
 my $test;
 my $incremental;
+my $overwrite;
 my $shared;
-GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
+GetOptions("test"=>\$test, "increment"=>\$incremental, "overwrite"=>\$overwrite, "shared" => \$shared);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Charm\", \"CharmD0\", \"Bottom\", \"BottomD0\", \"JetD0\" production>\n";
@@ -96,6 +97,10 @@ while (my @res = $getfiles->fetchrow_array())
 	if (defined $test)
 	{
 	    $tstflag="--test";
+	}
+        elsif (defined $overwrite)
+	{
+	    $tstflag="--overwrite";
 	}
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $quarkfilter, $lfn, $outfilename, $outdir, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
