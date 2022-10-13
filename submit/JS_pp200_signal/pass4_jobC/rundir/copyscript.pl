@@ -270,7 +270,7 @@ if ($attempts > 0)
     print "connections succeded after $attempts attempts\n";
 }
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $chkfile = $dbh->prepare("select size,full_file_path from files where full_file_path = ?") || die $DBI::error;
+my $chkfile = $dbh->prepare("select size,full_file_path from files where full_file_path = ?");
 my $insertfile = $dbh->prepare("insert into files (lfn,full_host_name,full_file_path,time,size,md5) values (?,?,?,'now',?,?)");
 my $insertdataset = $dbh->prepare("insert into datasets (filename,runnumber,segment,size,dataset,dsttype,events) values (?,?,?,?,'mdc2',?,?)");
 my $chkdataset = $dbh->prepare("select size from datasets where filename=? and dataset='mdc2'");
