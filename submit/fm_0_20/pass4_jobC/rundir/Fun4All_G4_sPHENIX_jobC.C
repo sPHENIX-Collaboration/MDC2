@@ -34,7 +34,8 @@ int Fun4All_G4_sPHENIX_jobC(
   // print inputs
   std::cout << "Fun4All_G4_sPHENIX_jobC - nEvents: " << nEvents << std::endl;
   std::cout << "Fun4All_G4_sPHENIX_jobC - nSkipEvents: " << nSkipEvents << std::endl;
-  std::cout << "Fun4All_G4_sPHENIX_jobC - inputFile: " << inputFile << std::endl;
+  std::cout << "Fun4All_G4_sPHENIX_jobC - seed inputFile: " << inputFile1 << std::endl;
+  std::cout << "Fun4All_G4_sPHENIX_jobC - cluster inputFile: " << inputFile2 << std::endl;
   std::cout << "Fun4All_G4_sPHENIX_jobC - outputFile: " << outputFile << std::endl;
 
   recoConsts *rc = recoConsts::instance();
