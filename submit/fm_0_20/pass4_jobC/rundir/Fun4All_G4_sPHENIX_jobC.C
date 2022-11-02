@@ -24,8 +24,9 @@ R__LOAD_LIBRARY(libfun4all.so)
 int Fun4All_G4_sPHENIX_jobC(
   const int nEvents = 0,
   const int nSkipEvents = 0,
-  const std::string &inputFile = "DST_TRACKSEEDS_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000040-00000.root",
-  const std::string &outputFile = "DST_TRACKS_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000040-00000.root",
+  const std::string &inputFile1 = "DST_TRACKSEEDS_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000050-00000.root",
+  const std::string &inputFile2 = "DST_CALO_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000050-00000.root",
+  const std::string &outputFile = "DST_TRACKS_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000050-00000.root",
   const std::string &outdir = "."
   )
 {
@@ -91,8 +92,11 @@ int Fun4All_G4_sPHENIX_jobC(
   Tracking_Reco_TrackFit();
   
   // input manager
-  auto in = new Fun4AllDstInputManager("DSTin");
-  in->fileopen(inputFile);
+  auto in = new Fun4AllDstInputManager("DSTin1");
+  in->fileopen(inputFile1);
+  se->registerInputManager(in);
+  in = new Fun4AllDstInputManager("DSTin2");
+  in->fileopen(inputFile2);
   se->registerInputManager(in);
 
   if (Enable::PRODUCTION)
