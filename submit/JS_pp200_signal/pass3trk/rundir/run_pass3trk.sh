@@ -19,18 +19,14 @@ if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
     cd $_CONDOR_SCRATCH_DIR
     rsync -av $this_dir/* .
-
-    getinputfiles.pl $2
+    echo $2 > inputfiles.list
+    echo $3 >> inputfiles.list
+    getinputfiles.pl  --filelist inputfiles.list
     if [ $? -ne 0 ]
     then
-	echo error from getinputfiles.pl $2, exiting
-	exit -1
-    fi
-    getinputfiles.pl $3
-    if [ $? -ne 0 ]
-    then
-	echo error from getinputfiles.pl $3, exiting
-	exit -1
+        cat inputfiles.list
+        echo error from getinputfiles.pl  --filelist inputfiles.list, exiting
+        exit -1
     fi
 else
     echo condor scratch NOT set
