@@ -122,23 +122,25 @@ int Fun4All_G4_Embed(
   Input::PYTHIA8 = true;
   if (Input::PYTHIA8)
   {
+    string pythia8_config_file = string(getenv("CALIBRATIONROOT")) + "/Generators/JetStructure_TG/";
     if (jettrigger == "Jet10")
     {
-      PYTHIA8::config_file = "phpythia8_15GeV_JS_MDC2.cfg";
+      pythia8_config_file += "phpythia8_15GeV_JS_MDC2.cfg";
     }
     else if (jettrigger == "Jet30")
     {
-      PYTHIA8::config_file = "phpythia8_JS_MDC2.cfg";
+      pythia8_config_file += "phpythia8_30GeV_JS_MDC2.cfg";
     }
     else if (jettrigger == "PhotonJet")
     {
-      PYTHIA8::config_file = "phpythia8_JS_GJ_MDC2.cfg";
+      pythia8_config_file += "phpythia8_JS_GJ_MDC2.cfg";
     }
     else
     {
       cout << "invalid jettrigger: " << jettrigger << endl;
       gSystem->Exit(1);
     }
+    PYTHIA8::config_file = pythia8_config_file;
   }
   //  Input::GUN = true;
   //  Input::GUN_NUMBER = 3; // if you need 3 of them
