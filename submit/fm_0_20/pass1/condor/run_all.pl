@@ -32,7 +32,7 @@ my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::er
 
 my $maxsubmit = $ARGV[0];
 my $hijing_runnumber = 1;
-my $runnumber = 60;
+my $runnumber = 61;
 my $events = 400;
 #$events = 100; # for ftfp_bert_hp
 my $evtsperfile = 10000;
@@ -64,7 +64,7 @@ else
   mkpath($outdir);
 }
 my $nsubmit = 0;
-OUTER: for (my $segment=0; $segment<2000; $segment++)
+OUTER: for (my $segment=0; $segment<3000; $segment++)
 {
     my $hijingdatfile = sprintf("/sphenix/sim/sim01/sphnxpro/MDC1/sHijing_HepMC/data/sHijing_0_20fm-%010d-%05d.dat",$hijing_runnumber, $segment);
     if (! -f $hijingdatfile)
