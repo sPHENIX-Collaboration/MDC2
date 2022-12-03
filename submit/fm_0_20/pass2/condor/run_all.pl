@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $input_runnumber = 60;
+my $input_runnumber = 61;
 my $test;
 my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
@@ -172,9 +172,9 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $nsubmit++;
 	}
-	if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit > 20000)
+	if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit >= 20000)
 	{
-	    print "maximum number of submissions reached, exiting\n";
+	    print "maximum number of submissions $nsubmit reached, exiting\n";
 	    last;
 	}
     }
