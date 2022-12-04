@@ -32,8 +32,8 @@ my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::er
 
 my $maxsubmit = $ARGV[0];
 my $hijing_runnumber = 1;
-my $runnumber = 61;
-my $events = 400;
+my $runnumber = 62;
+my $events = 500;
 #$events = 100; # for ftfp_bert_hp
 my $evtsperfile = 10000;
 my $nmax = $evtsperfile;
@@ -99,7 +99,7 @@ OUTER: for (my $segment=0; $segment<3000; $segment++)
 	    {
 		$nsubmit++;
 	    }
-	    if ($nsubmit >= $maxsubmit)
+	    if ($nsubmit >= $maxsubmit || $nsubmit >= 20000)
 	    {
 		print "maximum number of submissions reached, exiting\n";
 		last OUTER;
