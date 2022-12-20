@@ -20,7 +20,7 @@ else
 }
 my $localdir=`pwd`;
 chomp $localdir;
-my $baseprio = 61;
+my $baseprio = 51;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_pythia8_pp_mb.sh",$rundir);
 my $nevents = $ARGV[0];
