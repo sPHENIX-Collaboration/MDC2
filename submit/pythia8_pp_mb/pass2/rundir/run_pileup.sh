@@ -12,8 +12,9 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n ana.322
+source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.335
 
+hostname
 
 # add to the GSEARCHPATH
 cat /etc/auto.direct | grep lustre
@@ -22,7 +23,7 @@ then
 # Lustre not mounted
 export GSEARCHPATH=${GSEARCHPATH}:MINIO
 else
-export GSEARCHPATH=.:PG:LUSTRE:XROOTD:DCACHE
+export GSEARCHPATH=.:PG:LUSTRE:XROOTD
 fi
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
