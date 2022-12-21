@@ -17,6 +17,7 @@ if ($#ARGV < 3)
 
 my $localdir=`pwd`;
 chomp $localdir;
+my $baseprio = 52;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_pass2_nopileup.sh",$rundir);
 my $nevents = $ARGV[0];
@@ -26,6 +27,12 @@ my $calodstoutdir = $ARGV[3];
 my $trkdstoutdir = $ARGV[4];
 my $runnumber = $ARGV[5];
 my $sequence = $ARGV[6];
+if ($sequence < 100)
+{
+    $baseprio = 90;
+}
+my $condorlistfile = sprintf("condor.list");
+
 my $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
@@ -63,11 +70,15 @@ print F "Priority 	= 952\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);
-if (defined $test)
-{
-    print "would submit $jobfile\n";
-}
-else
-{
-    system("condor_submit $jobfile");
-}
+#if (defined $test)
+#{
+#    print "would submit $jobfile\n";
+#}
+#else
+#{
+#    system("condor_submit $jobfile");
+#}
+
+open(F,">>$condorlistfile");
+print F "$executable, $nevents, $infile, $calooutfile $calodstoutdir $trkdstoutdir, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+close(F);
