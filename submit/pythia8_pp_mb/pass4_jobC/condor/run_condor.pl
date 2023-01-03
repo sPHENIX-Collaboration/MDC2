@@ -7,9 +7,9 @@ use File::Path;
 
 my $test;
 GetOptions("test"=>\$test);
-if ($#ARGV < 5)
+if ($#ARGV < 6)
 {
-    print "usage: run_condor.pl <events> <trk seeds> <outfile> <outdir> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <seeds infile> <cluster infile> <jettrigger> <outfile> <outdir> <runnumber> <sequence>\n";
     print "options:\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
@@ -21,11 +21,12 @@ my $baseprio = 57;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_jobC.sh",$rundir);
 my $nevents = $ARGV[0];
-my $infile = $ARGV[1];
-my $dstoutfile = $ARGV[2];
-my $dstoutdir = $ARGV[3];
-my $runnumber = $ARGV[4];
-my $sequence = $ARGV[5];
+my $infile1 = $ARGV[1];
+my $infile2 = $ARGV[2];
+my $dstoutfile = $ARGV[3];
+my $dstoutdir = $ARGV[4];
+my $runnumber = $ARGV[5];
+my $sequence = $ARGV[6];
 if ($sequence < 100)
 {
     $baseprio = 90;
@@ -53,7 +54,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $infile $dstoutfile $dstoutdir $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $infile1 $infile2 $dstoutfile $dstoutdir $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -78,5 +79,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile, $dstoutfile, $dstoutdir, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $infile1, $infile2, $dstoutfile, $dstoutdir, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);
