@@ -17,7 +17,7 @@ if ($#ARGV < 7)
 
 my $localdir=`pwd`;
 chomp $localdir;
-my $baseprio = 42;
+my $baseprio = 52;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_pass2_nopileup.sh",$rundir);
 my $nevents = $ARGV[0];

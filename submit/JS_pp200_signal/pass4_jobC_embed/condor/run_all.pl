@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=50;
+my $runnumber=62;
 my $test;
 my $incremental;
 my $overwrite;
@@ -73,15 +73,40 @@ else
 }
 
 
+my %trkhash = ();
+my %clusterhash = ();
+
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRACKSEEDS' and filename like '%$outfilelike%' and runnumber = $runnumber order by filename") || die $DBI::error;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
+
+my $getclusterfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_CLUSTER' and filename like '%$outfilelike%' and runnumber = $runnumber");
+
 my $nsubmit = 0;
+
 $getfiles->execute() || die $DBI::error;
 while (my @res = $getfiles->fetchrow_array())
 {
-    my $lfn = $res[0];
+    $trkhash{sprintf("%05d",$res[1])} = $res[0];
+}
+$getfiles->finish();
+$getclusterfiles->execute() || die $DBI::error;
+my $ncluster = $getclusterfiles->rows;
+while (my @res = $getclusterfiles->fetchrow_array())
+{
+    $clusterhash{sprintf("%05d",$res[1])} = $res[0];
+}
+$getclusterfiles->finish();
+
+foreach my $segment (sort keys %trkhash)
+{
+    if (! exists $clusterhash{$segment})
+    {
+	next;
+    }
+
+    my $lfn = $trkhash{$segment};
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
 	my $runnumber = int($2);
@@ -101,7 +126,7 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $tstflag="--overwrite";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $outfilename, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $clusterhash{sprintf("%05d",$segment)}, $outfilename, $outdir, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
@@ -117,14 +142,13 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $nsubmit++;
 	}
-	if ($maxsubmit != 0 && $nsubmit >= $maxsubmit)
+	if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit>= 20000)
 	{
-	    print "maximum number of submissions reached, exiting\n";
+	    print "maximum number of submissions $nsubmit reached, exiting\n";
 	    last;
 	}
     }
 }
-$getfiles->finish();
 $chkfile->finish();
 $dbh->disconnect;
 
