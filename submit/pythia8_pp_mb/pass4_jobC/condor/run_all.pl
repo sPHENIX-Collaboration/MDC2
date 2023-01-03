@@ -69,7 +69,7 @@ my %clusterhash = ();
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRACKSEEDS' and filename like '%$outfilestring%' and runnumber = $runnumber order by filename") || die $DBI::error;
-my $getclusterfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_CLUSTER' and filename like '%$outfilelike%' and runnumber = $runnumber");
+my $getclusterfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_CLUSTER' and filename like '%$outfilestring%' and runnumber = $runnumber");
 
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
 
