@@ -58,7 +58,7 @@ echo running prmon --filename $txtfilename0 --json-summary $jsonfilename0 -- roo
 prmon --filename $txtfilename0 --json-summary $jsonfilename0 -- root.exe -q -b  Fun4All_G4_sPHENIX_job0.C\($1,0,\"$2\",\"$3\",\"$4\"\)
 
 
-rsyncdirname=/sphenix/user/sphnxpro/prmon/fm_0_20/pass4_nopileup_job0
+rsyncdirname=/sphenix/user/sphnxpro/prmon/fm_0_20/pass3_nopileup_job0
 if [ ! -d $rsyncdirname ]
 then
   mkdir -p $rsyncdirname
