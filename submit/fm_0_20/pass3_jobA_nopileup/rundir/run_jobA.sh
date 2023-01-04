@@ -11,7 +11,7 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n  ana.319
+source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.339
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
@@ -57,7 +57,7 @@ echo running prmon --filename $txtfilenameA --json-summary $jsonfilenameA -- roo
 prmon --filename $txtfilenameA --json-summary $jsonfilenameA -- root.exe -q -b  Fun4All_G4_sPHENIX_jobA.C\($1,0,\"$2\",\"$3\",\"$4\"\)
 
 
-rsyncdirname=/sphenix/user/sphnxpro/prmon/fm_0_20/pass4_nopilep_jobA
+rsyncdirname=/sphenix/user/sphnxpro/prmon/fm_0_20/pass3_nopilep_jobA
 if [ ! -d $rsyncdirname ]
 then
   mkdir -p $rsyncdirname

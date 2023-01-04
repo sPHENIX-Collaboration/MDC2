@@ -1,6 +1,7 @@
 #include <GlobalVariables.C>
 
 #include <G4_Magnet.C>
+#include <G4_Micromegas.C>
 #include <G4_Production.C>
 #include <G4_Tracking.C>
 
@@ -22,8 +23,8 @@ R__LOAD_LIBRARY(libfun4all.so)
 int Fun4All_G4_sPHENIX_jobA(
   const int nEvents = 0,
   const int nSkipEvents = 0,
-  const string &inputFile = "DST_TRKR_CLUSTER_sHijing_0_20fm-0000000040-00000.root",
-  const string &outputFile = "DST_TRACKSEEDS_sHijing_0_20fm-0000000040-00000.root",
+  const string &inputFile = "DST_TRKR_CLUSTER_sHijing_0_20fm-0000000062-00000.root",
+  const string &outputFile = "DST_TRACKSEEDS_sHijing_0_20fm-0000000062-00000.root",
   const string &outdir = "."
   )
 {
@@ -66,7 +67,7 @@ int Fun4All_G4_sPHENIX_jobA(
   G4TPC::ENABLE_TIME_ORDERED_DISTORTIONS = false;
 
   /* distortion corrections */
-  G4TPC::ENABLE_CORRECTIONS = true;
+  G4TPC::ENABLE_CORRECTIONS = false;
   G4TPC::correction_filename = string(getenv("CALIBRATIONROOT")) + "/distortion_maps/distortion_corrections_empty.root";
   
   // tracking
@@ -90,7 +91,7 @@ int Fun4All_G4_sPHENIX_jobA(
   TrackingInit();
   
   // tracking
-  Tracking_Reco();
+  Tracking_Reco_TrackSeed();
 
   // input manager
   auto in = new Fun4AllDstInputManager("DSTin");
