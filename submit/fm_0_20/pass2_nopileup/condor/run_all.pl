@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 40;
+my $runnumber = 62;
 my $test;
 my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
@@ -30,6 +30,12 @@ if ($hostname !~ /phnxsub/)
     exit(1);
 }
 my $maxsubmit = $ARGV[0];
+
+my $condorlistfile =  sprintf("condor.list");
+if (-f $condorlistfile)
+{
+    unlink $condorlistfile;
+}
 
 if (! -f "outdir.txt")
 {
@@ -122,13 +128,26 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $nsubmit++;
 	}
-	if ($nsubmit >= $maxsubmit)
+	if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit >= 20000)
 	{
-	    print "maximum number of submissions reached, exiting\n";
-	    exit(0);
+	    print "maximum number of submissions $nsubmit reached, exiting\n";
+	    last;
 	}
     }
 }
 
+$getfiles->finish();
 $chkfile->finish();
 $dbh->disconnect;
+
+if (-f $condorlistfile)
+{
+    if (defined $test)
+    {
+	print "would submit condor.job\n";
+    }
+    else
+    {
+	system("condor_submit condor.job");
+    }
+}
