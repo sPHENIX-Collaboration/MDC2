@@ -10,7 +10,7 @@ this_script=`readlink -f $this_script`
 this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n new
+source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.339
 
 echo running: run_job0.sh $*
 

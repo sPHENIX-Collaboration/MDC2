@@ -9,10 +9,11 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=40;
+my $runnumber=62;
 my $test;
 my $incremental;
-GetOptions("test"=>\$test, "increment"=>\$incremental);
+my $shared;
+GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
@@ -50,6 +51,11 @@ else
   mkpath($outdir);
 }
 
+my $condorlistfile =  sprintf("condor.list");
+if (-f $condorlistfile)
+{
+    unlink $condorlistfile;
+}
 
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
@@ -92,13 +98,36 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $nsubmit++;
 	}
-	if ($nsubmit >= $maxsubmit)
+	if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit >= 20000)
 	{
-	    print "maximum number of submissions reached, exiting\n";
-	    exit(0);
+	    print "maximum number of submissions $nsubmit reached, exiting\n";
+	    last;
 	}
     }
 }
 $getfiles->finish();
 $chkfile->finish();
 $dbh->disconnect;
+
+my $jobfile = sprintf("condor.job");
+if (defined $shared)
+{
+ $jobfile = sprintf("condor.job.shared");
+}
+if (! -f $jobfile)
+{
+    print "could not find $jobfile\n";
+    exit(1);
+}
+
+if (-f $condorlistfile)
+{
+    if (defined $test)
+    {
+	print "would submit $jobfile\n";
+    }
+    else
+    {
+	system("condor_submit $jobfile");
+    }
+}
