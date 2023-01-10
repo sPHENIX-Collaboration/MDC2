@@ -70,7 +70,7 @@ $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRACKSEEDS' and filename like '%sHijing_0_20fm-%' and filename not like '%pythia8%' and runnumber = $inrunnumber order by filename") || die $DBI::error;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
 
-my $getclusterfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_CLUSTER' and filename like '%sHijing_0_20fm_50kHz_bkg_0_20fm%'and filename not like '%pythia8%' and runnumber = $inrunnumber");
+my $getclusterfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_CLUSTER' and filename like '%sHijing_0_20fm-%'and filename not like '%pythia8%' and runnumber = $inrunnumber");
 
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::error;
