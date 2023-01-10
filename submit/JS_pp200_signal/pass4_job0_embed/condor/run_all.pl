@@ -19,6 +19,7 @@ if ($#ARGV < 1)
     print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\" \"PhotonJet\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
+    print "--shared : run on shared pool\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
@@ -110,9 +111,9 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $nsubmit++;
 	}
-	if ($maxsubmit != 0 && $nsubmit >= $maxsubmit)
+	if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit >= 20000)
 	{
-	    print "maximum number of submissions reached, exiting\n";
+	    print "maximum number of submissions $nsubmit reached, exiting\n";
 	    last;
 	}
     }
