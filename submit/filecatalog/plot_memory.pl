@@ -58,10 +58,10 @@ if (! defined $runremlist)
 	open(F1,$fcmd);
 	while (my $remline = <F1>)
 	{
+	    $cnt++;
 	    print F2 "$remline";
 	}
 	close(F1);
-	$cnt++;
 	if (defined $count &&  $cnt >= $count)
 	{
 	    last;

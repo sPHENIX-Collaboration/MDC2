@@ -159,6 +159,7 @@ my %productionsubdir = (
     "DST_TRUTH_G4HIT" => "pass2",
     "DST_TRUTH" => "pass3trk",
     "DST_TRUTH_JET" => "pass4jet",
+    "DST_TRUTH_RECO" => "pass5truthreco",
     "DST_TRUTH_DISTORT" => "pass3distort",
     "DST_VERTEX" => "pass2",
     "G4Hits" => "pass1"
