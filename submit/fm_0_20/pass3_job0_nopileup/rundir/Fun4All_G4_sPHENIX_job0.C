@@ -25,9 +25,9 @@ R__LOAD_LIBRARY(libfun4all.so)
 int Fun4All_G4_sPHENIX_job0(
   const int nEvents = 0,
   const int nSkipEvents = 0,
-  const char* inputFile = "DST_TRKR_HIT_sHijing_0_20fm-0000000040-00000.root",
-  const char* outputFile = "DST_TRKR_CLUSTER_sHijing_0_20fm-0000000040-00000.root",
-    const string &outdir = ".")
+  const std::string &inputFile = "DST_TRKR_HIT_sHijing_0_20fm-0000000062-00000.root",
+  const std::string &outputFile = "DST_TRKR_CLUSTER_sHijing_0_20fm-0000000062-00000.root",
+  const std::string &outdir = ".")
 {
 
   // print inputs
@@ -115,7 +115,7 @@ int Fun4All_G4_sPHENIX_job0(
 
   // output manager
   /* all the nodes from DST and RUN are saved to the output */
-    string FullOutFile = DstOut::OutputFile;
+  std::string FullOutFile = DstOut::OutputFile;
   auto out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
   out->AddNode("Sync");
   out->AddNode("EventHeader");
