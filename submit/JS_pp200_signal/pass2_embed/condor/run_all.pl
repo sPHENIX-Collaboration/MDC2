@@ -76,14 +76,14 @@ $outfiletype{"DST_TRKR_G4HIT"} = 1;
 $outfiletype{"DST_TRUTH_G4HIT"} = 1;
 $outfiletype{"DST_VERTEX"} = 1;
 
-my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
+my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $nsubmit = 0;
 
 my %trkhash = ();
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like '%$embedfilelike%' and filename not like '%pythia8%' and runnumber = $runnumber order by filename") || die $DBI::error;
-my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
-$getfiles->execute() || die $DBI::error;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like '%$embedfilelike%' and filename not like '%pythia8%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
+my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
+$getfiles->execute() || die $DBI::errstr;
 my $ncal = $getfiles->rows;
 while (my @res = $getfiles->fetchrow_array())
 {
@@ -93,7 +93,7 @@ $getfiles->finish();
 
 my %truthhash = ();
 my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH_G4HIT' and filename like '%$embedfilelike%' and filename not like '%pythia8%' and runnumber = $runnumber");
-$gettruthfiles->execute() || die $DBI::error;
+$gettruthfiles->execute() || die $DBI::errstr;
 my $ntruth = $gettruthfiles->rows;
 while (my @res = $gettruthfiles->fetchrow_array())
 {
@@ -103,7 +103,7 @@ $gettruthfiles->finish();
 
 my %bbchash = ();
 my $getbbcfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_BBC_G4HIT' and filename like '%$embedfilelike%' and filename not like '%pythia8%' and runnumber = $runnumber");
-$getbbcfiles->execute() || die $DBI::error;
+$getbbcfiles->execute() || die $DBI::errstr;
 my $nbbc = $getbbcfiles->rows;
 while (my @res = $getbbcfiles->fetchrow_array())
 {
@@ -113,7 +113,7 @@ $getbbcfiles->finish();
 
 my %calohash = ();
 my $getcalofiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_G4HIT' and filename like '%$embedfilelike%' and filename not like '%pythia8%' and runnumber = $runnumber");
-$getcalofiles->execute() || die $DBI::error;
+$getcalofiles->execute() || die $DBI::errstr;
 my $ncalo = $getcalofiles->rows;
 while (my @res = $getcalofiles->fetchrow_array())
 {
@@ -123,7 +123,7 @@ $getcalofiles->finish();
 
 my %vertexhash = ();
 my $getvertexfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_VERTEX' and filename like '%$embedfilelike%' and filename not like '%pythia8%' and runnumber = $runnumber");
-$getvertexfiles->execute() || die $DBI::error;
+$getvertexfiles->execute() || die $DBI::errstr;
 my $nvertex = $getvertexfiles->rows;
 while (my @res = $getvertexfiles->fetchrow_array())
 {

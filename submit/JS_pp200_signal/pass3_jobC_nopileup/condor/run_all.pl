@@ -74,21 +74,21 @@ my %trkhash = ();
 my %clusterhash = ();
 
 
-my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
+my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRACKSEEDS' and filename like '%pythia8_$jettriggerWithDash%' and runnumber = $runnumber order by filename") || die $DBI::error;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRACKSEEDS' and filename like '%pythia8_$jettriggerWithDash%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
 my $getclusterfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_CLUSTER' and filename like '%pythia8_$jettriggerWithDash%' and runnumber = $runnumber");
 
-my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
+my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
 my $nsubmit = 0;
-$getfiles->execute() || die $DBI::error;
+$getfiles->execute() || die $DBI::errstr;
 while (my @res = $getfiles->fetchrow_array())
 {
     $trkhash{sprintf("%05d",$res[1])} = $res[0];
 }
 $getfiles->finish();
-$getclusterfiles->execute() || die $DBI::error;
+$getclusterfiles->execute() || die $DBI::errstr;
 my $ncluster = $getclusterfiles->rows;
 while (my @res = $getclusterfiles->fetchrow_array())
 {

@@ -83,10 +83,10 @@ chomp $localdir;
 my $logdir = sprintf("%s/log/%s",$localdir,$jettrigger);
 mkpath($logdir);
 
-my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
+my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like 'G4Hits_pythia8_$jettriggerWithUnderScore%' and runnumber = $runnumber order by filename") || die $DBI::error;
-my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
+my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like 'G4Hits_pythia8_$jettriggerWithUnderScore%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
+my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
 my $getbkglastsegment = $dbh->prepare("select max(segment) from datasets where dsttype = 'G4Hits' and filename like '%pythia8_pp_mb%' and runnumber = $runnumber");
 $getbkglastsegment->execute();
@@ -95,7 +95,7 @@ my $lastsegment = $res1[0];
 $getbkglastsegment->finish();
 
 my $nsubmit = 0;
-$getfiles->execute() || die $DBI::error;
+$getfiles->execute() || die $DBI::errstr;
 while (my @res = $getfiles->fetchrow_array())
 {
     my $lfn = $res[0];

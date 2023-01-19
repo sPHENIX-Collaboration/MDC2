@@ -75,22 +75,22 @@ $jettrigger = sprintf("%s_3MHz",$jettrigger);
 my %calohash = ();
 my %trackhash = ();
 
-my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
+my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_CLUSTER' and filename like '%pythia8_$jettrigger%' and runnumber = $runnumber order by filename") || die $DBI::error;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_CLUSTER' and filename like '%pythia8_$jettrigger%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
 #print "select filename,segment from datasets where dsttype = 'DST_CALO_CLUSTER' and filename like '%pythia8_$jettrigger%' and runnumber = $runnumber order by filename\n";
 
-my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
+my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 my $gettrackfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRACKS' and filename like '%pythia8_$jettrigger%' and runnumber = $runnumber");
 my $nsubmit = 0;
-$getfiles->execute() || die $DBI::error;
+$getfiles->execute() || die $DBI::errstr;
 my $ncal = $getfiles->rows;
 while (my @res = $getfiles->fetchrow_array())
 {
     $calohash{sprintf("%05d",$res[1])} = $res[0];
 }
 $getfiles->finish();
-$gettrackfiles->execute() || die $DBI::error;
+$gettrackfiles->execute() || die $DBI::errstr;
 my $ntrack = $gettrackfiles->rows;
 while (my @res = $gettrackfiles->fetchrow_array())
 {
