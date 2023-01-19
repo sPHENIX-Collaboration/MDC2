@@ -239,7 +239,7 @@ else
 }
 
 open(F,">missing.files");
-my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
+my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $conds = sprintf("filename like \'\%%%s%\%\' and runnumber = %s",$systemstring,$runnumber);
 if (exists $notlike{$systemstring})
@@ -287,7 +287,7 @@ if (defined $verbosity)
     {
         print "$conds\n";
     }
-my $getsegments = $dbh->prepare($conds)|| die $DBI::error;
+my $getsegments = $dbh->prepare($conds)|| die $DBI::errstr;
 
 $conds = sprintf("dsttype = ? and  filename like \'\%%%s%\%\' and runnumber = %d",$systemstring,$runnumber);
 if (exists $notlike{$systemstring})
@@ -296,9 +296,9 @@ if (exists $notlike{$systemstring})
 }
 $conds = sprintf("select max(segment) from datasets where %s",$conds);
 
-my $getlastseg = $dbh->prepare($conds)|| die $DBI::error;
+my $getlastseg = $dbh->prepare($conds)|| die $DBI::errstr;
 
-$getlastseg->execute($type)|| die $DBI::error;;
+$getlastseg->execute($type)|| die $DBI::errstr;;
 my @res = $getlastseg->fetchrow_array();
 if (! defined $res[0])
 {

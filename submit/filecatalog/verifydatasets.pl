@@ -11,10 +11,10 @@ use DBI;
 my $kill;
 GetOptions("kill"=>\$kill);
 
-my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
+my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 
-my $getfiles = $dbh->prepare("select lfn,full_file_path from files where time < now() - interval '2 hours'") || die $DBI::error;
+my $getfiles = $dbh->prepare("select lfn,full_file_path from files where time < now() - interval '2 hours'") || die $DBI::errstr;
 
 my $getdatasets = $dbh->prepare("select filename from datasets");
 

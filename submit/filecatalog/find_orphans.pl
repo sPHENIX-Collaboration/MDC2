@@ -25,7 +25,7 @@ if (! -d $topdir)
     exit(1);
 }
 
-my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
+my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $checkfcat = $dbh->prepare("select full_file_path from files where lfn = ?");
 

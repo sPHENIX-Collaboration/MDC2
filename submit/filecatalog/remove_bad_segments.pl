@@ -20,7 +20,7 @@ my $verbose;
 my $embed;
 GetOptions("dsttype:s"=>\$dsttype, "embed"=>\$embed, "kill"=>\$kill, "nopileup"=>\$nopileup, "runnumber:i" => \$runnumber, "type:i"=>\$system, "verbose" => \$verbose);
 
-my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
+my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $getfiles = $dbh->prepare("select full_file_path from files where lfn = ?");
 my $deldataset = $dbh->prepare("delete from datasets where filename = ?");
@@ -364,8 +364,8 @@ if (exists $notlike{$systemstring})
     $conds = sprintf("%s and filename not like \'\%%%s%\%\' ",$conds,$notlike{$systemstring});
 }
 my $sqlcmd = sprintf("select filename from datasets where %s  order by filename",$conds);
-#my $getfilename = $dbh->prepare("select filename from datasets where dsttype = ? and filename like ? and segment = ? and runnumber = ? order by filename") || die $DBI::error;
-my $getfilename = $dbh->prepare($sqlcmd) || die $DBI::error;
+#my $getfilename = $dbh->prepare("select filename from datasets where dsttype = ? and filename like ? and segment = ? and runnumber = ? order by filename") || die $DBI::errstr;
+my $getfilename = $dbh->prepare($sqlcmd) || die $DBI::errstr;
 if (defined $pileupdir)
 {
     $productionsubdir{"DST_BBC_G4HIT"} = sprintf("%s_%s",$productionsubdir{"DST_BBC_G4HIT"},$pileupdir);

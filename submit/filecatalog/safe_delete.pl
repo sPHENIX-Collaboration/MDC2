@@ -37,7 +37,7 @@ if (! defined $dokill)
     print "TestMode, use -kill to delete files for real\n";
 }
 
-my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
+my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $getinfo = $dbh->prepare("select lfn,size,full_file_path,full_host_name,md5 from files where lfn = ? and ((full_host_name = 'dcache' and full_file_path like '/pnfs/%') or (full_host_name = 'lustre' and full_file_path like '%lustre%')) and md5 is not null");
 my $getdataset = $dbh->prepare("select runnumber,segment from datasets where filename=?");

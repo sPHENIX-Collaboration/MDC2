@@ -22,7 +22,7 @@ if ($#ARGV < 0)
     exit(1);
 }
 
-my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
+my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 
 my $getfiles;
@@ -47,7 +47,7 @@ else
 }
 
 my $updatemd5 = $dbh->prepare("update files set md5=? where lfn=?");
-$getfiles->execute()|| die $DBI::error;
+$getfiles->execute()|| die $DBI::errstr;
 while (my @res = $getfiles->fetchrow_array())
 {
     my $lfn =  $res[0];
