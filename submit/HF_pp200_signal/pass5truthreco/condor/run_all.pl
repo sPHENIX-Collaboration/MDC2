@@ -74,19 +74,19 @@ else
 $quarkfilter = sprintf("%s_3MHz",$quarkfilter);
 my $outfilelike = sprintf("pythia8_%s",$quarkfilter);
 
-my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
+my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like '%$outfilelike%' and filename not like '%hijing%' and runnumber = $runnumber") || die $DBI::error;
-my $getclusterfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_CLUSTER' and filename like '%$outfilelike%' and filename not like '%hijing%' and runnumber = $runnumber") || die $DBI::error;
-my $gettrackfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRACKS' and filename like '%$outfilelike%' and filename not like '%hijing%' and runnumber = $runnumber") || die $DBI::error;
-my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH' and filename like '%$outfilelike%' and filename not like '%hijing%' and runnumber = $runnumber") || die $DBI::error;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like '%$outfilelike%' and filename not like '%hijing%' and runnumber = $runnumber") || die $DBI::errstr;
+my $getclusterfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_CLUSTER' and filename like '%$outfilelike%' and filename not like '%hijing%' and runnumber = $runnumber") || die $DBI::errstr;
+my $gettrackfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRACKS' and filename like '%$outfilelike%' and filename not like '%hijing%' and runnumber = $runnumber") || die $DBI::errstr;
+my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH' and filename like '%$outfilelike%' and filename not like '%hijing%' and runnumber = $runnumber") || die $DBI::errstr;
 
-my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
+my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
 
 my %g4hithash = ();
-$getfiles->execute() || die $DBI::error;
+$getfiles->execute() || die $DBI::errstr;
 my $ng4hit = $getfiles->rows;
 while (my @res = $getfiles->fetchrow_array())
 {
@@ -95,7 +95,7 @@ while (my @res = $getfiles->fetchrow_array())
 $getfiles->finish();
 
 my %clusterhash = ();
-$getclusterfiles->execute() || die $DBI::error;
+$getclusterfiles->execute() || die $DBI::errstr;
 my $ncluster = $getclusterfiles->rows;
 while (my @res = $getclusterfiles->fetchrow_array())
 {
@@ -104,7 +104,7 @@ while (my @res = $getclusterfiles->fetchrow_array())
 $getclusterfiles->finish();
 
 my %trackhash = ();
-$gettrackfiles->execute() || die $DBI::error;
+$gettrackfiles->execute() || die $DBI::errstr;
 my $ntrack = $gettrackfiles->rows;
 while (my @res = $gettrackfiles->fetchrow_array())
 {
@@ -113,7 +113,7 @@ while (my @res = $gettrackfiles->fetchrow_array())
 $gettrackfiles->finish();
 
 my %truthhash = ();
-$gettruthfiles->execute() || die $DBI::error;
+$gettruthfiles->execute() || die $DBI::errstr;
 my $ntruth = $gettruthfiles->rows;
 while (my @res = $gettruthfiles->fetchrow_array())
 {
