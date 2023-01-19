@@ -79,12 +79,12 @@ foreach my $type (sort keys %outfiletype)
     print "type $type, dir: $outfiletype{$type}\n";
 } 
 #die;
-my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
+my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%$filetype%' and runnumber = $runnumber order by filename") || die $DBI::error;
-my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
+my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%$filetype%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
+my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 my $nsubmit = 0;
-$getfiles->execute() || die $DBI::error;
+$getfiles->execute() || die $DBI::errstr;
 while (my @res = $getfiles->fetchrow_array())
 {
     my $lfn = $res[0];
