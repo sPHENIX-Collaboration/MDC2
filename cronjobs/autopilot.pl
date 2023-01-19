@@ -8,7 +8,7 @@ sub ncondorjobs;
 sub condorcheck;
 
 my $nsubmit = 0;
-my $nsafejobs = 60000;
+my $nsafejobs = 80000;
 
 my $submittopdir = "/sphenix/u/sphnxpro/MDC2/submit";
 my @submitdir = (
