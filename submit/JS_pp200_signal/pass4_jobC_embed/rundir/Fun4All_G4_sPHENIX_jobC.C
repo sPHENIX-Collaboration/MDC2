@@ -24,9 +24,9 @@ R__LOAD_LIBRARY(libfun4all.so)
 int Fun4All_G4_sPHENIX_jobC(
   const int nEvents = 0,
   const int nSkipEvents = 0,
-  const std::string &inputFile1 = "DST_TRACKSEEDS_pythia8_PhotonJet-0000000062-00000.root",
-  const std::string &inputFile2 = "DST_CALO_CLUSTER_pythia8_PhotonJet-0000000062-00000.root",
-  const std::string &outputFile = "DST_TRACKS_pythia8_PhotonJet-0000000062-00000.root",
+  const std::string &inputFile1 = "DST_TRACKSEEDS_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000062-00000.root",
+  const std::string &inputFile2 = "DST_CALO_CLUSTER_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000062-00000.root",
+  const std::string &outputFile = "DST_TRACKS_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000062-00000.root",
   const std::string &outdir = "."
   )
 {
