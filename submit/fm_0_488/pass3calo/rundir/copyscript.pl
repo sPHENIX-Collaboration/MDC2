@@ -259,7 +259,7 @@ if ($attempts > 0)
     sleep(int(rand(21) + 10)); # sleep 10-30 seconds before retrying
 }
 $attempts++;
-if ($attempts > 20)
+if ($attempts > 100)
 {
     print "giving up connecting to DB after $attempts attempts\n";
     exit(1);
