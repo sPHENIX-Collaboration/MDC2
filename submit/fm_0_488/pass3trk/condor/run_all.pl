@@ -57,20 +57,20 @@ $outfiletype{"DST_TRUTH"} = 1;
 my %trkhash = ();
 my %truthhash = ();
 
-my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
+my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like '%sHijing_0_488fm_50kHz_bkg_0_20fm%' and runnumber = $runnumber order by filename") || die $DBI::error;
-my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like '%sHijing_0_488fm_50kHz_bkg_0_20fm%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
+my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH_G4HIT' and filename like '%sHijing_0_488fm_50kHz_bkg_0_20fm%'and runnumber = $runnumber");
 my $nsubmit = 0;
-$getfiles->execute() || die $DBI::error;
+$getfiles->execute() || die $DBI::errstr;
 my $ncal = $getfiles->rows;
 while (my @res = $getfiles->fetchrow_array())
 {
     $trkhash{sprintf("%05d",$res[1])} = $res[0];
 }
 $getfiles->finish();
-$gettruthfiles->execute() || die $DBI::error;
+$gettruthfiles->execute() || die $DBI::errstr;
 my $ntruth = $gettruthfiles->rows;
 while (my @res = $gettruthfiles->fetchrow_array())
 {

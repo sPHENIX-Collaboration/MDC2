@@ -26,9 +26,9 @@ if ($hostname !~ /phnxsub/)
     exit(1);
 }
 
-my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::error;
+my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::error;
+my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
 my $maxsubmit = $ARGV[0];
 my $hijing_runnumber = 1;
