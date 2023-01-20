@@ -12,10 +12,11 @@ my $outevents = 0;
 my $runnumber = 62;
 my $test;
 my $incremental;
+my $particle = "pi0";
 GetOptions("test"=>\$test, "increment"=>\$incremental);
-if ($#ARGV < 1)
+if ($#ARGV < 0)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"PhotonJet\" production>\n";
+    print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--test : dryrun - create jobfiles\n";
@@ -30,17 +31,9 @@ if ($hostname !~ /phnxsub/)
     exit(1);
 }
 my $maxsubmit = $ARGV[0];
-my $jettrigger = $ARGV[1];
-if ($jettrigger  ne "Jet10" &&
-    $jettrigger  ne "Jet30" &&
-    $jettrigger  ne "PhotonJet")
-{
-    print "second argument has to be Jet10, Jet30 or PhotonJet\n";
-    exit(1);
-}
 
 my $embedfilelike = sprintf("sHijing_0_20fm_50kHz_bkg_0_20fm");
-my $outfilelike = sprintf("pythia8_%s_%s",$jettrigger,$embedfilelike);
+my $outfilelike = sprintf("%s_%s",$particle,$embedfilelike);
 
 my $condorlistfile =  sprintf("condor.list");
 if (-f $condorlistfile)
@@ -55,7 +48,7 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/%s",$outdir,lc $jettrigger);
+$outdir = sprintf("%s/%s",$outdir,lc $particle);
 if ($outdir =~ /lustre/)
 {
     my $storedir = $outdir;
@@ -75,13 +68,14 @@ $outfiletype{"DST_CALO_G4HIT"} = 1;
 $outfiletype{"DST_TRKR_G4HIT"} = 1;
 $outfiletype{"DST_TRUTH_G4HIT"} = 1;
 $outfiletype{"DST_VERTEX"} = 1;
+$outfiletype{"CALIB_EMC"} = 1;
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $nsubmit = 0;
 
 my %trkhash = ();
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like '%$embedfilelike%' and filename not like '%pythia8%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like 'DST_TRKR_G4HIT_$embedfilelike%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 $getfiles->execute() || die $DBI::errstr;
 my $ncal = $getfiles->rows;
@@ -92,7 +86,7 @@ while (my @res = $getfiles->fetchrow_array())
 $getfiles->finish();
 
 my %truthhash = ();
-my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH_G4HIT' and filename like '%$embedfilelike%' and filename not like '%pythia8%' and runnumber = $runnumber");
+my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH_G4HIT' and filename like 'DST_TRUTH_G4HIT_$embedfilelike%' and runnumber = $runnumber");
 $gettruthfiles->execute() || die $DBI::errstr;
 my $ntruth = $gettruthfiles->rows;
 while (my @res = $gettruthfiles->fetchrow_array())
@@ -102,7 +96,7 @@ while (my @res = $gettruthfiles->fetchrow_array())
 $gettruthfiles->finish();
 
 my %bbchash = ();
-my $getbbcfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_BBC_G4HIT' and filename like '%$embedfilelike%' and filename not like '%pythia8%' and runnumber = $runnumber");
+my $getbbcfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_BBC_G4HIT' and filename like 'DST_BBC_G4HIT_$embedfilelike%' and runnumber = $runnumber");
 $getbbcfiles->execute() || die $DBI::errstr;
 my $nbbc = $getbbcfiles->rows;
 while (my @res = $getbbcfiles->fetchrow_array())
@@ -112,7 +106,7 @@ while (my @res = $getbbcfiles->fetchrow_array())
 $getbbcfiles->finish();
 
 my %calohash = ();
-my $getcalofiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_G4HIT' and filename like '%$embedfilelike%' and filename not like '%pythia8%' and runnumber = $runnumber");
+my $getcalofiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_G4HIT' and filename like 'DST_CALO_G4HIT_$embedfilelike%' and runnumber = $runnumber");
 $getcalofiles->execute() || die $DBI::errstr;
 my $ncalo = $getcalofiles->rows;
 while (my @res = $getcalofiles->fetchrow_array())
@@ -122,7 +116,7 @@ while (my @res = $getcalofiles->fetchrow_array())
 $getcalofiles->finish();
 
 my %vertexhash = ();
-my $getvertexfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_VERTEX' and filename like '%$embedfilelike%' and filename not like '%pythia8%' and runnumber = $runnumber");
+my $getvertexfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_VERTEX' and filename like 'DST_VERTEX_$embedfilelike%' and runnumber = $runnumber");
 $getvertexfiles->execute() || die $DBI::errstr;
 my $nvertex = $getvertexfiles->rows;
 while (my @res = $getvertexfiles->fetchrow_array())
@@ -159,6 +153,7 @@ foreach my $segment (sort keys %trkhash)
 	my $runnumber = int($2);
 	my $segment = int($3);
         my $foundall = 1;
+        my $ntupoutfile =  sprintf("CALIB_EMC_%s-%010d-%05d.root",$outfilelike,$runnumber,$segment);
 	foreach my $type (sort keys %outfiletype)
 	{
             my $lfn =  sprintf("%s_%s-%010d-%05d.root",$type,$outfilelike,$runnumber,$segment);
@@ -182,7 +177,7 @@ foreach my $segment (sort keys %trkhash)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $bbchash{sprintf("%05d",$segment)}, $calohash{sprintf("%05d",$segment)}, $truthhash{sprintf("%05d",$segment)}, $vertexhash{sprintf("%05d",$segment)}, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %s %s %d %d %s", $outevents, $particle, $lfn, $bbchash{sprintf("%05d",$segment)}, $calohash{sprintf("%05d",$segment)}, $truthhash{sprintf("%05d",$segment)}, $vertexhash{sprintf("%05d",$segment)}, $outdir, $ntupoutfile, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

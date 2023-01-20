@@ -7,9 +7,9 @@ use File::Path;
 
 my $test;
 GetOptions("test"=>\$test);
-if ($#ARGV < 3)
+if ($#ARGV < 10)
 {
-    print "usage: run_condor.pl <events> <jettrigger> <trk embedfile> <bbc embedfile> <calo embedfile> <truth embedfile> <vertex embedfile> <outdir> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <particle> <trk embedfile> <bbc embedfile> <calo embedfile> <truth embedfile> <vertex embedfile> <outdir> <ntupoutfile> <runnumber> <sequence>\n";
     print "options:\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
@@ -17,28 +17,29 @@ if ($#ARGV < 3)
 
 my $localdir=`pwd`;
 chomp $localdir;
-my $baseprio = 52;
+my $baseprio = 62;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_embed.sh",$rundir);
+my $executable = sprintf("%s/run_embed_pi0.sh",$rundir);
 my $nevents = $ARGV[0];
-my $jettrigger = $ARGV[1];
+my $particle = $ARGV[1];
 my $infile0 = $ARGV[2];
 my $infile1 = $ARGV[3];
 my $infile2 = $ARGV[4];
 my $infile3 = $ARGV[5];
 my $infile4 = $ARGV[6];
 my $dstoutdir = $ARGV[7];
-my $runnumber = $ARGV[8];
-my $sequence = $ARGV[9];
+my $ntupoutfile = $ARGV[8];
+my $runnumber = $ARGV[9];
+my $sequence = $ARGV[10];
 if ($sequence < 100)
 {
     $baseprio = 90;
 }
 my $condorlistfile = sprintf("condor.list");
-my $suffix = sprintf("%s-%010d-%05d",$jettrigger,$runnumber,$sequence);
-my $logdir = sprintf("%s/log/%s",$localdir,$jettrigger);
+my $suffix = sprintf("%s-%010d-%05d",$particle,$runnumber,$sequence);
+my $logdir = sprintf("%s/log/%s",$localdir,$particle);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass2_embed/%s",$jettrigger);
+my $condorlogdir = sprintf("/tmp/single_particle/pass2_pi0_embed");
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
 if (-f $jobfile)
@@ -57,7 +58,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $infile0 $infile1 $infile2 $infile3 $infile4 $dstoutdir $jettrigger $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $infile0 $infile1 $infile2 $infile3 $infile4 $dstoutdir $particle $ntupoutfile $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -83,5 +84,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile0,  $infile1, $infile2, $infile3, $infile4, $dstoutdir, $jettrigger, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $infile0,  $infile1, $infile2, $infile3, $infile4, $dstoutdir, $particle, $ntupoutfile, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);

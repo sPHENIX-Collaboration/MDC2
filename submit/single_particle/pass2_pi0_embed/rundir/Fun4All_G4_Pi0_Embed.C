@@ -43,7 +43,7 @@ int Fun4All_G4_Pi0_Embed(
     const int skip = 0,
     const string &outdir = ".",
     const string &particle = "pi0",
-    const string &ntupfile = "piemc_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000062-00000.root")
+    const string &ntupfile = "CALIB_EMC_pi0_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000062-00000.root")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
