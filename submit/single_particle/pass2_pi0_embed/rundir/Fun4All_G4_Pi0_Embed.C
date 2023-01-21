@@ -311,6 +311,14 @@ int Fun4All_G4_Pi0_Embed(
     G4Setup();
   }
 
+  if (Enable::CEMC_CELL) CEMC_Cells();
+  //-----------------------------
+  // CEMC towering and clustering
+  //-----------------------------
+
+  if (Enable::CEMC_TOWER) CEMC_Towers();
+  if (Enable::CEMC_CLUSTER) CEMC_Clusters();
+
   //--------------
   // Set up Input Managers
   //--------------
