@@ -34,15 +34,14 @@ my %daughters = (
     "DST_VERTEX" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_CALO_CLUSTER" ],
     "DST_TRKR_CLUSTER" => [ "DST_TRACKSEEDS", "DST_TRUTH_RECO"],
     "DST_TRACKSEEDS" => [ "DST_TRACKS"],
-    "DST_TRKR_HIT" => [ "DST_TRUTH", "DST_TRKR_CLUSTER", "DST_NEWTRACKS" ],
-    "DST_TRUTH" => [ "DST_TRKR_HIT", "DST_NEWTRACKS", "DST_TRUTH_JET", "DST_TRUTH_RECO" ],
+    "DST_TRKR_HIT" => [ "DST_TRUTH", "DST_TRKR_CLUSTER" ],
+    "DST_TRUTH" => [ "DST_TRKR_HIT", "DST_TRUTH_JET", "DST_TRUTH_RECO" ],
 #    "DST_TRKR_HIT" => [ "DST_TRUTH" ],
 #    "DST_TRUTH" => [ "DST_TRKR_HIT" ],
     "DST_TRUTH_JET" => [ "" ],
     "DST_TRUTH_RECO" => [ "" ],
     "DST_TRKR_HIT_DISTORT" => [ "DST_TRUTH_DISTORT", "DST_TRACKS_DISTORT" ],
     "DST_TRUTH_DISTORT" => [ "DST_TRKR_HIT_DISTORT", "DST_TRACKS_DISTORT" ],
-    "DST_NEWTRACKS" => [ "" ],
     "DST_TRACKS" => [ "DST_TRUTH_RECO" ],
     "DST_TRACKS_DISTORT" => [ "" ],
     "DST_CALO_CLUSTER" => [ "" ],
@@ -58,7 +57,6 @@ my %daughters = (
 if (defined $nopileup)
 {
     push($daughters{"DST_TRKR_HIT"},"DST_CALO_CLUSTER");
-    push($daughters{"DST_TRKR_CLUSTER"},"DST_CALO_CLUSTER");
     push($daughters{"DST_CALO_CLUSTER"},"DST_TRKR_HIT");
 }
 if (defined $verbose)
@@ -166,12 +164,13 @@ my %productionsubdir = (
     );
 if (defined $nopileup)
 {
+    $productionsubdir{"DST_TRKR_HIT"} = "pass2_nopileup";
     $productionsubdir{"DST_CALO_CLUSTER"} = "pass2_nopileup";
-    $productionsubdir{"DST_TRKR_CLUSTER"} = "pass2_nopileup";
+    $productionsubdir{"DST_TRKR_CLUSTER"} = "pass3_job0_nopileup";
     $productionsubdir{"DST_TRUTH"} = "pass2_nopileup";
-    $productionsubdir{"DST_TRACKS"} = "pass4_jobC_nopileup";
-    $productionsubdir{"DST_TRACKSEEDS"} = "pass4_jobA_nopileup";
-    $productionsubdir{"DST_TRKR_CLUSTER"} = "pass4_job0_nopileup";
+    $productionsubdir{"DST_TRACKS"} = "pass3_jobC_nopileup";
+    $productionsubdir{"DST_TRACKSEEDS"} = "pass3_jobA_nopileup";
+    $productionsubdir{"DST_TRUTH_JET" } = "pass3jet_nopileup",
 }
 if (defined $embed)
 {
@@ -201,8 +200,10 @@ elsif ($system == 2)
 }
 elsif ($system == 3)
 {
+    $systemstring = "pythia8_pp_mb";
     $specialsystemstring{"G4Hits"} = "pythia8_pp_mb-";
-    $systemstring = "pythia8_pp_mb_";
+    $pileupstring = "_3MHz";
+#    $systemstring = "pythia8_pp_mb_";
     $topdir = sprintf("%s/pythia8_pp_mb",$topdir);
 }
 elsif ($system == 4)
@@ -423,14 +424,25 @@ foreach my $rem (keys %removethese)
     }
     else
     {
+	print "no entry for $rem\n";
 	$condor_subdir = sprintf("%s/condor/log",$condor_subdir);
     }
     my $condornameprefix = sprintf("condor");
-    if ($system == 3 && $rem ne "G4Hits")
+    if ($system == 3)
+{
+if ( $rem ne "G4Hits" && !defined $nopileup)
     {
-	$condornameprefix = sprintf("condor_3MHz");
+	$condornameprefix = sprintf("condor%s",$pileupstring);
     }
-#    print "condor_subdir: $condor_subdir\n";
+else
+{
+$condornameprefix = sprintf("condor");
+}
+}
+    if (defined $verbose)
+    {
+    print "condor_subdir: $condor_subdir\n";
+    }
     if (defined $condorfileadd)
     {
 	if (exists $specialcondorfileadd{$rem})
@@ -469,12 +481,12 @@ foreach my $rem (keys %removethese)
 	$getfiles->execute($res[0]);
 	while (my @res2 = $getfiles->fetchrow_array())
 	{
-	    if (! defined $nopileup && $res2[0] =~ /NoPileUp/)
+	    if (! defined $nopileup && $res2[0] =~ /nopileup/)
 	    {
 		print "getfiles ($res[0]): trying to remove $res2[0]\n";
 #		die;
 	    }
-	    if (defined $nopileup && $res2[0] !~ /NoPileUp/)
+	    if (defined $nopileup && $res2[0] !~ /nopileup/)
 	    {
 		print "nopileup getfiles ($res[0]): trying to remove $res2[0]\n";
 #		die;
