@@ -12,7 +12,8 @@ my $verbosity;
 my $nopileup;
 my $runnumber = 40;
 my $embed;
-GetOptions("embed" => \$embed, "run:i"=>\$runnumber, "type:i"=>\$system, "verbosity" => \$verbosity, "nopileup" => \$nopileup);
+my $file_exist_check;
+GetOptions("embed" => \$embed, "exist" => \$file_exist_check, "run:i"=>\$runnumber, "type:i"=>\$system, "verbosity" => \$verbosity, "nopileup" => \$nopileup);
 
 if ($system < 1 || $system > 16)
 {
@@ -54,8 +55,18 @@ elsif ($system == 2)
 }
 elsif ($system == 3)
 {
-    $systemstring = "pythia8_pp_mb";
+#    $systemstring = "pythia8_pp_mb";
+    $systemstring_g4hits ="pythia8_pp_mb";
     $gpfsdir = "pythia8_pp_mb";
+    if (! defined $nopileup)
+    {
+	$systemstring = sprintf("%s_3MHz",$systemstring_g4hits);
+    }
+else
+    {
+	$systemstring = sprintf("%s-",$systemstring_g4hits);
+    }
+
 }
 elsif ($system == 4)
 {
@@ -328,7 +339,7 @@ if (exists $notlike{$systemstring})
     $conds = sprintf("%s and files.lfn not like \'\%%%s%\%\' ",$conds,$notlike{$systemstring});
 }
 
-    $conds = sprintf("select files.lfn from files,datasets where %s",$conds);
+    $conds = sprintf("select files.lfn,files.full_file_path from files,datasets where %s",$conds);
 #    print "$conds\n";
     my $getsegsdc = $dbh->prepare($conds);
     if (defined $verbosity)
@@ -338,6 +349,16 @@ if (exists $notlike{$systemstring})
     $getsegsdc->execute();
     my $rows = $getsegsdc->rows;
     print "entries for $dcdir: $rows\n";
+    if (defined $file_exist_check)
+    {
+	while (my @fullfile = $getsegsdc->fetchrow_array())
+	{
+	    if (! -f $fullfile[1])
+	    {
+		print "missing file $fullfile[1]\n";
+	    }
+	}
+    }
     $getsegsdc->finish();
 }
 my $lowercasegpfsdir = lc $gpfsdir;
