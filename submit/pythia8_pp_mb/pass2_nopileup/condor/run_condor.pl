@@ -33,24 +33,24 @@ if ($sequence < 100)
 }
 my $condorlistfile = sprintf("condor.list");
 
-my $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
+my $suffix = sprintf("-%010d-%05d",$runnumber,$sequence);
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
 my $condorlogdir = sprintf("/tmp/pythia8_pp_mb/pass2_nopileup");
 mkpath($condorlogdir);
-my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
+my $jobfile = sprintf("%s/condor%s.job",$logdir,$suffix);
 if (-f $jobfile)
 {
     print "jobfile $jobfile exists, possible overlapping names\n";
     exit(1);
 }
-my $condorlogfile = sprintf("%s/condor_%s.log",$condorlogdir,$suffix);
+my $condorlogfile = sprintf("%s/condor%s.log",$condorlogdir,$suffix);
 if (-f $condorlogfile)
 {
     unlink $condorlogfile;
 }
-my $errfile = sprintf("%s/condor_%s.err",$logdir,$suffix);
-my $outfile = sprintf("%s/condor_%s.out",$logdir,$suffix);
+my $errfile = sprintf("%s/condor%s.err",$logdir,$suffix);
+my $outfile = sprintf("%s/condor%s.out",$logdir,$suffix);
 print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
