@@ -8,8 +8,8 @@ use Getopt::Long;
 my $test;
 my $incremental;
 my $killexist;
-my $runnumber = 60;
-my $events = 1000;
+my $runnumber = 63;
+my $events = 100;
 GetOptions("test"=>\$test, "increment"=>\$incremental, "killexist" => \$killexist);
 if ($#ARGV < 3)
 {
