@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 4;
+my $runnumber = 63;
 my $test;
 my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
@@ -39,7 +39,12 @@ if ($quarkfilter  ne "Charm" &&
     print "second argument has to be either Charm, CharmD0, Bottom or BottomD0\n";
     exit(1);
 }
-my $quarkfilterWithMHz = sprintf("%s_3MHz",$quarkfilter);
+
+my $condorlistfile =  sprintf("condor.list");
+if (-f $condorlistfile)
+{
+    unlink $condorlistfile;
+}
 
 if (! -f "outdir.txt")
 {
@@ -66,8 +71,8 @@ while (my $line = <F>)
     push(@outdir,$line);
 }
 close(F);
-my $quarkfilterWithUnderScore = sprintf("%s-",$quarkfilter);
 
+my $quarkfilterWithUnderScore = sprintf("%s-",$quarkfilter);
 
 my %outfiletype = ();
 $outfiletype{"DST_CALO_CLUSTER"} = $outdir[0];
@@ -134,13 +139,26 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $nsubmit++;
 	}
-	if ($nsubmit >= $maxsubmit)
+	if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit >= 20000 )
 	{
-	    print "maximum number of submissions reached, exiting\n";
-	    exit(0);
+	    print "maximum number of submissions $nsubmit reached, exiting\n";
+	    last;
 	}
     }
 }
 
+$getfiles->finish();
 $chkfile->finish();
 $dbh->disconnect;
+
+if (-f $condorlistfile)
+{
+    if (defined $test)
+    {
+	print "would submit condor.job\n";
+    }
+    else
+    {
+	system("condor_submit condor.job");
+    }
+}
