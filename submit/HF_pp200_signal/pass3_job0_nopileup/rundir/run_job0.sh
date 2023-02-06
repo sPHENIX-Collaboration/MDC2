@@ -45,7 +45,7 @@ echo arg1 \(events\) : $1
 echo arg2 \(trkr cluster file\): $2
 echo arg3 \(output file\): $3
 echo arg4 \(output dir\): $4
-echo arg5 \(quarkfilter\): $5
+echo arg5 \(quark filter\): $5
 echo arg6 \(runnumber\): $6
 echo arg7 \(sequence\): 76
 
