@@ -7,7 +7,7 @@ use File::Path;
 
 my $test;
 GetOptions("test"=>\$test);
-if ($#ARGV < 5)
+if ($#ARGV < 4)
 {
     print "usage: run_condor.pl <events> <outdir> <outfile> <skip> <runnumber> <sequence>\n";
     print "options:\n";
@@ -25,10 +25,10 @@ my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_pass1_upsilon.sh",$rundir);
 my $nevents = $ARGV[0];
 my $particle = $ARGV[1];
-my $dstoutdir = $ARGV[4];
-my $dstoutfile = $ARGV[5];
-my $runnumber = $ARGV[6];
-my $sequence = $ARGV[7];
+my $dstoutdir = $ARGV[2];
+my $dstoutfile = $ARGV[3];
+my $runnumber = $ARGV[4];
+my $sequence = $ARGV[5];
 
 if ($sequence < 100)
 {
@@ -39,8 +39,11 @@ my $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
 my $condorlogdir = sprintf("/tmp/single_particle/upsilon/pass1");
-mkpath($condorlogdir);
-my $partprop = sprintf("%s_%d_%d",$particle);
+if (! -d $condorlogdir)
+{
+  mkpath($condorlogdir);
+}
+my $partprop = sprintf("%s",$particle);
 my $jobfile = sprintf("%s/condor_%s-%s.job",$logdir,$partprop,$suffix);
 if (-f $jobfile)
 {

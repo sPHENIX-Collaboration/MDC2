@@ -49,8 +49,8 @@ filename=single_$2
 txtfilename=${filename}-${runnumber}-${sequence}.txt
 jsonfilename=${filename}-${runnumber}-${sequence}.json
 
-echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Upsilon.C\($1,\"$2\",$3,$4,\"$5\",\"$6\"\)
-prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Upsilon.C\($1,\"$2\",$3,$4,\"$5\",\"$6\"\)
+echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Upsilon.C\($1,\"$2\",\"$3\",\"$4\"\)
+prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Upsilon.C\($1,\"$2\",\"$3\",\"$4\"\)
 
 rsyncdirname=/sphenix/user/sphnxpro/prmon/single/upsilon/pass1_$2
 

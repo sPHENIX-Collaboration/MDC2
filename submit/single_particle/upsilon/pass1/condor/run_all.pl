@@ -92,7 +92,7 @@ for (my $isub = 0; $isub < $maxsubmit; $isub++)
 	{
 	    $tstflag="--test";
 	}
-	system("perl run_condor.pl $events $outdir $outfile $runnumber $njob $tstflag");
+	system("perl run_condor.pl $events $particle $outdir $outfile $runnumber $njob $tstflag");
 	my $exit_value  = $? >> 8;
 	if ($exit_value != 0)
 	{

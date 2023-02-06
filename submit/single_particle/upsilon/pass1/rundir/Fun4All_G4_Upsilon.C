@@ -41,9 +41,7 @@ R__LOAD_LIBRARY(libffamodules.so)
 
 int Fun4All_G4_Upsilon(
   const int nEvents = 1,
-  const string &particle = "pi-", 
-  const int pmin = 10, 
-  const int pmax = 10, 
+  const string &particle = "upsilon",
   const string &outputFile = "G4Hits_single_upsilon-0000000063-00000.root",
   const string &outdir = ".")
 {
@@ -178,7 +176,7 @@ int Fun4All_G4_Upsilon(
     }
     INPUTGENERATOR::SimpleEventGenerator[0]->set_eta_range(-1.2, 1.2);
     INPUTGENERATOR::SimpleEventGenerator[0]->set_phi_range(-M_PI, M_PI);
-    INPUTGENERATOR::SimpleEventGenerator[0]->set_p_range(pmin/1000., pmax/1000.);
+    INPUTGENERATOR::SimpleEventGenerator[0]->set_p_range(0.2, 10.);
   }
   // Upsilons
   // if you run more than one of these Input::UPSILON_NUMBER > 1
