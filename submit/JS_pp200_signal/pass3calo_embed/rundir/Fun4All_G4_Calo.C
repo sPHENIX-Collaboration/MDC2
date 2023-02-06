@@ -298,19 +298,34 @@ int Fun4All_G4_Calo(
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     out->AddNode("Sync");
     out->AddNode("EventHeader");
+// Inner Hcal
     out->AddNode("TOWER_SIM_HCALIN");
     out->AddNode("TOWER_RAW_HCALIN");
     out->AddNode("TOWER_CALIB_HCALIN");
+    out->AddNode("TOWERINFO_RAW_HCALIN");
+    out->AddNode("TOWERINFO_SIM_HCALIN");
+    out->AddNode("TOWERINFO_CALIB_HCALIN");
     out->AddNode("CLUSTER_HCALIN");
+
+// Outer Hcal
     out->AddNode("TOWER_SIM_HCALOUT");
     out->AddNode("TOWER_RAW_HCALOUT");
     out->AddNode("TOWER_CALIB_HCALOUT");
+    out->AddNode("TOWERINFO_RAW_HCALOUT");
+    out->AddNode("TOWERINFO_SIM_HCALOUT");
+    out->AddNode("TOWERINFO_CALIB_HCALOUT");
     out->AddNode("CLUSTER_HCALOUT");
+
+// CEmc
     out->AddNode("TOWER_SIM_CEMC");
     out->AddNode("TOWER_RAW_CEMC");
     out->AddNode("TOWER_CALIB_CEMC");
+    out->AddNode("TOWERINFO_RAW_CEMC");
+    out->AddNode("TOWERINFO_SIM_CEMC");
+    out->AddNode("TOWERINFO_CALIB_CEMC");
     out->AddNode("CLUSTER_CEMC");
     out->AddNode("CLUSTER_POS_COR_CEMC");
+
 // leave the topo cluster here in case we run this during pass3
     out->AddNode("TOPOCLUSTER_ALLCALO");
     out->AddNode("TOPOCLUSTER_EMCAL");
