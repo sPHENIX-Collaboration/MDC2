@@ -11,9 +11,9 @@ my $killexist;
 my $runnumber = 63;
 my $events = 100;
 GetOptions("test"=>\$test, "increment"=>\$incremental, "killexist" => \$killexist);
-if ($#ARGV < 3)
+if ($#ARGV < 0)
 {
-    print "usage: run_all.pl <number of jobs> <particle> <pmin> <pmax>\n";
+    print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--killexist : delete output file if it already exists (but no jobfile)\n";
@@ -30,12 +30,10 @@ if ($hostname !~ /phnxsub/)
 }
 
 my $maxsubmit = $ARGV[0];
-my $particle = lc $ARGV[1];
-my $pmin = $ARGV[2];
-my $pmax = $ARGV[3];
+my $particle = "upsilon";
 my $filetype="single";
-my $partprop = sprintf("%s_%d_%d",$particle,$pmin,$pmax);
-$filetype=sprintf("%s_%sMeV",$filetype,$partprop);
+my $partprop = sprintf("%s",$particle);
+$filetype=sprintf("%s_%s",$filetype,$partprop);
 
 my $condorlistfile =  sprintf("condor.list");
 if (-f $condorlistfile)
@@ -94,7 +92,7 @@ for (my $isub = 0; $isub < $maxsubmit; $isub++)
 	{
 	    $tstflag="--test";
 	}
-	system("perl run_condor.pl $events $particle $pmin $pmax $outdir $outfile $runnumber $njob $tstflag");
+	system("perl run_condor.pl $events $outdir $outfile $runnumber $njob $tstflag");
 	my $exit_value  = $? >> 8;
 	if ($exit_value != 0)
 	{
