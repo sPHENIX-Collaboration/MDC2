@@ -95,15 +95,7 @@ int Fun4All_G4_Pass1(
   {
     //! apply sPHENIX nominal beam parameter with 2mrad crossing as defined in sPH-TRG-2020-001
     Input::ApplysPHENIXBeamParameter(INPUTMANAGER::HepMCInputManager);
-    INPUTMANAGER::HepMCInputManager->set_vertex_distribution_width(0.02, 0.02, 7.5, 0);  //collision vertex from CAD (sigma = 200um in x/y, 7.5cm in z)
-                                                                                           //    INPUTMANAGER::HepMCInputManager->set_vertex_distribution_mean(0,0,0,0);//optional collision central position shift in space, time
-    // //optional choice of vertex distribution function in space, time
-    INPUTMANAGER::HepMCInputManager->set_vertex_distribution_function(PHHepMCGenHelper::Gaus, PHHepMCGenHelper::Gaus, PHHepMCGenHelper::Gaus, PHHepMCGenHelper::Gaus);
-    //! embedding ID for the event
-    //! positive ID is the embedded event of interest, e.g. jetty event from pythia
-    //! negative IDs are backgrounds, .e.g out of time pile up collisions
-    //! Usually, ID = 0 means the primary Au+Au collision background
-    //INPUTMANAGER::HepMCInputManager->set_embedding_id(Input::EmbedID);
+
     if (Input::PILEUPRATE > 0)
     {
       // Copy vertex settings from foreground hepmc input

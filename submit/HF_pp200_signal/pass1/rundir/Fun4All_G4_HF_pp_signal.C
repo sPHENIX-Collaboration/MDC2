@@ -117,6 +117,10 @@ int Fun4All_G4_HF_pp_signal(
   // Input::SIMPLE_NUMBER = 2; // if you need 2 of them
   // Input::SIMPLE_VERBOSITY = 1;
 
+
+  // Enable this is emulating the nominal pp/pA/AA collision vertex distribution
+  Input::BEAM_CONFIGURATION = Input::pp_COLLISION;
+
   //  Input::PYTHIA6 = true;
 
   Input::PYTHIA8 = true;
