@@ -77,6 +77,10 @@ int Fun4All_G4_Pass1_pp(
   //===============
   // Input options
   //===============
+
+  // Enable this is emulating the nominal pp/pA/AA collision vertex distribution
+  Input::BEAM_CONFIGURATION = Input::AA_COLLISION; // for 2023 we want the AA beam config for no pileup sims
+
   // verbosity setting (applies to all input managers)
   Input::VERBOSITY = 1; // so we get prinouts of the event number
   Input::PYTHIA8 = true;
