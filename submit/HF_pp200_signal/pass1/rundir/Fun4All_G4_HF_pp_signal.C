@@ -74,6 +74,7 @@ int Fun4All_G4_HF_pp_signal(
   // conditions DB flags
   //===============
   Enable::XPLOAD = true;
+  XPLOAD::timestamp = 6;
   // tag
   rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
   // database config
