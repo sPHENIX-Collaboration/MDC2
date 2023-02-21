@@ -55,6 +55,7 @@ int Fun4All_G4_Pass1(
   // conditions DB flags
   //===============
   Enable::XPLOAD = true;
+  XPLOAD::timestamp = 6;
   // tag
   rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
   // database config
