@@ -12,7 +12,7 @@ my $outevents = 0;
 my $runnumber = 6;
 my $test;
 my $incremental;
-my $particle = "pi0";
+my $particle = "pi";
 GetOptions("test"=>\$test, "increment"=>\$incremental);
 if ($#ARGV < 0)
 {
@@ -33,12 +33,10 @@ if ($hostname !~ /phnxsub/)
 my $maxsubmit = $ARGV[0];
 my $pmin = $ARGV[1];
 my $pmax = $ARGV[2];
-my $particle = "pi";
-my $partprop = sprintf("%s_%d_%d",$particle,$pmin,$pmax);
-$filetype=sprintf("%s_%sMeV",$filetype,$partprop);
+my $partprop = sprintf("%s_%d_%dMeV",$particle,$pmin,$pmax);
 
 my $embedfilelike = sprintf("sHijing_0_20fm_50kHz_bkg_0_20fm");
-my $outfilelike = sprintf("%s_%s",$filetype,$embedfilelike);
+my $outfilelike = sprintf("%s_%s",$partprop,$embedfilelike);
 
 my $condorlistfile =  sprintf("condor.list");
 if (-f $condorlistfile)

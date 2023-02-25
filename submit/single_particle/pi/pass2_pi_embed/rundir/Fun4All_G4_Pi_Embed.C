@@ -243,7 +243,7 @@ int Fun4All_G4_Pi_Embed(
   //  Enable::CEMCALBEDO = true;
 
   Enable::CEMC = true;
-  Enable::CEMC_CELL = Enable::CEMC && true;
+//  Enable::CEMC_CELL = Enable::CEMC && true;
   Enable::CEMC_TOWER = Enable::CEMC_CELL && true;
   Enable::CEMC_CLUSTER = Enable::CEMC_TOWER && true;
 
@@ -327,7 +327,8 @@ int Fun4All_G4_Pi_Embed(
   if (Enable::PRODUCTION)
   {
     PRODUCTION::SaveOutputDir = DstOut::OutputDir;
-    CreateDstOutput(runnumber, segment, "pi");
+    std::string part = string("pi_") + to_string(pmin) + string("_") + to_string(pmax) + string("MeV");
+    CreateDstOutput(runnumber, segment, part);
   }
 
   //-----------------
