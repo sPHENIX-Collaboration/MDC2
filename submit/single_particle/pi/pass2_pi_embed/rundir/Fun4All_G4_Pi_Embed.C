@@ -29,11 +29,11 @@ R__LOAD_LIBRARY(libffamodules.so)
 
 int Fun4All_G4_Pi_Embed(
     const int nEvents = 1,
-    const string &embed_input_file0 = "DST_BBC_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
-    const string &embed_input_file1 = "DST_CALO_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
-    const string &embed_input_file2 = "DST_TRKR_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
-    const string &embed_input_file3 = "DST_TRUTH_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
-    const string &embed_input_file4 = "DST_VERTEX_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
+    const string &embed_input_file0 = "DST_BBC_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00003.root",
+    const string &embed_input_file1 = "DST_CALO_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00003.root",
+    const string &embed_input_file2 = "DST_TRKR_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00003.root",
+    const string &embed_input_file3 = "DST_TRUTH_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00003.root",
+    const string &embed_input_file4 = "DST_VERTEX_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00003.root",
     const int skip = 0,
     const string &outdir = ".",
     const string &particle1 = "pi-",
@@ -322,7 +322,6 @@ int Fun4All_G4_Pi_Embed(
   {
     PRODUCTION::SaveOutputDir = DstOut::OutputDir;
     CreateDstOutput(runnumber, segment, "pi");
-    OUTPUTMANAGER::outfiles.insert(ntupfile);
   }
 
   //-----------------
