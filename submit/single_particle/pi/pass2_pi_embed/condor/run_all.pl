@@ -16,7 +16,7 @@ my $particle = "pi0";
 GetOptions("test"=>\$test, "increment"=>\$incremental);
 if ($#ARGV < 0)
 {
-    print "usage: run_all.pl <number of jobs>\n";
+    print "usage: run_all.pl <number of jobs> <pmin> <pmax>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--test : dryrun - create jobfiles\n";
@@ -31,9 +31,14 @@ if ($hostname !~ /phnxsub/)
     exit(1);
 }
 my $maxsubmit = $ARGV[0];
+my $pmin = $ARGV[1];
+my $pmax = $ARGV[2];
+my $particle = "pi";
+my $partprop = sprintf("%s_%d_%d",$particle,$pmin,$pmax);
+$filetype=sprintf("%s_%sMeV",$filetype,$partprop);
 
 my $embedfilelike = sprintf("sHijing_0_20fm_50kHz_bkg_0_20fm");
-my $outfilelike = sprintf("%s_%s",$particle,$embedfilelike);
+my $outfilelike = sprintf("%s_%s",$filetype,$embedfilelike);
 
 my $condorlistfile =  sprintf("condor.list");
 if (-f $condorlistfile)
@@ -176,7 +181,7 @@ foreach my $segment (sort keys %trkhash)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %s %s %d %d %s", $outevents, $lfn, $bbchash{sprintf("%05d",$segment)}, $calohash{sprintf("%05d",$segment)}, $truthhash{sprintf("%05d",$segment)}, $vertexhash{sprintf("%05d",$segment)}, $outdir, $ntupoutfile, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %d %d %s", $outevents, $lfn, $bbchash{sprintf("%05d",$segment)}, $calohash{sprintf("%05d",$segment)}, $truthhash{sprintf("%05d",$segment)}, $vertexhash{sprintf("%05d",$segment)}, $outdir, $pmin, $pmax, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

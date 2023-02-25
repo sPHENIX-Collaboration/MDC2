@@ -7,9 +7,9 @@ use File::Path;
 
 my $test;
 GetOptions("test"=>\$test);
-if ($#ARGV < 8)
+if ($#ARGV < 10)
 {
-    print "usage: run_condor.pl <events> <trk embedfile> <bbc embedfile> <calo embedfile> <truth embedfile> <vertex embedfile> <outdir> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <trk embedfile> <bbc embedfile> <calo embedfile> <truth embedfile> <vertex embedfile> <outdir> <pmin> <pmax> <runnumber> <sequence>\n";
     print "options:\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
@@ -27,14 +27,16 @@ my $infile2 = $ARGV[3];
 my $infile3 = $ARGV[4];
 my $infile4 = $ARGV[5];
 my $dstoutdir = $ARGV[6];
-my $runnumber = $ARGV[7];
-my $sequence = $ARGV[8];
+my $pmin = $ARGV[7];
+my $pmax = $ARGV[8];
+my $runnumber = $ARGV[9];
+my $sequence = $ARGV[10];
 if ($sequence < 100)
 {
     $baseprio = 90;
 }
 my $condorlistfile = sprintf("condor.list");
-my $suffix = sprintf("-%010d-%05d",$runnumber,$sequence);
+my $suffix = sprintf("pi_%d_%d-%010d-%05d",$pmin, $pmax, $runnumber,$sequence);
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
 my $condorlogdir = sprintf("/tmp/single_particle/pi/pass2_pi_embed");
@@ -42,7 +44,7 @@ if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);
 }
-my $jobfile = sprintf("%s/condor%s.job",$logdir,$suffix);
+my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
 if (-f $jobfile)
 {
     print "jobfile $jobfile exists, possible overlapping names\n";
@@ -59,7 +61,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $infile0 $infile1 $infile2 $infile3 $infile4 $dstoutdir $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $infile0 $infile1 $infile2 $infile3 $infile4 $dstoutdir $pmin $pmax $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -85,5 +87,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile0,  $infile1, $infile2, $infile3, $infile4, $dstoutdir, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $infile0,  $infile1, $infile2, $infile3, $infile4, $dstoutdir, $pmin, $pmax, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);

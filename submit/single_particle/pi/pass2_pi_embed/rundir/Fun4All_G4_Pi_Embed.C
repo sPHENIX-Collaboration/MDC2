@@ -36,6 +36,8 @@ int Fun4All_G4_Pi_Embed(
     const string &embed_input_file4 = "DST_VERTEX_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00003.root",
     const int skip = 0,
     const string &outdir = ".",
+    const int pmin = 100,
+    const int pmax = 5000,
     const string &particle1 = "pi-",
     const string &particle2 = "pi+")
 {
@@ -153,23 +155,27 @@ int Fun4All_G4_Pi_Embed(
   if (Input::SIMPLE)
   {
     INPUTGENERATOR::SimpleEventGenerator[0]->add_particles("pi-",10);     
+    INPUTGENERATOR::SimpleEventGenerator[1]->add_particles("pi+",10);
+    for (int i=0; i<Input::SIMPLE_NUMBER; i++)
+    {
     if (Input::HEPMC || Input::EMBED)
     {
-			//INPUTGENERATOR::SimpleEventGenerator[0]->set_reuse_global_vertex(true);
-      INPUTGENERATOR::SimpleEventGenerator[0]->set_reuse_existing_vertex(true);
-      INPUTGENERATOR::SimpleEventGenerator[0]->set_existing_vertex_offset_vector(0.0, 0.0, 0.0);
+			//INPUTGENERATOR::SimpleEventGenerator[i]->set_reuse_global_vertex(true);
+      INPUTGENERATOR::SimpleEventGenerator[i]->set_reuse_existing_vertex(true);
+      INPUTGENERATOR::SimpleEventGenerator[i]->set_existing_vertex_offset_vector(0.0, 0.0, 0.0);
     }
     else
     {
-      INPUTGENERATOR::SimpleEventGenerator[0]->set_vertex_distribution_function(PHG4SimpleEventGenerator::Gaus,
+      INPUTGENERATOR::SimpleEventGenerator[i]->set_vertex_distribution_function(PHG4SimpleEventGenerator::Gaus,
                                                                                 PHG4SimpleEventGenerator::Gaus,
                                                                                 PHG4SimpleEventGenerator::Gaus);
-      INPUTGENERATOR::SimpleEventGenerator[0]->set_vertex_distribution_mean(0., 0., 0.);
-      INPUTGENERATOR::SimpleEventGenerator[0]->set_vertex_distribution_width(0.01, 0.01, 5.);
+      INPUTGENERATOR::SimpleEventGenerator[i]->set_vertex_distribution_mean(0., 0., 0.);
+      INPUTGENERATOR::SimpleEventGenerator[i]->set_vertex_distribution_width(0.01, 0.01, 5.);
     }
-    INPUTGENERATOR::SimpleEventGenerator[0]->set_eta_range(-1.1, 1.1);
-    INPUTGENERATOR::SimpleEventGenerator[0]->set_phi_range(-M_PI, M_PI);
-    INPUTGENERATOR::SimpleEventGenerator[0]->set_pt_range(1.6, 5.);
+    INPUTGENERATOR::SimpleEventGenerator[i]->set_eta_range(-1.1, 1.1);
+    INPUTGENERATOR::SimpleEventGenerator[i]->set_phi_range(-M_PI, M_PI);
+    INPUTGENERATOR::SimpleEventGenerator[i]->set_pt_range(pmin/1000., pmax/1000.);
+    }
   }
 
 
