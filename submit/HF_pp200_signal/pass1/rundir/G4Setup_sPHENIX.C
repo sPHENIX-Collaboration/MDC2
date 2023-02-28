@@ -87,10 +87,13 @@ int G4Setup()
   PHG4Reco *g4Reco = new PHG4Reco();
   g4Reco->set_rapidity_coverage(1.1);  // according to drawings
   WorldInit(g4Reco);
+  //PYTHIA 6
   if (G4P6DECAYER::decayType != EDecayType::kAll)
   {
     g4Reco->set_force_decay(G4P6DECAYER::decayType);
   }
+  //EvtGen
+  g4Reco->CustomizeEvtGenDecay(EVTGENDECAYER::DecayFile);
 
   double fieldstrength;
   istringstream stringline(G4MAGNET::magfield);
@@ -98,7 +101,8 @@ int G4Setup()
   if (stringline.fail())
   {  // conversion to double fails -> we have a string
 
-    if (G4MAGNET::magfield.find("sphenix3dbigmapxyz") != string::npos)
+    if (G4MAGNET::magfield.find("sphenix3dbigmapxyz") != string::npos ||
+        G4MAGNET::magfield == "CDB")
     {
       g4Reco->set_field_map(G4MAGNET::magfield, PHFieldConfig::Field3DCartesian);
     }
