@@ -32,12 +32,11 @@ int Fun4All_G4_Single_Embed(
     const string &particle = "gamma",
     const int ptmin = 10000,
     const int ptmax = 10000,
-    const string &embed_input_file0 = "DST_BBC_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000062-00000.root",
-    const string &embed_input_file1 = "DST_CALO_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000062-00000.root",
-    const string &embed_input_file2 = "DST_TRKR_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000062-00000.root",
-    const string &embed_input_file3 = "DST_TRUTH_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000062-00000.root",
-    const string &embed_input_file4 = "DST_VERTEX_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000062-00000.root",
-    const int skip = 0,
+    const string &embed_input_file0 = "DST_BBC_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
+    const string &embed_input_file1 = "DST_CALO_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
+    const string &embed_input_file2 = "DST_TRKR_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
+    const string &embed_input_file3 = "DST_TRUTH_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
+    const string &embed_input_file4 = "DST_VERTEX_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
     const string &outdir = ".")
 {
   string filetype = "single_" + particle + "_" + to_string(ptmin) + "_" + to_string(ptmax) + "MeV";
@@ -335,7 +334,6 @@ int Fun4All_G4_Single_Embed(
     return 0;
   }
 
-  se->skip(skip);
   se->run(nEvents);
 
   //-----

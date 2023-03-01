@@ -1,6 +1,6 @@
 Universe 	= vanilla
 Executable 	= $(executable)
-Arguments       = $(nevents) $(particle) $(ptmin) $(ptmax) $(infile0) $(infile1) $(infile2) $(infile3) $(infile4) $(dstoutdir) $(particle) $(ntupoutfile) $(runnumber) $(sequence)
+Arguments       = $(nevents) $(particle) $(ptmin) $(ptmax) $(infile0) $(infile1) $(infile2) $(infile3) $(infile4) $(dstoutdir) $(particle) $(runnumber) $(sequence)
 Output  	= $(outfile)
 Error 		= $(errfile)
 Log  		= $(condorlogfile)
@@ -12,4 +12,4 @@ Requirements = (CPU_Type == "mdc2")
 request_memory = 12288MB
 Priority = $(baseprio)
 job_lease_duration = 3600
-Queue executable, nevents, particle, ptmin, ptmax, infile0, infile1, infile2, infile3, infile4, dstoutdir, particle, ntupoutfile, runnumber, sequence, outfile, errfile, condorlogfile, rundir, baseprio from condor.list
+Queue executable, nevents, particle, ptmin, ptmax, infile0, infile1, infile2, infile3, infile4, dstoutdir, particle, runnumber, sequence, outfile, errfile, condorlogfile, rundir, baseprio from condor.list

@@ -35,7 +35,7 @@ my $ptmin = $ARGV[2];
 my $ptmax = $ARGV[3];
 
 my $embedfilelike = sprintf("sHijing_0_20fm_50kHz_bkg_0_20fm");
-my $outfilelike = sprintf("single_%s_%d_%dMeV_%s",$particle,$embedfilelike);
+my $outfilelike = sprintf("single_%s_%d_%dMeV_%s",$particle,$ptmin,$ptmax,$embedfilelike);
 
 my $condorlistfile =  sprintf("condor.list");
 if (-f $condorlistfile)
@@ -177,7 +177,7 @@ foreach my $segment (sort keys %trkhash)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %d %d %s %s %s %s %s %s %d %d %s", $outevents, $particle, $pmin, $pmax, $lfn, $bbchash{sprintf("%05d",$segment)}, $calohash{sprintf("%05d",$segment)}, $truthhash{sprintf("%05d",$segment)}, $vertexhash{sprintf("%05d",$segment)}, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %d %d %s %s %s %s %s %s %d %d %s", $outevents, $particle, $ptmin, $ptmax, $lfn, $bbchash{sprintf("%05d",$segment)}, $calohash{sprintf("%05d",$segment)}, $truthhash{sprintf("%05d",$segment)}, $vertexhash{sprintf("%05d",$segment)}, $outdir, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
