@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 63;
+my $runnumber = 6;
 my $test;
 my $incremental;
 my $shared;
@@ -54,6 +54,7 @@ open(F,"outdir.txt");
 while (my $line = <F>)
 {
     chomp $line;
+    $line = sprintf("%s/run%04d",$line,$runnumber);
     if ($line =~ /lustre/)
     {
 	my $storedir = $line;

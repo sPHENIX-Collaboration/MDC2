@@ -21,7 +21,6 @@
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/XploadInterface.h>
 
-
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
@@ -34,8 +33,8 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_Calo(
     const int nEvents = 1,
-    const string &inputFile0 = "G4Hits_single_pi0_2000_20000MeV-0000000040-00000.root",
-    const string &outputFile = "G4sPHENIX_calo.root",
+    const string &inputFile0 = "G4Hits_single_pi-_10_10MeV-0000000063-00000.root",
+    const string &outputFile = "DST_CALO_CLUSTER_single_pi-_10_10MeV-0000000063-00000.root",
     const string &outdir = ".")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
@@ -134,11 +133,6 @@ int Fun4All_G4_Calo(
 
 //  Enable::GLOBAL_RECO = true;
   Enable::GLOBAL_FASTSIM = true;
-// turn off smearing
-  G4GLOBAL::x_smearing = 0;
-  G4GLOBAL::y_smearing = 0;
-  G4GLOBAL::z_smearing = 0;
-  G4GLOBAL::t_smearing = 0;
 
 //  Enable::CALOTRIGGER = Enable::CEMC_TOWER && Enable::HCALIN_TOWER && Enable::HCALOUT_TOWER && false;
 
@@ -298,19 +292,35 @@ int Fun4All_G4_Calo(
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     out->AddNode("Sync");
     out->AddNode("EventHeader");
+
+// Inner Hcal
     out->AddNode("TOWER_SIM_HCALIN");
     out->AddNode("TOWER_RAW_HCALIN");
     out->AddNode("TOWER_CALIB_HCALIN");
+    out->AddNode("TOWERINFO_RAW_HCALIN");
+    out->AddNode("TOWERINFO_SIM_HCALIN");
+    out->AddNode("TOWERINFO_CALIB_HCALIN");
     out->AddNode("CLUSTER_HCALIN");
+
+// Outer Hcal
     out->AddNode("TOWER_SIM_HCALOUT");
     out->AddNode("TOWER_RAW_HCALOUT");
     out->AddNode("TOWER_CALIB_HCALOUT");
+    out->AddNode("TOWERINFO_RAW_HCALOUT");
+    out->AddNode("TOWERINFO_SIM_HCALOUT");
+    out->AddNode("TOWERINFO_CALIB_HCALOUT");
     out->AddNode("CLUSTER_HCALOUT");
+
+// CEmc
     out->AddNode("TOWER_SIM_CEMC");
     out->AddNode("TOWER_RAW_CEMC");
     out->AddNode("TOWER_CALIB_CEMC");
+    out->AddNode("TOWERINFO_RAW_CEMC");
+    out->AddNode("TOWERINFO_SIM_CEMC");
+    out->AddNode("TOWERINFO_CALIB_CEMC");
     out->AddNode("CLUSTER_CEMC");
     out->AddNode("CLUSTER_POS_COR_CEMC");
+
 // leave the topo cluster here in case we run this during pass3
     out->AddNode("TOPOCLUSTER_ALLCALO");
     out->AddNode("TOPOCLUSTER_EMCAL");
