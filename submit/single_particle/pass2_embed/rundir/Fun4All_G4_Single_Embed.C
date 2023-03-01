@@ -239,19 +239,12 @@ int Fun4All_G4_Single_Embed(
   //  Enable::CEMCALBEDO = true;
 
   Enable::CEMC = true;
-  Enable::CEMC_CELL = Enable::CEMC && true;
-  Enable::CEMC_TOWER = Enable::CEMC_CELL && true;
-  Enable::CEMC_CLUSTER = Enable::CEMC_TOWER && true;
 
   Enable::HCALIN = true;
-//  Enable::HCALIN_OLD = true;
-  G4HCALIN::light_scint_model = 20;
 
   Enable::MAGNET = true;
 
   Enable::HCALOUT = true;
-//  Enable::HCALOUT_OLD = true;
-  G4HCALOUT::light_scint_model = 20;
 
   Enable::EPD = true;
 
