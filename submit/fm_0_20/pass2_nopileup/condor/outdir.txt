@@ -1,2 +1,3 @@
 /sphenix/lustre01/sphnxpro/mdc2/shijing_hepmc/fm_0_20/nopileup/calocluster
+/sphenix/lustre01/sphnxpro/mdc2/shijing_hepmc/fm_0_20/nopileup/global
 /sphenix/lustre01/sphnxpro/mdc2/shijing_hepmc/fm_0_20/nopileup/trkrhit

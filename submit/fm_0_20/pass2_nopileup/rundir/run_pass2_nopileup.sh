@@ -12,7 +12,7 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.335
+source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.348
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
@@ -26,6 +26,7 @@ then
     fi
 else
     echo condor scratch NOT set
+    exit 1
 fi
 
 # arguments 
@@ -33,9 +34,11 @@ fi
 # $2: g4hits input file
 # $3: calo output file
 # $4: calo output dir
-# $5: track output dir
-# $6: runnumber
-# $7: sequence
+# $5: global output file
+# $6: global output dir
+# $7: track output dir
+# $8: runnumber
+# $9: sequence
 
 echo 'here comes your environment'
 printenv
@@ -43,12 +46,14 @@ echo arg1 \(events\) : $1
 echo arg2 \(g4hits file\): $2
 echo arg3 \(calo output file\): $3
 echo arg4 \(calo output dir\): $4
-echo arg5 \(trk output dir\): $5
-echo arg6 \(runnumber\): $6
-echo arg7 \(sequence\): $7
+echo arg5 \(global output file\): $5
+echo arg6 \(global output dir\): $6
+echo arg7 \(trk output dir\): $7
+echo arg8 \(runnumber\): $8
+echo arg9 \(sequence\): $9
 
-runnumber=$(printf "%010d" $6)
-sequence=$(printf "%05d" $7)
+runnumber=$(printf "%010d" $8)
+sequence=$(printf "%05d" $9)
 filename_calo=fm_0_20_pass2_nopileup_calo
 filename_trkr=fm_0_20_pass2_nopileup_trkr
 
@@ -58,20 +63,23 @@ jsonfilename=${filename_calo}-${runnumber}-${sequence}.json
 echo running calo  prmon  --filename $txtfilename --json-summary $jsonfilename --  root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
 prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
 
-rsync -av $txtfilename /sphenix/user/sphnxpro/prmon/fm_0_20/pass2_nopileup
-rsync -av $jsonfilename /sphenix/user/sphnxpro/prmon/fm_0_20/pass2_nopileup
+rsyncdirname=/sphenix/user/sphnxpro/prmon/fm_0_20/pass2_nopileup/run$8
+if [ ! -d $rsyncdirname ]
+then
+  mkdir -p $rsyncdirname
+fi
+
+rsync -av $txtfilename $rsyncdirname
+rsync -av $jsonfilename $rsyncdirname
+
+echo root.exe -q -b Fun4All_G4_Global.C\($1,\"$2\",\"$5\",\"$6\"\)
+root.exe -q -b  Fun4All_G4_Global.C\($1,\"$2\",\"$5\",\"$6\"\)
 
 txtfilename=${filename_trkr}-${runnumber}-${sequence}.txt
 jsonfilename=${filename_trkr}-${runnumber}-${sequence}.json
 
 echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$5\"\)
-prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$5\"\)
-
-rsyncdirname=/sphenix/user/sphnxpro/prmon/fm_0_20/pass2_nopileup
-if [ ! -d $rsyncdirname ]
-then
-  mkdir -p $rsyncdirname
-fi
+prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\"\)
 
 rsync -av $txtfilename $rsyncdirname
 rsync -av $jsonfilename $rsyncdirname

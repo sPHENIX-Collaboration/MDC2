@@ -7,9 +7,9 @@ use File::Path;
 
 my $test;
 GetOptions("test"=>\$test);
-if ($#ARGV < 6)
+if ($#ARGV < 8)
 {
-    print "usage: run_condor.pl <events> <infile> <calo outfile>  <calo outdir> <trk outdir> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <infile> <calo outfile>  <calo outdir> <global outfile> <global outdir> <trk outdir> <runnumber> <sequence>\n";
     print "options:\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
@@ -24,9 +24,11 @@ my $nevents = $ARGV[0];
 my $infile = $ARGV[1];
 my $calooutfile = $ARGV[2];
 my $calodstoutdir = $ARGV[3];
-my $trkdstoutdir = $ARGV[4];
-my $runnumber = $ARGV[5];
-my $sequence = $ARGV[6];
+my $globaloutfile = $ARGV[4];
+my $globaldstoutdir = $ARGV[5];
+my $trkdstoutdir = $ARGV[6];
+my $runnumber = $ARGV[7];
+my $sequence = $ARGV[8];
 if ($sequence < 100)
 {
     $baseprio = 90;
@@ -54,7 +56,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $infile $calooutfile $calodstoutdir $trkdstoutdir $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $infile $calooutfile $calodstoutdir $globaloutfile $globaldstoutdir $trkdstoutdir $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -79,5 +81,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile, $calooutfile $calodstoutdir $trkdstoutdir, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $infile, $calooutfile $calodstoutdir $globaloutfile $globaldstoutdir $trkdstoutdir, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);
