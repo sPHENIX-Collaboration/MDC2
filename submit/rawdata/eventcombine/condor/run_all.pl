@@ -8,14 +8,16 @@ use Getopt::Long;
 my $test;
 my $incremental;
 my $killexist;
+my $shared;
 my $events = 0;
-GetOptions("test"=>\$test, "increment"=>\$incremental, "killexist" => \$killexist);
+GetOptions("increment"=>\$incremental, "killexist" => \$killexist, "shared" => \$shared, "test"=>\$test);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--killexist : delete output file if it already exists (but no jobfile)\n";
+    print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
@@ -32,6 +34,13 @@ my $maxsubmit = $ARGV[0];
 my $localdir=`pwd`;
 chomp $localdir;
 my $logdir = sprintf("%s/log",$localdir);
+
+my $condorlistfile =  sprintf("condor.list");
+if (-f $condorlistfile)
+{
+    unlink $condorlistfile;
+}
+
 my $nsubmit = 0;
 my $njob = 0;
 my $jobno = 0;
@@ -45,20 +54,13 @@ for (my $isub = 0; $isub < $maxsubmit; $isub++)
     {
 	$njob=0;
     }
-    my $jobfile = sprintf("%s/condor-%010d-%05d.job",$logdir,$runnumber,$jobno);
-    while (-f $jobfile)
-    {
-	$jobno++;
-	$jobfile = sprintf("%s/condor-%010d-%05d.job",$logdir,$runnumber,$jobno);
-    }
-    print "using jobfile $jobfile\n";
     my $tstflag="";
     if (defined $test)
     {
 	$tstflag="--test";
     }
 #    print "executing perl run_condor.pl $events $runnumber $jobno $indir $tstflag\n";
-    system("perl run_condor.pl $events $runnumber $jobno $indir $tstflag");
+    system("perl run_condor.pl $events $runnumber 0 $jobno $indir $tstflag");
     my $exit_value  = $? >> 8;
     if ($exit_value != 0)
     {
@@ -72,9 +74,33 @@ for (my $isub = 0; $isub < $maxsubmit; $isub++)
     {
 	$nsubmit++;
     }
-    if ($nsubmit >= $maxsubmit)
+    if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit >= 20000)
     {
-	print "maximum number of submissions reached, exiting\n";
-	exit(0);
+	print "maximum number of submissions reached $nsubmit, submitting\n";
+	last;
+    }
+    $jobno++;
+}
+
+my $jobfile = sprintf("condor.job");
+if (defined $shared)
+{
+ $jobfile = sprintf("condor.job.shared");
+}
+if (! -f $jobfile)
+{
+    print "could not find $jobfile\n";
+    exit(1);
+}
+
+if (-f $condorlistfile)
+{
+    if (defined $test)
+    {
+	print "would submit $jobfile\n";
+    }
+    else
+    {
+	system("condor_submit $jobfile");
     }
 }

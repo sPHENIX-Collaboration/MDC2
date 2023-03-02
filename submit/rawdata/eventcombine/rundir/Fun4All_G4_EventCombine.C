@@ -12,6 +12,7 @@ R__LOAD_LIBRARY(libffarawmodules.so)
 void Fun4All_G4_EventCombine(int nEvents = 10, const int irun = 10349, const int sequence = 0, const std::string &topdir = "/sphenix/lustre01/sphnxpro/mdc2/rawdata")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
+//  se->Verbosity(1); // produces enormous logs
   Fun4AllInputManager *in = nullptr;
   int n = 0;
   EventCombiner *evtcomb = new EventCombiner();

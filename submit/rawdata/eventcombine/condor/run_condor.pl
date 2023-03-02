@@ -20,13 +20,16 @@ else
 }
 my $localdir=`pwd`;
 chomp $localdir;
+my $baseprio = 91;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_eventcombine.sh",$rundir);
 my $nevents = $ARGV[0];
 my $runnumber = $ARGV[1];
 my $sequence = $ARGV[2];
-my $indir = $ARGV[3];
-my $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
+my $jobno = $ARGV[3];
+my $indir = $ARGV[4];
+my $condorlistfile = sprintf("condor.list");
+my $suffix = sprintf("%010d-%05d",$runnumber,$jobno);
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
 my $condorlogdir = sprintf("/tmp/rawdata/eventcombine");
@@ -58,16 +61,20 @@ print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
 print F "accounting_group = group_sphenix.mdc2\n";
 print F "accounting_group_user = sphnxpro\n";
 print F "Requirements = (CPU_Type == \"mdc2\")\n";
-print F "request_memory = 2000MB\n";
-print F "Priority 	= 22\n";
+print F "request_memory = 2048MB\n";
+print F "Priority = $baseprio\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);
-if (defined $test)
-{
-    print "would submit $jobfile\n";
-}
-else
-{
-    system("condor_submit $jobfile");
-}
+#if (defined $test)
+#{
+#    print "would submit $jobfile\n";
+#}
+#else
+#{
+#    system("condor_submit $jobfile");
+#}
+
+open(F,">>$condorlistfile");
+print F "$executable, $nevents, $runnumber, $sequence, $indir, $errfile, $outfile, $condorlogfile, $rundir, $baseprio\n";
+close(F);
