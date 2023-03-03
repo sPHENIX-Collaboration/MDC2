@@ -160,8 +160,8 @@ int Fun4All_G4_HF_pp_signal(
   else if (HF_Q_filter == "b2JpsiX") pythia8_config_file += "phpythia8_b2JpsiX_MDC2.cfg";
   else if (HF_Q_filter == "b2DX") pythia8_config_file += "phpythia8_b2DX_MDC2.cfg";
   else if (HF_Q_filter == "JetD0") pythia8_config_file += "phpythia8_jets_d02kpi_MDC2.cfg";
-  else if (HF_Q_filter == "CharmD0piKJet5") pythia8_config_file = "./phpythia8_CharmJet_pTHatMin2_MDC2.cfg";
-  else if (HF_Q_filter == "CharmD0piKJet12") pythia8_config_file = "./phpythia8_CharmJet_pTHatMin6_MDC2.cfg";
+  else if (HF_Q_filter == "CharmD0piKJet5") pythia8_config_file += "phpythia8_CharmJet_pTHatMin2_MDC2.cfg";
+  else if (HF_Q_filter == "CharmD0piKJet12") pythia8_config_file += "phpythia8_CharmJet_pTHatMin6_MDC2.cfg";
   else if (HF_Q_filter == "Charm" || HF_Q_filter == "Bottom") pythia8_config_file += "phpythia8_minBias_MDC2.cfg";
   else
   {
