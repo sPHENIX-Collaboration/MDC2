@@ -53,6 +53,7 @@ for (my $isub = 0; $isub < $maxsubmit; $isub++)
     if ($runnumber > 10399)
     {
 	$njob=0;
+        $jobno++;
     }
     my $tstflag="";
     if (defined $test)
@@ -79,7 +80,6 @@ for (my $isub = 0; $isub < $maxsubmit; $isub++)
 	print "maximum number of submissions reached $nsubmit, submitting\n";
 	last;
     }
-    $jobno++;
 }
 
 my $jobfile = sprintf("condor.job");
