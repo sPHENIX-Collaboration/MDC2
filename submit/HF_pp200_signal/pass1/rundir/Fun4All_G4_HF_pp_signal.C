@@ -44,7 +44,8 @@ R__LOAD_LIBRARY(libffamodules.so)
 
 int Fun4All_G4_HF_pp_signal(
     const int nEvents = 1,
-    const string &HF_Q_filter = "Charm", // or "Bottom"  or "CharmD0"  or "BottomD0" or "MB"
+    // "Charm" or "Bottom"  or "CharmD0"  or "BottomD0" or "MB" or "CharmD0piKJet5" or "CharmD0piKJet12"
+    const string &HF_Q_filter = "Charm",
     const string &outputFile = "G4sPHENIX.root",
     const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
     const int skip = 0,
@@ -159,6 +160,8 @@ int Fun4All_G4_HF_pp_signal(
   else if (HF_Q_filter == "b2JpsiX") pythia8_config_file += "phpythia8_b2JpsiX_MDC2.cfg";
   else if (HF_Q_filter == "b2DX") pythia8_config_file += "phpythia8_b2DX_MDC2.cfg";
   else if (HF_Q_filter == "JetD0") pythia8_config_file += "phpythia8_jets_d02kpi_MDC2.cfg";
+  else if (HF_Q_filter == "CharmD0piKJet5") pythia8_config_file += "phpythia8_CharmJet_pTHatMin2_MDC2.cfg";
+  else if (HF_Q_filter == "CharmD0piKJet12") pythia8_config_file += "phpythia8_CharmJet_pTHatMin6_MDC2.cfg";
   else if (HF_Q_filter == "Charm" || HF_Q_filter == "Bottom") pythia8_config_file += "phpythia8_minBias_MDC2.cfg";
   else
   {
@@ -182,6 +185,15 @@ int Fun4All_G4_HF_pp_signal(
     {
       p8_hf_signal_trigger->AddParticles(4);
       p8_hf_signal_trigger->AddParticles(-4);
+    }
+    if (HF_Q_filter == "CharmD0piKJet5" || HF_Q_filter == "CharmD0piKJet12" )
+    {
+      // has a D0 in HepMC Event
+      p8_hf_signal_trigger->AddParticles(421);
+      p8_hf_signal_trigger->AddParticles(-421);
+
+      // force D0 decay to piK using standard decay file at https://github.com/sPHENIX-Collaboration/calibrations/tree/master/EvtGen
+      EVTGENDECAYER::DecayFile = "D0.KPi.DEC";
     }
     else if (HF_Q_filter == "BottomD0"  || HF_Q_filter == "BottomD+" || HF_Q_filter == "BottomLc" || HF_Q_filter == "b2JpsiX" || HF_Q_filter == "b2DX" || HF_Q_filter == "Bottom")
     {
@@ -207,6 +219,22 @@ int Fun4All_G4_HF_pp_signal(
       PHPy8JetTrigger *p8_jet_signal_trigger = new PHPy8JetTrigger();
       p8_jet_signal_trigger->SetEtaHighLow(1.1, -1.1);
       p8_jet_signal_trigger->SetMinJetPt(10.);
+      p8_jet_signal_trigger->PrintConfig();
+      INPUTGENERATOR::Pythia8->register_trigger(p8_jet_signal_trigger);
+    }
+    else if (HF_Q_filter == "CharmD0piKJet5")
+    {
+      PHPy8JetTrigger *p8_jet_signal_trigger = new PHPy8JetTrigger();
+      p8_jet_signal_trigger->SetEtaHighLow(1.1, -1.1);
+      p8_jet_signal_trigger->SetMinJetPt(5);
+      p8_jet_signal_trigger->PrintConfig();
+      INPUTGENERATOR::Pythia8->register_trigger(p8_jet_signal_trigger);
+    }
+    else if (HF_Q_filter == "CharmD0piKJet12")
+    {
+      PHPy8JetTrigger *p8_jet_signal_trigger = new PHPy8JetTrigger();
+      p8_jet_signal_trigger->SetEtaHighLow(1.1, -1.1);
+      p8_jet_signal_trigger->SetMinJetPt(12);
       p8_jet_signal_trigger->PrintConfig();
       INPUTGENERATOR::Pythia8->register_trigger(p8_jet_signal_trigger);
     }
