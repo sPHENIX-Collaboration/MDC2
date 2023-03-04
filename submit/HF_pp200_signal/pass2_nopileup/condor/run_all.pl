@@ -56,7 +56,7 @@ open(F,"outdir.txt");
 while (my $line = <F>)
 {
     chomp $line;
-    $line = sprintf("%s/%s",$line,lc $quarkfilter);
+    $line = sprintf("%s/run%04d/%s",$line,$runnumber,lc $quarkfilter);
     if ($line =~ /lustre/)
     {
 	my $storedir = $line;
@@ -76,8 +76,9 @@ my $quarkfilterWithUnderScore = sprintf("%s-",$quarkfilter);
 
 my %outfiletype = ();
 $outfiletype{"DST_CALO_CLUSTER"} = $outdir[0];
-$outfiletype{"DST_TRKR_HIT"} = $outdir[1];
-$outfiletype{"DST_TRUTH"} = $outdir[1];
+$outfiletype{"DST_GLOBAL"} = $outdir[1];
+$outfiletype{"DST_TRKR_HIT"} = $outdir[2];
+$outfiletype{"DST_TRUTH"} = $outdir[2];
 foreach my $type (sort keys %outfiletype)
 {
     print "type $type, dir: $outfiletype{$type}\n";
@@ -123,7 +124,8 @@ while (my @res = $getfiles->fetchrow_array())
 	    $tstflag="--test";
 	}
 	my $calooutfilename = sprintf("DST_CALO_CLUSTER_pythia8_%s-%010d-%05d.root",$quarkfilter,$runnumber,$segment);
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s  %s %s %s %d %d %s", $outevents, $quarkfilter, $lfn, $calooutfilename, $outdir[0], $outdir[1],$runnumber, $segment, $tstflag);
+	my $globaloutfilename = sprintf("DST_GLOBAL_pythia8_%s-%010d-%05d.root",$quarkfilter,$runnumber,$segment);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %s %d %d %s", $outevents, $quarkfilter, $lfn, $calooutfilename, $outdir[0], $globaloutfilename, $outdir[1], $outdir[2], $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

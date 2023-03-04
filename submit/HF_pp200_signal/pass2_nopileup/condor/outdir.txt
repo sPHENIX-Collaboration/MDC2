@@ -1,2 +1,3 @@
-/sphenix/lustre01/sphnxpro/mdc2/hf_pp200_signal/calocluster/nopileup
-/sphenix/lustre01/sphnxpro/mdc2/hf_pp200_signal/trkrhit/nopileup
+/sphenix/lustre01/sphnxpro/mdc2/hf_pp200_signal/nopileup/calocluster
+/sphenix/lustre01/sphnxpro/mdc2/hf_pp200_signal/nopileup/global
+/sphenix/lustre01/sphnxpro/mdc2/hf_pp200_signal/nopileup/trkrhit
