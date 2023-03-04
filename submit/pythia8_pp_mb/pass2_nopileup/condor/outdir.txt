@@ -1,2 +1,3 @@
-/sphenix/lustre01/sphnxpro/mdc2/pythia8_pp_mb/calocluster/nopileup
-/sphenix/lustre01/sphnxpro/mdc2/pythia8_pp_mb/trkrhit/nopileup
+/sphenix/lustre01/sphnxpro/mdc2/pythia8_pp_mb/nopileup/calocluster
+/sphenix/lustre01/sphnxpro/mdc2/pythia8_pp_mb/nopileup/global
+/sphenix/lustre01/sphnxpro/mdc2/pythia8_pp_mb/nopileup/trkrhit

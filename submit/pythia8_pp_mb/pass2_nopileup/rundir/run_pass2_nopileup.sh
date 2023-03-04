@@ -12,7 +12,7 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.335
+source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.349
 
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
@@ -34,7 +34,11 @@ fi
 # $2: g4hits input file
 # $3: calo output file
 # $4: calo output dir
-# $5: track output dir
+# $5: global output file
+# $6: global output dir
+# $7: track output dir
+# $8: runnumber
+# $9: sequence
 
 echo 'here comes your environment'
 printenv
@@ -42,12 +46,20 @@ echo arg1 \(events\) : $1
 echo arg2 \(g4hits file\): $2
 echo arg3 \(calo output file\): $3
 echo arg4 \(calo output dir\): $4
-echo arg5 \(trk output dir\): $5
+echo arg5 \(global output file\): $5
+echo arg6 \(global output dir\): $6
+echo arg7 \(trk output dir\): $7
+echo arg8 \(runnumber\): $8
+echo arg9 \(sequence\): $9
+
 
 echo running calo root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
 root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
 
-echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$5\"\)
-root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$5\"\)
+echo root.exe -q -b Fun4All_G4_Global.C\($1,\"$2\",\"$5\",\"$6\"\)
+root.exe -q -b  Fun4All_G4_Global.C\($1,\"$2\",\"$5\",\"$6\"\)
+
+echo running root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\"\)
+root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\"\)
 
 echo "script done"

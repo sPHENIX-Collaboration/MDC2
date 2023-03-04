@@ -36,7 +36,7 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_Pass3Trk(
     const int nEvents = 1,
-    const string &inputFile0 = "DST_TRKR_G4HIT_sHijing_0_488fm_50kHz_bkg_0_20fm-0000000002-00003.root",
+    const string &inputFile0 = "G4Hits_pythia8_pp_mb-0000000006-00000.root",
     const string &outdir = ".")
 {
   const string outputFile = "G4sPHENIX.root";
