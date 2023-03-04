@@ -62,7 +62,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $particle, $ptmin, $ptmax, $infile0 $infile1 $infile2 $infile3 $infile4 $dstoutdir $particle $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $particle $ptmin $ptmax $infile0 $infile1 $infile2 $infile3 $infile4 $dstoutdir $particle $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
