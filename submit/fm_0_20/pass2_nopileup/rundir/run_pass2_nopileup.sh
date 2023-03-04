@@ -12,7 +12,7 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.348
+source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.349
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
@@ -55,12 +55,13 @@ echo arg9 \(sequence\): $9
 runnumber=$(printf "%010d" $8)
 sequence=$(printf "%05d" $9)
 filename_calo=fm_0_20_pass2_nopileup_calo
+filename_epd=fm_0_20_pass2_nopileup_epd
 filename_trkr=fm_0_20_pass2_nopileup_trkr
 
 txtfilename=${filename_calo}-${runnumber}-${sequence}.txt
 jsonfilename=${filename_calo}-${runnumber}-${sequence}.json
 
-echo running calo  prmon  --filename $txtfilename --json-summary $jsonfilename --  root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
+echo running prmon  --filename $txtfilename --json-summary $jsonfilename --  root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
 prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
 
 rsyncdirname=/sphenix/user/sphnxpro/prmon/fm_0_20/pass2_nopileup/run$8
@@ -72,8 +73,11 @@ fi
 rsync -av $txtfilename $rsyncdirname
 rsync -av $jsonfilename $rsyncdirname
 
-echo root.exe -q -b Fun4All_G4_Global.C\($1,\"$2\",\"$5\",\"$6\"\)
-root.exe -q -b  Fun4All_G4_Global.C\($1,\"$2\",\"$5\",\"$6\"\)
+txtfilename=${filename_epd}-${runnumber}-${sequence}.txt
+jsonfilename=${filename_epd}-${runnumber}-${sequence}.json
+
+echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Global.C\($1,\"$2\",\"$5\",\"$6\"\)
+prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Global.C\($1,\"$2\",\"$5\",\"$6\"\)
 
 txtfilename=${filename_trkr}-${runnumber}-${sequence}.txt
 jsonfilename=${filename_trkr}-${runnumber}-${sequence}.json
