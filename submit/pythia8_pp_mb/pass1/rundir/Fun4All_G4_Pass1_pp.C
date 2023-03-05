@@ -48,8 +48,6 @@ int Fun4All_G4_Pass1_pp(
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
 
-// set pp mode for extended readout
-  TRACKING::pp_mode = true;
 
   //===============
   // conditions DB flags
@@ -78,6 +76,8 @@ int Fun4All_G4_Pass1_pp(
   // Input options
   //===============
 
+// set pp mode for extended readout
+//  TRACKING::pp_mode = true;
   // Enable this is emulating the nominal pp/pA/AA collision vertex distribution
   Input::BEAM_CONFIGURATION = Input::AA_COLLISION; // for 2023 we want the AA beam config for no pileup sims
 
@@ -178,12 +178,10 @@ int Fun4All_G4_Pass1_pp(
   Enable::CEMC = true;
 
   Enable::HCALIN = true;
-  G4HCALIN::light_scint_model = 20;
 
   Enable::MAGNET = true;
 
   Enable::HCALOUT = true;
-  G4HCALOUT::light_scint_model = 20;
 
   Enable::EPD = true;
 
