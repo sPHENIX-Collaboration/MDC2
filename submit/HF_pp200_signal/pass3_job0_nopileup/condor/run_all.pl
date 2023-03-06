@@ -9,14 +9,14 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=63;
+my $runnumber=6;
 my $test;
 my $incremental;
 my $shared;
 GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs>  <\"Charm\", \"CharmD0\", \"Bottom\", \"BottomD0\", \"JetD0\" production>\n";
+    print "usage: run_all.pl <number of jobs>  <\"Charm\", \"CharmD0\", \"CharmD0piKJet5\", \"CharmD0piKJet12\", \"Bottom\", \"BottomD0\", \"JetD0\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--shared : submit jobs to shared pool\n";
@@ -36,6 +36,8 @@ my $maxsubmit = $ARGV[0];
 my $quarkfilter = $ARGV[1];
 if ($quarkfilter  ne "Charm" &&
     $quarkfilter  ne "CharmD0" &&
+    $quarkfilter  ne "CharmD0piKJet5" &&
+    $quarkfilter  ne "CharmD0piKJet12" &&
     $quarkfilter  ne "Bottom" &&
     $quarkfilter  ne "BottomD0" &&
     $quarkfilter  ne "JetD0")
@@ -57,7 +59,7 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/%s",$outdir,lc $quarkfilter);
+$outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber, lc $quarkfilter);
 if ($outdir =~ /lustre/)
 {
     my $storedir = $outdir;

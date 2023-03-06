@@ -15,7 +15,7 @@ my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Charm\", \"CharmD0\", \"Bottom\", \"BottomD0\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Charm\", \"CharmD0\", \"CharmD0piKJet5\", \"CharmD0piKJet12\", \"Bottom\", \"BottomD0\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--test : dryrun - create jobfiles\n";
@@ -33,6 +33,8 @@ my $maxsubmit = $ARGV[0];
 my $quarkfilter = $ARGV[1];
 if ($quarkfilter  ne "Charm" &&
     $quarkfilter  ne "CharmD0" &&
+    $quarkfilter  ne "CharmD0piKJet5" &&
+    $quarkfilter  ne "CharmD0piKJet12" &&
     $quarkfilter  ne "Bottom" &&
     $quarkfilter  ne "BottomD0")
 {
