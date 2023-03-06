@@ -14,7 +14,7 @@ my $shared;
 GetOptions("test"=>\$test, "increment"=>\$incremental, "killexist" => \$killexist, "shared" => \$shared);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Charm\", \"CharmD0\", \"Bottom\", \"BottomD0\", \"JetD0\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Charm\", \"CharmD0\", \"CharmD0piKJet5\", \"CharmD0piKJet12\", \"Bottom\", \"BottomD0\", \"JetD0\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--killexist : delete output file if it already exists (but no jobfile)\n";
@@ -36,11 +36,13 @@ my $quarkfilter = $ARGV[1];
 my $filetype="pythia8";
 if ($quarkfilter  ne "Charm" &&
     $quarkfilter  ne "CharmD0" &&
+    $quarkfilter  ne "CharmD0piKJet5" &&
+    $quarkfilter  ne "CharmD0piKJet12" &&
     $quarkfilter  ne "Bottom" &&
     $quarkfilter  ne "BottomD0" &&
     $quarkfilter  ne "JetD0")
 {
-    print "second argument has to be either Charm, CharmD0, Bottom, BottomD0, JetD0\n";
+    print "second argument has to be either Charm, CharmD0, CharmD0piKJet5, CharmD0piKJet12, Bottom, BottomD0, JetD0\n";
     exit(1);
 }
 $filetype=sprintf("%s_%s",$filetype,$quarkfilter);
@@ -58,7 +60,7 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/%s",$outdir,lc $quarkfilter);
+$outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,lc $quarkfilter);
 if ($outdir =~ /lustre/)
 {
     my $storedir = $outdir;
