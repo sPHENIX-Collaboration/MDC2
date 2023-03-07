@@ -9,7 +9,10 @@ R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libfun4allraw.so)
 R__LOAD_LIBRARY(libffarawmodules.so)
 
-void Fun4All_G4_EventCombine(int nEvents = 10, const int irun = 10349, const int sequence = 0, const std::string &topdir = "/sphenix/lustre01/sphnxpro/mdc2/rawdata", int nrepeat = 20)
+// each pass takes 15 minutes --> 4 passes for an hour
+// repeat = number(passes) - 1
+// repeat=39 is 40 passes == 10 hours
+void Fun4All_G4_EventCombine(int nEvents = 0, const int irun = 10349, const int sequence = 0, const std::string &topdir = "/sphenix/lustre01/sphnxpro/mdc2/rawdata", int nrepeat = 39)
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   //  se->Verbosity(1); // produces enormous logs
