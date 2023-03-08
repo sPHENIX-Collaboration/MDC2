@@ -3,15 +3,15 @@ export USER="$(id -u -n)"
 export LOGNAME=${USER}
 export HOME=/sphenix/u/${USER}
 
+hostname
+
 this_script=$BASH_SOURCE
 this_script=`readlink -f $this_script`
 this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.335
-
-hostname
+source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.349
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
@@ -19,6 +19,7 @@ then
     rsync -av $this_dir/* .
 else
     echo condor scratch NOT set
+    exit 1
 fi
 
 # arguments 
@@ -42,7 +43,7 @@ echo arg6 \(sequence\): $6
 
 runnumber=$(printf "%010d" $5)
 sequence=$(printf "%05d" $6)
-filename=JS_pp200_signal_pass1_$2
+filename=JS_pp200_signal_pass1
 
 txtfilename=${filename}-${runnumber}-${sequence}.txt
 jsonfilename=${filename}-${runnumber}-${sequence}.json
@@ -50,7 +51,7 @@ jsonfilename=${filename}-${runnumber}-${sequence}.json
 echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_JS_pp_signal.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
 prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_JS_pp_signal.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
 
-rsyncdirname=/sphenix/user/sphnxpro/prmon/JS_pp200_signal/pass1_$2
+rsyncdirname=/sphenix/user/sphnxpro/prmon/JS_pp200_signal/pass1/$2
 
 if [ ! -d $rsyncdirname ]
 then
