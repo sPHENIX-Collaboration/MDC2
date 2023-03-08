@@ -8,7 +8,7 @@ use Getopt::Long;
 my $test;
 my $incremental;
 my $killexist;
-my $runnumber = 62;
+my $runnumber = 6;
 my $events = 1000;
 GetOptions("test"=>\$test, "increment"=>\$incremental, "killexist" => \$killexist);
 if ($#ARGV < 1)
@@ -53,7 +53,7 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/%s",$outdir,lc $jettrigger);
+$outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,lc $jettrigger);
 if ($outdir =~ /lustre/)
 {
     my $storedir = $outdir;
