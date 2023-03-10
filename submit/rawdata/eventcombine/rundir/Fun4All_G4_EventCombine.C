@@ -78,5 +78,6 @@ void Fun4All_G4_EventCombine(int nEvents = 10, const int irun = 251, const int s
 
   se->End();
   delete se;
+  cout << "all done" << endl;
   gSystem->Exit(0);
 }
