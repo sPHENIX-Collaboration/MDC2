@@ -9,15 +9,17 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 62;
+my $runnumber = 6;
 my $test;
 my $incremental;
+my $shared;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"PhotonJet\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
+    print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
@@ -55,7 +57,7 @@ open(F,"outdir.txt");
 while (my $line = <F>)
 {
     chomp $line;
-    $line = sprintf("%s/%s",$line,$jettrigger);
+    $line = sprintf("%s/run%04d/%s",$line,$runnumber,lc $jettrigger);
     if ($line =~ /lustre/)
     {
 	my $storedir = $line;
@@ -75,8 +77,9 @@ my $jettriggerWithUnderScore = sprintf("%s-",$jettrigger);
 
 my %outfiletype = ();
 $outfiletype{"DST_CALO_CLUSTER"} = $outdir[0];
-$outfiletype{"DST_TRKR_HIT"} = $outdir[1];
-$outfiletype{"DST_TRUTH"} = $outdir[1];
+$outfiletype{"DST_GLOBAL"} = $outdir[1];
+$outfiletype{"DST_TRKR_HIT"} = $outdir[2];
+$outfiletype{"DST_TRUTH"} = $outdir[2];
 foreach my $type (sort keys %outfiletype)
 {
     print "type $type, dir: $outfiletype{$type}\n";
@@ -122,7 +125,8 @@ while (my @res = $getfiles->fetchrow_array())
 	    $tstflag="--test";
 	}
 	my $calooutfilename = sprintf("DST_CALO_CLUSTER_pythia8_%s-%010d-%05d.root",$jettrigger,$runnumber,$segment);
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s  %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $calooutfilename, $outdir[0], $outdir[1],$runnumber, $segment, $tstflag);
+	my $globaloutfilename = sprintf("DST_GLOBAL_pythia8_%s-%010d-%05d.root",$jettrigger,$runnumber,$segment);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $calooutfilename, $outdir[0], $globaloutfilename, $outdir[1], $outdir[2], $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
@@ -150,14 +154,19 @@ $getfiles->finish();
 $chkfile->finish();
 $dbh->disconnect;
 
+my $jobfile = sprintf("condor.job");
+if (defined $shared)
+{
+    $jobfile = sprintf("condor.job.shared");
+}
 if (-f $condorlistfile)
 {
     if (defined $test)
     {
-	print "would submit condor.job\n";
+	print "would submit $jobfile\n";
     }
     else
     {
-	system("condor_submit condor.job");
+	system("condor_submit $jobfile");
     }
 }
