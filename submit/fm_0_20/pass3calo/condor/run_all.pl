@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $inrunnumber=62;
+my $inrunnumber=6;
 #my $outrunnumber=40;
 my $outrunnumber=$inrunnumber;
 my $test;
@@ -34,11 +34,6 @@ if ($hostname !~ /phnxsub/)
 }
 
 my $maxsubmit = $ARGV[0];
-if (! -f "outdir.txt")
-{
-    print "could not find outdir.txt\n";
-    exit(1);
-}
 
 my $condorlistfile =  sprintf("condor.list");
 if (-f $condorlistfile)
@@ -46,8 +41,15 @@ if (-f $condorlistfile)
     unlink $condorlistfile;
 }
 
+if (! -f "outdir.txt")
+{
+    print "could not find outdir.txt\n";
+    exit(1);
+}
+
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
+$outdir = sprintf("%s/run%04d",$outdir,$inrunnumber);
 if ($outdir =~ /lustre/)
 {
     my $storedir = $outdir;
