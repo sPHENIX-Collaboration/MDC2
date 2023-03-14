@@ -1,6 +1,6 @@
 Universe 	= vanilla
 Executable 	= $(executable)
-Arguments       = $(nevents) $(infile) $(dstoutfile) $(dstoutdir) $(quarkfilter) $(runnumber) $(sequence)
+Arguments       = $(nevents) $(infile1) $(infile2) $(dstoutfile) $(dstoutdir) $(quarkfilter) $(runnumber) $(sequence)
 Output  	= $(outfile)
 Error 		= $(errfile)
 Log  		= $(condorlogfile)
@@ -11,4 +11,4 @@ accounting_group_user = sphnxpro
 request_memory = 2048MB
 Priority = $(baseprio)
 job_lease_duration = 3600
-Queue executable, nevents, infile, dstoutfile, dstoutdir, quarkfilter, runnumber, sequence, outfile, errfile, condorlogfile, rundir, baseprio from condor.list
+Queue executable, nevents, infile1, infile2, dstoutfile, dstoutdir, quarkfilter, runnumber, sequence, outfile, errfile, condorlogfile, rundir, baseprio from condor.list
