@@ -118,6 +118,8 @@ int Fun4All_G4_Embed(
   // Input::SIMPLE_VERBOSITY = 1;
 
   //  Input::PYTHIA6 = true;
+  // Enable this is emulating the nominal pp/pA/AA collision vertex distribution
+  Input::BEAM_CONFIGURATION = Input::AA_COLLISION; // for 2023 sims we want the AA geometry for no pileup sims
 
   Input::PYTHIA8 = true;
   if (Input::PYTHIA8)
