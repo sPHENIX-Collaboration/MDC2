@@ -10,12 +10,12 @@ use DBI;
 my $system = 0;
 my $verbosity;
 my $nopileup;
-my $runnumber = 40;
+my $runnumber = 6;
 my $embed;
 my $file_exist_check;
 GetOptions("embed" => \$embed, "exist" => \$file_exist_check, "run:i"=>\$runnumber, "type:i"=>\$system, "verbosity" => \$verbosity, "nopileup" => \$nopileup);
 
-if ($system < 1 || $system > 16)
+if ($system < 1 || $system > 18)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
@@ -33,6 +33,8 @@ if ($system < 1 || $system > 16)
     print "   12 : JS pythia8 Jet >10GeV\n";
     print "   13 : JS pythia8 Photon Jet\n";
     print "   16 : HF D0 Jet\n";
+    print "   17 : HF pythia8 D0 pi-k Jets ptmin = 5GeV\n";
+    print "   18 : HF pythia8 D0 pi-k Jets ptmin = 12GeV\n";
     exit(0);
 }
 
@@ -80,7 +82,7 @@ elsif ($system == 4)
     {
 	$systemstring = sprintf("%s-",$systemstring_g4hits);
     }
-    $notlike{$systemstring} = "pythia8";
+    $notlike{$systemstring} = ["pythia8" ,"single", "special"];
 }
 elsif ($system == 5)
 {
@@ -104,9 +106,9 @@ elsif ($system == 7)
     }
     else
     {
-	$systemstring = sprintf("%s-",$systemstring_g4hits);
+	$systemstring = sprintf("%s",$systemstring_g4hits);
     }
-    $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
+    $systemstring_g4hits = sprintf("%s",$systemstring_g4hits);
     $gpfsdir = "HF_pp200_signal";
 }
 elsif ($system == 8)
@@ -243,6 +245,36 @@ elsif ($system == 16)
     $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
     $gpfsdir = "HF_pp200_signal";
 }
+elsif ($system == 17)
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "pythia8_CharmD0piKJet5";
+    if (! defined $nopileup)
+    {
+	$systemstring = sprintf("%s_3MHz",$systemstring_g4hits);
+    }
+    else
+    {
+	$systemstring = sprintf("%s-",$systemstring_g4hits);
+    }
+    $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
+    $gpfsdir = "HF_pp200_signal";
+}
+elsif ($system == 18)
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "pythia8_CharmD0piKJet12";
+    if (! defined $nopileup)
+    {
+	$systemstring = sprintf("%s_3MHz",$systemstring_g4hits);
+    }
+    else
+    {
+	$systemstring = sprintf("%s-",$systemstring_g4hits);
+    }
+    $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
+    $gpfsdir = "HF_pp200_signal";
+}
 
 else
 {
@@ -255,15 +287,19 @@ $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $conds = sprintf("filename like \'\%%%s%\%\' and runnumber = %s",$systemstring,$runnumber);
 if (exists $notlike{$systemstring})
 {
-    $conds = sprintf("%s and filename not like \'\%%%s%\%\' ",$conds,$notlike{$systemstring});
+    my $ref = $notlike{$systemstring};
+    foreach my $item  (@$ref)
+    {
+	$conds = sprintf("%s and filename not like  \'\%%%s%\%\'",$conds,$item);
+    }
 }
 $conds = sprintf("%s order by dsttype",$conds);
 my $sqlcmd = sprintf("select distinct(dsttype) from datasets where %s", $conds);
 #print "$sqlcmd\n";
 my $getdsttypes = $dbh->prepare($sqlcmd);
 my %topdcachedir = ();
-$topdcachedir{sprintf("/pnfs/rcf.bnl.gov/sphenix/disk/MDC2/%s",$gpfsdir)} = 1;
-$topdcachedir{sprintf("/sphenix/lustre01/sphnxpro/dcsphst004/mdc2/%s",lc $gpfsdir)} = 1;
+#$topdcachedir{sprintf("/pnfs/rcf.bnl.gov/sphenix/disk/MDC2/%s",$gpfsdir)} = 1;
+#$topdcachedir{sprintf("/sphenix/lustre01/sphnxpro/dcsphst004/mdc2/%s",lc $gpfsdir)} = 1;
 $topdcachedir{sprintf("/sphenix/lustre01/sphnxpro/mdc2/%s",lc $gpfsdir)} = 1;
 
 if ($#ARGV < 0)
@@ -291,7 +327,11 @@ if ($g4hits_exist == 1 && $type eq "G4Hits")
 $conds = sprintf("dsttype = ? and  filename like \'\%%%s%\%\' and runnumber = %d",$systemstring,$runnumber);
 if (exists $notlike{$systemstring})
  {
-    $conds = sprintf("%s and filename not like \'\%%%s%\%\' ",$conds,$notlike{$systemstring});
+    my $ref = $notlike{$systemstring};
+    foreach my $item  (@$ref)
+    {
+	$conds = sprintf("%s and filename not like  \'\%%%s%\%\'",$conds,$item);
+    }
 }
 $conds = sprintf("select segment,filename from datasets where %s order by segment",$conds);
 if (defined $verbosity)
@@ -303,7 +343,11 @@ my $getsegments = $dbh->prepare($conds)|| die $DBI::errstr;
 $conds = sprintf("dsttype = ? and  filename like \'\%%%s%\%\' and runnumber = %d",$systemstring,$runnumber);
 if (exists $notlike{$systemstring})
  {
-    $conds = sprintf("%s and filename not like \'\%%%s%\%\' ",$conds,$notlike{$systemstring});
+    my $ref = $notlike{$systemstring};
+    foreach my $item  (@$ref)
+    {
+	$conds = sprintf("%s and filename not like  \'\%%%s%\%\'",$conds,$item);
+    }
 }
 $conds = sprintf("select max(segment) from datasets where %s",$conds);
 
@@ -336,7 +380,11 @@ foreach my $dcdir (keys  %topdcachedir)
     $conds = sprintf("datasets.runnumber = %d and datasets.filename = files.lfn and files.lfn like \'%s%\%\' and files.full_file_path like \'%s/\%%%s%\%\'",$runnumber,$typeWithUnderscore,$dcdir,$type);
 if (exists $notlike{$systemstring})
  {
-    $conds = sprintf("%s and files.lfn not like \'\%%%s%\%\' ",$conds,$notlike{$systemstring});
+    my $ref = $notlike{$systemstring};
+    foreach my $item  (@$ref)
+    {
+	$conds = sprintf("%s and filename not like  \'\%%%s%\%\'",$conds,$item);
+    }
 }
 
     $conds = sprintf("select files.lfn,files.full_file_path from files,datasets where %s",$conds);

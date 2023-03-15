@@ -14,7 +14,7 @@ my $topdir = "/sphenix/u/sphnxpro/MDC2/submit";
 my $kill;
 my $system = 0;
 my $dsttype = "none";
-my $runnumber = 40;
+my $runnumber = 6;
 my $nopileup;
 my $verbose;
 my $embed;
@@ -27,7 +27,7 @@ my $deldataset = $dbh->prepare("delete from datasets where filename = ?");
 my $delfcat = $dbh->prepare("delete from files where full_file_path = ?");
 my %daughters = (
     "G4Hits" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_VERTEX" ],
-    "DST_BBC_G4HIT" => [ "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_VERTEX" ],
+    "DST_BBC_G4HIT" => [ "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_VERTEX", "DST_GLOBAL" ],
     "DST_CALO_G4HIT" => [ "DST_BBC_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_VERTEX", "DST_CALO_CLUSTER" ],
     "DST_TRKR_G4HIT" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRUTH_G4HIT", "DST_VERTEX", "DST_TRKR_HIT", "DST_TRUTH_RECO"],
     "DST_TRUTH_G4HIT" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_VERTEX", "DST_TRUTH" ],
@@ -38,6 +38,7 @@ my %daughters = (
     "DST_TRUTH" => [ "DST_TRKR_HIT", "DST_TRUTH_JET", "DST_TRUTH_RECO" ],
 #    "DST_TRKR_HIT" => [ "DST_TRUTH" ],
 #    "DST_TRUTH" => [ "DST_TRKR_HIT" ],
+    "DST_GLOBAL" => [ "" ],
     "DST_TRUTH_JET" => [ "" ],
     "DST_TRUTH_RECO" => [ "" ],
     "DST_TRKR_HIT_DISTORT" => [ "DST_TRUTH_DISTORT", "DST_TRACKS_DISTORT" ],
@@ -56,8 +57,9 @@ my %daughters = (
 
 if (defined $nopileup)
 {
-    push($daughters{"DST_TRKR_HIT"},"DST_CALO_CLUSTER");
-    push($daughters{"DST_CALO_CLUSTER"},"DST_TRKR_HIT");
+    push($daughters{"DST_TRKR_HIT"},("DST_CALO_CLUSTER", "DST_GLOBAL"));
+    push($daughters{"DST_CALO_CLUSTER"},("DST_TRKR_HIT","DST_GLOBAL") );
+    push($daughters{"DST_GLOBAL"},("DST_CALO_CLUSTER", "DST_TRKR_HIT"));
 }
 if (defined $verbose)
 {
@@ -96,6 +98,8 @@ if ($#ARGV < 0)
     print "   12 : JS pythia8 Jet > 10GeV\n";
     print "   13 : JS pythia8 Photon Jet\n";
     print "   16 : HF D0 Jet\n";
+    print "   17 : HF pythia8 D0 pi-k Jets ptmin = 5GeV\n";
+    print "   18 : HF pythia8 D0 pi-k Jets ptmin = 12GeV\n";
     print "-dsttype:\n";
     foreach my $tp (sort keys %daughters)
     {
@@ -115,7 +119,7 @@ if( ! exists $daughters{$dsttype})
     }
     exit(0);
 }
-if ($system < 1 || $system > 16)
+if ($system < 1 || $system > 18)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
@@ -133,6 +137,8 @@ if ($system < 1 || $system > 16)
     print "   12 : JS pythia8 Jet > 15GeV\n";
     print "   13 : JS pythia8 Jet Photon Jet\n";
     print "   16 : HF D0 Jet\n";
+    print "   17 : HF pythia8 D0 pi-k Jets ptmin = 5GeV\n";
+    print "   18 : HF pythia8 D0 pi-k Jets ptmin = 12GeV\n";
     exit(0);
 }
 
@@ -146,6 +152,7 @@ my %productionsubdir = (
     "DST_BBC_G4HIT" => "pass2",
     "DST_CALO_CLUSTER" => "pass3calo",
     "DST_CALO_G4HIT"=> "pass2",
+    "DST_GLOBAL"=> "pass3global",
     "DST_JETS"=> "pass5jetreco",
     "DST_TRACKS" => "pass4_jobC",
     "DST_TRACKSEEDS" => "pass4_jobA",
@@ -166,6 +173,7 @@ if (defined $nopileup)
 {
     $productionsubdir{"DST_TRKR_HIT"} = "pass2_nopileup";
     $productionsubdir{"DST_CALO_CLUSTER"} = "pass2_nopileup";
+    $productionsubdir{"DST_GLOBAL"} = "pass2_nopileup";
     $productionsubdir{"DST_TRKR_CLUSTER"} = "pass3_job0_nopileup";
     $productionsubdir{"DST_TRUTH"} = "pass2_nopileup";
     $productionsubdir{"DST_TRACKS"} = "pass3_jobC_nopileup";
@@ -184,6 +192,7 @@ if (defined $embed)
     $productionsubdir{"DST_TRKR_CLUSTER"} = "pass4_job0_embed";
     $productionsubdir{"DST_TRKR_HIT"} = "pass3trk_embed";
     $productionsubdir{"DST_TRKR_G4HIT"} = "pass2_embed";
+    $productionsubdir{"DST_TRUTH_JET" } = "pass4jet_embed",
     $productionsubdir{"DST_VERTEX"} = "pass2_embed";
 }
 
@@ -218,7 +227,7 @@ elsif ($system == 4)
 	$topdir = sprintf("%s/fm_0_20",$topdir);
     }
     $pileupstring = "_50kHz_bkg_0_20fm";
-    $notlike{$systemstring} = "pythia8";
+    $notlike{$systemstring} = ["pythia8" ,"single", "special"];
 }
 elsif ($system == 5)
 {
@@ -355,6 +364,32 @@ elsif ($system == 16)
     }
     $specialcondorfileadd{"G4Hits"} = "JetD0";
 }
+elsif ($system == 17)
+{
+    $specialsystemstring{"G4Hits"} = "pythia8_CharmD0piKJet5-";
+    $systemstring = "pythia8_CharmD0piKJet5_";
+    $topdir = sprintf("%s/HF_pp200_signal",$topdir);
+    $condorfileadd = sprintf("CharmD0piKJet5_3MHz");
+    if (defined $nopileup)
+    {
+	$condorfileadd = sprintf("CharmD0piKJet5");
+        $systemstring = "pythia8_CharmD0piKJet5";
+    }
+    $specialcondorfileadd{"G4Hits"} = "CharmD0piKJet5";
+}
+elsif ($system == 18)
+{
+    $specialsystemstring{"G4Hits"} = "pythia8_CharmD0piKJet12-";
+    $systemstring = "pythia8_CharmD0piKJet12_";
+    $topdir = sprintf("%s/HF_pp200_signal",$topdir);
+    $condorfileadd = sprintf("CharmD0piKJet12_3MHz");
+    if (defined $nopileup)
+    {
+	$condorfileadd = sprintf("CharmD0piKJet12");
+        $systemstring = "pythia8_CharmD0piKJet12";
+    }
+    $specialcondorfileadd{"G4Hits"} = "CharmD0piKJet12";
+}
 else
 {
     die "bad type $system\n";
@@ -362,7 +397,11 @@ else
 my $conds = sprintf("dsttype = ? and filename like ? and segment = ? and runnumber = ?");
 if (exists $notlike{$systemstring})
 {
-    $conds = sprintf("%s and filename not like \'\%%%s%\%\' ",$conds,$notlike{$systemstring});
+    my $ref = $notlike{$systemstring};
+    foreach my $item  (@$ref)
+    {
+	$conds = sprintf("%s and filename not like  \'\%%%s%\%\'",$conds,$item);
+    }
 }
 my $sqlcmd = sprintf("select filename from datasets where %s  order by filename",$conds);
 #my $getfilename = $dbh->prepare("select filename from datasets where dsttype = ? and filename like ? and segment = ? and runnumber = ? order by filename") || die $DBI::errstr;
