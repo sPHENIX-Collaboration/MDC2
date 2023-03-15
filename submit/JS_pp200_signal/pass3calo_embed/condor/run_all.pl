@@ -9,10 +9,11 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=62;
+my $runnumber=6;
 my $test;
 my $incremental;
-GetOptions("test"=>\$test, "increment"=>\$incremental);
+my $shared;
+GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"PhotonJet\" production>\n";
@@ -56,7 +57,7 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/%s",$outdir,lc $jettrigger);
+$outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,lc $jettrigger);
 if ($outdir =~ /lustre/)
 {
     my $storedir = $outdir;
@@ -144,14 +145,25 @@ foreach my $segment (sort keys %calohash)
 $chkfile->finish();
 $dbh->disconnect;
 
+my $jobfile = sprintf("condor.job");
+if (defined $shared)
+{
+ $jobfile = sprintf("condor.job.shared");
+}
+if (! -f $jobfile)
+{
+    print "could not find $jobfile\n";
+    exit(1);
+}
+
 if (-f $condorlistfile)
 {
     if (defined $test)
     {
-	print "would submit condor.job\n";
+	print "would submit $jobfile\n";
     }
     else
     {
-	system("condor_submit condor.job");
+	system("condor_submit $jobfile");
     }
 }
