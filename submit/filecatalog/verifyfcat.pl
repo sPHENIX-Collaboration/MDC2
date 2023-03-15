@@ -17,7 +17,7 @@ $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $getfiles = $dbh->prepare("select filename from datasets") || die $DBI::errstr;
 
 my $getfullfile = $dbh->prepare("select lfn,full_file_path from files");
-#my $delfile = $dbh->prepare("delete from files where full_file_path = ?");
+my $delfile = $dbh->prepare("delete from datasets where filename = ?");
 my %fcatfiles = ();
 $getfullfile->execute();
 while (my @res = $getfullfile->fetchrow_array())
@@ -42,6 +42,10 @@ while (my @res = $getfiles->fetchrow_array())
 	print "cannot find $res[0] in fcat\n";
         $nfail++;
 	$failfiles{$res[0]} = 1;
+	if (defined $kill)
+	{
+	    $delfile->execute($res[0]);
+	}
     }
     if ($nchk >= 1000)
     {

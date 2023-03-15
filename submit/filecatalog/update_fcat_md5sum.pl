@@ -15,7 +15,7 @@ GetOptions("test"=>\$test, "all"=>\$all);
 
 if ($#ARGV < 0)
 {
-    print "usage: update_fcat_md5sum.pl <dcache dir>\n";
+    print "usage: update_fcat_md5sum.pl <lustre dir>\n";
     print "parameters:\n";
     print "--all : check all files\n";
     print "--test: run in test mode - no changes\n";
@@ -38,9 +38,9 @@ else
 	print "could not find directory $dcachedir\n";
 	exit(1);
     }
-    if ($dcachedir !~ /pnfs/)
+    if ($dcachedir !~ /lustre/)
     {
-	print "only pnfs (dcache) dirs allowed\n";
+	print "only lustre dirs allowed\n";
 	exit(1);
     }
     $getfiles = $dbh->prepare("select lfn,full_file_path from files where md5 is null and full_file_path like '$dcachedir/%'");
@@ -52,17 +52,15 @@ while (my @res = $getfiles->fetchrow_array())
 {
     my $lfn =  $res[0];
     my $fullfile = $res[1];
-    if ($fullfile!~ /pnfs/)
+    if ($fullfile!~ /lustre/)
     {
-	print "$fullfile not in dcache\n";
+	print "$fullfile not in lustre\n";
 	next;
     }
     if (-f $fullfile)
     {
 	print "handling $fullfile\n";
-	my $copycmd = sprintf("env LD_LIBRARY_PATH==/cvmfs/sdcc.bnl.gov/software/x8664_sl7/xrootd:%s /cvmfs/sdcc.bnl.gov/software/x8664_sl7/xrootd/xrdcp --nopbar --retry 3 root://dcsphdoor02.rcf.bnl.gov:1095%s /tmp", $LD_LIBRARY_PATH, $fullfile);
-	system($copycmd);
-	my $localfile = sprintf("/tmp/%s",$lfn);
+	my $localfile = $fullfile;
 #	print "handling $localfile\n";
 	open FILE, "$localfile";
 	my $ctx = Digest::MD5->new;
@@ -71,7 +69,6 @@ while (my @res = $getfiles->fetchrow_array())
 	close (FILE);
 	printf("md5_hex:%s\n",$hash);
 	$updatemd5->execute($hash,$lfn);
-        unlink $localfile;
     }
 }
 $getfiles->finish();

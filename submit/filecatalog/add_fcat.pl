@@ -12,7 +12,7 @@ GetOptions("test"=>\$test);
 
 if ($#ARGV < 0)
 {
-    print "usage: add_fcat <dcachedir>\n";
+    print "usage: add_fcat <lustredir>\n";
     print "parameters:\n";
     print "--test: run in test mode\n";
     exit(1);
@@ -24,16 +24,16 @@ if (! -d $dcachedir)
     print "could not find directory $dcachedir\n";
     exit(1);
 }
-if ($dcachedir !~ /pnfs/)
+if ($dcachedir !~ /lustre/)
 {
-    print "only pnfs (dcache) dirs allowed\n";
+    print "only lustre dirs allowed\n";
     exit(1);
 }
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc");
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $chkfile = $dbh->prepare("select size,full_file_path from files where lfn=?"); 
-my $insertfile = $dbh->prepare("insert into files (lfn,full_host_name,full_file_path,time,size) values (?,'dcache',?,'now',?)");
+my $insertfile = $dbh->prepare("insert into files (lfn,full_host_name,full_file_path,time,size) values (?,'lustre',?,'now',?)");
 my $updatesize = $dbh->prepare("update files set size=?,md5=NULL where lfn = ? and full_file_path = ?");
 
 print "checking $dcachedir for new files\n";
