@@ -110,6 +110,7 @@ int Fun4All_G4_sPHENIX_job0(
   out->AddNode("EventHeader");
   out->AddNode("TRKR_CLUSTER"); 
   out->AddNode("TRKR_CLUSTERCROSSINGASSOC");
+  out->AddNode("TRKR_CLUSTERHITASSOC");
   se->registerOutputManager(out);
 
   // skip events if any specified

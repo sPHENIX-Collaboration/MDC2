@@ -19,7 +19,7 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 53;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_job0.sh",$rundir);
+my $executable = sprintf("%s/run_job0_embed.sh",$rundir);
 my $nevents = $ARGV[0];
 my $jettrigger = $ARGV[1];
 my $infile = $ARGV[2];
