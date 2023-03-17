@@ -57,9 +57,18 @@ my %daughters = (
 
 if (defined $nopileup)
 {
-    push($daughters{"DST_TRKR_HIT"},("DST_CALO_CLUSTER", "DST_GLOBAL"));
-    push($daughters{"DST_CALO_CLUSTER"},("DST_TRKR_HIT","DST_GLOBAL") );
-    push($daughters{"DST_GLOBAL"},("DST_CALO_CLUSTER", "DST_TRKR_HIT"));
+    my $ref = $daughters{"DST_TRKR_HIT"};
+    push(@$ref,("DST_CALO_CLUSTER", "DST_GLOBAL"));
+    @$ref = grep($_,@$ref); # removes empty strings from array
+    $ref = $daughters{"DST_CALO_CLUSTER"};
+    push(@$ref,("DST_TRKR_HIT","DST_GLOBAL","DST_TRUTH"));
+    @$ref = grep($_,@$ref); # removes empty strings from array
+    $ref = $daughters{"DST_GLOBAL"};
+    push(@$ref,("DST_CALO_CLUSTER", "DST_TRKR_HIT","DST_TRUTH"));
+    @$ref = grep($_,@$ref); # removes empty strings from array
+    $ref = $daughters{"DST_TRUTH"};
+    push(@$ref,("DST_CALO_CLUSTER","DST_GLOBAL"));
+    @$ref = grep($_,@$ref); # removes empty strings from array
 }
 if (defined $verbose)
 {
