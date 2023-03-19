@@ -169,17 +169,31 @@ if (defined $test)
 }
 else
 {
-    my $thisdate = `date +%s`;
-    chomp $thisdate;
-    print "unixtime begin: $thisdate cmd: $copycmd\n";
-    system($copycmd);
-    my $exit_value  = $? >> 8;
-    print "copy return code: $exit_value\n";
-    $thisdate = `date +%s`;
-    chomp $thisdate;
-    print "unixtime end: $thisdate cmd: $copycmd\n";
-}
+    my $ncopytry = 0;
+    while($ncopytry < 100)
+    {
+	my $thisdate = `date +%s`;
+	chomp $thisdate;
+	print "unixtime begin: $thisdate cmd: $copycmd\n";
+	system($copycmd);
+	my $exit_value  = $? >> 8;
+	print "copy return code: $exit_value\n";
+	$thisdate = `date +%s`;
 
+	chomp $thisdate;
+	print "unixtime end: $thisdate cmd: $copycmd\n";
+	if ($exit_value == 0)
+	{
+	    break;
+	}
+	else
+	{
+	    print "copy failed - retrying\n";
+	    sleep(int(rand(21) + 10)); # sleep 10-30 seconds before retrying
+	    $ncopytry++;
+	}
+    }
+}
 # down here only things for the production account
 # 1) on failed copy - copy to backup dir
 # 2) get md5sum and number of entries and update file catalog
