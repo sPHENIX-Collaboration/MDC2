@@ -184,7 +184,7 @@ else
 	print "unixtime end: $thisdate cmd: $copycmd\n";
 	if ($exit_value == 0)
 	{
-	    break;
+	    last;
 	}
 	else
 	{
