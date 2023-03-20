@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=62;
+my $runnumber=6;
 my $test;
 my $incremental;
 my $shared;
@@ -55,7 +55,7 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/%s",$outdir,lc $jettrigger);
+$outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,lc $jettrigger);
 if ($outdir =~ /lustre/)
 {
     my $storedir = $outdir;
