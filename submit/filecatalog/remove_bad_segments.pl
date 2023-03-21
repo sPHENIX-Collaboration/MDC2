@@ -254,7 +254,7 @@ elsif ($system == 6)
 elsif ($system == 7)
 {
     $specialsystemstring{"G4Hits"} = "pythia8_Charm-";
-    $systemstring = "pythia8_Charm_";
+    $systemstring = "pythia8_Charm-";
     $topdir = sprintf("%s/HF_pp200_signal",$topdir);
     $condorfileadd = sprintf("Charm_3MHz");
     if (defined $nopileup)
@@ -469,6 +469,15 @@ foreach my $rem (keys %removethese)
 		$condor_subdir = sprintf("%s",$condorsubdir);
 	    }
 	}
+	if (exists $specialcondorfileadd{$rem})
+	{
+	    my $condorsubdir = sprintf("%s/%s",$condor_subdir,$specialcondorfileadd{$rem});
+	    if (-d $condorsubdir)
+	    {
+		$condor_subdir = sprintf("%s",$condorsubdir);
+	    }
+	}
+
     }
     else
     {
@@ -477,16 +486,16 @@ foreach my $rem (keys %removethese)
     }
     my $condornameprefix = sprintf("condor");
     if ($system == 3)
-{
-if ( $rem ne "G4Hits" && !defined $nopileup)
     {
-	$condornameprefix = sprintf("condor%s",$pileupstring);
+	if ( $rem ne "G4Hits" && !defined $nopileup)
+	{
+	    $condornameprefix = sprintf("condor%s",$pileupstring);
+	}
+	else
+	{
+	    $condornameprefix = sprintf("condor");
+	}
     }
-else
-{
-$condornameprefix = sprintf("condor");
-}
-}
     if (defined $verbose)
     {
     print "condor_subdir: $condor_subdir\n";
@@ -514,10 +523,10 @@ $condornameprefix = sprintf("condor");
     if ($rem eq 'G4Hits')
     {
 	$getfilename->execute($rem,'%'.$systemstring.'%',$segment,$runnumber);
-    if (defined $verbose)
-    {
-	print "getfilename->execute($rem,'%'.$systemstring.'%',$segment,$runnumber)\n";
-    }
+	if (defined $verbose)
+	{
+	    print "getfilename->execute($rem,'%'.$systemstring.'%',$segment,$runnumber)\n";
+	}
     }
     else
     {
