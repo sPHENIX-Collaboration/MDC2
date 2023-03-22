@@ -44,16 +44,26 @@ if (-f $condorlistfile)
 my $nsubmit = 0;
 my $njob = 0;
 my $jobno = 0;
+my $sequence = 0;
 for (my $isub = 0; $isub < $maxsubmit; $isub++)
 {
-    my $indir = sprintf("/sphenix/lustre01/sphnxpro/mdc2/rawdata");
-    my $sequence = 0;
-    my $runnumber = 10000 + $njob;
+    my $indir = sprintf("/sphenix/lustre01/sphnxpro/mdc2/rawdata/stripe5");
+    my $runnumber = 250 + $njob;
     $njob++;
-    if ($runnumber > 10399)
+    if ($runnumber == 265)
+    {
+	next;
+    }
+#    if ($runnumber > 10399)
+    if ($runnumber > 299)
     {
 	$njob=0;
+	$sequence++;
         $jobno++;
+    }
+    if ($sequence > 18)
+    {
+      $sequence = 0;
     }
     my $tstflag="";
     if (defined $test)
@@ -61,7 +71,7 @@ for (my $isub = 0; $isub < $maxsubmit; $isub++)
 	$tstflag="--test";
     }
 #    print "executing perl run_condor.pl $events $runnumber $jobno $indir $tstflag\n";
-    system("perl run_condor.pl $events $runnumber 0 $jobno $indir $tstflag");
+    system("perl run_condor.pl $events $runnumber $sequence $jobno $indir $tstflag");
     my $exit_value  = $? >> 8;
     if ($exit_value != 0)
     {
