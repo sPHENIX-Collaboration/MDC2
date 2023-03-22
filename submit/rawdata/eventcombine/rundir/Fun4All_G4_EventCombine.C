@@ -9,8 +9,9 @@ R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libfun4allraw.so)
 R__LOAD_LIBRARY(libffarawmodules.so)
 
-void Fun4All_G4_EventCombine(int nEvents = 10, const int irun = 251, const int sequence = 1, const std::string &topdir = "/sphenix/lustre01/sphnxpro/mdc2/rawdata/stripe5", int nrepeat = 20)
+void Fun4All_G4_EventCombine(int nEvents = 10, const int irun = 251, const int sequence = 1, const std::string &topdir = "/sphenix/lustre01/sphnxpro/mdc2/rawdata/pool_stripe5", int nrepeat = 20)
 {
+  int nfiles = 0;
   Fun4AllServer *se = Fun4AllServer::instance();
   //  se->Verbosity(1); // produces enormous logs
   Fun4AllInputManager *in = nullptr;
@@ -37,6 +38,7 @@ void Fun4All_G4_EventCombine(int nEvents = 10, const int irun = 251, const int s
       out << ebdcfilename << endl;
     }
     out.close();
+    nfiles++;
     in = new Fun4AllPrdfInputManager(ebdc, prdfnode);
     in->AddListFile(listfilename);
     // in->Verbosity(4);
@@ -62,12 +64,18 @@ void Fun4All_G4_EventCombine(int nEvents = 10, const int irun = 251, const int s
     }
     out2.close();
     cout << "opening file: " << sebfilename << endl;
+    nfiles++;
     in = new Fun4AllPrdfInputManager(seb, prdfnode);
     in->AddListFile(listfilename);
     // in->Verbosity(4);
     evtcomb->AddPrdfInputNodeFromManager(in);
     se->registerInputManager(in);
     n++;
+  }
+  if (nfiles == 0)
+  {
+    cout << "no files for run " << irun << ", segment " << sequence << endl;
+    gSystem->Exit(0);
   }
   se->registerSubsystem(evtcomb);
   //  Fun4AllEventOutputManager *out = new Fun4AllEventOutputManager("EvtOut","out-%08d-%04d.prdf",20000);
