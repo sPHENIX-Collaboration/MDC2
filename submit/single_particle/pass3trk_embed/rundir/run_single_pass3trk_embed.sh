@@ -3,23 +3,22 @@ export USER="$(id -u -n)"
 export LOGNAME=${USER}
 export HOME=/sphenix/u/${USER}
 
+hostname
+
 this_script=$BASH_SOURCE
 this_script=`readlink -f $this_script`
 this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.335
-
-hostname
-
+source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.349
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
     cd $_CONDOR_SCRATCH_DIR
     rsync -av $this_dir/* .
-    echo $2 > inputfiles.list
-    echo $3 >> inputfiles.list
+    echo $5 > inputfiles.list
+    echo $6 >> inputfiles.list
     getinputfiles.pl  --filelist inputfiles.list
     if [ $? -ne 0 ]
     then
@@ -33,34 +32,38 @@ fi
 
 # arguments 
 # $1: number of events
-# $2: track g4hits input file
-# $3: truth g4hits input file
-# $4: output dir
-# $5: jettrigger
-# $6: run number
-# $7: sequence
+# $2: particle
+# $3: ptmin (GeV/c)
+# $4: ptmax (GeV/c)
+# $5: track g4hits input file
+# $6: truth g4hits input file
+# $7: output dir
+# $8: run number
+# $9: sequence
 
 echo 'here comes your environment'
 printenv
 echo arg1 \(events\) : $1
-echo arg2 \(track g4hits file\): $2
-echo arg3 \(truth g4hits file\): $3
-echo arg4 \(output dir\): $4
-echo arg5 \(jettrigger\): $5
-echo arg6 \(runnumber\): $6
-echo arg7 \(sequence\): $7
+echo arg2 \(particle\) : $2
+echo arg3 \(ptmin \(GeV/c\)\) : $3
+echo arg4 \(ptmax \(GeV/c\)\) : $4
+echo arg5 \(track g4hits file\): $5
+echo arg6 \(truth g4hits file\): $6
+echo arg7 \(output dir\): $7
+echo arg8 \(runnumber\): $8
+echo arg9 \(sequence\): $9
 
-runnumber=$(printf "%010d" $6)
-sequence=$(printf "%05d" $7)
-filename=JS_pp200_signal_pass3trk_embed_$5
+runnumber=$(printf "%010d" $8)
+sequence=$(printf "%05d" $9)
+filename=JS_pp200_signal_pass3trk_embed_$2
 
 txtfilename=${filename}-${runnumber}-${sequence}.txt
 jsonfilename=${filename}-${runnumber}-${sequence}.json
 
-echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\",\"$5\"\)
-prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\",\"$5\"\)
+echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",$3,$4,\"$5\",\"$6\",\"$7\"\)
+prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",$3,$4,\"$5\",\"$6\",\"$7\"\)
 
-rsyncdirname=/sphenix/user/sphnxpro/prmon/JS_pp200_signal/pass3trk_embed_$5
+rsyncdirname=/sphenix/user/sphnxpro/prmon/JS_pp200_signal/pass3trk_embed_$2/run$8
 if [ ! -d $rsyncdirname ]
 then
   mkdir -p $rsyncdirname

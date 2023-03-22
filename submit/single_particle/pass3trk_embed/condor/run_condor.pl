@@ -40,19 +40,19 @@ my $logdir = sprintf("%s/log/%s",$localdir,$particle);
 mkpath($logdir);
 my $condorlogdir = sprintf("/tmp/single/pass3trk_embed/%s",$particle);
 mkpath($condorlogdir);
-my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
+my $jobfile = sprintf("%s/condor%s.job",$logdir,$suffix);
 if (-f $jobfile)
 {
     print "jobfile $jobfile exists, possible overlapping names\n";
     exit(1);
 }
-my $condorlogfile = sprintf("%s/condor_%s.log",$condorlogdir,$suffix);
+my $condorlogfile = sprintf("%s/condor%s.log",$condorlogdir,$suffix);
 if (-f $condorlogfile)
 {
     unlink $condorlogfile;
 }
-my $errfile = sprintf("%s/condor_%s.err",$logdir,$suffix);
-my $outfile = sprintf("%s/condor_%s.out",$logdir,$suffix);
+my $errfile = sprintf("%s/condor%s.err",$logdir,$suffix);
+my $outfile = sprintf("%s/condor%s.out",$logdir,$suffix);
 print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
@@ -83,5 +83,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $particle, $ptmin, $ptmax, $infile0, $infile1, $dstoutdir, $particle, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $particle, $ptmin, $ptmax, $infile0, $infile1, $dstoutdir, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);

@@ -13,7 +13,7 @@ my $runnumber = 6;
 my $test;
 my $incremental;
 my $condorprio = 54;
-GetOptions("priority:i"=>\$baseprio, "test"=>\$test, "increment"=>\$incremental);
+GetOptions("priority:i"=>\$condorprio, "test"=>\$test, "increment"=>\$incremental);
 if ($#ARGV < 3)
 {
     print "usage: run_all.pl <number of jobs> <particle> <ptmin> <ptmax>\n";
