@@ -42,7 +42,8 @@ int Fun4All_G4_Pass3Trk(
     const int ptmax = 10000,
     const string &inputFile0 = "DST_TRKR_G4HIT_single_gamma_10000_10000MeV_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
     const string &inputFile1 = "DST_TRUTH_G4HIT_single_gamma_10000_10000MeV_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
-    const string &outdir = ".")
+    const string &outdir = ".",
+    const string &outputFile = "dummy.root")
 {
   string filetype = "single_" + particle + "_" + to_string(ptmin) + "_" + to_string(ptmax) + "MeV";  
   Fun4AllServer *se = Fun4AllServer::instance();
@@ -89,7 +90,7 @@ int Fun4All_G4_Pass3Trk(
   // In case embedding into a production output, please double check your G4Setup_sPHENIX.C and G4_*.C consistent with those in the production macro folder
   // E.g. /sphenix/sim//sim01/production/2016-07-21/single_particle/spacal2d/
   //  Input::EMBED = true;
-  INPUTEMBED::filename[0] = embed_input_file;
+  //INPUTEMBED::filename[0] = embed_input_file;
   // if you use a filelist
   //INPUTEMBED::listfile[0] = embed_input_file;
 
@@ -600,7 +601,6 @@ int Fun4All_G4_Pass3Trk(
     return 0;
   }
 
-  se->skip(skip);
   se->run(nEvents);
 
   //-----
