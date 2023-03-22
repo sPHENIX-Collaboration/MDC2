@@ -45,10 +45,8 @@ fi
 # $8: truth g4hits embed file
 # $9: vertex embed file
 # $10: output directory
-# $11: particle
-# $12: ntuple output file
-# $13: run number
-# $14: sequence
+# $11: run number
+# $12: sequence
 
 echo 'here comes your environment'
 printenv
@@ -61,21 +59,21 @@ echo arg6 \(calo g4hits embed file\): $6
 echo arg7 \(track g4hits embed file\): $7
 echo arg8 \(truth g4hits embed file\): $8
 echo arg9 \(vertex embed file\): $9
-echo arg10 \(output dir\): $10
-echo arg11 \(runnumber\): $11
-echo arg12 \(sequence\): $12
+echo arg10 \(output dir\): ${10}
+echo arg11 \(runnumber\): ${11}
+echo arg12 \(sequence\): ${12}
 
-runnumber=$(printf "%010d" $13)
-sequence=$(printf "%05d" $14)
+runnumber=$(printf "%010d" ${11})
+sequence=$(printf "%05d" ${12})
 filename=hijing_embed_$2
 
 txtfilename=${filename}-${runnumber}-${sequence}.txt
 jsonfilename=${filename}-${runnumber}-${sequence}.json
 
-echo running root.exe -q -b Fun4All_G4_Single_Embed.C\($1,\"$2\",$3, $4, \"$5\",\"$6\",\"$7\",\"$8\",\"$9\",\"$10\"\)
-prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Single_Embed.C\($1,\"$2\",$3,$4,\"$5\",\"$6\",\"$7\",\"$8\",\"$9\",\"$10\"\)
+echo running root.exe -q -b Fun4All_G4_Single_Embed.C\($1,\"$2\",$3, $4, \"$5\",\"$6\",\"$7\",\"$8\",\"$9\",\"${10}\"\)
+prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Single_Embed.C\($1,\"$2\",$3,$4,\"$5\",\"$6\",\"$7\",\"$8\",\"$9\",\"${10}\"\)
 
-rsyncdirname=/sphenix/user/sphnxpro/prmon/single/single_embed_$2/run$11
+rsyncdirname=/sphenix/user/sphnxpro/prmon/single/single_embed_$2/run${11}
 if [ ! -d $rsyncdirname ]
 then
   mkdir -p $rsyncdirname

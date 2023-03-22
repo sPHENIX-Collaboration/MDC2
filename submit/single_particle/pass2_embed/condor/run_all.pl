@@ -156,7 +156,7 @@ foreach my $segment (sort keys %trkhash)
         my $foundall = 1;
 	foreach my $type (sort keys %outfiletype)
 	{
-            my $lfn =  sprintf("%s_%s-%010d-%05d.root",$outfilelike,$outfilelike,$runnumber,$segment);
+            my $lfn =  sprintf("%s_%s-%010d-%05d.root",$type,$outfilelike,$runnumber,$segment);
 	    $chkfile->execute($lfn);
 	    if ($chkfile->rows > 0)
 	    {

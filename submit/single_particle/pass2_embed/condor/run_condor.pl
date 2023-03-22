@@ -38,9 +38,9 @@ if ($sequence < 100)
 }
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s_%d_%dMeV-%010d-%05d",$particle,$ptmin,$ptmax,$runnumber,$sequence);
-my $logdir = sprintf("%s/log",$localdir);
+my $logdir = sprintf("%s/log/%s",$localdir,$particle);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/single_particle/pass2_embed");
+my $condorlogdir = sprintf("/tmp/single_particle/pass2_embed/%s",$particle);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);
@@ -88,5 +88,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $particle, $ptmin, $ptmax, $infile0,  $infile1, $infile2, $infile3, $infile4, $dstoutdir, $particle, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $particle, $ptmin, $ptmax, $infile0,  $infile1, $infile2, $infile3, $infile4, $dstoutdir, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);
