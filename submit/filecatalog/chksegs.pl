@@ -12,6 +12,9 @@ my $verbosity;
 my $nopileup;
 my $runnumber = 6;
 my $embed;
+my $ptmin;
+my $ptmax;
+my $particle;
 my $file_exist_check;
 GetOptions("embed" => \$embed, "exist" => \$file_exist_check, "run:i"=>\$runnumber, "type:i"=>\$system, "verbosity" => \$verbosity, "nopileup" => \$nopileup);
 
@@ -32,6 +35,7 @@ if ($system < 1 || $system > 18)
     print "   11 : JS pythia8 Jet >30GeV\n";
     print "   12 : JS pythia8 Jet >10GeV\n";
     print "   13 : JS pythia8 Photon Jet\n";
+    print "   14 : Single Particle\n";
     print "   16 : HF D0 Jet\n";
     print "   17 : HF pythia8 D0 pi-k Jets ptmin = 5GeV\n";
     print "   18 : HF pythia8 D0 pi-k Jets ptmin = 12GeV\n";
@@ -230,6 +234,36 @@ elsif ($system == 13)
 #    $systemstring = "DST_HF_BOTTOM_pythia8-";
 #    $gpfsdir = "HF_pp200_signal";
 }
+elsif ($system == 14)
+{
+    if ($#ARGV == 3)
+    {
+        $particle = $ARGV[1];
+	$ptmin = $ARGV[2];
+	$ptmax = $ARGV[3];
+    }
+    else
+    {
+	print "needs arguments particle ptmin ptmax\n";
+        exit(1)
+    }
+    $g4hits_exist = 1;
+    $systemstring_g4hits = sprintf("single_%s_%d_%dMeV",$particle,$ptmin,$ptmax);
+    if (! defined $nopileup)
+    {
+	    if (defined $embed)
+	    {
+		$systemstring = sprintf("%s_sHijing_0_20fm_50kHz_bkg_0_20fm",$systemstring_g4hits);
+	    }
+    }
+    else
+    {
+	$systemstring = sprintf("%s-",$systemstring_g4hits);
+    }
+    $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
+    $gpfsdir = "single_particle";
+}
+
 elsif ($system == 16)
 {
     $g4hits_exist = 1;

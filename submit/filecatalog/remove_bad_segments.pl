@@ -18,6 +18,9 @@ my $runnumber = 6;
 my $nopileup;
 my $verbose;
 my $embed;
+my $ptmin;
+my $ptmax;
+my $particle;
 GetOptions("dsttype:s"=>\$dsttype, "embed"=>\$embed, "kill"=>\$kill, "nopileup"=>\$nopileup, "runnumber:i" => \$runnumber, "type:i"=>\$system, "verbose" => \$verbose);
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
@@ -106,6 +109,7 @@ if ($#ARGV < 0)
     print "   11 : JS pythia8 Jet > 30GeV\n";
     print "   12 : JS pythia8 Jet > 10GeV\n";
     print "   13 : JS pythia8 Photon Jet\n";
+    print "   14 : Single Particle\n";
     print "   16 : HF D0 Jet\n";
     print "   17 : HF pythia8 D0 pi-k Jets ptmin = 5GeV\n";
     print "   18 : HF pythia8 D0 pi-k Jets ptmin = 12GeV\n";
@@ -145,6 +149,7 @@ if ($system < 1 || $system > 18)
     print "   11 : JS pythia8 Jet R=0.4\n";
     print "   12 : JS pythia8 Jet > 15GeV\n";
     print "   13 : JS pythia8 Jet Photon Jet\n";
+    print "   14 : Single Particle\n";
     print "   16 : HF D0 Jet\n";
     print "   17 : HF pythia8 D0 pi-k Jets ptmin = 5GeV\n";
     print "   18 : HF pythia8 D0 pi-k Jets ptmin = 12GeV\n";
@@ -359,6 +364,37 @@ elsif ($system == 13)
         $pileupstring = "_sHijing_0_20fm_50kHz_bkg_0_20fm";
     }
     $specialcondorfileadd{"G4Hits"} = "PhotonJet";
+}
+elsif ($system == 14)
+{
+    if ($#ARGV == 3)
+    {
+        $particle = $ARGV[1];
+	$ptmin = $ARGV[2];
+	$ptmax = $ARGV[3];
+    }
+    else
+    {
+	print "needs arguments segment particle ptmin ptmax\n";
+        exit(1)
+    }
+    my $snglstring = sprintf("single_%s_%d_%dMeV",$particle,$ptmin,$ptmax);
+    $specialsystemstring{"G4Hits"} = sprintf("%s-",$snglstring);
+    $systemstring = sprintf("%s_",$snglstring);
+    $topdir = sprintf("%s/single_particle",$topdir);
+    $condorfileadd = sprintf("%s",$snglstring);
+    if (defined $nopileup)
+    {
+	$condorfileadd = sprintf("%s",$snglstring);
+        $systemstring = sprintf("single_%s",$snglstring);
+    }
+    if (defined $embed)
+    {
+	$condorfileadd = sprintf("%s",$snglstring);
+        $systemstring = sprintf("%s",$snglstring);
+        $pileupstring = "_sHijing_0_20fm_50kHz_bkg_0_20fm";
+    }
+    $specialcondorfileadd{"G4Hits"} = "$snglstring";
 }
 elsif ($system == 16)
 {
