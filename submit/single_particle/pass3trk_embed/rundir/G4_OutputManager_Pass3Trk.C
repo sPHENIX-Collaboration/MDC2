@@ -21,7 +21,7 @@ void CreateDstOutput(int runnumber, int segment, const string &particle)
   auto se = Fun4AllServer::instance();
 
   char segrun[100];
-  snprintf(segrun,100,"_single_%s_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%05d",particle.c_str(),runnumber,segment);
+  snprintf(segrun,100,"_%s_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%05d",particle.c_str(),runnumber,segment);
   string FullOutFile = "DST_TRUTH" + string(segrun) + ".root";
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("TRUTHOUT", FullOutFile);
   AddCommonNodes(out);
