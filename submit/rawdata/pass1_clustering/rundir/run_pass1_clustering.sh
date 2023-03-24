@@ -12,7 +12,6 @@ echo rsyncing from $this_dir
 echo running: $this_script $*
 
 source /opt/sphenix/core/bin/sphenix_setup.sh
-source /opt/sphenix/core/bin/setup_local.sh /phenix/u/pinkenbu/workarea/sPHENIX/gitrepov5/install
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
