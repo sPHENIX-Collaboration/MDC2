@@ -21,15 +21,16 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 55;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_pass1_clustering.sh",$rundir);
+my $executable = sprintf("%s/run_job0.sh",$rundir);
 my $nevents = $ARGV[0];
 my $runnumber = $ARGV[1];
-my $dstoutfile = $ARGV[2];
-my $dstoutdir = $ARGV[3];
-my $dstlist = $ARGV[4];
-my $rawrun = $ARGV[5];
-my $sequence = $ARGV[6];
-my $rawdatadir = $ARGV[7];
+my $sequence = $ARGV[2];
+my $dstoutfile = $ARGV[3];
+my $dstoutdir = $ARGV[4];
+my $dstlist = $ARGV[5];
+my $rawrun = $ARGV[6];
+my $rawsequence = $ARGV[7];
+my $rawdatadir = $ARGV[8];
 if ($sequence < 100)
 {
     $baseprio = 90;
@@ -57,7 +58,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $dstoutfile  $dstoutdir $dstlist $rawrun $sequence $rawdatadir\"\n";
+print F "Arguments       = \"$nevents $dstoutfile  $dstoutdir $dstlist $rawrun $rawsequence $rawdatadir\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -82,5 +83,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $dstoutfile, $dstoutdir, $dstlist, $rawrun, $sequence, $rawdatadir, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $dstoutfile, $dstoutdir, $dstlist, $rawrun, $rawsequence, $rawdatadir, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);

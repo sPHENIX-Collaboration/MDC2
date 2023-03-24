@@ -25,7 +25,7 @@ R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libfun4allraw.so)
 R__LOAD_LIBRARY(libffarawmodules.so)
 
-void Fun4All_Pass1_Clustering(
+void Fun4All_Job0(
   int nEvents = 10,
   const std::string &outputFile = "DST_TRKR_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
   const std::string &dstlist = "dst_trkr_hit.list",

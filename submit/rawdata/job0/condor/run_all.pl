@@ -131,7 +131,7 @@ if ($nrun > 299)
 }
     $rawfilename = sprintf("%s/ebdc01_junk-%08d-%04d.evt",$rawdatadir,$nrun,$nseg);
 } until (-f $rawfilename);
-    my $subcmd = sprintf("perl run_condor.pl %d %d %s %s %s %d %d %s %s", $outevents, $runnumber, $outfilename, $dstlistfile, $outdir, $nrun, $nseg, $rawdatadir, $tstflag);
+    my $subcmd = sprintf("perl run_condor.pl %d %d %d %s %s %s %d %d %s %s", $outevents, $runnumber, $outseg, $outfilename, $dstlistfile, $outdir, $nrun, $nseg, $rawdatadir, $tstflag);
     print "cmd: $subcmd\n";
 	system($subcmd);
     my $exit_value  = $? >> 8;

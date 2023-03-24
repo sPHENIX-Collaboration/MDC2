@@ -50,8 +50,8 @@ filename=pass1_clustering
 txtfilename=${filename}-${runnumber}-${sequence}.txt
 jsonfilename=${filename}-${runnumber}-${sequence}.json
 
-echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_Pass1_Clustering.C\($1,\"$2\",\"$3\",\"$4\",$5,$6,\"$7\"\)
-prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_Pass1_Clustering.C\($1,\"$2\",\"$3\",\"$4\",$5,$6,\"$7\"\)
+echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_Job0.C\($1,\"$2\",\"$3\",\"$4\",$5,$6,\"$7\"\)
+prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_Job0.C\($1,\"$2\",\"$3\",\"$4\",$5,$6,\"$7\"\)
 
 rsyncdirname=/sphenix/user/sphnxpro/prmon/rawdata/pass1_clustering
 
