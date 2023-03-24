@@ -16,22 +16,26 @@ push(@fmrange,"JS_pp200_signal");
 push(@fmrange,"pythia8_pp_mb");
 #push(@fmrange,"FixDST");
 push(@fmrange,"rawdata");
-
+push(@fmrange,"single_particle");
 
 my @passes = ();
 push(@passes,"eventcombine");
 push(@passes,"pass1");
+push(@passes,"pass1_clustering");
 push(@passes,"pass2");
 push(@passes,"pass2_10kHz");
 push(@passes,"pass2_25kHz");
 push(@passes,"pass2_50kHz_0_20fm");
 push(@passes,"pass2_embed");
+push(@passes,"pass2_pi0_embed");
 push(@passes,"pass2_nopileup");
 push(@passes,"pass3_nopileup");
 push(@passes,"pass3calo");
 push(@passes,"pass3calo_50kHz_0_20fm");
 push(@passes,"pass3calo_embed");
 push(@passes,"pass3distort");
+push(@passes,"pass3global");
+push(@passes,"pass3jet_nopileup");
 push(@passes,"pass3_job0_nopileup");
 push(@passes,"pass3_jobA_nopileup");
 push(@passes,"pass3_jobC_nopileup");
