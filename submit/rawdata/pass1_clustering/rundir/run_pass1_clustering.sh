@@ -12,6 +12,7 @@ echo rsyncing from $this_dir
 echo running: $this_script $*
 
 source /opt/sphenix/core/bin/sphenix_setup.sh
+source /opt/sphenix/core/bin/setup_local.sh /phenix/u/pinkenbu/workarea/sPHENIX/gitrepov5/install
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
@@ -23,9 +24,12 @@ fi
 
 # arguments 
 # $1: number of events
-# $2: runnumber
-# $3: sequence
-# $4: input dir
+# $2: outfile name
+# $3: dst file list
+# $4: output dir
+# $5: runnumber
+# $6: sequence
+# $7: raw data input dir
 
 
 echo 'here comes your environment'
@@ -33,21 +37,24 @@ echo 'here comes your environment'
 printenv
 
 echo arg1 \(events\) : $1
-echo arg2 \(runnumber\): $2
-echo arg3 \(sequence\): $3
-echo arg4 \(input dir\): $4
+echo arg2 \(outfile name\) : $2
+echo arg3 \(dst file list\) : $3
+echo arg4 \(output dir\): $4
+echo arg5 \(runnumber\): $5
+echo arg6 \(sequence\): $6
+echo arg7 \(input dir\): $7
 
 runnumber=$(printf "%010d" $5)
 sequence=$(printf "%05d" $6)
-filename=eventcombine
+filename=pass1_clustering
 
 txtfilename=${filename}-${runnumber}-${sequence}.txt
 jsonfilename=${filename}-${runnumber}-${sequence}.json
 
-echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_Pass1_Tracking.C\($1,$2,$3,\"$4\"\)
-prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_Pass1_Tracking.C\($1,$2,$3,\"$4\"\)
+echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_Pass1_Clustering.C\($1,\"$2\",\"$3\",\"$4\",$5,$6,\"$7\"\)
+prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_Pass1_Clustering.C\($1,\"$2\",\"$3\",\"$4\",$5,$6,\"$7\"\)
 
-rsyncdirname=/sphenix/user/sphnxpro/prmon/rawdata/pass1_tracking
+rsyncdirname=/sphenix/user/sphnxpro/prmon/rawdata/pass1_clustering
 
 if [ ! -d $rsyncdirname ]
 then

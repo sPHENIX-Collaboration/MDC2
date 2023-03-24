@@ -14,8 +14,8 @@ my $test;
 my $incremental;
 my $overwrite;
 my $shared;
+my $rawdatadir = sprintf("/sphenix/lustre01/sphnxpro/mdc2/rawdata/stripe5");
 my $startrun = 250;
-my $njob = 0;
 GetOptions("test"=>\$test, "increment"=>\$incremental, "overwrite"=>\$overwrite, "shared" => \$shared);
 if ($#ARGV < 0)
 {
@@ -79,6 +79,8 @@ $getfiles->execute() || die $DBI::errstr;
 my $icnt = 0;
 my $outseg = 0;
 my @files = ();
+my $nrun = $startrun;
+my $nseg = -1;
 while (my @res = $getfiles->fetchrow_array())
 {
     my $lfn = $res[0];
@@ -89,7 +91,7 @@ while (my @res = $getfiles->fetchrow_array())
 	next;
     }
     $icnt = 0;
-    my $outfilename = sprintf("DST_PASS1_TRACKS_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%05d.root",$runnumber,$outseg);
+    my $outfilename = sprintf("DST_PASS1_CLUSTERS_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%05d.root",$runnumber,$outseg);
     my $dstlistfile = sprintf("%s/condor-%010d-%05d.dstlist",$logdir,$runnumber,$outseg);
     open(F1,">$dstlistfile");
     foreach my $bf (@files)
@@ -97,6 +99,7 @@ while (my @res = $getfiles->fetchrow_array())
 	print F1 "$bf\n";
     }
     close(F1);
+    @files = ();
     $outseg++;
     $chkfile->execute($outfilename);
     if ($chkfile->rows > 0)
@@ -112,9 +115,25 @@ while (my @res = $getfiles->fetchrow_array())
     {
 	$tstflag="--overwrite";
     }
-    my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %d %s", $outevents, $dstlistfile, $outfilename, $outdir, $runnumber, $outseg, $tstflag);
+# create run and segment number to pass down
+my $rawfilename;
+do
+ {
+    $nseg++;
+if ($nseg > 16)
+ {
+    $nseg = 0;
+    $nrun++;
+}
+if ($nrun > 299)
+ {
+    $nrun = $startrun;
+}
+    $rawfilename = sprintf("%s/ebdc01_junk-%08d-%04d.evt",$rawdatadir,$nrun,$nseg);
+} until (-f $rawfilename);
+    my $subcmd = sprintf("perl run_condor.pl %d %d %s %s %s %d %d %s %s", $outevents, $runnumber, $outfilename, $dstlistfile, $outdir, $nrun, $nseg, $rawdatadir, $tstflag);
     print "cmd: $subcmd\n";
-#	system($subcmd);
+	system($subcmd);
     my $exit_value  = $? >> 8;
     if ($exit_value != 0)
     {

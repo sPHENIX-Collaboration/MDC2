@@ -10,7 +10,7 @@ my $overwrite;
 GetOptions("test"=>\$test, "overwrite"=>\$overwrite);
 if ($#ARGV < 3)
 {
-    print "usage: run_condor.pl <events> <infile> <outfile> <outdir> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <outfile> <dstlist> <outdir> <runnumber> <sequence> <rawdata dir>\n";
     print "options:\n";
     print "-test: testmode - no condor submission\n";
     print "--overwrite : overwrite existing jobfiles\n";
@@ -21,13 +21,15 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 55;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_pass4_job0_fm_0_20.sh",$rundir);
+my $executable = sprintf("%s/run_pass1_clustering.sh",$rundir);
 my $nevents = $ARGV[0];
-my $infile = $ARGV[1];
+my $runnumber = $ARGV[1];
 my $dstoutfile = $ARGV[2];
 my $dstoutdir = $ARGV[3];
-my $runnumber = $ARGV[4];
-my $sequence = $ARGV[5];
+my $dstlist = $ARGV[4];
+my $rawrun = $ARGV[5];
+my $sequence = $ARGV[6];
+my $rawdatadir = $ARGV[7];
 if ($sequence < 100)
 {
     $baseprio = 90;
@@ -36,7 +38,7 @@ my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/fm_0_20/pass4_job0");
+my $condorlogdir = sprintf("/tmp/rawdata/pass1_clustering");
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor-%s.job",$logdir,$suffix);
 if (-f $jobfile && ! defined $overwrite)
@@ -55,7 +57,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $infile $dstoutfile $dstoutdir $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $dstoutfile  $dstoutdir $dstlist $rawrun $sequence $rawdatadir\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -65,8 +67,7 @@ print F "accounting_group = group_sphenix.mdc2\n";
 print F "accounting_group_user = sphnxpro\n";
 #print F "Requirements = (CPU_Type == \"mdc2\")&& (TARGET.Machine != \"spool1011.sdcc.bnl.gov\")\n";
 print F "Requirements = (CPU_Type == \"mdc2\")\n";
-#print F "request_memory = 3700MB\n";
-print F "request_memory = 4096MB\n";
+print F "request_memory = 5120MB\n";
 print F "Priority = $baseprio\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
@@ -81,5 +82,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile, $dstoutfile, $dstoutdir, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $dstoutfile, $dstoutdir, $dstlist, $rawrun, $sequence, $rawdatadir, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);

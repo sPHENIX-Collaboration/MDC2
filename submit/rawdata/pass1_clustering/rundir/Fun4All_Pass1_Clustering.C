@@ -1,8 +1,8 @@
 #include <GlobalVariables.C>
 
-//#include <G4Setup_sPHENIX.C>
 #include <G4_Bbc.C>
 #include <G4_Global.C>
+#include <G4_Production.C>
 #include <G4_Tracking.C>
 
 #include <ffamodules/FlagHandler.h>
@@ -25,21 +25,16 @@ R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libfun4allraw.so)
 R__LOAD_LIBRARY(libffarawmodules.so)
 
-void Fun4All_Pass1_Tracking(int nEvents = 10, const std::string outfilename = "DST_TRKR_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root", const int segstart = 0, const int irun = 251, const int sequence = 1, const std::string &topdir = "/sphenix/lustre01/sphnxpro/mdc2/rawdata/pool_stripe5")
+void Fun4All_Pass1_Clustering(
+  int nEvents = 10,
+  const std::string &outputFile = "DST_TRKR_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
+  const std::string &dstlist = "dst_trkr_hit.list",
+  const std::string &outdir = ".",
+  const int irun = 251,
+  const int sequence = 1,
+  const std::string &topdir = "/sphenix/lustre01/sphnxpro/mdc2/rawdata/pool_stripe5")
 {
   gSystem->Load("libg4dst.so");
-  char createscript[1000];
-  sprintf(createscript,"CreateFileList.pl -type 4 DST_TRKR_HIT");
-  if (nEvents > 0)
-  {
-    sprintf(createscript,"%s -n %d",createscript,nEvents);
-  }
-  if (segstart > 0)
-  {
-    sprintf(createscript,"%s -s %d",createscript,segstart);
-  }
-  std::string dstlist = "dst_trkr_hit.list";
-  gSystem->Exec(createscript);
   int nfiles = 0;
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1); // produces enormous logs
@@ -98,6 +93,12 @@ void Fun4All_Pass1_Tracking(int nEvents = 10, const std::string outfilename = "D
   // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
 
+  // set up production relatedstuff
+  Enable::PRODUCTION = true;
+  Enable::DSTOUT = true;
+  DstOut::OutputDir = outdir;
+  DstOut::OutputFile = outputFile;
+
   // central tracking
   Enable::MVTX = true;
   Enable::INTT = true;
@@ -127,7 +128,14 @@ void Fun4All_Pass1_Tracking(int nEvents = 10, const std::string outfilename = "D
   Intt_Clustering();
   TPC_Clustering();
   Micromegas_Clustering();
-  Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT",outfilename);
+
+  if (Enable::PRODUCTION)
+  {
+    Production_CreateOutputDir();
+  }
+
+    string FullOutFile = DstOut::OutputFile;
+  Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT",FullOutFile);
   out->AddNode("Sync");
   out->AddNode("EventHeader");
   out->AddNode("TRKR_CLUSTER"); 
@@ -139,6 +147,10 @@ void Fun4All_Pass1_Tracking(int nEvents = 10, const std::string outfilename = "D
 
   se->End();
   delete se;
+  if (Enable::PRODUCTION)
+  {
+    Production_MoveOutput();
+  }
   cout << "all done" << endl;
   gSystem->Exit(0);
 }
