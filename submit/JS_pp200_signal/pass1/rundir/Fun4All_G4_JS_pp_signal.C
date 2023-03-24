@@ -148,7 +148,7 @@ int Fun4All_G4_JS_pp_signal(
   // Initialize the selected Input/Event generation
   //-----------------
   // This creates the input generator(s)
-  string pythia8_config_file = string(getenv("CALIBRATIONROOT")) + "/Generators/JetStructure_TG/"
+  string pythia8_config_file = string(getenv("CALIBRATIONROOT")) + "/Generators/JetStructure_TG/";
   if (Jet_Trigger == "PhotonJet")
   {
     pythia8_config_file += "phpythia8_JS_GJ_MDC2.cfg";

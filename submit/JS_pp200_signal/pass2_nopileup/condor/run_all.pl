@@ -13,7 +13,7 @@ my $runnumber = 6;
 my $test;
 my $incremental;
 my $shared;
-GetOptions("test"=>\$test, "increment"=>\$incremental);
+GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"PhotonJet\" production>\n";
