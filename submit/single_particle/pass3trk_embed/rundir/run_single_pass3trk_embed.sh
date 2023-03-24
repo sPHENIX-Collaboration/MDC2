@@ -55,7 +55,7 @@ echo arg9 \(sequence\): $9
 
 runnumber=$(printf "%010d" $8)
 sequence=$(printf "%05d" $9)
-filename=JS_pp200_signal_pass3trk_embed_$2
+filename=single_pass3trk_embed_$2
 
 txtfilename=${filename}-${runnumber}-${sequence}.txt
 jsonfilename=${filename}-${runnumber}-${sequence}.json
@@ -63,7 +63,7 @@ jsonfilename=${filename}-${runnumber}-${sequence}.json
 echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",$3,$4,\"$5\",\"$6\",\"$7\"\)
 prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",$3,$4,\"$5\",\"$6\",\"$7\"\)
 
-rsyncdirname=/sphenix/user/sphnxpro/prmon/JS_pp200_signal/pass3trk_embed_$2/run$8
+rsyncdirname=/sphenix/user/sphnxpro/prmon/single/pass3trk_embed_$2/run$8
 if [ ! -d $rsyncdirname ]
 then
   mkdir -p $rsyncdirname

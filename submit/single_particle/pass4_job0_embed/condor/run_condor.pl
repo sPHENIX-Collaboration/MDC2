@@ -8,9 +8,9 @@ use File::Path;
 my $test;
 my $baseprio = 55;
 GetOptions("priority:i"=>\$baseprio, "test"=>\$test);
-if ($#ARGV < 5)
+if ($#ARGV < 7)
 {
-    print "usage: run_condor.pl <events> <jettrigger> <infile> <outfile> <outdir> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <particle> <ptmin> <ptmax> <infile> <outfile> <outdir> <runnumber> <sequence>\n";
     print "options:\n";
     print "--priority : condor priority\n";
     print "-test: testmode - no condor submission\n";

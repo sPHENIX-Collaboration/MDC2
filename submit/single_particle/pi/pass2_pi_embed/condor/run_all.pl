@@ -13,6 +13,7 @@ my $runnumber = 6;
 my $test;
 my $incremental;
 my $particle = "pi";
+my $filetype = "single";
 GetOptions("test"=>\$test, "increment"=>\$incremental);
 if ($#ARGV < 0)
 {
@@ -33,7 +34,7 @@ if ($hostname !~ /phnxsub/)
 my $maxsubmit = $ARGV[0];
 my $pmin = $ARGV[1];
 my $pmax = $ARGV[2];
-my $partprop = sprintf("%s_%d_%dMeV",$particle,$pmin,$pmax);
+my $partprop = sprintf("%s_%s_%d_%dMeV",$filetype,$particle,$pmin,$pmax);
 
 my $embedfilelike = sprintf("sHijing_0_20fm_50kHz_bkg_0_20fm");
 my $outfilelike = sprintf("%s_%s",$partprop,$embedfilelike);

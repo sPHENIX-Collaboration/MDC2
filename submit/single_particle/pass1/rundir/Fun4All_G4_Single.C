@@ -42,8 +42,8 @@ R__LOAD_LIBRARY(libffamodules.so)
 int Fun4All_G4_Single(
   const int nEvents = 1,
   const string &particle = "pi-", 
-  const int pmin = 10, 
-  const int pmax = 10, 
+  const int pmin = 10000,
+  const int pmax = 10000,
   const string &outputFile = "G4Hits_single_pi-_10000_10000MeV-0000000040-00000.root",
   const string &outdir = ".")
 {
