@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $inrunnumber=62;
+my $inrunnumber=6;
 my $outrunnumber=$inrunnumber;
 my $test;
 my $incremental;
@@ -49,6 +49,7 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
+$outdir = sprintf("%s/run%04d",$outdir,$outrunnumber);
 if ($outdir =~ /lustre/)
 {
     my $storedir = $outdir;

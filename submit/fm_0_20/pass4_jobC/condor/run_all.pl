@@ -49,7 +49,7 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/run%04d/%s",$outdir,$outrunnumber);
+$outdir = sprintf("%s/run%04d",$outdir,$outrunnumber);
 if ($outdir =~ /lustre/)
 {
     my $storedir = $outdir;

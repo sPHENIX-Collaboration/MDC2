@@ -9,16 +9,18 @@ use DBI;
 
 
 my $outevents = 0;
-my $input_runnumber = 62;
+my $runnumber = 6;
 my $test;
 my $incremental;
-GetOptions("test"=>\$test, "increment"=>\$incremental);
+my $verbosity;
+GetOptions("test"=>\$test, "increment"=>\$incremental, "verbose"=>\$verbosity);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--test : dryrun - create jobfiles\n";
+    print "--verbose : turn on blabbering\n";
     exit(1);
 }
 
@@ -45,6 +47,7 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
+$outdir = sprintf("%s/run%04d",$outdir,$runnumber);
 if ($outdir =~ /lustre/)
 {
     my $storedir = $outdir;
@@ -71,10 +74,10 @@ mkpath($logdir);
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%sHijing_0_20fm%' and runnumber = $input_runnumber order by filename") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%sHijing_0_20fm%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
-my $getbkglastsegment = $dbh->prepare("select max(segment) from datasets where dsttype = 'G4Hits' and filename like '%sHijing_0_20fm%' and runnumber = $input_runnumber");
+my $getbkglastsegment = $dbh->prepare("select max(segment) from datasets where dsttype = 'G4Hits' and filename like '%sHijing_0_20fm%' and runnumber = $runnumber");
 $getbkglastsegment->execute();
 my @res1 = $getbkglastsegment->fetchrow_array();
 my $lastsegment = $res1[0];
@@ -85,7 +88,6 @@ $getfiles->execute() || die $DBI::errstr;
 while (my @res = $getfiles->fetchrow_array())
 {
     my $lfn = $res[0];
-#    print "found $lfn\n";
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
         my $prefix=$1;
@@ -135,6 +137,10 @@ while (my @res = $getfiles->fetchrow_array())
 	    $chkfile->execute($bckfile);
 	    if ($chkfile->rows == 0)
 	    {
+if (defined $verbosity)
+{
+    print "$bckfile missing\n";
+}
 		$foundall = 0;
 		last;
 	    }
