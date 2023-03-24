@@ -186,7 +186,7 @@ int Fun4All_G4_HF_pp_signal(
       p8_hf_signal_trigger->AddParticles(4);
       p8_hf_signal_trigger->AddParticles(-4);
     }
-    if (HF_Q_filter == "CharmD0piKJet5" || HF_Q_filter == "CharmD0piKJet12" )
+    else if (HF_Q_filter == "CharmD0piKJet5" || HF_Q_filter == "CharmD0piKJet12" )
     {
       // has a D0 in HepMC Event
       p8_hf_signal_trigger->AddParticles(421);
