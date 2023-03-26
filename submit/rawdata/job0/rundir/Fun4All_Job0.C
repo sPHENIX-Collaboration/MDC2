@@ -10,12 +10,14 @@
 
 
 #include <ffarawmodules/EventCombiner.h>
+
 #include <fun4all/Fun4AllInputManager.h>
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllSyncManager.h>
 #include <fun4all/Fun4AllServer.h>
+
 #include <fun4allraw/Fun4AllEventOutputManager.h>
 #include <fun4allraw/Fun4AllPrdfInputManager.h>
 
@@ -134,7 +136,7 @@ void Fun4All_Job0(
     Production_CreateOutputDir();
   }
 
-    string FullOutFile = DstOut::OutputFile;
+  string FullOutFile = DstOut::OutputFile;
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT",FullOutFile);
   out->AddNode("Sync");
   out->AddNode("EventHeader");
@@ -146,6 +148,7 @@ void Fun4All_Job0(
   se->run(nEvents);
 
   se->End();
+  se->PrintTimer();
   delete se;
   if (Enable::PRODUCTION)
   {
