@@ -13,7 +13,7 @@ my $nsafejobs = 80000;
 my $submittopdir = "/sphenix/u/sphnxpro/MDC2/submit";
 my %submitdir = (
     "fm_0_20/pass2/condor" => (""),
-    "fm_0_20/pass2_nopileup/condor" => (""),
+#    "fm_0_20/pass2_nopileup/condor" => (""),
     "fm_0_20/pass3trk/condor" => (""),
     "fm_0_20/pass3calo/condor" => ("-shared"),
     "fm_0_20/pass3global/condor" => (""),
@@ -57,6 +57,7 @@ my %submitdir = (
     "JS_pp200_signal/pass2_nopileup/condor" => ("-shared"),
 #"JS_pp200_signal/pass3calo/condor" => (""),
     "JS_pp200_signal/pass3calo_embed/condor" => ("-shared"),
+    "JS_pp200_signal/pass3global_embed/condor" => ("-shared"),
     "JS_pp200_signal/pass3jet_nopileup/condor" => ("-shared"),
     "JS_pp200_signal/pass3_job0_nopileup/condor" => ("-shared"),
     "JS_pp200_signal/pass3_jobA_nopileup/condor" => ("-shared"),
@@ -80,8 +81,8 @@ my %submitdir = (
 
 #my @quarkfilters = ("Charm", "Bottom", "JetD0");
 my @quarkfilters = ("Charm", "CharmD0piKJet5", "CharmD0piKJet12");
-#my @jettriggers = ("Jet10", "Jet30", "PhotonJet");
-my @jettriggers = ("Jet10", "Jet30");
+my @jettriggers = ("Jet10", "Jet30", "PhotonJet");
+#my @jettriggers = ("Jet10", "Jet30");
 #my @singleparticles = {"gamma 10000 10000"};
 
 foreach my $subdir (sort keys %submitdir)
