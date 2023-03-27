@@ -11,6 +11,7 @@ use DBI;
 my $outevents = 0;
 my $inrunnumber=6;
 #my $outrunnumber=40;
+my $numsegs_to_process = 1000;
 my $outrunnumber=$inrunnumber;
 my $test;
 my $incremental;
@@ -114,15 +115,15 @@ foreach my $segment (sort keys %calohash)
     push(@calofiles,$lfn);
     push(@vtxfiles,$vtxhash{$segment});
     $icnt++;
-    if ($icnt < 10)
+    if ($icnt < $numsegs_to_process)
     {
 	next;
     }
     $icnt = 0;
 
     my $outfilename = sprintf("DST_RECO_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%05d.root",$outrunnumber,$outseg);
-    my $vtxlistfile = sprintf("%s/condor-vtx-%010d-%05d.dstlist",$logdir,$outrunnumber,$outseg);
-    my $calolistfile = sprintf("%s/condor-calo-%010d-%05d.dstlist",$logdir,$outrunnumber,$outseg);
+    my $vtxlistfile = sprintf("%s/condor-%010d-%05d.vtxlist",$logdir,$outrunnumber,$outseg);
+    my $calolistfile = sprintf("%s/condor-%010d-%05d.calolist",$logdir,$outrunnumber,$outseg);
     open(F1,">$vtxlistfile");
     foreach my $bf (@vtxfiles)
     {
