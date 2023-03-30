@@ -15,7 +15,7 @@ void plotmem(const std::string &fname)
     {
       maxmem = tmp;
     }
-    if (tmp > 500)
+    if (tmp > 50)
     {
     fmem.push_back(tmp);
     }
