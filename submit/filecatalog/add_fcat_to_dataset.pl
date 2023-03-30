@@ -16,7 +16,7 @@ if (! -d $dcachedir)
     print "could not find directory $dcachedir\n";
     exit(1);
 }
-if ($dcachedir !~ /pnfs/)
+if ($dcachedir !~ /lustre/)
 {
     print "only pnfs (dcache) dirs allowed\n";
     exit(1);
@@ -26,6 +26,7 @@ my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc");
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 #my $getfiles = $dbh->prepare("select lfn,size,full_file_path from files where lfn = 'DST_TRUTH_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000002-02278.root'");
 my $getfiles = $dbh->prepare("select lfn,size,full_file_path from files where full_file_path like '$dcachedir/%'"); 
+#my $getfiles = $dbh->prepare("select lfn,size,full_file_path from files where lfn = 'G4Hits_sHijing_0_20fm-0000000006-18875.root'");
 my $chkfile = $dbh->prepare("select size from datasets where filename = ?");
 my $insertdataset = $dbh->prepare("insert into datasets (filename,runnumber,segment,size,dataset,dsttype,events) values (?,?,?,?,'mdc2',?,?)");
 #my $updatesize = $dbh->prepare("update files set size=? where lfn = ? and full_file_path = ?");
@@ -64,12 +65,12 @@ while (my @res = $getfiles->fetchrow_array)
     my @sp1 = split(/$splitstring/,$lfn);
     if (! defined $test)
     {
-	print "running: insertdataset->execute($lfn,$runnumber,$segment,$fsize,$sp1[0]),$entries\n";
+	print "running: insertdataset->execute($lfn,$runnumber,$segment,$fsize,$sp1[0],$entries)\n";
 	$insertdataset->execute($lfn,$runnumber,$segment,$fsize,$sp1[0],$entries);
     }
     else
     {
-	print "would run insertdataset->execute($lfn,$runnumber,$segment,$fsize,$sp1[0]),$entries\n";
+	print "would run insertdataset->execute($lfn,$runnumber,$segment,$fsize,$sp1[0],$entries)\n";
     }
 }
 sub getentries
