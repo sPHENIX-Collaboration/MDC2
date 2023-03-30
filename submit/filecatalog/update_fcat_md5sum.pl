@@ -9,16 +9,16 @@ use DBI;
 use Digest::MD5  qw(md5 md5_hex md5_base64);
 use Env;
 
-my $test;
+my $notest;
 my $all;
-GetOptions("test"=>\$test, "all"=>\$all);
+GetOptions("notest"=>\$notest, "all"=>\$all);
 
 if ($#ARGV < 0)
 {
     print "usage: update_fcat_md5sum.pl <lustre dir>\n";
     print "parameters:\n";
     print "--all : check all files\n";
-    print "--test: run in test mode - no changes\n";
+    print "--notest: run for real\n";
     exit(1);
 }
 
@@ -59,16 +59,23 @@ while (my @res = $getfiles->fetchrow_array())
     }
     if (-f $fullfile)
     {
-	print "handling $fullfile\n";
-	my $localfile = $fullfile;
+	if (! defined $notest)
+	{
+	    print "would handling $fullfile\n";
+	}
+	else
+	{
+	    print "handling $fullfile\n";
+	    my $localfile = $fullfile;
 #	print "handling $localfile\n";
-	open FILE, "$localfile";
-	my $ctx = Digest::MD5->new;
-	$ctx->addfile (*FILE);
-	my $hash = $ctx->hexdigest;
-	close (FILE);
-	printf("md5_hex:%s\n",$hash);
-	$updatemd5->execute($hash,$lfn);
+	    open FILE, "$localfile";
+	    my $ctx = Digest::MD5->new;
+	    $ctx->addfile (*FILE);
+	    my $hash = $ctx->hexdigest;
+	    close (FILE);
+	    printf("md5_hex:%s\n",$hash);
+	    $updatemd5->execute($hash,$lfn);
+	}
     }
 }
 $getfiles->finish();
