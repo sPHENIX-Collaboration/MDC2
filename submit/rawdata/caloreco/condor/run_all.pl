@@ -138,6 +138,7 @@ foreach my $segment (sort keys %calohash)
     close(F1);
     @vtxfiles = ();
     @calofiles = ();
+    my $outsegused = $outseg;
     $outseg++;
 
     $chkfile->execute($outfilename);
@@ -170,7 +171,7 @@ foreach my $segment (sort keys %calohash)
 	}
 	$rawfilename = sprintf("%s/seb02_junk-%08d-%04d.evt",$rawdatadir,$nrun,$nseg);
     } until (-f $rawfilename);
-    my $subcmd = sprintf("perl run_condor.pl %d %d %d %s %s %s %s %d %d %s %s", $outevents, $outrunnumber, $outseg, $outfilename, $outdir, $calolistfile, $vtxlistfile, $nrun, $nseg, $rawdatadir, $tstflag);
+    my $subcmd = sprintf("perl run_condor.pl %d %d %d %s %s %s %s %d %d %s %s", $outevents, $outrunnumber, $outsegused, $outfilename, $outdir, $calolistfile, $vtxlistfile, $nrun, $nseg, $rawdatadir, $tstflag);
 
 #	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $vtxhash{sprintf("%05d",$segment)}, $outfilename, $outdir, $outrunnumber, $segment, $tstflag);
     print "cmd: $subcmd\n";
