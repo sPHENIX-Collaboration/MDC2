@@ -21,6 +21,7 @@ if ($#ARGV < 0)
     print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
+    print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
@@ -63,18 +64,42 @@ else
   mkpath($outdir);
 }
 
+my %bbchash = ();
+my %truthhash = ();
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_BBC_G4HIT' and filename like 'DST_BBC_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm%' and runnumber = $inrunnumber order by filename") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
+my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH_G4HIT' and filename like 'DST_TRUTH_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm%' and runnumber = $inrunnumber");
+
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
-my $ncal = $getfiles->rows;
+my $nbbc = $getfiles->rows;
+
 while (my @res = $getfiles->fetchrow_array())
 {
-    my $lfn = $res[0];
+    $bbchash{sprintf("%05d",$res[1])} = $res[0];
+}
+$getfiles->finish();
+
+$gettruthfiles->execute() || die $DBI::errstr;
+my $ntruth = $gettruthfiles->rows;
+while (my @res = $gettruthfiles->fetchrow_array())
+{
+    $truthhash{sprintf("%05d",$res[1])} = $res[0];
+}
+$gettruthfiles->finish();
+
+foreach my $segment (sort keys %bbchash)
+{
+    if (! exists $truthhash{$segment})
+    {
+	next;
+    }
+
+    my $lfn = $bbchash{$segment};
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
 	my $runnumber = int($2);
@@ -90,7 +115,7 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %d %s", $outevents, $lfn, $outfilename, $outdir, $outrunnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $truthhash{sprintf("%05d",$segment)}, $outfilename, $outdir, $outrunnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
