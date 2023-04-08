@@ -82,8 +82,8 @@ echo running prmon  --filename $txtfilename --json-summary $jsonfilename --  roo
 prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
 
 
-rsync -av $txtfilename $rsyncdirname
-rsync -av $jsonfilename $rsyncdirname
+if [ -f $txtfilename ] && rsync -av $txtfilename $rsyncdirname
+if [ -f $jsonfilename ] && rsync -av $jsonfilename $rsyncdirname
 
 #---------------------------------------------------------------
 # Global Reconstruction
@@ -98,8 +98,8 @@ jsonfilename=${filename_epd}-${runnumber}-${sequence}.json
 echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Global.C\($1,\"$2\",\"$5\",\"$6\"\)
 prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Global.C\($1,\"$2\",\"$5\",\"$6\"\)
 
-rsync -av $txtfilename $rsyncdirname
-rsync -av $jsonfilename $rsyncdirname
+if [ -f $txtfilename ] && rsync -av $txtfilename $rsyncdirname
+if [ -f $jsonfilename ] && rsync -av $jsonfilename $rsyncdirname
 
 #---------------------------------------------------------------
 # pass3 tracking
@@ -114,7 +114,7 @@ jsonfilename=${filename_trkr}-${runnumber}-${sequence}.json
 echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$5\"\)
 prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\"\)
 
-rsync -av $txtfilename $rsyncdirname
-rsync -av $jsonfilename $rsyncdirname
+if [ -f $txtfilename ] && rsync -av $txtfilename $rsyncdirname
+if [ -f $jsonfilename ] && rsync -av $jsonfilename $rsyncdirname
 
 echo "script done"
