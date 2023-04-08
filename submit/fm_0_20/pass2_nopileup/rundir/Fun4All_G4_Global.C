@@ -3,7 +3,9 @@
 
 #include <GlobalVariables.C>
 
+#include <G4_Bbc.C>
 #include <G4_EPD.C>
+#include <G4_Global.C>
 #include <G4_Input.C>
 #include <G4_Production.C>
 
@@ -94,16 +96,15 @@ int Fun4All_G4_Global(
   //  Enable::OVERLAPCHECK = true;
   //  Enable::VERBOSITY = 1;
 
-
-  Enable::EPD = true;
+  Enable::GLOBAL_FASTSIM = true;
+  Enable::GLOBAL_RECO = true;
+  Enable::BBCRECO = true;
   Enable::EPD_TILE = true;
 
-
-  //--------------
-  // EPD tile reconstruction
-  //--------------
-
+  if (Enable::GLOBAL_FASTSIM)  Global_FastSim();
+  if (Enable::BBCRECO) Bbc_Reco();
   if (Enable::EPD_TILE) EPD_Tiles();
+  if (Enable::GLOBAL_RECO) Global_Reco();
 
   //--------------
   // Set up Input Managers
@@ -122,8 +123,11 @@ int Fun4All_G4_Global(
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     out->AddNode("Sync");
     out->AddNode("EventHeader");
+    out->AddNode("BbcOut");
+    out->AddNode("BbcPmtContainer");
     out->AddNode("TOWERINFO_SIM_EPD");
     out->AddNode("TOWERINFO_CALIB_EPD");
+    out->AddNode("GlobalVertexMap");
     se->registerOutputManager(out);
   }
 
