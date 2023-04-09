@@ -16,7 +16,7 @@ my $shared;
 GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"PhotonJet\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"Jet40\",\"PhotonJet\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--shared : submit jobs to shared pool\n";
@@ -35,6 +35,7 @@ my $maxsubmit = $ARGV[0];
 my $jettrigger = $ARGV[1];
 if ($jettrigger  ne "Jet10" &&
     $jettrigger  ne "Jet30" &&
+    $jettrigger  ne "Jet40" &&
     $jettrigger  ne "PhotonJet")
 {
     print "second argument has to be Jet10, Jet30 or PhotonJet";

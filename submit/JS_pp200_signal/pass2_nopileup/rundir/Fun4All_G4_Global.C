@@ -3,7 +3,9 @@
 
 #include <GlobalVariables.C>
 
+#include <G4_Bbc.C>
 #include <G4_EPD.C>
+#include <G4_Global.C>
 #include <G4_Input.C>
 #include <G4_Production.C>
 
@@ -22,8 +24,8 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_Global(
     const int nEvents = 1,
-    const string &inputFile = "DST_BBC_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
-  const string &outputFile = "DST_GLOBAL_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
+    const string &inputFile = "G4Hits_pythia8_Jet10-0000000006-00000.root",
+  const string &outputFile = "DST_GLOBAL_pythia8_Jet10-0000000006-00000.root",
     const string &outdir = ".")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
@@ -94,16 +96,15 @@ int Fun4All_G4_Global(
   //  Enable::OVERLAPCHECK = true;
   //  Enable::VERBOSITY = 1;
 
-
-  Enable::EPD = true;
+  Enable::GLOBAL_FASTSIM = true;
+  Enable::GLOBAL_RECO = true;
+  Enable::BBCRECO = true;
   Enable::EPD_TILE = true;
 
-
-  //--------------
-  // EPD tile reconstruction
-  //--------------
-
+  if (Enable::GLOBAL_FASTSIM)  Global_FastSim();
+  if (Enable::BBCRECO) Bbc_Reco();
   if (Enable::EPD_TILE) EPD_Tiles();
+  if (Enable::GLOBAL_RECO) Global_Reco();
 
   //--------------
   // Set up Input Managers
@@ -122,8 +123,11 @@ int Fun4All_G4_Global(
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     out->AddNode("Sync");
     out->AddNode("EventHeader");
+    out->AddNode("BbcOut");
+    out->AddNode("BbcPmtContainer");
     out->AddNode("TOWERINFO_SIM_EPD");
     out->AddNode("TOWERINFO_CALIB_EPD");
+    out->AddNode("GlobalVertexMap");
     se->registerOutputManager(out);
   }
 
