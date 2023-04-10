@@ -55,7 +55,7 @@ $outdir = sprintf("%s/%s",$outdir,$outdirsubdir);
 if ($outdir =~ /lustre/)
 {
     my $storedir = $outdir;
-    $storedir =~  s/\/sphenix\/lustre01\/sphnxpro/sphenixS3/;
+    $storedir =~ s/\/sphenix\/lustre01\/sphnxpro/sphenixS3/;
     my $makedircmd = sprintf("mcs3 mb %s",$storedir);
     system($makedircmd);
 }
@@ -138,7 +138,6 @@ foreach my $segment (sort keys %bbchash)
 	}
     }
 }
-$getfiles->finish();
 $chkfile->finish();
 $dbh->disconnect;
 
@@ -146,6 +145,11 @@ my $jobfile = sprintf("condor.job");
 if (defined $shared)
 {
  $jobfile = sprintf("condor.job.shared");
+}
+if (! -f $jobfile)
+{
+    print "could not find $jobfile\n";
+    exit(1);
 }
 if (-f $condorlistfile)
 {
