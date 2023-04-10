@@ -7,7 +7,7 @@ use File::Path;
 
 my $test;
 GetOptions("test"=>\$test);
-if ($#ARGV < 3)
+if ($#ARGV < 6)
 {
     print "usage: run_condor.pl <events> <g4hit infile> <vertex infile> <outfile> <outdir> <runnumber> <sequence>\n";
     print "options:\n";
