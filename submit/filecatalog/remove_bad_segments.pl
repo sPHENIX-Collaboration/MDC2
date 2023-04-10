@@ -113,6 +113,7 @@ if ($#ARGV < 0)
     print "   16 : HF D0 Jet\n";
     print "   17 : HF pythia8 D0 pi-k Jets ptmin = 5GeV\n";
     print "   18 : HF pythia8 D0 pi-k Jets ptmin = 12GeV\n";
+    print "   19 : JS pythia8 Jet > 30GeV\n";
     print "-dsttype:\n";
     foreach my $tp (sort keys %daughters)
     {
@@ -132,7 +133,7 @@ if( ! exists $daughters{$dsttype})
     }
     exit(0);
 }
-if ($system < 1 || $system > 18)
+if ($system < 1 || $system > 19)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
@@ -146,13 +147,14 @@ if ($system < 1 || $system > 18)
     print "    8 : HF pythia8 Bottom\n";
     print "    9 : HF pythia8 CharmD0\n";
     print "   10 : HF pythia8 BottomD0\n";
-    print "   11 : JS pythia8 Jet R=0.4\n";
-    print "   12 : JS pythia8 Jet > 15GeV\n";
+    print "   11 : JS pythia8 Jet >30GeV\n";
+    print "   12 : JS pythia8 Jet >10GeV\n";
     print "   13 : JS pythia8 Jet Photon Jet\n";
     print "   14 : Single Particle\n";
     print "   16 : HF D0 Jet\n";
     print "   17 : HF pythia8 D0 pi-k Jets ptmin = 5GeV\n";
     print "   18 : HF pythia8 D0 pi-k Jets ptmin = 12GeV\n";
+    print "   19 : JS pythia8 Jet >40GeV\n";
     exit(0);
 }
 
@@ -434,6 +436,25 @@ elsif ($system == 18)
         $systemstring = "pythia8_CharmD0piKJet12";
     }
     $specialcondorfileadd{"G4Hits"} = "CharmD0piKJet12";
+}
+elsif ($system == 19)
+{
+    $specialsystemstring{"G4Hits"} = "pythia8_Jet40-";
+    $systemstring = "pythia8_Jet40_";
+    $topdir = sprintf("%s/JS_pp200_signal",$topdir);
+    $condorfileadd = sprintf("Jet40_3MHz");
+    if (defined $nopileup)
+    {
+	$condorfileadd = sprintf("Jet40");
+        $systemstring = "pythia8_Jet40";
+    }
+    if (defined $embed)
+    {
+	$condorfileadd = sprintf("Jet40");
+        $systemstring = "pythia8_Jet40";
+        $pileupstring = "_sHijing_0_20fm_50kHz_bkg_0_20fm";
+    }
+    $specialcondorfileadd{"G4Hits"} = "Jet40";
 }
 else
 {

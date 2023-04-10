@@ -18,7 +18,7 @@ my $particle;
 my $file_exist_check;
 GetOptions("embed" => \$embed, "exist" => \$file_exist_check, "run:i"=>\$runnumber, "type:i"=>\$system, "verbosity" => \$verbosity, "nopileup" => \$nopileup);
 
-if ($system < 1 || $system > 18)
+if ($system < 1 || $system > 19)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
@@ -39,6 +39,7 @@ if ($system < 1 || $system > 18)
     print "   16 : HF D0 Jet\n";
     print "   17 : HF pythia8 D0 pi-k Jets ptmin = 5GeV\n";
     print "   18 : HF pythia8 D0 pi-k Jets ptmin = 12GeV\n";
+    print "   19 : JS pythia8 Jet >40GeV\n";
     exit(0);
 }
 
@@ -309,7 +310,30 @@ elsif ($system == 18)
     $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
     $gpfsdir = "HF_pp200_signal";
 }
-
+elsif ($system == 19)
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "pythia8_Jet40";
+    if (! defined $nopileup)
+    {
+	    if (defined $embed)
+	    {
+		$systemstring = sprintf("%s_sHijing_0_20fm_50kHz_bkg_0_20fm",$systemstring_g4hits);
+	    }
+	    else
+	    {
+		$systemstring = sprintf("%s_3MHz",$systemstring_g4hits);
+	    }
+    }
+    else
+    {
+	$systemstring = sprintf("%s-",$systemstring_g4hits);
+    }
+    $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
+    $gpfsdir = "js_pp200_signal";
+#    $systemstring = "DST_HF_BOTTOM_pythia8-";
+#    $gpfsdir = "HF_pp200_signal";
+}
 else
 {
     die "bad type $system\n";
