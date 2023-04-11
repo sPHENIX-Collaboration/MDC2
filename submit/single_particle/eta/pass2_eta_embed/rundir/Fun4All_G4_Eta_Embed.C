@@ -332,7 +332,7 @@ int Fun4All_G4_Eta_Embed(
     OUTPUTMANAGER::outfiles.insert(ntupfile);
   }
 
-  CaloCalibEmc_Pi0 *eval_eta2 = new CaloCalibEmc_Pi0("dummy", ntupfile);
+  CaloCalibEmc_Pi0 *eval_eta2 = new CaloCalibEmc_Pi0("ETACALIB", ntupfile);
                                                 // this call is needed for embedding
   eval_eta2->set_centrality_nclusters_cut(350);  // which uses more central events
                                                 // than we will for data to enhance Bkg
