@@ -1,0 +1,1 @@
+/sphenix/lustre01/sphnxpro/mdc2/single_particle/pass2_eta_embed
