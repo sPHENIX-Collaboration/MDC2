@@ -23,8 +23,8 @@ R__LOAD_LIBRARY(libfun4all.so)
 int Fun4All_G4_sPHENIX_job0(
   const int nEvents = 0,
   const int nSkipEvents = 0,
-  const string &inputFile = "DST_TRKR_HIT_pythia8_pp_mb-0000000062-00000.root",
-  const string &outputFile = "DST_TRKR_CLUSTER_pythia8_pp_mb-0000000062-00000.root",
+  const string &inputFile = "DST_TRKR_HIT_pythia8_pp_mb-0000000006-00000.root",
+  const string &outputFile = "DST_TRKR_CLUSTER_pythia8_pp_mb-0000000006-00000.root",
   const string &outdir = ".")
 {
 
@@ -101,7 +101,10 @@ int Fun4All_G4_sPHENIX_job0(
   // skip events if any specified
   if( nSkipEvents > 0 )
   { se->skip( nSkipEvents ); }
-
+  if (nEvents < 0)
+  {
+    return 0;
+  }
   // process events
   se->run(nEvents);
 
