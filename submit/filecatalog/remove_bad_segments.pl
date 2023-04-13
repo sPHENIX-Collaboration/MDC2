@@ -201,6 +201,7 @@ if (defined $embed)
     $productionsubdir{"DST_BBC_G4HIT"} = "pass2_embed";
     $productionsubdir{"DST_CALO_CLUSTER"} = "pass3calo_embed";
     $productionsubdir{"DST_CALO_G4HIT"} = "pass2_embed";
+    $productionsubdir{"DST_GLOBAL"} = "pass3global_embed";
     $productionsubdir{"DST_TRUTH"} = "pass3trk_embed";
     $productionsubdir{"DST_TRUTH_G4HIT"} = "pass2_embed";
     $productionsubdir{"DST_TRACKS"} = "pass4_jobC_embed";
