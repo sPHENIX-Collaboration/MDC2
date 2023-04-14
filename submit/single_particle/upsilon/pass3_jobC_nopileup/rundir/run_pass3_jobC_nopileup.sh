@@ -61,8 +61,8 @@ filename=single_particle_upsilon_pass3_jobC_nopileup_$6
 txtfilenameC=${filename}-${runnumber}-${sequence}_C.txt
 jsonfilenameC=${filename}-${runnumber}-${sequence}_C.json
 
-echo running prmon --filename $txtfilenameC --json-summary $jsonfilenameC -- root.exe -q -b Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\"\)
-prmon --filename $txtfilenameC --json-summary $jsonfilenameC -- root.exe -q -b  Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\"\)
+echo running root.exe -q -b Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\"\)
+root.exe -q -b  Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\"\)
 
 rsyncdirname=/sphenix/user/sphnxpro/prmon/single_particle_upsilon/pass3_jobC_nopileup_$5
 if [ ! -d $rsyncdirname ]

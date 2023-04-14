@@ -59,8 +59,8 @@ filename=fm_0_20_pass3_jobC_nopileup
 txtfilenameC=${filename}-${runnumber}-${sequence}_C.txt
 jsonfilenameC=${filename}-${runnumber}-${sequence}_C.json
 
-echo running prmon --filename $txtfilenameC --json-summary $jsonfilenameC -- root.exe -q -b Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\"\)
-prmon --filename $txtfilenameC --json-summary $jsonfilenameC -- root.exe -q -b  Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\"\)
+echo running root.exe -q -b Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\"\)
+root.exe -q -b  Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\"\)
 
 rsyncdirname=/sphenix/user/sphnxpro/prmon/fm_0_20/pass3_jobC_nopileup/run$6
 if [ ! -d $rsyncdirname ]

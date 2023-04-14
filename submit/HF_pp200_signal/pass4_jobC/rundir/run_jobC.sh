@@ -56,8 +56,8 @@ filename=HF_pp200_signal_pass4_jobC_$5
 txtfilenameC=${filename}-${runnumber}-${sequence}_C.txt
 jsonfilenameC=${filename}-${runnumber}-${sequence}_C.json
 
-echo running prmon --filename $txtfilenameC --json-summary $jsonfilenameC -- root.exe -q -b Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\"\)
-prmon --filename $txtfilenameC --json-summary $jsonfilenameC -- root.exe -q -b  Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\"\)
+echo running root.exe -q -b Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\"\)
+root.exe -q -b  Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\"\)
 
 rsyncdirname=/sphenix/user/sphnxpro/prmon/HF_pp200_signal/pass4_jobC_$5
 if [ ! -d $rsyncdirname ]
