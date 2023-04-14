@@ -53,8 +53,8 @@ filename=fm_0_20_pass4_nopilep_jobA
 txtfilenameA=${filename}-${runnumber}-${sequence}_A.txt
 jsonfilenameA=${filename}-${runnumber}-${sequence}_A.json
 
-echo running prmon --filename $txtfilenameA --json-summary $jsonfilenameA -- root.exe -q -b Fun4All_G4_sPHENIX_jobA.C\($1,0,\"$2\",\"$3\",\"$4\"\)
-prmon --filename $txtfilenameA --json-summary $jsonfilenameA -- root.exe -q -b  Fun4All_G4_sPHENIX_jobA.C\($1,0,\"$2\",\"$3\",\"$4\"\)
+echo running root.exe -q -b Fun4All_G4_sPHENIX_jobA.C\($1,0,\"$2\",\"$3\",\"$4\"\)
+root.exe -q -b  Fun4All_G4_sPHENIX_jobA.C\($1,0,\"$2\",\"$3\",\"$4\"\)
 
 
 rsyncdirname=/sphenix/user/sphnxpro/prmon/fm_0_20/pass3_nopilep_jobA/run$5

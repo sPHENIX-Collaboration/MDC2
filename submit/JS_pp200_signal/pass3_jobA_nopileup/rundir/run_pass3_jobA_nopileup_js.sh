@@ -55,8 +55,8 @@ filename=JS_pp200_signal_pass3_jobA_nopileup_$5
 txtfilenameA=${filename}-${runnumber}-${sequence}_A.txt
 jsonfilenameA=${filename}-${runnumber}-${sequence}_A.json
 
-echo running prmon --filename $txtfilenameA --json-summary $jsonfilenameA -- root.exe -q -b Fun4All_G4_sPHENIX_jobA.C\($1,0,\"$2\",\"$3\",\"$4\"\)
-prmon --filename $txtfilenameA --json-summary $jsonfilenameA -- root.exe -q -b  Fun4All_G4_sPHENIX_jobA.C\($1,0,\"$2\",\"$3\",\"$4\"\)
+echo running root.exe -q -b Fun4All_G4_sPHENIX_jobA.C\($1,0,\"$2\",\"$3\",\"$4\"\)
+root.exe -q -b  Fun4All_G4_sPHENIX_jobA.C\($1,0,\"$2\",\"$3\",\"$4\"\)
 
 
 rsyncdirname=/sphenix/user/sphnxpro/prmon/JS_pp200_signal/pass3_jobA_nopileup_$5

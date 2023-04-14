@@ -53,8 +53,8 @@ filename=jobA
 txtfilenameA=${filename}-${runnumber}-${sequence}.txt
 jsonfilenameA=${filename}-${runnumber}-${sequence}.json
 
-echo running prmon --filename $txtfilenameA --json-summary $jsonfilenameA -- root.exe -q -b Fun4All_G4_sPHENIX_jobA.C\($1,0,\"$2\",\"$3\",\"$4\"\)
-prmon --filename $txtfilenameA --json-summary $jsonfilenameA -- root.exe -q -b  Fun4All_G4_sPHENIX_jobA.C\($1,0,\"$2\",\"$3\",\"$4\"\)
+echo running root.exe -q -b Fun4All_G4_sPHENIX_jobA.C\($1,0,\"$2\",\"$3\",\"$4\"\)
+root.exe -q -b  Fun4All_G4_sPHENIX_jobA.C\($1,0,\"$2\",\"$3\",\"$4\"\)
 
 
 rsyncdirname=/sphenix/user/sphnxpro/prmon/rawdata/jobA/run$5
