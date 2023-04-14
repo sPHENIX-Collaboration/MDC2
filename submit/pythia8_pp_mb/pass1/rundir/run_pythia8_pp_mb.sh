@@ -46,9 +46,9 @@ filename=pythia8_pp_mb_pass1
 txtfilename=${filename}-${runnumber}-${sequence}.txt
 jsonfilename=${filename}-${runnumber}-${sequence}.json
 
-echo running prmon --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Pass1_pp.C\($1,\"$2\",\"$3\"\)
+echo running root.exe -q -b Fun4All_G4_Pass1_pp.C\($1,\"$2\",\"$3\"\)
 
-prmon --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Pass1_pp.C\($1,\"$2\",\"$3\"\)
+root.exe -q -b  Fun4All_G4_Pass1_pp.C\($1,\"$2\",\"$3\"\)
 
 mkdir -p /sphenix/user/sphnxpro/prmon/pythia8_pp_mb/pass1/run$4
 rsync -av $txtfilename /sphenix/user/sphnxpro/prmon/pythia8_pp_mb/pass1

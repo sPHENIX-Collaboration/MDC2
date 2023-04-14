@@ -62,9 +62,9 @@ sequence=$(printf "%05d" $6)
 filename=pythia8_pp_mb_pass2
 
 
-echo running prmon --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Pileup_pp.C\($1,\"$2\",\"$3\",\"$4\"\)
+echo running root.exe -q -b Fun4All_G4_Pileup_pp.C\($1,\"$2\",\"$3\",\"$4\"\)
 
-prmon --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Pileup_pp.C\($1,\"$2\",\"$3\",\"$4\"\)
+root.exe -q -b  Fun4All_G4_Pileup_pp.C\($1,\"$2\",\"$3\",\"$4\"\)
 
 rsyncdirname=/sphenix/user/sphnxpro/prmon/pythia8_pp_mb/pass2
 if [ ! -d $rsyncdirname ]

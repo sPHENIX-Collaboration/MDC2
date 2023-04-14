@@ -93,7 +93,7 @@ printenv
 txtfilename=${filename_epd}-${runnumber}-${sequence}.txt
 jsonfilename=${filename_epd}-${runnumber}-${sequence}.json
 
-echo running prmon --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Global.C\($1,\"$2\",\"$5\",\"$6\"\)
+echo running root.exe -q -b Fun4All_G4_Global.C\($1,\"$2\",\"$5\",\"$6\"\)
 root.exe -q -b  Fun4All_G4_Global.C\($1,\"$2\",\"$5\",\"$6\"\)
 
 [ -f $txtfilename ] && rsync -av $txtfilename $rsyncdirname
