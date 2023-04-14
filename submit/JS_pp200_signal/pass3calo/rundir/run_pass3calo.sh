@@ -57,21 +57,8 @@ echo arg8 \(sequence\): $8
 
 runnumber=$(printf "%010d" $7)
 sequence=$(printf "%05d" $8)
-filename=JS_pp200_signal_pass2_$6
-
-txtfilename=${filename}-${runnumber}-${sequence}.txt
-jsonfilename=${filename}-${runnumber}-${sequence}.json
 
 echo running root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
 root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
-
-rsyncdirname=/sphenix/user/sphnxpro/prmon/JS_pp200_signal/pass3calo_$6
-if [ ! -d $rsyncdirname ]
-then
-mkdir -p $rsyncdirname
-fi
-
-rsync -av $txtfilename $rsyncdirname
-rsync -av $jsonfilename $rsyncdirname
 
 echo "script done"

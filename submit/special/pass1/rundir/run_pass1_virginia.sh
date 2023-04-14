@@ -42,10 +42,6 @@ echo arg6 \(sequence\): $6
 
 runnumber=$(printf "%010d" $5)
 sequence=$(printf "%05d" $6)
-filename=special_$2
-
-txtfilename=${filename}-${runnumber}-${sequence}.txt
-jsonfilename=${filename}-${runnumber}-${sequence}.json
 
 macroname=Fun4All_G4_Special_$2.C
 if [[ ! -f $macroname ]]
@@ -56,15 +52,5 @@ fi
 
 echo running root.exe -q -b $macroname\($1,\"$3\",\"$4\"\)
 root.exe -q -b $macroname\($1,\"$3\",\"$4\"\)
-
-rsyncdirname=/sphenix/user/sphnxpro/prmon/special/pass1_$2
-
-if [ ! -d $rsyncdirname ]
-then
-mkdir -p $rsyncdirname
-fi
-rsync -av $txtfilename $rsyncdirname
-rsync -av $jsonfilename $rsyncdirname
-
 
 echo "script done"

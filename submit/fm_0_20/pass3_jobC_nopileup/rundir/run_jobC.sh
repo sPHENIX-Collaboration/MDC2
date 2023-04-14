@@ -54,21 +54,8 @@ echo arg7 \(sequence\): $7
 
 runnumber=$(printf "%010d" $6)
 sequence=$(printf "%05d" $7)
-filename=fm_0_20_pass3_jobC_nopileup
-
-txtfilenameC=${filename}-${runnumber}-${sequence}_C.txt
-jsonfilenameC=${filename}-${runnumber}-${sequence}_C.json
 
 echo running root.exe -q -b Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\"\)
 root.exe -q -b  Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\"\)
-
-rsyncdirname=/sphenix/user/sphnxpro/prmon/fm_0_20/pass3_jobC_nopileup/run$6
-if [ ! -d $rsyncdirname ]
-then
-  mkdir -p $rsyncdirname
-fi
-
-rsync -av $txtfilenameC $rsyncdirname
-rsync -av $jsonfilenameC $rsyncdirname
 
 echo "script done"

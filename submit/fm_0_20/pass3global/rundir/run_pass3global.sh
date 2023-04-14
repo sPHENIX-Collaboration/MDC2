@@ -52,18 +52,8 @@ echo arg7 \(sequence\): $7
 
 runnumber=$(printf "%010d" $6)
 sequence=$(printf "%05d" $7)
-filename=fm_0_20_pass3global
-
-txtfilename=${filename}-${runnumber}-${sequence}.txt
-jsonfilename=${filename}-${runnumber}-${sequence}.json
 
 echo running root.exe -q -b Fun4All_G4_Global.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
 root.exe -q -b  Fun4All_G4_Global.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
-
-rsyncdirname=/sphenix/user/sphnxpro/prmon/fm_0_20/pass3global/${runnumber}
-[ -d $rsyncdirname ] || mkdir -p $rsyncdirname
-
-[ -f $txtfilename ] && rsync -av $txtfilename $rsyncdirname
-[ -f $jsonfilename ] && rsync -av $jsonfilename $rsyncdirname
 
 echo "script done"

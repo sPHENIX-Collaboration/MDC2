@@ -53,22 +53,8 @@ echo arg7 \(sequence\): $7
 
 runnumber=$(printf "%010d" $6)
 sequence=$(printf "%05d" $7)
-filename=JS_pp200_signal_pass3trk_$5
-
-txtfilename=${filename}-${runnumber}-${sequence}.txt
-jsonfilename=${filename}-${runnumber}-${sequence}.json
-
 
 echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\",\"$5\"\)
 root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\",\"$5\"\)
-
-rsyncdirname=/sphenix/user/sphnxpro/prmon/JS_pp200_signal/pass3trk_$5
-if [ ! -d $rsyncdirname ]
-then
-mkdir -p $rsyncdirname
-fi
-
-rsync -av $txtfilename $rsyncdirname
-rsync -av $jsonfilename $rsyncdirname
 
 echo "script done"

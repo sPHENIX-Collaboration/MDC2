@@ -54,18 +54,8 @@ echo arg8 \(sequence\): $8
 
 runnumber=$(printf "%010d" $7)
 sequence=$(printf "%05d" $8)
-filename=JS_pp200_signal_pass3global_embed_$6
-
-txtfilename=${filename}-${runnumber}-${sequence}.txt
-jsonfilename=${filename}-${runnumber}-${sequence}.json
 
 echo running root.exe -q -b Fun4All_G4_Global.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
 root.exe -q -b  Fun4All_G4_Global.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
-
-rsyncdirname=/sphenix/user/sphnxpro/prmon/JS_pp200_signal/pass3global_embed_$6/run$7
-[ -d $rsyncdirname ] || mkdir -p $rsyncdirname
-
-[ -f $txtfilename ] && rsync -av $txtfilename $rsyncdirname
-[ -f $jsonfilename ] && rsync -av $jsonfilename $rsyncdirname
 
 echo "script done"

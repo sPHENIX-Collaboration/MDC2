@@ -61,21 +61,8 @@ echo arg10 \(sequence\): ${10}
 
 runnumber=$(printf "%010d" $9)
 sequence=$(printf "%05d" ${10})
-filename=fm_0_20_pass3_embed_$8
-
-txtfilename=${filename}-${runnumber}-${sequence}.txt
-jsonfilename=${filename}-${runnumber}-${sequence}.json
 
 echo running root.exe -q -b Fun4All_G4_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",0,\"$7\",\"$8\"\)
 root.exe -q -b  Fun4All_G4_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",0,\"$7\",\"$8\"\)
-
-rsyncdirname=/sphenix/user/sphnxpro/prmon/JS_pp200_signal/pass2_embed/run$9
-if [ ! -d $rsyncdirname ]
-then
-  mkdir -p $rsyncdirname
-fi
-
-rsync -av $txtfilename $rsyncdirname
-rsync -av $jsonfilename $rsyncdirname
 
 echo "script done"

@@ -58,23 +58,13 @@ echo arg6 \(vertex embed file\): $6
 echo arg7 \(output dir\): $7
 echo arg8 \(particle\): $8
 echo arg9 \(ntuple output file\): $9
-echo arg10 \(runnumber\): $10
-echo arg11 \(sequence\): $11
+echo arg10 \(runnumber\): ${10}
+echo arg11 \(sequence\): ${11}
 
-runnumber=$(printf "%010d" $10)
-sequence=$(printf "%05d" $11)
-filename=hijing_embed_$8
-
-txtfilename=${filename}-${runnumber}-${sequence}.txt
-jsonfilename=${filename}-${runnumber}-${sequence}.json
+runnumber=$(printf "%010d" ${10})
+sequence=$(printf "%05d" ${11})
 
 echo running root.exe -q -b Fun4All_G4_Pi0_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",0,\"$7\",\"$8\",\"$9\"\)
 root.exe -q -b  Fun4All_G4_Eta_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",0,\"$7\",\"$8\",\"$9\"\)
-
-rsyncdirname=/sphenix/user/sphnxpro/prmon/single/hijing_embed_$8
-[ -d $rsyncdirname ] ||  mkdir -p $rsyncdirname
-
-[ -f $txtfilename ] && rsync -av $txtfilename $rsyncdirname
-[ -f $jsonfilename ] && rsync -av $jsonfilename $rsyncdirname
 
 echo "script done"

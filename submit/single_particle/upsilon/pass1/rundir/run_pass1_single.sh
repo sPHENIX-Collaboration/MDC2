@@ -46,22 +46,8 @@ echo arg8 \(sequence\): $8
 
 runnumber=$(printf "%010d" $7)
 sequence=$(printf "%05d" $8)
-filename=single_$2_$3_$4
-
-txtfilename=${filename}-${runnumber}-${sequence}.txt
-jsonfilename=${filename}-${runnumber}-${sequence}.json
 
 echo running root.exe -q -b Fun4All_G4_Single.C\($1,\"$2\",$3,$4,\"$5\",\"$6\"\)
 root.exe -q -b Fun4All_G4_Single.C\($1,\"$2\",$3,$4,\"$5\",\"$6\"\)
-
-rsyncdirname=/sphenix/user/sphnxpro/prmon/single/pass1_$2_$3_$4
-
-if [ ! -d $rsyncdirname ]
-then
-mkdir -p $rsyncdirname
-fi
-rsync -av $txtfilename $rsyncdirname
-rsync -av $jsonfilename $rsyncdirname
-
 
 echo "script done"

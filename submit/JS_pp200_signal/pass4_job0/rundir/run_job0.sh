@@ -49,22 +49,8 @@ echo arg6 \(sequence\): $6
 
 runnumber=$(printf "%010d" $5)
 sequence=$(printf "%05d" $6)
-filename=JS_pp200_signal_pass4_job0_$5
-
-txtfilename0=${filename}-${runnumber}-${sequence}_0.txt
-jsonfilename0=${filename}-${runnumber}-${sequence}_0.json
 
 echo running root.exe -q -b Fun4All_G4_sPHENIX_job0.C\($1,0,\"$2\",\"$3\",\"$4\"\)
 root.exe -q -b  Fun4All_G4_sPHENIX_job0.C\($1,0,\"$2\",\"$3\",\"$4\"\)
-
-
-rsyncdirname=/sphenix/user/sphnxpro/prmon/JS_pp200_signal/pass4_job0_$5
-if [ ! -d $rsyncdirname ]
-then
-  mkdir -p $rsyncdirname
-fi
-
-rsync -av $txtfilename0 $rsyncdirname
-rsync -av $jsonfilename0 $rsyncdirname
 
 echo "script done"

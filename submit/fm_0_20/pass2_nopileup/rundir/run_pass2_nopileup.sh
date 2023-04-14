@@ -58,12 +58,6 @@ echo arg9 \(sequence\): $9
 
 runnumber=$(printf "%010d" $8)
 sequence=$(printf "%05d" $9)
-filename_calo=fm_0_20_pass2_nopileup_calo
-filename_epd=fm_0_20_pass2_nopileup_epd
-filename_trkr=fm_0_20_pass2_nopileup_trkr
-
-rsyncdirname=/sphenix/user/sphnxpro/prmon/fm_0_20/pass2_nopileup/run$8
-[ -d $rsyncdirname ] || mkdir -p $rsyncdirname
 
 #---------------------------------------------------------------
 # Calorimeter Reconstruction
@@ -72,15 +66,9 @@ source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup
 echo 'here comes your Calorimeter Reconstruction environment'
 printenv
 
-txtfilename=${filename_calo}-${runnumber}-${sequence}.txt
-jsonfilename=${filename_calo}-${runnumber}-${sequence}.json
-
 echo running root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
 #root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
 
-
-[ -f $txtfilename ] && rsync -av $txtfilename $rsyncdirname
-[ -f $jsonfilename ] && rsync -av $jsonfilename $rsyncdirname
 
 #---------------------------------------------------------------
 # Global Reconstruction
@@ -89,14 +77,8 @@ source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup
 echo 'here comes your Global Reconstruction environment'
 printenv
 
-txtfilename=${filename_epd}-${runnumber}-${sequence}.txt
-jsonfilename=${filename_epd}-${runnumber}-${sequence}.json
-
 echo running root.exe -q -b Fun4All_G4_Global.C\($1,\"$2\",\"$5\",\"$6\"\)
 root.exe -q -b  Fun4All_G4_Global.C\($1,\"$2\",\"$5\",\"$6\"\)
-
-[ -f $txtfilename ] && rsync -av $txtfilename $rsyncdirname
-[ -f $jsonfilename ] && rsync -av $jsonfilename $rsyncdirname
 
 #---------------------------------------------------------------
 # pass3 tracking
@@ -105,13 +87,7 @@ source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup
 echo 'here comes your Pass3 Tracking environment'
 printenv
 
-txtfilename=${filename_trkr}-${runnumber}-${sequence}.txt
-jsonfilename=${filename_trkr}-${runnumber}-${sequence}.json
-
 echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$5\"\)
 #root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\"\)
-
-[ -f $txtfilename ] && rsync -av $txtfilename $rsyncdirname
-[ -f $jsonfilename ] && rsync -av $jsonfilename $rsyncdirname
 
 echo "script done"

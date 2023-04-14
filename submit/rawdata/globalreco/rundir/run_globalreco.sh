@@ -48,21 +48,8 @@ echo arg10 \(raw data dir\): ${10}
 
 runnumber=$(printf "%010d" $2)
 sequence=$(printf "%05d" $3)
-filename=globalreco
-
-txtfilename=${filename}-${runnumber}-${sequence}.txt
-jsonfilename=${filename}-${runnumber}-${sequence}.json
 
 echo running root.exe -q -b Fun4All_GlobalReco.C\($1,\"$4\",\"$5\",\"$6\",\"$7\",$8,$9,\"${10}\"\)
 root.exe -q -b  Fun4All_GlobalReco.C\($1,\"$4\",\"$5\",\"$6\",\"$7\",$8,$9,\"${10}\"\)
-
-rsyncdirname=/sphenix/user/sphnxpro/prmon/rawdata/globalreco
-if [ ! -d $rsyncdirname ]
-then
-  mkdir -p $rsyncdirname
-fi
-
-rsync -av $txtfilename $rsyncdirname
-rsync -av $jsonfilename $rsyncdirname
 
 echo "script done"

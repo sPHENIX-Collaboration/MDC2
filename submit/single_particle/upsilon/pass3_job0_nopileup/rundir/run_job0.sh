@@ -51,22 +51,8 @@ echo arg7 \(sequence\): 76
 
 runnumber=$(printf "%010d" $6)
 sequence=$(printf "%05d" $7)
-filename=single_particle_upsilon_pass3_job0_nopileup
-
-txtfilename0=${filename}-${runnumber}-${sequence}_0.txt
-jsonfilename0=${filename}-${runnumber}-${sequence}_0.json
 
 echo running root.exe -q -b Fun4All_G4_sPHENIX_job0.C\($1,0,\"$2\",\"$3\",\"$4\"\)
 root.exe -q -b  Fun4All_G4_sPHENIX_job0.C\($1,0,\"$2\",\"$3\",\"$4\"\)
-
-
-rsyncdirname=/sphenix/user/sphnxpro/prmon/single_particle_upsilon/pass3_job0_nopileup
-if [ ! -d $rsyncdirname ]
-then
-  mkdir -p $rsyncdirname
-fi
-
-rsync -av $txtfilename0 $rsyncdirname
-rsync -av $jsonfilename0 $rsyncdirname
 
 echo "script done"

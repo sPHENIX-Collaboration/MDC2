@@ -41,16 +41,9 @@ echo arg5 \(sequence\): $5
 
 runnumber=$(printf "%010d" $4)
 sequence=$(printf "%05d" $5)
-filename=pythia8_pp_mb_pass1
-
-txtfilename=${filename}-${runnumber}-${sequence}.txt
-jsonfilename=${filename}-${runnumber}-${sequence}.json
 
 echo running root.exe -q -b Fun4All_G4_Pass1_pp.C\($1,\"$2\",\"$3\"\)
 
 root.exe -q -b  Fun4All_G4_Pass1_pp.C\($1,\"$2\",\"$3\"\)
 
-mkdir -p /sphenix/user/sphnxpro/prmon/pythia8_pp_mb/pass1/run$4
-rsync -av $txtfilename /sphenix/user/sphnxpro/prmon/pythia8_pp_mb/pass1
-rsync -av $jsonfilename /sphenix/user/sphnxpro/prmon/pythia8_pp_mb/pass1
 echo "script done"

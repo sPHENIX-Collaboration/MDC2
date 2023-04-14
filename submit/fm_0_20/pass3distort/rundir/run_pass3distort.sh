@@ -45,17 +45,8 @@ echo arg6 \(sequence\): $6
 
 runnumber=$(printf "%010d" $5)
 sequence=$(printf "%05d" $6)
-filename=fm_0_20_pass3distort
-
-txtfilename=${filename}-${runnumber}-${sequence}.txt
-jsonfilename=${filename}-${runnumber}-${sequence}.json
 
 echo running root.exe -q -b Fun4All_G4_Pass3TrkDistort.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\"\)
  root.exe -q -b  Fun4All_G4_Pass3TrkDistort.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\"\)
-
-mkdir -p /sphenix/user/sphnxpro/prmon/fm_0_20/pass3distort
-
-rsync -av $txtfilename /sphenix/user/sphnxpro/prmon/fm_0_20/pass3distort
-rsync -av $jsonfilename /sphenix/user/sphnxpro/prmon/fm_0_20/pass3distort
 
 echo "script done"

@@ -46,22 +46,8 @@ echo arg7 \(input dir\): $7
 
 runnumber=$(printf "%010d" $5)
 sequence=$(printf "%05d" $6)
-filename=job0
-
-txtfilename=${filename}-${runnumber}-${sequence}.txt
-jsonfilename=${filename}-${runnumber}-${sequence}.json
 
 echo running root.exe -q -b Fun4All_Job0.C\($1,\"$2\",\"$3\",\"$4\",$5,$6,\"$7\"\)
 root.exe -q -b Fun4All_Job0.C\($1,\"$2\",\"$3\",\"$4\",$5,$6,\"$7\"\)
-
-rsyncdirname=/sphenix/user/sphnxpro/prmon/rawdata/job0/run$5
-
-if [ ! -d $rsyncdirname ]
-then
-mkdir -p $rsyncdirname
-fi
-rsync -av $txtfilename $rsyncdirname
-rsync -av $jsonfilename $rsyncdirname
-
 
 echo "script done"

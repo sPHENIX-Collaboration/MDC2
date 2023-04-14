@@ -69,25 +69,12 @@ echo arg6 \(output file\): $6
 echo arg7 \(output dir\): $7
 echo arg8 \(runnumber\): $8
 echo arg9 \(sequence\): $9
-echo arg10 \(quarkfilter\): $10
+echo arg10 \(quarkfilter\): ${10}
 
 runnumber=$(printf "%010d" $8)
 sequence=$(printf "%05d" $9)
-filename=HF_pp200_signal_pass5_truthreco_$10
-
-txtfilename=${filename}-${runnumber}-${sequence}.txt
-jsonfilename=${filename}-${runnumber}-${sequence}.json
 
 echo running root.exe -q -b Fun4All_TruthReco.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\"\)
 root.exe -q -b  Fun4All_TruthReco.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\"\)
-
-rsyncdirname=/sphenix/user/sphnxpro/prmon/HF_pp200_signal/pass5_truthreco_$10
-if [ ! -d $rsyncdirname ]
-then
-  mkdir -p $rsyncdirname
-fi
-
-rsync -av $txtfilename $rsyncdirname
-rsync -av $jsonfilename $rsyncdirname
 
 echo "script done"
