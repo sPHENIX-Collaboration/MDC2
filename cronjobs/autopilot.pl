@@ -54,7 +54,7 @@ my %submitdir = (
      "HF_pp200_signal/pass3_jobC_nopileup/condor" => ("-shared"),
 #"JS_pp200_signal/pass2/condor" => (""),
 #    "JS_pp200_signal/pass2_embed/condor" => (""),
-    "JS_pp200_signal/pass2_nopileup/condor" => (""),
+#    "JS_pp200_signal/pass2_nopileup/condor" => (""),
 #"JS_pp200_signal/pass3calo/condor" => (""),
     "JS_pp200_signal/pass3calo_embed/condor" => ("-shared"),
     "JS_pp200_signal/pass3global_embed/condor" => ("-shared"),
@@ -81,7 +81,7 @@ my %submitdir = (
 
 #my @quarkfilters = ("Charm", "Bottom", "JetD0");
 my @quarkfilters = ("Charm", "CharmD0piKJet5", "CharmD0piKJet12");
-my @jettriggers = ("Jet10", "Jet30", "PhotonJet");
+my @jettriggers = ("Jet10", "Jet30", "Jet40", "PhotonJet");
 #my @jettriggers = ("Jet10", "Jet30");
 #my @singleparticles = {"gamma 10000 10000"};
 
