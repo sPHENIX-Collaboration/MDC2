@@ -60,8 +60,8 @@ filename=single_pass4_job0_embed_$2
 txtfilename0=${filename}-${runnumber}-${sequence}_0.txt
 jsonfilename0=${filename}-${runnumber}-${sequence}_0.json
 
-echo running prmon --filename $txtfilename0 --json-summary $jsonfilename0 -- root.exe -q -b Fun4All_G4_sPHENIX_job0.C\($1,0,\"$5\",\"$6\",\"$7\"\)
-prmon --filename $txtfilename0 --json-summary $jsonfilename0 -- root.exe -q -b  Fun4All_G4_sPHENIX_job0.C\($1,0,\"$5\",\"$6\",\"$7\"\)
+echo running root.exe -q -b Fun4All_G4_sPHENIX_job0.C\($1,0,\"$5\",\"$6\",\"$7\"\)
+root.exe -q -b  Fun4All_G4_sPHENIX_job0.C\($1,0,\"$5\",\"$6\",\"$7\"\)
 
 
 rsyncdirname=/sphenix/user/sphnxpro/prmon/single/pass4_job0_embed_$2/run$8

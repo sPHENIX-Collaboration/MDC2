@@ -54,8 +54,8 @@ filename=fm_0_20_striptruth
 txtfilename0=${filename}-${runnumber}-${sequence}_0.txt
 jsonfilename0=${filename}-${runnumber}-${sequence}_0.json
 
-echo running prmon --filename $txtfilename0 --json-summary $jsonfilename0 -- root.exe -q -b Fun4All_G4_StripTruth.C\($1,\"$2\",\"$3\",\"$4\"\)
-prmon --filename $txtfilename0 --json-summary $jsonfilename0 -- root.exe -q -b  Fun4All_G4_StripTruth.C\($1,\"$2\",\"$3\",\"$4\"\)
+echo running root.exe -q -b Fun4All_G4_StripTruth.C\($1,\"$2\",\"$3\",\"$4\"\)
+root.exe -q -b  Fun4All_G4_StripTruth.C\($1,\"$2\",\"$3\",\"$4\"\)
 
 
 rsyncdirname=/sphenix/user/sphnxpro/prmon/fm_0_20/striptruth
