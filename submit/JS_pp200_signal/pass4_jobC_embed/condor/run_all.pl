@@ -14,10 +14,11 @@ my $test;
 my $incremental;
 my $overwrite;
 my $shared;
-GetOptions("test"=>\$test, "increment"=>\$incremental,  "overwrite"=>\$overwrite,"shared" => \$shared);
+my $phenix;
+GetOptions("test"=>\$test, "increment"=>\$incremental,  "overwrite"=>\$overwrite,"phenix" => \$phenix, "shared" => \$shared);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"PhotonJet\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"Jet40\", \"PhotonJet\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--overwrite : overwrite existing jobfiles and restart\n";
@@ -38,6 +39,7 @@ my $maxsubmit = $ARGV[0];
 my $jettrigger = $ARGV[1];
 if ($jettrigger  ne "Jet10" &&
     $jettrigger  ne "Jet30" &&
+    $jettrigger  ne "Jet40" &&
     $jettrigger  ne "PhotonJet")
 {
     print "second argument has to be Jet10, Jet30 or PhotonJet\n";
@@ -156,6 +158,10 @@ my $jobfile = sprintf("condor.job");
 if (defined $shared)
 {
  $jobfile = sprintf("condor.job.shared");
+}
+if (defined $phenix)
+{
+ $jobfile = sprintf("condor.job.phenix");
 }
 if (! -f $jobfile)
 {
