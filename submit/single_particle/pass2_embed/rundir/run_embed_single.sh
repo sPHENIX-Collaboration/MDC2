@@ -71,7 +71,7 @@ txtfilename=${filename}-${runnumber}-${sequence}.txt
 jsonfilename=${filename}-${runnumber}-${sequence}.json
 
 echo running root.exe -q -b Fun4All_G4_Single_Embed.C\($1,\"$2\",$3, $4, \"$5\",\"$6\",\"$7\",\"$8\",\"$9\",\"${10}\"\)
-prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Single_Embed.C\($1,\"$2\",$3,$4,\"$5\",\"$6\",\"$7\",\"$8\",\"$9\",\"${10}\"\)
+root.exe -q -b  Fun4All_G4_Single_Embed.C\($1,\"$2\",$3,$4,\"$5\",\"$6\",\"$7\",\"$8\",\"$9\",\"${10}\"\)
 
 rsyncdirname=/sphenix/user/sphnxpro/prmon/single/single_embed_$2/run${11}
 if [ ! -d $rsyncdirname ]

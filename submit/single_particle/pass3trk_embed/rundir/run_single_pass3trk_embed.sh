@@ -60,8 +60,8 @@ filename=single_pass3trk_embed_$2
 txtfilename=${filename}-${runnumber}-${sequence}.txt
 jsonfilename=${filename}-${runnumber}-${sequence}.json
 
-echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",$3,$4,\"$5\",\"$6\",\"$7\"\)
-prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",$3,$4,\"$5\",\"$6\",\"$7\"\)
+echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",$3,$4,\"$5\",\"$6\",\"$7\"\)
+root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",$3,$4,\"$5\",\"$6\",\"$7\"\)
 
 rsyncdirname=/sphenix/user/sphnxpro/prmon/single/pass3trk_embed_$2/run$8
 if [ ! -d $rsyncdirname ]

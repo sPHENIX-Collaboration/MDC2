@@ -51,7 +51,7 @@ txtfilename=${filename}-${runnumber}-${sequence}.txt
 jsonfilename=${filename}-${runnumber}-${sequence}.json
 
 echo running root.exe -q -b Fun4All_G4_Pass3TrkDistort.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\"\)
-prmon  --filename $txtfilename --json-summary $jsonfilename --  root.exe -q -b  Fun4All_G4_Pass3TrkDistort.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\"\)
+ root.exe -q -b  Fun4All_G4_Pass3TrkDistort.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\"\)
 
 mkdir -p /sphenix/user/sphnxpro/prmon/fm_0_20/pass3distort
 

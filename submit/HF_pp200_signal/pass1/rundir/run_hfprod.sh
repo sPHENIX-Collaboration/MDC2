@@ -47,8 +47,8 @@ filename=HF_pp200_signal_pass1_$2
 txtfilename=${filename}-${runnumber}-${sequence}.txt
 jsonfilename=${filename}-${runnumber}-${sequence}.json
 
-echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_HF_pp_signal.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
-prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_HF_pp_signal.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
+echo running root.exe -q -b Fun4All_G4_HF_pp_signal.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
+root.exe -q -b Fun4All_G4_HF_pp_signal.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
 
 rsyncdirname=/sphenix/user/sphnxpro/prmon/HF_pp200_signal/pass1_$2
 

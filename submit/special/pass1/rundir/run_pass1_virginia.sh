@@ -54,8 +54,8 @@ then
   exit 1
 fi
 
-echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b $macroname\($1,\"$3\",\"$4\"\)
-prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b $macroname\($1,\"$3\",\"$4\"\)
+echo running root.exe -q -b $macroname\($1,\"$3\",\"$4\"\)
+root.exe -q -b $macroname\($1,\"$3\",\"$4\"\)
 
 rsyncdirname=/sphenix/user/sphnxpro/prmon/special/pass1_$2
 

@@ -53,8 +53,8 @@ filename=globalreco
 txtfilename=${filename}-${runnumber}-${sequence}.txt
 jsonfilename=${filename}-${runnumber}-${sequence}.json
 
-echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_GlobalReco.C\($1,\"$4\",\"$5\",\"$6\",\"$7\",$8,$9,\"${10}\"\)
-prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_GlobalReco.C\($1,\"$4\",\"$5\",\"$6\",\"$7\",$8,$9,\"${10}\"\)
+echo running root.exe -q -b Fun4All_GlobalReco.C\($1,\"$4\",\"$5\",\"$6\",\"$7\",$8,$9,\"${10}\"\)
+root.exe -q -b  Fun4All_GlobalReco.C\($1,\"$4\",\"$5\",\"$6\",\"$7\",$8,$9,\"${10}\"\)
 
 rsyncdirname=/sphenix/user/sphnxpro/prmon/rawdata/globalreco
 if [ ! -d $rsyncdirname ]

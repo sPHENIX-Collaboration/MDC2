@@ -48,8 +48,8 @@ filename=JS_pp200_signal_pass1
 txtfilename=${filename}-${runnumber}-${sequence}.txt
 jsonfilename=${filename}-${runnumber}-${sequence}.json
 
-echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_JS_pp_signal.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
-prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_JS_pp_signal.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
+echo running root.exe -q -b Fun4All_G4_JS_pp_signal.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
+root.exe -q -b Fun4All_G4_JS_pp_signal.C\($1,\"$2\",\"$3\",\"\",0,\"$4\"\)
 
 rsyncdirname=/sphenix/user/sphnxpro/prmon/JS_pp200_signal/pass1/$2
 

@@ -77,8 +77,8 @@ printenv
 txtfilename=${filename_calo}-${runnumber}-${sequence}.txt
 jsonfilename=${filename_calo}-${runnumber}-${sequence}.json
 
-echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
-#prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
+echo running root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
+#root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
 
 [ -f $txtfilename ] && rsync -av $txtfilename $rsyncdirname
 [ -f $jsonfilename ] && rsync -av $jsonfilename $rsyncdirname
@@ -94,7 +94,7 @@ txtfilename=${filename_epd}-${runnumber}-${sequence}.txt
 jsonfilename=${filename_epd}-${runnumber}-${sequence}.json
 
 echo running prmon --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Global.C\($1,\"$2\",\"$5\",\"$6\"\)
-prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Global.C\($1,\"$2\",\"$5\",\"$6\"\)
+root.exe -q -b  Fun4All_G4_Global.C\($1,\"$2\",\"$5\",\"$6\"\)
 
 [ -f $txtfilename ] && rsync -av $txtfilename $rsyncdirname
 [ -f $jsonfilename ] && rsync -av $jsonfilename $rsyncdirname
@@ -109,8 +109,8 @@ printenv
 txtfilename=${filename_trkr}-${runnumber}-${sequence}.txt
 jsonfilename=${filename_trkr}-${runnumber}-${sequence}.json
 
-echo running prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$8\"\)
-#prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$8\"\)
+echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$8\"\)
+#root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$8\"\)
 
 [ -f $txtfilename ] && rsync -av $txtfilename $rsyncdirname
 [ -f $jsonfilename ] && rsync -av $jsonfilename $rsyncdirname

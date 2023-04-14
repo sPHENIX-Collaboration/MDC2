@@ -69,7 +69,7 @@ txtfilename=${filename}-${runnumber}-${sequence}.txt
 jsonfilename=${filename}-${runnumber}-${sequence}.json
 
 echo running root.exe -q -b Fun4All_G4_Pi0_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",0,\"$7\",\"$8\",\"$9\"\)
-prmon  --filename $txtfilename --json-summary $jsonfilename -- root.exe -q -b  Fun4All_G4_Pi0_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",0,\"$7\",\"$8\",\"$9\"\)
+root.exe -q -b  Fun4All_G4_Pi0_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",0,\"$7\",\"$8\",\"$9\"\)
 
 rsyncdirname=/sphenix/user/sphnxpro/prmon/single/hijing_embed_$8
 if [ ! -d $rsyncdirname ]
