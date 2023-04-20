@@ -19,7 +19,7 @@
 #include <G4_User.C>
 
 #include <ffamodules/FlagHandler.h>
-#include <ffamodules/XploadInterface.h>
+#include <ffamodules/CDBInterface.h>
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
@@ -36,9 +36,9 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_Calo(
     const int nEvents = 1,
-    const string &inputFile0 = "DST_CALO_G4HIT_sHijing_0_12fm-0000000001-00000.root",
-    const string &inputFile1 = "DST_VERTEX_sHijing_0_12fm-0000000001-00000.root",
-    const string &outputFile = "G4sPHENIX_calo.root",
+    const string &inputFile0 = "DST_CALO_G4HIT_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
+    const string &inputFile1 = "DST_VERTEX_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
+    const string &outputFile = "DST_CALO_CLUSTER_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
     const string &outdir = ".")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
@@ -58,10 +58,9 @@ int Fun4All_G4_Calo(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
-  Enable::XPLOAD = true;
-  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
-  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
-  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
+  Enable::CDB = true;
+  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
   //===============
   // Input options
@@ -298,19 +297,34 @@ int Fun4All_G4_Calo(
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     out->AddNode("Sync");
     out->AddNode("EventHeader");
+// Inner Hcal
     out->AddNode("TOWER_SIM_HCALIN");
     out->AddNode("TOWER_RAW_HCALIN");
     out->AddNode("TOWER_CALIB_HCALIN");
+    out->AddNode("TOWERINFO_RAW_HCALIN");
+    out->AddNode("TOWERINFO_SIM_HCALIN");
+    out->AddNode("TOWERINFO_CALIB_HCALIN");
     out->AddNode("CLUSTER_HCALIN");
+
+// Outer Hcal
     out->AddNode("TOWER_SIM_HCALOUT");
     out->AddNode("TOWER_RAW_HCALOUT");
     out->AddNode("TOWER_CALIB_HCALOUT");
+    out->AddNode("TOWERINFO_RAW_HCALOUT");
+    out->AddNode("TOWERINFO_SIM_HCALOUT");
+    out->AddNode("TOWERINFO_CALIB_HCALOUT");
     out->AddNode("CLUSTER_HCALOUT");
+
+// CEmc
     out->AddNode("TOWER_SIM_CEMC");
     out->AddNode("TOWER_RAW_CEMC");
     out->AddNode("TOWER_CALIB_CEMC");
+    out->AddNode("TOWERINFO_RAW_CEMC");
+    out->AddNode("TOWERINFO_SIM_CEMC");
+    out->AddNode("TOWERINFO_CALIB_CEMC");
     out->AddNode("CLUSTER_CEMC");
     out->AddNode("CLUSTER_POS_COR_CEMC");
+
 // leave the topo cluster here in case we run this during pass3
     out->AddNode("TOPOCLUSTER_ALLCALO");
     out->AddNode("TOPOCLUSTER_EMCAL");
@@ -357,7 +371,7 @@ int Fun4All_G4_Calo(
   // Exit
   //-----
 
-  XploadInterface::instance()->Print(); // print used DB files
+  CDBInterface::instance()->Print(); // print used DB files
   se->End();
   se->PrintTimer();
   std::cout << "All done" << std::endl;
