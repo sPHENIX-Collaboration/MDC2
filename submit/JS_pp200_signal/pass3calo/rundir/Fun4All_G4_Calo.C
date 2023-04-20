@@ -2,21 +2,21 @@
 #define MACRO_FUN4ALLG4CALO_C
 
 #include <GlobalVariables.C>
-
-#include <DisplayOn.C>
-#include <G4Setup_sPHENIX.C>
-#include <G4_Bbc.C>
-#include <G4_CaloTrigger.C>
-#include <G4_DSTReader.C>
-#include <G4_Global.C>
-#include <G4_HIJetReco.C>
+#include <G4_CEmc_Spacal.C>
+//#include <G4Setup_sPHENIX.C>
+//#include <G4_Bbc.C>
+//#include <G4_CaloTrigger.C>
+//#include <G4_Global.C>
+//#include <G4_HIJetReco.C>
+#include <G4_HcalIn_ref.C>
+#include <G4_HcalOut_ref.C>
 #include <G4_Input.C>
-#include <G4_Jets.C>
-#include <G4_ParticleFlow.C>
+//#include <G4_Jets.C>
+//#include <G4_ParticleFlow.C>
 #include <G4_Production.C>
 #include <G4_TopoClusterReco.C>
-#include <G4_Tracking.C>
-#include <G4_User.C>
+//#include <G4_Tracking.C>
+//#include <G4_User.C>
 
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
@@ -101,12 +101,6 @@ int Fun4All_G4_Calo(
   DstOut::OutputDir = outdir;
   DstOut::OutputFile = outputFile;
 
-  //Option to convert DST to human command readable TTree for quick poke around the outputs
-  //  Enable::DSTREADER = true;
-
-  // turn the display on (default off)
-  Enable::DISPLAY = false;
-
   //======================
   // What to run
   //======================
@@ -131,66 +125,20 @@ int Fun4All_G4_Calo(
   Enable::HCALOUT_CELL = Enable::HCALOUT && true;
   Enable::HCALOUT_TOWER = Enable::HCALOUT_CELL && true;
   Enable::HCALOUT_CLUSTER = Enable::HCALOUT_TOWER && true;
-//  Enable::HCALOUT_EVAL = Enable::HCALOUT_CLUSTER && true;
-
-
-//  Enable::EPD = false;
-
-//  Enable::GLOBAL_RECO = true;
-  //  Enable::GLOBAL_FASTSIM = true;
-
-//  Enable::CALOTRIGGER = Enable::CEMC_TOWER && Enable::HCALIN_TOWER && Enable::HCALOUT_TOWER && false;
-
-//  Enable::JETS = true;
-//  Enable::JETS_EVAL = Enable::JETS && true;
-
-  // HI Jet Reco for p+Au / Au+Au collisions (default is false for
-  // single particle / p+p-only simulations, or for p+Au / Au+Au
-  // simulations which don't particularly care about jets)
-//  Enable::HIJETS = false && Enable::JETS && Enable::CEMC_TOWER && Enable::HCALIN_TOWER && Enable::HCALOUT_TOWER;
-
-  // 3-D topoCluster reconstruction, potentially in all calorimeter layers
-//  Enable::TOPOCLUSTER = true && Enable::CEMC_TOWER && Enable::HCALIN_TOWER && Enable::HCALOUT_TOWER;
-  // particle flow jet reconstruction - needs topoClusters!
-//  Enable::PARTICLEFLOW = true && Enable::TOPOCLUSTER;
-
-  //---------------
-  // Magnet Settings
-  //---------------
-
-  //  const string magfield = "1.5"; // alternatively to specify a constant magnetic field, give a float number, which will be translated to solenoidal field in T, if string use as fieldmap name (including path)
-  //  G4MAGNET::magfield = string(getenv("CALIBRATIONROOT")) + string("/Field/Map/sPHENIX.2d.root");  // default map from the calibration database
-//  G4MAGNET::magfield_rescale = 1;  // make consistent with expected Babar field strength of 1.4T
-
-  //---------------
-  // Pythia Decayer
-  //---------------
-  // list of decay types in
-  // $OFFLINE_MAIN/include/g4decayer/EDecayType.hh
-  // default is All:
-  // G4P6DECAYER::decayType = EDecayType::kAll;
-
   // Initialize the selected subsystems
-  G4Init();
+//  G4Init();
 
   //---------------------
   // GEANT4 Detector description
   //---------------------
-  if (!Input::READHITS)
-  {
-    G4Setup();
-  }
+  // if (!Input::READHITS)
+  // {
+  //   G4Setup();
+  // }
 
   //------------------
   // Detector Division
   //------------------
-
-  if (Enable::BBC || Enable::BBCFAKE) Bbc_Reco();
-
-  if (Enable::MVTX_CELL) Mvtx_Cells();
-  if (Enable::INTT_CELL) Intt_Cells();
-  if (Enable::TPC_CELL) TPC_Cells();
-  if (Enable::MICROMEGAS_CELL) Micromegas_Cells();
 
   if (Enable::CEMC_CELL) CEMC_Cells();
 
@@ -217,68 +165,6 @@ int Fun4All_G4_Calo(
 
   // if enabled, do topoClustering early, upstream of any possible jet reconstruction
   if (Enable::TOPOCLUSTER) TopoClusterReco();
-
-  if (Enable::DSTOUT_COMPRESS) ShowerCompress();
-
-  //--------------
-  // SVTX tracking
-  //--------------
-  if (Enable::MVTX_CLUSTER) Mvtx_Clustering();
-  if (Enable::INTT_CLUSTER) Intt_Clustering();
-  if (Enable::TPC_CLUSTER) TPC_Clustering();
-  if (Enable::MICROMEGAS_CLUSTER) Micromegas_Clustering();
-
-  if (Enable::TRACKING_TRACK)
-  {
-    TrackingInit();
-    Tracking_Reco();
-  }
-  //-----------------
-  // Global Vertexing
-  //-----------------
-
-  if (Enable::GLOBAL_RECO && Enable::GLOBAL_FASTSIM)
-  {
-    cout << "You can only enable Enable::GLOBAL_RECO or Enable::GLOBAL_FASTSIM, not both" << endl;
-    gSystem->Exit(1);
-  }
-  if (Enable::GLOBAL_RECO)
-  {
-    Global_Reco();
-  }
-  else if (Enable::GLOBAL_FASTSIM)
-  {
-    Global_FastSim();
-  }
-
-  //-----------------
-  // Calo Trigger Simulation
-  //-----------------
-
-  if (Enable::CALOTRIGGER)
-  {
-    CaloTrigger_Sim();
-  }
-
-  //---------
-  // Jet reco
-  //---------
-
-  if (Enable::JETS) Jet_Reco();
-  if (Enable::HIJETS) HIJetReco();
-
-  if (Enable::PARTICLEFLOW) ParticleFlow();
-
-  //----------------------
-  // Simulation evaluation
-  //----------------------
-  string outputroot = outputFile;
-  string remove_this = ".root";
-  size_t pos = outputroot.find(remove_this);
-  if (pos != string::npos)
-  {
-    outputroot.erase(pos, remove_this.length());
-  }
 
   //--------------
   // Set up Input Managers
@@ -330,41 +216,16 @@ int Fun4All_G4_Calo(
     out->AddNode("TOPOCLUSTER_EMCAL");
     out->AddNode("TOPOCLUSTER_HCAL");
     out->AddNode("GlobalVertexMap");
-    if (Enable::DSTOUT_COMPRESS) DstCompress(out);
     se->registerOutputManager(out);
   }
   //-----------------
   // Event processing
   //-----------------
-  if (Enable::DISPLAY)
-  {
-    DisplayOn();
-
-    gROOT->ProcessLine("Fun4AllServer *se = Fun4AllServer::instance();");
-    gROOT->ProcessLine("PHG4Reco *g4 = (PHG4Reco *) se->getSubsysReco(\"PHG4RECO\");");
-
-    cout << "-------------------------------------------------" << endl;
-    cout << "You are in event display mode. Run one event with" << endl;
-    cout << "se->run(1)" << endl;
-    cout << "Run Geant4 command with following examples" << endl;
-    gROOT->ProcessLine("displaycmd()");
-
-    return 0;
-  }
-
   // if we use a negative number of events we go back to the command line here
   if (nEvents < 0)
   {
     return 0;
   }
-  // if we run the particle generator and use 0 it'll run forever
-  if (nEvents == 0 && !Input::HEPMC && !Input::READHITS)
-  {
-    cout << "using 0 for number of events is a bad idea when using particle generators" << endl;
-    cout << "it will run forever, so I just return without running anything" << endl;
-    return 0;
-  }
-
   se->run(nEvents);
 
   //-----
