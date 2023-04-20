@@ -2,21 +2,13 @@
 #define MACRO_FUN4ALLG4CALO_C
 
 #include <GlobalVariables.C>
+
 #include <G4_CEmc_Spacal.C>
-//#include <G4Setup_sPHENIX.C>
-//#include <G4_Bbc.C>
-//#include <G4_CaloTrigger.C>
-//#include <G4_Global.C>
-//#include <G4_HIJetReco.C>
 #include <G4_HcalIn_ref.C>
 #include <G4_HcalOut_ref.C>
 #include <G4_Input.C>
-//#include <G4_Jets.C>
-//#include <G4_ParticleFlow.C>
 #include <G4_Production.C>
 #include <G4_TopoClusterReco.C>
-//#include <G4_Tracking.C>
-//#include <G4_User.C>
 
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
@@ -105,39 +97,25 @@ int Fun4All_G4_Calo(
   // What to run
   //======================
   // Global options (enabled for all enables subsystems - if implemented)
-  //  Enable::ABSORBER = true;
-  //  Enable::OVERLAPCHECK = true;
   //  Enable::VERBOSITY = 1;
 
   Enable::CEMC = true;
   Enable::CEMC_CELL = Enable::CEMC && true;
   Enable::CEMC_TOWER = Enable::CEMC_CELL && true;
   Enable::CEMC_CLUSTER = Enable::CEMC_TOWER && true;
-//  Enable::CEMC_EVAL = Enable::CEMC_CLUSTER && true;
 
   Enable::HCALIN = true;
   Enable::HCALIN_CELL = Enable::HCALIN && true;
   Enable::HCALIN_TOWER = Enable::HCALIN_CELL && true;
   Enable::HCALIN_CLUSTER = Enable::HCALIN_TOWER && true;
-//  Enable::HCALIN_EVAL = Enable::HCALIN_CLUSTER && true;
 
   Enable::HCALOUT = true;
   Enable::HCALOUT_CELL = Enable::HCALOUT && true;
   Enable::HCALOUT_TOWER = Enable::HCALOUT_CELL && true;
   Enable::HCALOUT_CLUSTER = Enable::HCALOUT_TOWER && true;
-  // Initialize the selected subsystems
-//  G4Init();
-
-  //---------------------
-  // GEANT4 Detector description
-  //---------------------
-  // if (!Input::READHITS)
-  // {
-  //   G4Setup();
-  // }
 
   //------------------
-  // Detector Division
+  // Detector Reconstruction
   //------------------
 
   if (Enable::CEMC_CELL) CEMC_Cells();
