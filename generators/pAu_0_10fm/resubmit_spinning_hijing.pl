@@ -8,18 +8,19 @@ use Getopt::Long;
 my $submit;
 GetOptions("submit"=>\$submit);
 
-if ($#ARGV < 0)
+if ($#ARGV < 1)
 {
-    print "usage resubmit_spinning_hijing.pl <condor id>\n";
+    print "usage resubmit_spinning_hijing.pl <condor id> <fm range>\n";
     print "parameters:\n";
     print "-submit : submit the job\n";
     exit(0);
 }
 my $condorid = $ARGV[0];
+my $fm_range = $ARGV[1];
 
-my $condorlogdir = "/tmp/mdc1";
-my $condoroutdir = "/sphenix/sim/sim01/sphnxpro/MDC1/sHijing_HepMC/log";
-my $outputdir = sprintf("/sphenix/sim/sim01/sphnxpro/MDC1/sHijing_HepMC/data");
+my $condorlogdir = "/tmp/mdc2/generators";
+my $condoroutdir = sprintf("/sphenix/sim/sim01/sphnxpro/mdc2/sHijing_HepMC/log/pAu_%s",$fm_range);
+my $outputdir = sprintf("/sphenix/sim/sim01/sphnxpro/mdc2/sHijing_HepMC/pAu_%s",$fm_range);
 my $maxnum=hex('0xFFFFFFFF');
 
 open(F,"find $condoroutdir -maxdepth 1 -type f -name '*.out' | sort |");
