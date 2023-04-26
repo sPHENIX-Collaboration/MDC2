@@ -4,10 +4,11 @@
 #include <G4_Bbc.C>
 #include <G4_Global.C>
 #include <G4_Production.C>
-#include <G4_Tracking.C>
+#include <Trkr_RecoInit.C>
+#include <Trkr_Clustering.C>
 
 #include <ffamodules/FlagHandler.h>
-#include <ffamodules/XploadInterface.h>
+#include <ffamodules/CDBInterface.h>
 
 #include <fun4all/SubsysReco.h>
 #include <fun4all/Fun4AllServer.h>
@@ -41,14 +42,9 @@ int Fun4All_G4_sPHENIX_job0(
   //===============
   // conditions DB flags
   //===============
-  Enable::XPLOAD = true;
-  // tag
-  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
-  // database config
-  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
-  // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
-
+  Enable::CDB = true;
+  rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
+  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
   // set up production relatedstuff
   Enable::PRODUCTION = true;
   Enable::DSTOUT = true;
@@ -123,7 +119,6 @@ int Fun4All_G4_sPHENIX_job0(
   se->run(nEvents);
 
   // terminate
-  XploadInterface::instance()->Print(); // print used DB files
   se->End();
   se->PrintTimer();
   std::cout << "All done" << std::endl;
