@@ -119,6 +119,7 @@ int Fun4All_G4_sPHENIX_job0(
   se->run(nEvents);
 
   // terminate
+  CDBInterface::instance()->Print();
   se->End();
   se->PrintTimer();
   std::cout << "All done" << std::endl;
