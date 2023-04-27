@@ -1,8 +1,5 @@
 #include <GlobalVariables.C>
 
-#include <G4Setup_sPHENIX.C>
-#include <G4_Bbc.C>
-#include <G4_Global.C>
 #include <G4_Production.C>
 #include <Trkr_RecoInit.C>
 #include <Trkr_Clustering.C>
