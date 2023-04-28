@@ -27,7 +27,7 @@ R__LOAD_LIBRARY(libffamodules.so)
 
 int Fun4All_G4_Pass1(
     const int nEvents = 1,
-    const string &inputFile = "/sphenix/sim/sim01/sphnxpro/mdc2/sHijing_HepMC/pAu_0_10fm-0000000006-00000.dat",
+    const string &inputFile = "/sphenix/sim/sim01/sphnxpro/mdc2/sHijing_HepMC/pAu_0_10fm/pAu_0_10fm-0000000006-00000.dat",
     const string &outputFile = "G4Hits_sHijing_pAu_0_10fm-0000000006-00000.root",
     const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
     const int skip = 0,
