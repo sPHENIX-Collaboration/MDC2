@@ -1,13 +1,11 @@
 #include <GlobalVariables.C>
 
-#include <G4Setup_sPHENIX.C>
-#include <G4_Bbc.C>
-#include <G4_Global.C>
 #include <G4_Production.C>
-#include <G4_Tracking.C>
+#include <Trkr_RecoInit.C>
+#include <Trkr_Clustering.C>
 
 #include <ffamodules/FlagHandler.h>
-#include <ffamodules/XploadInterface.h>
+#include <ffamodules/CDBInterface.h>
 
 #include <fun4all/SubsysReco.h>
 #include <fun4all/Fun4AllServer.h>
@@ -25,9 +23,9 @@ R__LOAD_LIBRARY(libfun4all.so)
 int Fun4All_G4_sPHENIX_job0(
   const int nEvents = 0,
   const int nSkipEvents = 0,
-  const std::string &inputFile = "DST_TRKR_HIT_sHijing_0_20fm-0000000062-00000.root",
-  const std::string &outputFile = "DST_TRKR_CLUSTER_sHijing_0_20fm-0000000062-00000.root",
-  const std::string &outdir = ".")
+  const std::string &inputFile = "DST_TRKR_HIT_sHijing_0_20fm-0000000006-00000.root",
+  const std::string &outputFile = "DST_TRKR_CLUSTER_sHijing_0_20fm-0000000006-00000.root",
+    const string &outdir = ".")
 {
 
   // print inputs
@@ -35,42 +33,26 @@ int Fun4All_G4_sPHENIX_job0(
   std::cout << "Fun4All_G4_sPHENIX_job0 - nSkipEvents: " << nSkipEvents << std::endl;
   std::cout << "Fun4All_G4_sPHENIX_job0 - inputFile: " << inputFile << std::endl;
   std::cout << "Fun4All_G4_sPHENIX_job0 - outputFile: " << outputFile << std::endl;
-
+  
   recoConsts *rc = recoConsts::instance();
 
   //===============
   // conditions DB flags
   //===============
-  Enable::XPLOAD = true;
-  // tag
-  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
-  // database config
-  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
-  // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
-
+  Enable::CDB = true;
+  rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
+  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
   // set up production relatedstuff
   Enable::PRODUCTION = true;
   Enable::DSTOUT = true;
   DstOut::OutputDir = outdir;
   DstOut::OutputFile = outputFile;
 
-  // options
-  Enable::PIPE = true;
-  Enable::BBC = true;
-  Enable::MAGNET = true;
-  Enable::PLUGDOOR = false;
-
-  // enable all absorbers
-  // this is equivalent to the old "absorberactive" flag
-  Enable::ABSORBER = true;
-
   // central tracking
   Enable::MVTX = true;
   Enable::INTT = true;
   Enable::TPC = true;
   Enable::MICROMEGAS = true;
-  Enable::BLACKHOLE = true;
 
   // TPC
   G4TPC::ENABLE_STATIC_DISTORTIONS = false;
@@ -94,14 +76,16 @@ int Fun4All_G4_sPHENIX_job0(
   FlagHandler *flg = new FlagHandler();
   se->registerSubsystem(flg);
 
+  // needed for makeActsGeometry, used in clustering
+  TrackingInit();
+
   // clustering
   Mvtx_Clustering();
   Intt_Clustering();
   TPC_Clustering();
   Micromegas_Clustering();
 
-  // needed for makeActsGeometry, used in clustering
-  TrackingInit();
+
   
   // input manager
   auto in = new Fun4AllDstInputManager("DSTin");
@@ -115,7 +99,7 @@ int Fun4All_G4_sPHENIX_job0(
 
   // output manager
   /* all the nodes from DST and RUN are saved to the output */
-  std::string FullOutFile = DstOut::OutputFile;
+    string FullOutFile = DstOut::OutputFile;
   auto out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
   out->AddNode("Sync");
   out->AddNode("EventHeader");
@@ -132,7 +116,7 @@ int Fun4All_G4_sPHENIX_job0(
   se->run(nEvents);
 
   // terminate
-  XploadInterface::instance()->Print(); // print used DB files
+  CDBInterface::instance()->Print();
   se->End();
   se->PrintTimer();
   std::cout << "All done" << std::endl;
