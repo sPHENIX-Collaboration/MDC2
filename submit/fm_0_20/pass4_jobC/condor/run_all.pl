@@ -55,6 +55,7 @@ if ($outdir =~ /lustre/)
     my $storedir = $outdir;
     $storedir =~ s/\/sphenix\/lustre01\/sphnxpro/sphenixS3/;
     my $makedircmd = sprintf("mcs3 mb %s",$storedir);
+    print "executing $makedircmd\n";
     system($makedircmd);
 }
 else
