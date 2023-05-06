@@ -19,7 +19,7 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 58;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_jobC.sh",$rundir);
+my $executable = sprintf("%s/run_pass3_jobC_nopileup_fm_0_20.sh",$rundir);
 my $nevents = $ARGV[0];
 my $infile1 = $ARGV[1];
 my $infile2 = $ARGV[2];
