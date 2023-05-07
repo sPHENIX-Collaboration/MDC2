@@ -1,9 +1,12 @@
+#include <GlobalVariables.C>
+
 #include <G4_Magnet.C>
-#include <G4_Micromegas.C>
 #include <G4_Production.C>
-#include <G4_Tracking.C>
+#include <Trkr_RecoInit.C>
+#include <Trkr_Reco.C>
 
 #include <ffamodules/FlagHandler.h>
+#include <ffamodules/CDBInterface.h>
 
 #include <fun4all/SubsysReco.h>
 #include <fun4all/Fun4AllServer.h>
@@ -20,8 +23,8 @@ R__LOAD_LIBRARY(libfun4all.so)
 int Fun4All_G4_sPHENIX_jobA(
   const int nEvents = 0,
   const int nSkipEvents = 0,
-  const string &inputFile = "DST_TRKR_CLUSTER_pythia8_Charm-0000000063-00000.root",
-  const string &outputFile = "DST_TRACKSEEDS_pythia8_Charm-0000000063-00000.root",
+  const string &inputFile = "DST_TRKR_CLUSTER_pythia8_Charms-0000000006-00000.root",
+  const string &outputFile = "DST_TRACKSEEDS_pythia8_Charm-0000000006-00000.root",
   const string &outdir = "."
   )
 {
@@ -31,6 +34,16 @@ int Fun4All_G4_sPHENIX_jobA(
   std::cout << "Fun4All_G4_sPHENIX_jobA - nSkipEvents: " << nSkipEvents << std::endl;
   std::cout << "Fun4All_G4_sPHENIX_jobA - inputFile: " << inputFile << std::endl;
   std::cout << "Fun4All_G4_sPHENIX_jobA - outputFile: " << outputFile << std::endl;
+
+  recoConsts *rc = recoConsts::instance();
+
+  //===============
+  // conditions DB flags
+  //===============
+  Enable::CDB = true;
+  // tag
+  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
   // set up production relatedstuff
   Enable::PRODUCTION = true;
@@ -116,6 +129,7 @@ int Fun4All_G4_sPHENIX_jobA(
   se->run(nEvents);
 
   // terminate
+  CDBInterface::instance()->Print();
   se->End();
   se->PrintTimer();
   std::cout << "All done" << std::endl;

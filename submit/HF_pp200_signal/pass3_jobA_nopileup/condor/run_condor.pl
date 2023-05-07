@@ -19,7 +19,7 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 54;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_pass3_jobA_nopileup.sh",$rundir);
+my $executable = sprintf("%s/run_pass3_jobA_nopileup_hf.sh",$rundir);
 my $nevents = $ARGV[0];
 my $quarkfilter = $ARGV[1];
 my $infile = $ARGV[2];
