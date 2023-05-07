@@ -81,7 +81,8 @@ int Fun4All_G4_Pass1(
   Input::BEAM_CONFIGURATION = Input::pA_COLLISION;
   
   INPUTHEPMC::filename = inputFile;
-  INPUTHEPMC::FLOW = true;
+//  No AuAu flow for pAu
+//  INPUTHEPMC::FLOW = true;
 //  INPUTHEPMC::FLOW_VERBOSITY = 3;
   INPUTHEPMC::FERMIMOTION = true;
 
