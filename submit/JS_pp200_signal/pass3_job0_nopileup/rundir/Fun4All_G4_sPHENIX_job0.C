@@ -1,11 +1,11 @@
-// local macros
-#include <G4Setup_sPHENIX.C>
-#include <G4_Bbc.C>
-#include <G4_Global.C>
+#include <GlobalVariables.C>
+
 #include <G4_Production.C>
-#include <G4_Tracking.C>
+#include <Trkr_RecoInit.C>
+#include <Trkr_Clustering.C>
 
 #include <ffamodules/FlagHandler.h>
+#include <ffamodules/CDBInterface.h>
 
 #include <fun4all/SubsysReco.h>
 #include <fun4all/Fun4AllServer.h>
@@ -23,8 +23,8 @@ R__LOAD_LIBRARY(libfun4all.so)
 int Fun4All_G4_sPHENIX_job0(
   const int nEvents = 0,
   const int nSkipEvents = 0,
-  const string &inputFile = "DST_TRKR_HIT_pythia8_Jet30-0000000062-00000.root",
-  const string &outputFile = "DST_TRKR_CLUSTER_pythia8_Jet30-0000000062-00000.root",
+  const std::string &inputFile = "DST_TRKR_HIT_pythia8_Jet30-0000000006-00000.root",
+  const std::string &outputFile = "DST_TRKR_CLUSTER_pythia8_Jet30-0000000006-00000.root",
   const string &outdir = ".")
 {
 
@@ -34,6 +34,14 @@ int Fun4All_G4_sPHENIX_job0(
   std::cout << "Fun4All_G4_sPHENIX_job0 - inputFile: " << inputFile << std::endl;
   std::cout << "Fun4All_G4_sPHENIX_job0 - outputFile: " << outputFile << std::endl;
 
+  recoConsts *rc = recoConsts::instance();
+
+  //===============
+  // conditions DB flags
+  //===============
+  Enable::CDB = true;
+  rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
+  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
   // set up production relatedstuff
   Enable::PRODUCTION = true;
   Enable::DSTOUT = true;
@@ -65,8 +73,8 @@ int Fun4All_G4_sPHENIX_job0(
   // make sure to printout random seeds for reproducibility
   PHRandomSeed::Verbosity(1);
 
-  FlagHandler *flag = new FlagHandler();
-  se->registerSubsystem(flag);
+  FlagHandler *flg = new FlagHandler();
+  se->registerSubsystem(flg);
 
   // needed for makeActsGeometry, used in clustering
   TrackingInit();
@@ -106,6 +114,7 @@ int Fun4All_G4_sPHENIX_job0(
   se->run(nEvents);
 
   // terminate
+  CDBInterface::instance()->Print();
   se->End();
   se->PrintTimer();
   std::cout << "All done" << std::endl;
