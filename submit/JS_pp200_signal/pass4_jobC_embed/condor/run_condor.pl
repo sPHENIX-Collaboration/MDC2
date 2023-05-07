@@ -21,7 +21,7 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 56;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_jobC_embed.sh",$rundir);
+my $executable = sprintf("%s/run_pass4_jobC_embed_js.sh",$rundir);
 my $nevents = $ARGV[0];
 my $jettrigger = $ARGV[1];
 my $infile1 = $ARGV[2];
