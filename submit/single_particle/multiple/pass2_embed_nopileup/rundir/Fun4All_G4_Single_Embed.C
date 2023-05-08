@@ -6,10 +6,8 @@
 #include <G4Setup_sPHENIX.C>
 #include <G4_Bbc.C>
 #include <G4_Input.C>
-#include <G4_Jets.C>
 #include <G4_OutputManager_Embed.C>
 #include <G4_Production.C>
-#include <G4_User.C>
 
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
