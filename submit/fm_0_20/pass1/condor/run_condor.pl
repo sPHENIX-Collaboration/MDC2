@@ -22,7 +22,7 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 51;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_hepmc.sh",$rundir);
+my $executable = sprintf("%s/run_hepmc_0_20fm.sh",$rundir);
 my $nevents = $ARGV[0];
 my $infile = $ARGV[1];
 my $dstoutdir = $ARGV[2];

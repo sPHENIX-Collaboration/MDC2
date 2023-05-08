@@ -6,6 +6,8 @@ use File::Path;
 use Getopt::Long;
 use DBI;
 
+sub getlastsegment;
+
 my $test;
 my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
@@ -32,6 +34,7 @@ my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::er
 
 my $maxsubmit = $ARGV[0];
 my $hijing_runnumber = 1;
+my $hijing_dir = sprintf("/sphenix/sim/sim01/sphnxpro/MDC1/sHijing_HepMC/data");
 my $runnumber = 6;
 my $events = 400;
 #$events = 100; # for ftfp_bert_hp
@@ -64,9 +67,10 @@ else
   mkpath($outdir);
 }
 my $nsubmit = 0;
-OUTER: for (my $segment=0; $segment<3000; $segment++)
+my $lastsegment=getlastsegment();
+OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
 {
-    my $hijingdatfile = sprintf("/sphenix/sim/sim01/sphnxpro/MDC1/sHijing_HepMC/data/sHijing_0_20fm-%010d-%05d.dat",$hijing_runnumber, $segment);
+    my $hijingdatfile = sprintf("%s/sHijing_0_20fm-%010d-%05d.dat",$hijing_dir,$hijing_runnumber, $segment);
     if (! -f $hijingdatfile)
     {
 	print "could not locate $hijingdatfile\n";
@@ -105,6 +109,10 @@ OUTER: for (my $segment=0; $segment<3000; $segment++)
 		last OUTER;
 	    }
 	}
+#	else
+#	{
+#	    print "$outfile exists\n";
+#	}
         $sequence++;
     }
 }
@@ -119,4 +127,30 @@ if (-f $condorlistfile)
     {
 	system("condor_submit condor.job");
     }
+}
+
+sub getlastsegment()
+{
+    opendir(DH,$hijing_dir);
+    my @tmpfiles = sort(readdir(DH));
+    closedir(DH);
+    my @files = ();
+    foreach my $f (@tmpfiles)
+    {
+	if ($f =~ /0_20fm/)
+	{
+	    push(@files,$f);
+	}
+    }
+    my $last_segment = -1;
+    if ($files[$#files] =~ /(\S+)-(\d+)-(\d+).*\..*/ )
+    {
+	$last_segment = int($3);
+    }
+    else
+    {
+	print "cannot parse $files[$#files] for segment number\n";
+	exit(1);
+    }
+    return $last_segment;
 }
