@@ -66,7 +66,8 @@ else
   mkpath($outdir);
 }
 my $nsubmit = 0;
-OUTER: for (my $segment=0; $segment<=getlastsegment(); $segment++)
+my $lastsegment=getlastsegment();
+OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
 {
     my $hijingdatfile = sprintf("%s/pAu_0_10fm-%010d-%05d.dat",$hijing_dir,$hijing_runnumber, $segment);
     if (! -f $hijingdatfile)
@@ -132,7 +133,7 @@ sub getlastsegment()
     if ($files[$#files] =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
 	$last_segment = int($3);
-	print "last segment: $last_segment\n";
+#	print "last segment: $last_segment\n";
     }
     else
     {
