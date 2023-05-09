@@ -26,7 +26,6 @@ int Fun4All_G4_Pass3Trk(
   const int nEvents = 0,
   const string &inputFile0 = "DST_TRKR_G4HIT_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000006-00000.root",
   const string &inputFile1 = "DST_TRUTH_G4HIT_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000006-00000.root",
-  const int skip = 0,
   const string &outdir = ".")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
@@ -161,7 +160,6 @@ int Fun4All_G4_Pass3Trk(
     return 0;
   }
 
-  se->skip(skip);
   se->run(nEvents);
 
   //-----
