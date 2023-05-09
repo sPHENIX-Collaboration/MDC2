@@ -54,7 +54,7 @@ echo arg9 \(sequence\): $9
 runnumber=$(printf "%010d" $8)
 sequence=$(printf "%05d" $9)
 
-echo running root.exe -q -b Fun4All_G4_Single_Embed.C\($1,\"$2\",$3, $4, $5, \"$6\",\"$7\"\)
-root.exe -q -b  Fun4All_G4_Single_Embed.C\($1,\"$2\",$3,$4, $5,\"$6\",\"$7\"\)
+echo running root.exe -q -b Fun4All_G4_Single_Embed.C\($1,\"$2\",$3,$4,$5,\"$6\",\"$7\"\)
+root.exe -q -b  Fun4All_G4_Single_Embed.C\($1,\"$2\",$3,$4,$5,\"$6\",\"$7\"\)
 
 echo "script done"

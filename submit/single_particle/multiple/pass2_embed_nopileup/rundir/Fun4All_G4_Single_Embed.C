@@ -28,9 +28,9 @@ R__LOAD_LIBRARY(libffamodules.so)
 int Fun4All_G4_Single_Embed(
     const int nEvents = 1,
     const string &particle = "gamma",
-    const int nperevt = 10,
     const int pmin = 10000,
     const int pmax = 10000,
+    const int nperevt = 10,
     const string &embed_input_file0 = "G4Hits_sHijing_0_20fm-0000000006-00000.root",
     const string &outdir = ".")
 {
