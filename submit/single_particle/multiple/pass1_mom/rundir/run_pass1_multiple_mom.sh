@@ -11,14 +11,16 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n ana.347
+source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.358
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
     cd $_CONDOR_SCRATCH_DIR
     rsync -av $this_dir/* .
 else
+    hostname
     echo condor scratch NOT set
+    exit -1
 fi
 
 # arguments 
@@ -46,8 +48,8 @@ echo arg7 \(output dir\): $7
 echo arg8 \(runnumber\): $8
 echo arg9 \(sequence\): $9
 
-runnumber=$(printf "%010d" $7)
-sequence=$(printf "%05d" $8)
+runnumber=$(printf "%010d" $8)
+sequence=$(printf "%05d" $9)
 
 echo running root.exe -q -b Fun4All_G4_Multiple.C\($1,\"$2\",$3,$4,$5,\"$6\",\"$7\"\)
 root.exe -q -b Fun4All_G4_Multiple.C\($1,\"$2\",$3,$4,$5,\"$6\",\"$7\"\)
