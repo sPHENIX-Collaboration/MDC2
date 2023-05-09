@@ -4,10 +4,8 @@
 #include <GlobalVariables.C>
 
 #include <G4Setup_sPHENIX.C>
-#include <G4_Bbc.C>
 #include <G4_Input.C>
 #include <G4_Production.C>
-#include <G4_Tracking.C>
 
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/HeadReco.h>
@@ -23,7 +21,7 @@
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
 
-#include <stdlib.h>
+#include <cstdlib>
 
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
@@ -34,7 +32,7 @@ int Fun4All_G4_Multiple(
   const int pmin = 5000, 
   const int pmax = 40000, 
   const int nparticle = 10,
-  const string &outputFile = "G4Hits_single_pi-_10000_10000MeV-0000000006-00000.root",
+  const string &outputFile = "G4Hits_single_pi-_p_10000_10000MeV-0000000006-00000.root",
   const string &outdir = ".")
 {
   int skip = 0;
