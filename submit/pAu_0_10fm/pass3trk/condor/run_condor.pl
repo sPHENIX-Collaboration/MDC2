@@ -34,7 +34,7 @@ my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/fm_0_20/pass3trk");
+my $condorlogdir = sprintf("/tmp/pAu_0_10fm/pass3trk");
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor-%s.job",$logdir,$suffix);
 if (-f $jobfile)

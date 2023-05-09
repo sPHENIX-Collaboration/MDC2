@@ -86,7 +86,6 @@ int Fun4All_G4_Pass3Trk(
 
   Enable::DSTOUT = true;
   Enable::DSTOUT_COMPRESS = false;
-  DstOut::OutputFile = outputFile;
   DstOut::OutputDir = outdir;
 
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile0);
