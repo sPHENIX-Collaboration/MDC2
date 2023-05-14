@@ -47,18 +47,7 @@ if (! -f "outdir.txt")
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 $outdir = sprintf("%s/run%04d",$outdir,$runnumber);
-if ($outdir =~ /lustre/)
-{
-    my $storedir = $outdir;
-    $storedir =~ s/\/sphenix\/lustre01\/sphnxpro/sphenixS3/;
-    my $makedircmd = sprintf("mcs3 mb %s",$storedir);
-    system($makedircmd);
-}
-else
-{
-  mkpath($outdir);
-}
-
+mkpath($outdir);
 
 my %outfiletype = ();
 $outfiletype{"DST_TRKR_HIT"} = 1;
@@ -77,14 +66,29 @@ $getfiles->execute() || die $DBI::errstr;
 my $ncal = $getfiles->rows;
 while (my @res = $getfiles->fetchrow_array())
 {
-    $trkhash{sprintf("%05d",$res[1])} = $res[0];
+    if ($res[1] < 100000)
+    {
+	$trkhash{sprintf("%05d",$res[1])} = $res[0];
+    }
+    else
+    {
+	$trkhash{sprintf("%06d",$res[1])} = $res[0];
+    }
+
 }
 $getfiles->finish();
 $gettruthfiles->execute() || die $DBI::errstr;
 my $ntruth = $gettruthfiles->rows;
 while (my @res = $gettruthfiles->fetchrow_array())
 {
-    $truthhash{sprintf("%05d",$res[1])} = $res[0];
+    if ($res[1] < 100000)
+    {
+	$truthhash{sprintf("%05d",$res[1])} = $res[0];
+    }
+    else
+    {
+	$truthhash{sprintf("%06d",$res[1])} = $res[0];
+    }
 }
 $gettruthfiles->finish();
 #print "input files: $ncal, truth: $ntruth\n";
@@ -104,7 +108,12 @@ foreach my $segment (sort keys %trkhash)
         my $foundall = 1;
 	foreach my $type (sort keys %outfiletype)
 	{
-            my $lfn =  sprintf("%s_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%05d.root",$type,$runnumber,$segment);
+            my $lfn =  sprintf("%s_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%06d.root",$type,$runnumber,$segment);
+	    if ($segment < 100000)
+	    {
+		$lfn =  sprintf("%s_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%05d.root",$type,$runnumber,$segment);
+
+	    }
 	    $chkfile->execute($lfn);
 	    if ($chkfile->rows > 0)
 	    {
@@ -156,7 +165,7 @@ my $jobfile = sprintf("condor.job");
 if (defined $shared)
 {
 # $jobfile = sprintf("condor.job.shared");
- $jobfile = sprintf("condor.job");
+    $jobfile = sprintf("condor.job");
 }
 if (-f $condorlistfile)
 {
