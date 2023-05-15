@@ -134,7 +134,12 @@ foreach my $segment (sort keys %trkhash)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %d %s", $outevents, $lfn, $truthhash{sprintf("%05d",$segment)}, $outdir, $runnumber, $segment, $tstflag);
+	my $truthfile = $truthhash{sprintf("%06d",$segment)};
+	if ($segment < 100000)
+	{
+	    $truthfile = $truthhash{sprintf("%05d",$segment)};
+	}
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %d %s", $outevents, $lfn, $truthfile, $outdir, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
