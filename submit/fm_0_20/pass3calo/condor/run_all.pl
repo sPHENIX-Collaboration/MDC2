@@ -51,18 +51,7 @@ if (! -f "outdir.txt")
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 $outdir = sprintf("%s/run%04d",$outdir,$inrunnumber);
-if ($outdir =~ /lustre/)
-{
-    my $storedir = $outdir;
-    $storedir =~  s/\/sphenix\/lustre01\/sphnxpro/sphenixS3/;
-    my $makedircmd = sprintf("mcs3 mb %s",$storedir);
-    system($makedircmd);
-}
-else
-{
-  mkpath($outdir);
-}
-
+mkpath($outdir);
 
 my %calohash = ();
 my %vtxhash = ();
@@ -78,14 +67,28 @@ $getfiles->execute() || die $DBI::errstr;
 my $ncal = $getfiles->rows;
 while (my @res = $getfiles->fetchrow_array())
 {
-    $calohash{sprintf("%05d",$res[1])} = $res[0];
+    if ($res[1] < 100000)
+    {
+	$calohash{sprintf("%05d",$res[1])} = $res[0];
+    }
+    else
+    {
+	$calohash{sprintf("%06d",$res[1])} = $res[0];
+    }
 }
 $getfiles->finish();
 $getvtxfiles->execute() || die $DBI::errstr;
 my $nvtx = $getvtxfiles->rows;
 while (my @res = $getvtxfiles->fetchrow_array())
 {
-    $vtxhash{sprintf("%05d",$res[1])} = $res[0];
+    if ($res[1] < 100000)
+    {
+	$vtxhash{sprintf("%05d",$res[1])} = $res[0];
+    }
+    else
+    {
+	$vtxhash{sprintf("%06d",$res[1])} = $res[0];
+    }
 }
 $getvtxfiles->finish();
 #print "input files: $ncal, vtx: $nvtx\n";
@@ -101,7 +104,11 @@ foreach my $segment (sort keys %calohash)
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_CALO_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%05d.root",$outrunnumber,$segment);
+	my $outfilename = sprintf("DST_CALO_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%06d.root",$outrunnumber,$segment);
+	if ($segment < 100000)
+	{
+	    $outfilename = sprintf("DST_CALO_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%05d.root",$outrunnumber,$segment);
+	}
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
