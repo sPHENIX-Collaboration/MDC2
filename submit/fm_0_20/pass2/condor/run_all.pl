@@ -48,17 +48,17 @@ if (! -f "outdir.txt")
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 $outdir = sprintf("%s/run%04d",$outdir,$runnumber);
-if ($outdir =~ /lustre/)
-{
-    my $storedir = $outdir;
-    $storedir =~ s/\/sphenix\/lustre01\/sphnxpro/sphenixS3/;
-    my $makedircmd = sprintf("mcs3 mb %s",$storedir);
-    system($makedircmd);
-}
-else
-{
-  mkpath($outdir);
-}
+#if ($outdir =~ /lustre/)
+#{
+#    my $storedir = $outdir;
+#    $storedir =~ s/\/sphenix\/lustre01\/sphnxpro/sphenixS3/;
+#    my $makedircmd = sprintf("mcs3 mb %s",$storedir);
+#    system($makedircmd);
+#}
+#else
+#{
+mkpath($outdir);
+#}
 
 my %outfiletype = ();
 $outfiletype{"DST_BBC_G4HIT"} = 1;
@@ -96,7 +96,11 @@ while (my @res = $getfiles->fetchrow_array())
 	my $foundall = 1;
 	foreach my $type (sort keys %outfiletype)
 	{
-            my $lfn =  sprintf("%s_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%05d.root",$type,$runnumber,$segment);
+            my $lfn =  sprintf("%s_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%06d.root",$type,$runnumber,$segment);
+	    if ($segment < 100000)
+	    {
+		$lfn =  sprintf("%s_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%05d.root",$type,$runnumber,$segment);
+	    }
 	    $chkfile->execute($lfn);
 	    if ($chkfile->rows > 0)
 	    {
@@ -131,16 +135,20 @@ while (my @res = $getfiles->fetchrow_array())
 	    my $bkgseg = $cnt;
 	    while ($bkgseg > $lastsegment)
 	    {
-		$bkgseg = $bkgseg - $lastsegment;
+		$bkgseg = $bkgseg - $lastsegment -1; # make sure it starts at segment zero, not 1
 	    }
-	    my $bckfile = sprintf("%s-%010d-%05d.root",$prefix,$runnumber,$bkgseg);
+	    my $bckfile = sprintf("%s-%010d-%06d.root",$prefix,$runnumber,$bkgseg);
+	    if ($bkgseg < 100000)
+	    {
+		$bckfile = sprintf("%s-%010d-%05d.root",$prefix,$runnumber,$bkgseg);
+	    }
 	    $chkfile->execute($bckfile);
 	    if ($chkfile->rows == 0)
 	    {
-if (defined $verbosity)
-{
-    print "$bckfile missing\n";
-}
+		if (defined $verbosity)
+		{
+		    print "$bckfile missing\n";
+		}
 		$foundall = 0;
 		last;
 	    }
@@ -150,7 +158,11 @@ if (defined $verbosity)
 	{
 	    next;
 	}
-	my $bkglistfile = sprintf("%s/condor-%010d-%05d.bkglist",$logdir,$runnumber,$segment);
+	my $bkglistfile = sprintf("%s/condor-%010d-%06d.bkglist",$logdir,$runnumber,$segment);
+	if ($segment < 100000)
+	{
+	    $bkglistfile = sprintf("%s/condor-%010d-%05d.bkglist",$logdir,$runnumber,$segment);
+	}
 	open(F1,">$bkglistfile");
 	foreach my $bf (@bkgfiles)
 	{
