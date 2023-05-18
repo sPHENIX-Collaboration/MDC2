@@ -9,7 +9,7 @@ R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libfun4allraw.so)
 R__LOAD_LIBRARY(libffarawmodules.so)
 
-void Fun4All_G4_EventCombine(int nEvents = 10, const int irun = 251, const int sequence = 1, const std::string &topdir = "/sphenix/lustre01/sphnxpro/mdc2/rawdata/pool_stripe5", int nrepeat = 20)
+void Fun4All_G4_EventCombine(int nEvents = 10, const int irun = 329, const int sequence = 1, const std::string &topdir = "/sphenix/lustre01/sphnxpro/mdc2/rawdata/stripe5", int nrepeat = 0)
 {
   int nfiles = 0;
   Fun4AllServer *se = Fun4AllServer::instance();
