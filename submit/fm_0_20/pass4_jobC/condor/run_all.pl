@@ -67,14 +67,29 @@ my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
 while (my @res = $getfiles->fetchrow_array())
 {
-    $trkhash{sprintf("%05d",$res[1])} = $res[0];
+    if ($res[1] < 100000)
+    {
+	$trkhash{sprintf("%05d",$res[1])} = $res[0];
+    }
+    else
+    {
+	$trkhash{sprintf("%06d",$res[1])} = $res[0];
+    }
+
 }
 $getfiles->finish();
 $getclusterfiles->execute() || die $DBI::errstr;
 my $ncluster = $getclusterfiles->rows;
 while (my @res = $getclusterfiles->fetchrow_array())
 {
-    $clusterhash{sprintf("%05d",$res[1])} = $res[0];
+    if ($res[1] < 100000)
+    {
+	$clusterhash{sprintf("%05d",$res[1])} = $res[0];
+    }
+    else
+    {
+	$clusterhash{sprintf("%06d",$res[1])} = $res[0];
+    }
 }
 $getclusterfiles->finish();
 foreach my $segment (sort keys %trkhash)
@@ -89,7 +104,11 @@ foreach my $segment (sort keys %trkhash)
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_TRACKS_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%05d.root",$outrunnumber,$segment);
+	my $outfilename = sprintf("DST_TRACKS_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%06d.root",$outrunnumber,$segment);
+	if ($segment < 100000)
+	{
+	    $outfilename = sprintf("DST_TRACKS_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%05d.root",$outrunnumber,$segment);
+	}
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
