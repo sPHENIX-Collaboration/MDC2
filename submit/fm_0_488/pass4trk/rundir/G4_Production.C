@@ -3,6 +3,10 @@
 
 #include <GlobalVariables.C>
 
+// for directory check
+#include <dirent.h>
+#include <sys/types.h>
+
 namespace Enable
 {
   bool PRODUCTION = false;
@@ -16,18 +20,16 @@ namespace PRODUCTION
 void Production_CreateOutputDir()
 {
   PRODUCTION::SaveOutputDir = DstOut::OutputDir;
-  string toreplace("/sphenix/lustre01/sphnxpro");
-  string mkdircmd;
-  size_t strpos = DstOut::OutputDir.find(toreplace);
-  if (strpos == string::npos)
+// check if directory already exists, mkdirs can hang up the system if we have gazillions of them
+  DIR *dr;
+  struct dirent *en;
+  dr = opendir(DstOut::OutputDir.c_str());
+  if (dr)
   {
-    mkdircmd = "mkdir -p " + DstOut::OutputDir;
+    closedir(dr);  // output directory exists - close it and do nothing
+    return;
   }
-  else
-  {
-    DstOut::OutputDir.replace(DstOut::OutputDir.begin(),DstOut::OutputDir.begin()+toreplace.size(),"sphenixS3");
-    mkdircmd = "mcs3 mb " + DstOut::OutputDir;
-  }
+  string mkdircmd = "mkdir -p " + DstOut::OutputDir;
   gSystem->Exec(mkdircmd.c_str());
 }
 
