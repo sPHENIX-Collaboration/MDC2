@@ -121,7 +121,7 @@ while (my @res = $getfiles->fetchrow_array())
 	    my $bkgseg = $cnt;
 	    while ($bkgseg > $lastsegment)
 	    {
-		$bkgseg = $bkgseg - $lastsegment;
+		$bkgseg = $bkgseg - $lastsegment -1;
 	    }
 	    my $bckfile = sprintf("%s-%010d-%05d.root",$prefix,$runnumber,$bkgseg);
 	    $chkfile->execute($bckfile);
