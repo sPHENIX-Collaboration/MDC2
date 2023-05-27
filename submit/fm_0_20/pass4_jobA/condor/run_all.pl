@@ -70,7 +70,7 @@ while (my @res = $getfiles->fetchrow_array())
 	my $outfilename = sprintf("DST_TRACKSEEDS_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%06d.root",$outrunnumber,$segment);
 	if ($segment < 100000)
 	{
-	    $outfilename = sprintf("DST_TRKR_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%05d.root",$runnumber,$segment);
+	    $outfilename = sprintf("DST_TRACKSEEDS_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%05d.root",$runnumber,$segment);
 	}
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
