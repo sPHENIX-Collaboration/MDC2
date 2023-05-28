@@ -18,10 +18,11 @@ my $runnumber = 6;
 my $nopileup;
 my $verbose;
 my $embed;
+my $mom;
 my $ptmin;
 my $ptmax;
 my $particle;
-GetOptions("dsttype:s"=>\$dsttype, "embed"=>\$embed, "kill"=>\$kill, "nopileup"=>\$nopileup, "runnumber:i" => \$runnumber, "type:i"=>\$system, "verbose" => \$verbose);
+GetOptions("dsttype:s"=>\$dsttype, "embed:s"=>\$embed, "kill"=>\$kill, "nopileup"=>\$nopileup, "runnumber:i" => \$runnumber, "type:i"=>\$system, "verbose" => \$verbose);
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
@@ -49,6 +50,7 @@ my %daughters = (
     "DST_TRACKS" => [ "DST_TRUTH_RECO" ],
     "DST_TRACKS_DISTORT" => [ "" ],
     "DST_CALO_CLUSTER" => [ "DST_TRACKS" ],
+#    "DST_CALO_CLUSTER" => [ "" ],
     "DST_JETS" => [ "" ],
     "DST_HF_CHARM" => [ "JET_EVAL_DST_HF_CHARM", "QA_DST_HF_CHARM"],
     "JET_EVAL_DST_HF_CHARM" => [ "DST_HF_CHARM", "QA_DST_HF_CHARM"],
@@ -66,8 +68,8 @@ if (defined $nopileup)
     $ref = $daughters{"DST_CALO_CLUSTER"};
     push(@$ref,("DST_TRKR_HIT","DST_GLOBAL","DST_TRUTH"));
     @$ref = grep($_,@$ref); # removes empty strings from array
-    $ref = $daughters{"DST_GLOBAL"};
-    push(@$ref,("DST_CALO_CLUSTER", "DST_TRKR_HIT","DST_TRUTH"));
+#    $ref = $daughters{"DST_GLOBAL"};
+#    push(@$ref,("DST_CALO_CLUSTER", "DST_TRKR_HIT","DST_TRUTH"));
     @$ref = grep($_,@$ref); # removes empty strings from array
     $ref = $daughters{"DST_TRUTH"};
     push(@$ref,("DST_CALO_CLUSTER","DST_GLOBAL"));
@@ -114,6 +116,8 @@ if ($#ARGV < 0)
     print "   17 : HF pythia8 D0 pi-k Jets ptmin = 5GeV\n";
     print "   18 : HF pythia8 D0 pi-k Jets ptmin = 12GeV\n";
     print "   19 : JS pythia8 Jet > 30GeV\n";
+    print "   20 : hijing pAu (0-10fm) pileup 0-10fm\n";
+    print "   21 : JS pythia8 Jet >20GeV\n";
     print "-dsttype:\n";
     foreach my $tp (sort keys %daughters)
     {
@@ -133,7 +137,7 @@ if( ! exists $daughters{$dsttype})
     }
     exit(0);
 }
-if ($system < 1 || $system > 19)
+if ($system < 1 || $system > 21)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
@@ -155,6 +159,8 @@ if ($system < 1 || $system > 19)
     print "   17 : HF pythia8 D0 pi-k Jets ptmin = 5GeV\n";
     print "   18 : HF pythia8 D0 pi-k Jets ptmin = 12GeV\n";
     print "   19 : JS pythia8 Jet >40GeV\n";
+    print "   20 : hijing pAu (0-10fm) pileup 0-10fm\n";
+    print "   21 : JS pythia8 Jet >20GeV\n";
     exit(0);
 }
 
@@ -198,19 +204,27 @@ if (defined $nopileup)
 }
 if (defined $embed)
 {
-    $productionsubdir{"DST_BBC_G4HIT"} = "pass2_embed";
-    $productionsubdir{"DST_CALO_CLUSTER"} = "pass3calo_embed";
-    $productionsubdir{"DST_CALO_G4HIT"} = "pass2_embed";
-    $productionsubdir{"DST_GLOBAL"} = "pass3global_embed";
-    $productionsubdir{"DST_TRUTH"} = "pass3trk_embed";
-    $productionsubdir{"DST_TRUTH_G4HIT"} = "pass2_embed";
-    $productionsubdir{"DST_TRACKS"} = "pass4_jobC_embed";
-    $productionsubdir{"DST_TRACKSEEDS"} = "pass4_jobA_embed";
-    $productionsubdir{"DST_TRKR_CLUSTER"} = "pass4_job0_embed";
-    $productionsubdir{"DST_TRKR_HIT"} = "pass3trk_embed";
-    $productionsubdir{"DST_TRKR_G4HIT"} = "pass2_embed";
-    $productionsubdir{"DST_TRUTH_JET" } = "pass4jet_embed",
-    $productionsubdir{"DST_VERTEX"} = "pass2_embed";
+    my $embedpostfix = "_embed";
+if ($embed eq "pau")
+ {
+    $embedpostfix = sprintf("%s_%s",$embedpostfix,$embed);
+}
+    $productionsubdir{"DST_BBC_G4HIT"} = sprintf("pass2%s",$embedpostfix);
+    $productionsubdir{"DST_CALO_CLUSTER"} = sprintf("pass3calo%s",$embedpostfix);
+    $productionsubdir{"DST_CALO_G4HIT"} = sprintf("pass2%s",$embedpostfix);
+    $productionsubdir{"DST_GLOBAL"} = sprintf("pass3global%s",$embedpostfix);
+    $productionsubdir{"DST_TRUTH"} = sprintf("pass3trk%s",$embedpostfix);
+    $productionsubdir{"DST_TRUTH_G4HIT"} = sprintf("pass2%s",$embedpostfix);
+    $productionsubdir{"DST_TRACKS"} = sprintf("pass4_jobC%s",$embedpostfix);
+    $productionsubdir{"DST_TRACKSEEDS"} = sprintf("pass4_jobA%s",$embedpostfix);
+    $productionsubdir{"DST_TRKR_CLUSTER"} = sprintf("pass4_job0%s",$embedpostfix);
+    $productionsubdir{"DST_TRKR_HIT"} = sprintf("pass3trk%s",$embedpostfix);
+    $productionsubdir{"DST_TRKR_G4HIT"} = sprintf("pass2%s",$embedpostfix);
+    $productionsubdir{"DST_TRUTH_JET" } = sprintf("pass4jet%s",$embedpostfix),
+    $productionsubdir{"DST_VERTEX"} = sprintf("pass2%s",$embedpostfix);
+}
+else
+{
 }
 
 my %notlike = ();
@@ -345,7 +359,15 @@ elsif ($system == 12)
     {
 	$condorfileadd = sprintf("Jet10");
         $systemstring = "pythia8_Jet10";
-        $pileupstring = "_sHijing_0_20fm_50kHz_bkg_0_20fm";
+	if ($embed eq "pau")
+	{
+	    $pileupstring = "_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm";
+	}
+	else
+	{
+	    $pileupstring = "_sHijing_0_20fm_50kHz_bkg_0_20fm";
+	}
+
     }
     $specialcondorfileadd{"G4Hits"} = "Jet10";
 }
@@ -370,21 +392,22 @@ elsif ($system == 13)
 }
 elsif ($system == 14)
 {
-    if ($#ARGV == 3)
+    if ($#ARGV == 4)
     {
         $particle = $ARGV[1];
-	$ptmin = $ARGV[2];
-	$ptmax = $ARGV[3];
+        $mom = $ARGV[2];
+	$ptmin = $ARGV[3];
+	$ptmax = $ARGV[4];
     }
     else
     {
-	print "needs arguments segment particle ptmin ptmax\n";
+	print "needs arguments segment particle [p or pt] ptmin ptmax\n";
         exit(1)
     }
-    my $snglstring = sprintf("single_%s_%d_%dMeV",$particle,$ptmin,$ptmax);
+    my $snglstring = sprintf("single_%s_%s_%d_%dMeV",$particle,$mom,$ptmin,$ptmax);
     $specialsystemstring{"G4Hits"} = sprintf("%s-",$snglstring);
     $systemstring = sprintf("%s_",$snglstring);
-    $topdir = sprintf("%s/single_particle",$topdir);
+    $topdir = sprintf("%s/multiple_particle",$topdir);
     $condorfileadd = sprintf("%s",$snglstring);
     if (defined $nopileup)
     {
@@ -456,6 +479,40 @@ elsif ($system == 19)
         $pileupstring = "_sHijing_0_20fm_50kHz_bkg_0_20fm";
     }
     $specialcondorfileadd{"G4Hits"} = "Jet40";
+}
+elsif ($system == 20)
+{
+    $systemstring = "sHijing_pAu_0_10fm";
+    $topdir = sprintf("%s/pAu_0_10fm",$topdir);
+    $pileupstring = "_500kHz_bkg_0_10fm";
+    $notlike{$systemstring} = ["pythia8" ,"single", "special"];
+}
+elsif ($system == 21)
+{
+    $specialsystemstring{"G4Hits"} = "pythia8_Jet20-";
+    $systemstring = "pythia8_Jet20_";
+    $topdir = sprintf("%s/JS_pp200_signal",$topdir);
+    $condorfileadd = sprintf("Jet20_3MHz");
+    if (defined $nopileup)
+    {
+	$condorfileadd = sprintf("Jet20");
+        $systemstring = "pythia8_Jet20";
+    }
+    if (defined $embed)
+    {
+	$condorfileadd = sprintf("Jet20");
+        $systemstring = "pythia8_Jet20";
+	if ($embed eq "pau")
+	{
+	    $pileupstring = "_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm";
+	}
+	else
+	{
+	    $pileupstring = "_sHijing_0_20fm_50kHz_bkg_0_20fm";
+	}
+
+    }
+    $specialcondorfileadd{"G4Hits"} = "Jet20";
 }
 else
 {

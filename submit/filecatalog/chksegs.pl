@@ -14,11 +14,12 @@ my $runnumber = 6;
 my $embed;
 my $ptmin;
 my $ptmax;
+my $mom;
 my $particle;
 my $file_exist_check;
-GetOptions("embed" => \$embed, "exist" => \$file_exist_check, "run:i"=>\$runnumber, "type:i"=>\$system, "verbosity" => \$verbosity, "nopileup" => \$nopileup);
+GetOptions("embed:s" => \$embed, "exist" => \$file_exist_check, "run:i"=>\$runnumber, "type:i"=>\$system, "verbosity" => \$verbosity, "nopileup" => \$nopileup);
 
-if ($system < 1 || $system > 19)
+if ($system < 1 || $system > 21)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
@@ -40,6 +41,8 @@ if ($system < 1 || $system > 19)
     print "   17 : HF pythia8 D0 pi-k Jets ptmin = 5GeV\n";
     print "   18 : HF pythia8 D0 pi-k Jets ptmin = 12GeV\n";
     print "   19 : JS pythia8 Jet >40GeV\n";
+    print "   20 : hijing pAu (0-10fm) pileup 0-10fm\n";
+    print "   21 : JS pythia8 Jet >20GeV\n";
     exit(0);
 }
 
@@ -171,7 +174,19 @@ elsif ($system == 11)
     {
 	    if (defined $embed)
 	    {
-		$systemstring = sprintf("%s_sHijing_0_20fm_50kHz_bkg_0_20fm",$systemstring_g4hits);
+		if ($embed eq "auau")
+		{
+		    $systemstring = sprintf("%s_sHijing_0_20fm_50kHz_bkg_0_20fm",$systemstring_g4hits);
+		}
+		elsif ($embed eq "pau")
+		{
+		    $systemstring = sprintf("%s_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm",$systemstring_g4hits);
+		}
+		else
+		{
+		    print "bad embed val: $embed, valid values auau, pau\n";
+		    exit(0);
+		}
 	    }
 	    else
 	    {
@@ -195,7 +210,19 @@ elsif ($system == 12)
     {
 	    if (defined $embed)
 	    {
-		$systemstring = sprintf("%s_sHijing_0_20fm_50kHz_bkg_0_20fm",$systemstring_g4hits);
+		if ($embed eq "auau")
+		{
+		    $systemstring = sprintf("%s_sHijing_0_20fm_50kHz_bkg_0_20fm",$systemstring_g4hits);
+		}
+		elsif ($embed eq "pau")
+		{
+		    $systemstring = sprintf("%s_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm",$systemstring_g4hits);
+		}
+		else
+		{
+		    print "bad embed val: $embed, valid values auau, pau\n";
+		    exit(0);
+		}
 	    }
 	    else
 	    {
@@ -237,19 +264,21 @@ elsif ($system == 13)
 }
 elsif ($system == 14)
 {
-    if ($#ARGV == 3)
+    if ($#ARGV == 4)
     {
         $particle = $ARGV[1];
-	$ptmin = $ARGV[2];
-	$ptmax = $ARGV[3];
+        $mom = $ARGV[2];
+	$ptmin = $ARGV[3];
+	$ptmax = $ARGV[4];
     }
     else
     {
-	print "needs arguments particle ptmin ptmax\n";
+	print "needs arguments particle p or pt ptmin ptmax\n";
         exit(1)
     }
     $g4hits_exist = 1;
-    $systemstring_g4hits = sprintf("single_%s_%d_%dMeV",$particle,$ptmin,$ptmax);
+    $systemstring = sprintf("single_%s_%s_%d_%dMeV",$particle,$mom,$ptmin,$ptmax);
+    $systemstring_g4hits = sprintf("single_%s_%s_%d_%dMeV",$particle,$mom,$ptmin,$ptmax);
     if (! defined $nopileup)
     {
 	    if (defined $embed)
@@ -262,7 +291,9 @@ elsif ($system == 14)
 	$systemstring = sprintf("%s-",$systemstring_g4hits);
     }
     $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
-    $gpfsdir = "single_particle";
+    $gpfsdir = "multiple_particle";
+    print "systemstring_g4hits: $systemstring_g4hits\n";
+    print "systemstring: $systemstring\n";
 }
 
 elsif ($system == 16)
@@ -319,6 +350,56 @@ elsif ($system == 19)
 	    if (defined $embed)
 	    {
 		$systemstring = sprintf("%s_sHijing_0_20fm_50kHz_bkg_0_20fm",$systemstring_g4hits);
+	    }
+	    else
+	    {
+		$systemstring = sprintf("%s_3MHz",$systemstring_g4hits);
+	    }
+    }
+    else
+    {
+	$systemstring = sprintf("%s-",$systemstring_g4hits);
+    }
+    $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
+    $gpfsdir = "js_pp200_signal";
+#    $systemstring = "DST_HF_BOTTOM_pythia8-";
+#    $gpfsdir = "HF_pp200_signal";
+}
+elsif ($system == 20)
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "sHijing_pAu_0_10fm";
+    if (! defined $nopileup)
+    {
+	$systemstring = sprintf("%s_500kHz_bkg_0_10fm",$systemstring_g4hits);
+    }
+    else
+    {
+	$systemstring = sprintf("%s-",$systemstring_g4hits);
+    }
+    $notlike{$systemstring} = ["pythia8" ,"single", "special"];
+}
+elsif ($system == 21)
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "pythia8_Jet20";
+    if (! defined $nopileup)
+    {
+	    if (defined $embed)
+	    {
+		if ($embed eq "auau")
+		{
+		    $systemstring = sprintf("%s_sHijing_0_20fm_50kHz_bkg_0_20fm",$systemstring_g4hits);
+		}
+		elsif ($embed eq "pau")
+		{
+		    $systemstring = sprintf("%s_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm",$systemstring_g4hits);
+		}
+		else
+		{
+		    print "bad embed val: $embed, valid values auau, pau\n";
+		    exit(0);
+		}
 	    }
 	    else
 	    {
