@@ -11,7 +11,8 @@ use Env;
 
 my $notest;
 my $all;
-GetOptions("notest"=>\$notest, "all"=>\$all);
+my $lfn;
+GetOptions("lfn:s" => \$lfn, "notest"=>\$notest, "all"=>\$all);
 
 if ($#ARGV < 0)
 {
@@ -43,7 +44,15 @@ else
 	print "only lustre dirs allowed\n";
 	exit(1);
     }
-    $getfiles = $dbh->prepare("select lfn,full_file_path from files where md5 is null and full_file_path like '$dcachedir/%'");
+    if (defined $lfn)
+    {
+	$getfiles = $dbh->prepare("select lfn,full_file_path from files where lfn like '$lfn%' and md5 is null");
+
+    }
+    else
+    {
+	$getfiles = $dbh->prepare("select lfn,full_file_path from files where md5 is null and full_file_path like '$dcachedir/%'");
+    }
 }
 
 my $updatemd5 = $dbh->prepare("update files set md5=? where lfn=?");

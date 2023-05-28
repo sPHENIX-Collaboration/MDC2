@@ -29,7 +29,8 @@ $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $getfiles = $dbh->prepare("select lfn,size,full_file_path from files where full_file_path like '$dcachedir/%'"); 
 if (defined $lfn)
 {
-    $getfiles = $dbh->prepare("select lfn,size,full_file_path from files where lfn =  '$lfn'");
+#    $getfiles = $dbh->prepare("select lfn,size,full_file_path from files where lfn =  '$lfn'");
+    $getfiles = $dbh->prepare("select lfn,size,full_file_path from files where lfn like  '$lfn%'");
 }
 #my $getfiles = $dbh->prepare("select lfn,size,full_file_path from files where lfn = 'G4Hits_sHijing_0_20fm-0000000006-18875.root'");
 my $chkfile = $dbh->prepare("select size from datasets where filename = ?");
