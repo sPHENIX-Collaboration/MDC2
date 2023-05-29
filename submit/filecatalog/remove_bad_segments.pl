@@ -340,7 +340,14 @@ elsif ($system == 11)
     {
 	$condorfileadd = sprintf("Jet30");
         $systemstring = "pythia8_Jet30";
-        $pileupstring = "_sHijing_0_20fm_50kHz_bkg_0_20fm";
+	if ($embed eq "pau")
+	{
+	    $pileupstring = "_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm";
+	}
+	else
+	{
+	    $pileupstring = "_sHijing_0_20fm_50kHz_bkg_0_20fm";
+	}
     }
     $specialcondorfileadd{"G4Hits"} = "Jet30";
 }
@@ -367,7 +374,6 @@ elsif ($system == 12)
 	{
 	    $pileupstring = "_sHijing_0_20fm_50kHz_bkg_0_20fm";
 	}
-
     }
     $specialcondorfileadd{"G4Hits"} = "Jet10";
 }
@@ -386,7 +392,14 @@ elsif ($system == 13)
     {
 	$condorfileadd = sprintf("PhotonJet");
         $systemstring = "pythia8_PhotonJet";
-        $pileupstring = "_sHijing_0_20fm_50kHz_bkg_0_20fm";
+	if ($embed eq "pau")
+	{
+	    $pileupstring = "_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm";
+	}
+	else
+	{
+	    $pileupstring = "_sHijing_0_20fm_50kHz_bkg_0_20fm";
+	}
     }
     $specialcondorfileadd{"G4Hits"} = "PhotonJet";
 }
@@ -476,7 +489,14 @@ elsif ($system == 19)
     {
 	$condorfileadd = sprintf("Jet40");
         $systemstring = "pythia8_Jet40";
-        $pileupstring = "_sHijing_0_20fm_50kHz_bkg_0_20fm";
+	if ($embed eq "pau")
+	{
+	    $pileupstring = "_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm";
+	}
+	else
+	{
+	    $pileupstring = "_sHijing_0_20fm_50kHz_bkg_0_20fm";
+	}
     }
     $specialcondorfileadd{"G4Hits"} = "Jet40";
 }
