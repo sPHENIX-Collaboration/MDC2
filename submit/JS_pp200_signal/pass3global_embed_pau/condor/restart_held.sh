@@ -1,13 +1,14 @@
 #! /usr/bin/bash
 if [ $# -eq 0 ]
-  then
-    echo "No arguments supplied"
+then
+  echo "No arguments supplied"
+  exit 0
 fi
 echo $1
 variable=$1
 #exit 0
 [ -f bla ] && rm bla
-condor_q | grep ' H ' | grep run_pass3global_embed_pau_js.sh | grep ${variable} | grep sHijing_0_20 > bla
+condor_q | grep ' H ' | grep run_pass3global_embed_pau_js.sh | grep ${variable}  > bla
 [ -f bla ] || exit 0
 for i in `cat bla| awk '{print $1}'`; do condor_rm $i; done
 
