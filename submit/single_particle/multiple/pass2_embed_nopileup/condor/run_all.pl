@@ -36,7 +36,7 @@ my $ptmin = $ARGV[2];
 my $ptmax = $ARGV[3];
 
 my $embedfilelike = sprintf("sHijing_0_20fm");
-my $outfilelike = sprintf("single_%s_%d_%dMeV_%s",$particle,$ptmin,$ptmax,$embedfilelike);
+my $outfilelike = sprintf("single_%s_p_%d_%dMeV_%s",$particle,$ptmin,$ptmax,$embedfilelike);
 
 my $condorlistfile =  sprintf("condor.list");
 if (-f $condorlistfile)

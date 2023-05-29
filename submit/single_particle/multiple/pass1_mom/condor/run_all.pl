@@ -37,6 +37,7 @@ my $nparticles = $ARGV[4];
 my $filetype="single";
 my $partprop = sprintf("%s_p_%d_%d",$particle,$pmin,$pmax);
 $filetype=sprintf("%s_%sMeV",$filetype,$partprop);
+my $logsuffix = sprintf("%s_%d_%d",$particle,$pmin,$pmax);
 
 my $condorlistfile =  sprintf("condor.list");
 if (-f $condorlistfile)
@@ -53,17 +54,8 @@ if (! -f "outdir.txt")
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 $outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,$partprop);
-if ($outdir =~ /lustre/)
-{
-    my $storedir = $outdir;
-    $storedir =~ s/\/sphenix\/lustre01\/sphnxpro/sphenixS3/;
-    my $makedircmd = sprintf("mcs3 mb %s",$storedir);
-    system($makedircmd);
-}
-else
-{
-    mkpath($outdir);
-}
+mkpath($outdir);
+
 my $localdir=`pwd`;
 chomp $localdir;
 my $logdir = sprintf("%s/log",$localdir);
@@ -71,11 +63,11 @@ my $nsubmit = 0;
 my $njob = 0;
 for (my $isub = 0; $isub < $maxsubmit; $isub++)
 {
-    my $jobfile = sprintf("%s/condor_%s-%010d-%05d.job",$logdir,$partprop,$runnumber,$njob);
+    my $jobfile = sprintf("%s/condor_%s-%010d-%05d.job",$logdir,$logsuffix,$runnumber,$njob);
     while (-f $jobfile)
     {
 	$njob++;
-	$jobfile = sprintf("%s/condor_%s-%010d-%05d.job",$logdir,$partprop,$runnumber,$njob);
+	$jobfile = sprintf("%s/condor_%s-%010d-%05d.job",$logdir,$logsuffix,$runnumber,$njob);
     }
     print "using jobfile $jobfile\n";
     my $outfile = sprintf("G4Hits_%s-%010d-%05d.root",$filetype, $runnumber,$njob);
