@@ -68,7 +68,7 @@ print F "accounting_group = group_sphenix.mdc2\n";
 print F "accounting_group_user = sphnxpro\n";
 print F "Requirements = (CPU_Type == \"mdc2\")\n";
 #print F "request_memory = 11000MB\n";
-print F "request_memory = 12288MB\n";
+print F "request_memory = 6144MB\n";
 print F "Priority = $baseprio\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
