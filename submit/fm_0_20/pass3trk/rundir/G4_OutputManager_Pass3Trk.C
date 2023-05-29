@@ -21,7 +21,15 @@ void CreateDstOutput(int runnumber, int segment)
   auto se = Fun4AllServer::instance();
 
   char segrun[100];
-  snprintf(segrun,100,"%010d-%05d",runnumber,segment);
+  if (segment < 100000)
+  {
+    snprintf(segrun,100,"%010d-%05d",runnumber,segment);
+  }
+  else
+  {
+    snprintf(segrun,100,"%010d-%06d",runnumber,segment);
+  }
+
   string FullOutFile = "DST_TRUTH_sHijing_0_20fm_50kHz_bkg_0_20fm-" + string(segrun) + ".root";;
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("TRUTHOUT", FullOutFile);
   AddCommonNodes(out);

@@ -50,17 +50,7 @@ while (my $line = <F>)
 {
     chomp $line;
     $line = sprintf("%s/run%04d",$line,$runnumber);
-    if ($line =~ /lustre/)
-    {
-	my $storedir = $line;
-	$storedir =~ s/\/sphenix\/lustre01\/sphnxpro/sphenixS3/;
-	my $makedircmd = sprintf("mcs3 mb %s",$storedir);
-	system($makedircmd);
-    }
-    else
-    {
-	mkpath($line);
-    }
+    mkpath($line);
     push(@outdir,$line);
 }
 close(F);
@@ -78,7 +68,7 @@ foreach my $type (sort keys %outfiletype)
 #die;
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%sHijing_0_20fm%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%sHijing_0_20fm%' and runnumber = $runnumber and segment < 100000 order by filename") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;

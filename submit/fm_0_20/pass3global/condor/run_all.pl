@@ -52,17 +52,7 @@ my $outdir = `cat outdir.txt`;
 chomp $outdir;
 my $outdirsubdir = sprintf("run%04d",$inrunnumber);
 $outdir = sprintf("%s/%s",$outdir,$outdirsubdir);
-if ($outdir =~ /lustre/)
-{
-    my $storedir = $outdir;
-    $storedir =~ s/\/sphenix\/lustre01\/sphnxpro/sphenixS3/;
-    my $makedircmd = sprintf("mcs3 mb %s",$storedir);
-    system($makedircmd);
-}
-else
-{
-  mkpath($outdir);
-}
+ mkpath($outdir);
 
 my %bbchash = ();
 my %truthhash = ();
@@ -80,7 +70,14 @@ my $nbbc = $getfiles->rows;
 
 while (my @res = $getfiles->fetchrow_array())
 {
-    $bbchash{sprintf("%05d",$res[1])} = $res[0];
+    if ($res[1] < 100000)
+    {
+	$bbchash{sprintf("%05d",$res[1])} = $res[0];
+    }
+    else
+    {
+	$bbchash{sprintf("%06d",$res[1])} = $res[0];
+    }
 }
 $getfiles->finish();
 
@@ -88,7 +85,14 @@ $gettruthfiles->execute() || die $DBI::errstr;
 my $ntruth = $gettruthfiles->rows;
 while (my @res = $gettruthfiles->fetchrow_array())
 {
-    $truthhash{sprintf("%05d",$res[1])} = $res[0];
+    if ($res[1] < 100000)
+    {
+	$truthhash{sprintf("%05d",$res[1])} = $res[0];
+    }
+    else
+    {
+	$truthhash{sprintf("%06d",$res[1])} = $res[0];
+    }
 }
 $gettruthfiles->finish();
 
@@ -104,7 +108,11 @@ foreach my $segment (sort keys %bbchash)
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_GLOBAL_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%05d.root",$outrunnumber,$segment);
+	my $outfilename = sprintf("DST_GLOBAL_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%06d.root",$outrunnumber,$segment);
+	if ($segment < 100000)
+	{
+	    $outfilename = sprintf("DST_GLOBAL_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%05d.root",$outrunnumber,$segment);
+	}
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
