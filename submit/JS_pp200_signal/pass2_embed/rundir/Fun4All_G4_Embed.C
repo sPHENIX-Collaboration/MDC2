@@ -133,6 +133,10 @@ int Fun4All_G4_Embed(
     {
       pythia8_config_file += "phpythia8_30GeV_JS_MDC2.cfg";
     }
+    else if (jettrigger == "Jet40")
+    {
+      pythia8_config_file += "phpythia8_40GeV_JS_MDC2.cfg";
+    }
     else if (jettrigger == "PhotonJet")
     {
       pythia8_config_file += "phpythia8_JS_GJ_MDC2.cfg";
@@ -186,6 +190,10 @@ int Fun4All_G4_Embed(
       p8_js_signal_trigger->SetMinJetPt(10); // require a 10 GeV minimum pT jet in the event
     }
     else if (jettrigger == "Jet30")
+    {
+      p8_js_signal_trigger->SetMinJetPt(30); // require a 30 GeV minimum pT jet in the event
+    }
+    else if (jettrigger == "Jet40")
     {
       p8_js_signal_trigger->SetMinJetPt(30); // require a 30 GeV minimum pT jet in the event
     }
