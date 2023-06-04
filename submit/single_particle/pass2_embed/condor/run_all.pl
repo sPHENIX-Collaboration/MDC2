@@ -51,18 +51,7 @@ if (! -f "outdir.txt")
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 $outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber, lc $particle);
-if ($outdir =~ /lustre/)
-{
-    my $storedir = $outdir;
-    $storedir =~ s/\/sphenix\/lustre01\/sphnxpro/sphenixS3/;
-    my $makedircmd = sprintf("mcs3 mb %s",$storedir);
-    system($makedircmd);
-}
-else
-{
-  mkpath($outdir);
-}
-
+mkpath($outdir);
 
 my %outfiletype = ();
 $outfiletype{"DST_BBC_G4HIT"} = 1;
