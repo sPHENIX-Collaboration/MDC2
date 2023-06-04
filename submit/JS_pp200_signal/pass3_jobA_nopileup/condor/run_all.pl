@@ -57,20 +57,9 @@ if (! -f "outdir.txt")
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 $outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,lc $jettrigger);
-if ($outdir =~ /lustre/)
-{
-    my $storedir = $outdir;
-    $storedir =~ s/\/sphenix\/lustre01\/sphnxpro/sphenixS3/;
-    my $makedircmd = sprintf("mcs3 mb %s",$storedir);
-    system($makedircmd);
-}
-else
-{
-  mkpath($outdir);
-}
+mkpath($outdir);
 
 my $jettriggerWithDash = sprintf("%s-",$jettrigger);
-
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
