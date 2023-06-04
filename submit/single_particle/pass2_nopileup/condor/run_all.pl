@@ -55,17 +55,7 @@ while (my $line = <F>)
 {
     chomp $line;
     $line = sprintf("%s/run%04d",$line,$runnumber);
-    if ($line =~ /lustre/)
-    {
-	my $storedir = $line;
-	$storedir =~ s/\/sphenix\/lustre01\/sphnxpro/sphenixS3/;
-	my $makedircmd = sprintf("mcs3 mb %s",$storedir);
-	system($makedircmd);
-    }
-    else
-    {
-	mkpath($line);
-    }
+    mkpath($line);
     push(@outdir,$line);
 }
 close(F);
