@@ -39,18 +39,7 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-if ($outdir =~ /lustre/)
-{
-    my $storedir = $outdir;
-    $storedir =~  s/\/sphenix\/lustre01\/sphnxpro/sphenixS3/;
-    my $makedircmd = sprintf("mcs3 mb %s",$storedir);
-    system($makedircmd);
-}
-else
-{
-  mkpath($outdir);
-}
-
+mkpath($outdir);
 
 my %calohash = ();
 my %vtxhash = ();
