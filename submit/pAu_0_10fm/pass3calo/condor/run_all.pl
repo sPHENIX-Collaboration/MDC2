@@ -15,7 +15,8 @@ my $outrunnumber=$inrunnumber;
 my $test;
 my $incremental;
 my $shared;
-GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
+my $verbosity;
+GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared, "verbose"=>\$verbosity);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
@@ -77,7 +78,10 @@ while (my @res = $getvtxfiles->fetchrow_array())
     $vtxhash{sprintf("%05d",$res[1])} = $res[0];
 }
 $getvtxfiles->finish();
-#print "input files: $ncal, vtx: $nvtx\n";
+if (defined $verbosity)
+{
+    print "input files: $ncal, vtx: $nvtx\n";
+}
 foreach my $segment (sort keys %calohash)
 {
     if (! exists $vtxhash{$segment})
@@ -94,6 +98,10 @@ foreach my $segment (sort keys %calohash)
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
+	    if (defined $verbosity)
+	    {
+		print "$outfilename exists\n";
+	    }
 	    next;
 	}
 	my $tstflag="";
