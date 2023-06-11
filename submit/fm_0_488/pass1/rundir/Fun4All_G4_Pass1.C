@@ -11,6 +11,7 @@
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/HeadReco.h>
 #include <ffamodules/SyncReco.h>
+#include <ffamodules/CDBInterface.h>
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
@@ -52,6 +53,12 @@ int Fun4All_G4_Pass1(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
+  //===============
+  // conditions DB flags
+  //===============
+  Enable::CDB = true;
+  rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
+  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
 
 // this extracts the runnumber and segment from the output filename
 // and sets this so the server can pick it up
@@ -71,6 +78,7 @@ int Fun4All_G4_Pass1(
   // verbosity setting (applies to all input managers)
   Input::VERBOSITY = 1; // so we get prinouts of the event number
   Input::HEPMC = true;
+  Input::BEAM_CONFIGURATION = Input::AA_COLLISION;
   
   INPUTHEPMC::filename = inputFile;
   INPUTHEPMC::FLOW = true;
@@ -249,7 +257,9 @@ int Fun4All_G4_Pass1(
   // Exit
   //-----
 
+  CDBInterface::instance()->Print(); // print used DB files
   se->End();
+  se->PrintTimer();
   std::cout << "All done" << std::endl;
   delete se;
   if (Enable::PRODUCTION)
