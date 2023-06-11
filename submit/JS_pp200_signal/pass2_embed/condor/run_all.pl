@@ -71,7 +71,7 @@ $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $nsubmit = 0;
 
 my %trkhash = ();
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like 'DST_TRKR_G4HIT_$embedfilelike%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like 'DST_TRKR_G4HIT_$embedfilelike%' and runnumber = $runnumber order by segment") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 $getfiles->execute() || die $DBI::errstr;
 my $ncal = $getfiles->rows;
@@ -123,7 +123,7 @@ $getvertexfiles->finish();
 
 
 #print "input files: $ncal, truth: $ntruth\n";
-foreach my $segment (sort keys %trkhash)
+foreach my $segment (sort { $a <=> $b } keys %trkhash)
 {
     if (! exists $bbchash{$segment})
     {
