@@ -29,7 +29,7 @@ my %submitdir = (
 #"fm_0_488/pass4_job0/condor" => (""),
 #"fm_0_488/pass4_jobA/condor" => (""),
 #"fm_0_488/pass4_jobC/condor" => (""),
-    "pAu_0_10fm/pass2/condor" => (""),
+#    "pAu_0_10fm/pass2/condor" => (""),
     "pAu_0_10fm/pass3global/condor" => ("-shared"),
     "pAu_0_10fm/pass3trk/condor" => ("-shared"),
     "pAu_0_10fm/pass3calo/condor" => ("-shared"),
@@ -61,11 +61,11 @@ my %submitdir = (
      "HF_pp200_signal/pass3_jobC_nopileup/condor" => ("-shared"),
 #"JS_pp200_signal/pass2/condor" => (""),
 #    "JS_pp200_signal/pass2_embed/condor" => (""),
-#    "JS_pp200_signal/pass2_embed_pau/condor" => (""),
+     "JS_pp200_signal/pass2_embed_pau/condor" => (""),
 #    "JS_pp200_signal/pass2_nopileup/condor" => (""),
 #"JS_pp200_signal/pass3calo/condor" => (""),
     "JS_pp200_signal/pass3calo_embed/condor" => ("-shared"),
-#    "JS_pp200_signal/pass3calo_embed_pau/condor" => ("-shared"),
+    "JS_pp200_signal/pass3calo_embed_pau/condor" => ("-shared"),
     "JS_pp200_signal/pass3global_embed/condor" => ("-shared"),
     "JS_pp200_signal/pass3global_embed_pau/condor" => ("-shared"),
     "JS_pp200_signal/pass3jet_nopileup/condor" => ("-shared"),
@@ -77,6 +77,7 @@ my %submitdir = (
     "JS_pp200_signal/pass3trk_embed_pau/condor" => (""),
 #"JS_pp200_signal/pass4jet/condor" => (""),
     "JS_pp200_signal/pass4jet_embed/condor" => (""),
+    "JS_pp200_signal/pass4jet_embed_pau/condor" => (""),
 #"JS_pp200_signal/pass4_job0/condor" => (""),
     "JS_pp200_signal/pass4_job0_embed/condor" => (""),
     "JS_pp200_signal/pass4_job0_embed_pau/condor" => (""),
@@ -95,8 +96,8 @@ my %submitdir = (
 
 #my @quarkfilters = ("Charm", "Bottom", "JetD0");
 my @quarkfilters = ("Charm", "CharmD0piKJet5", "CharmD0piKJet12");
-my @jettriggers = ("Jet10", "Jet20");
-#my @jettriggers = ("Jet10", "Jet20", "Jet30", "Jet40", "PhotonJet");
+my @jettriggers1 = ("Jet10", "Jet20");
+my @jettriggers2 = ("Jet10", "Jet30", "PhotonJet");
 #my @jettriggers = ("Jet10", "Jet30");
 #my @singleparticles = {"gamma 10000 10000"};
 
@@ -127,13 +128,27 @@ foreach my $subdir (sort keys %submitdir)
     }
     elsif ($newdir =~ /JS_pp200_signal/)
     {
-	foreach my $qf (@jettriggers)
+	if ($newdir =~ /pau/)
 	{
-	    my $submitcmd = sprintf("perl run_all.pl %d %s -inc %s",$nsubmit,$qf,$submitargs);
-            condorcheck();
-	    print "executing $submitcmd in $newdir\n";
-	    system($submitcmd);
+	    foreach my $qf (@jettriggers1)
+	    {
+		my $submitcmd = sprintf("perl run_all.pl %d %s -inc %s",$nsubmit,$qf,$submitargs);
+		condorcheck();
+		print "executing $submitcmd in $newdir\n";
+		system($submitcmd);
+	    }
 	}
+	else
+	{
+	    foreach my $qf (@jettriggers2)
+	    {
+		my $submitcmd = sprintf("perl run_all.pl %d %s -inc %s",$nsubmit,$qf,$submitargs);
+		condorcheck();
+		print "executing $submitcmd in $newdir\n";
+		system($submitcmd);
+	    }
+	}
+
     }
     elsif ($newdir =~ /single_particle/)
     {
