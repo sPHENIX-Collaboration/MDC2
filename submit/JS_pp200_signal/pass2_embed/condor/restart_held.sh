@@ -7,6 +7,7 @@ fi
 echo $1
 variable=$1
 condor_q | grep ' H ' | grep run_embed_js.sh | grep ${variable} > bla
+#condor_q | grep ' H ' | grep run_embed.sh | grep ${variable} | grep sHijing_0_20fm_50kHz_bkg_0_20fm > bla
 for i in `cat bla| awk '{print $1}'`; do condor_rm $i; done
 if [ -f tmplist ]
 then
