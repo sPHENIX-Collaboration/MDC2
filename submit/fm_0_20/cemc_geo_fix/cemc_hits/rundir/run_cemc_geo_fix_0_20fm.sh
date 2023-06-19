@@ -42,8 +42,8 @@ echo 'here comes your environment'
 printenv
 echo arg1 \(output events\) : $1
 echo arg2 \(input file\): $2
-echo arg3 \(geofile\): $3
-echo arg4 \(output file\): $4
+echo arg3 \(output file\): $4
+echo arg4 \(output dir\): $4
 echo arg5 \(runnumber\): $5
 echo arg6 \(sequence\): $6
 
