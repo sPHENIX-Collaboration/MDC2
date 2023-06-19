@@ -7,8 +7,9 @@ fi
 echo $1
 variable=$1
 #exit 0
-condor_q | grep ' H ' | grep run_pass3global_embed.sh | grep ${variable} | grep sHijing_0_20 > bla
-#condor_q | grep ' H ' | grep run_pass3global_embed_js.sh | grep ${variable}  > bla
+#condor_q | grep ' H ' | grep run_pass3global_embed.sh | grep ${variable} | grep sHijing_0_20 > bla
+condor_q | grep ' H ' | grep run_pass3global_embed_js.sh | grep ${variable}  > bla
+[ -s bla ] || exit 0
 for i in `cat bla| awk '{print $1}'`; do condor_rm $i; done
 if [ -f tmplist ]
 then
