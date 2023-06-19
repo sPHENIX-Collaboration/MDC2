@@ -1,4 +1,5 @@
 #include <GlobalVariables.C>
+#include <G4_Production.C>
 
 #include <g4calo/g4hitshift.h>
 
@@ -21,13 +22,13 @@ R__LOAD_LIBRARY(libg4calo.so)
 void Fun4All_G4_FixCemcGeo(
   const int nEvents = 0,
   const string &g4hitfile = "G4HitsOld_sHijing_0_20fm-0000000006-00000.root",
-  const string &outfilename = "G4Hits_sHijing_0_20fm-0000000006-00000.root",
+  const string &outputFile = "G4Hits_sHijing_0_20fm-0000000006-00000.root",
   const string &outdir = "."
   )
 {
 
   gSystem->Load("libg4dst.so");
-  const string &filefixedgeo = "updated_geo.root",
+  const string &filefixedgeo = "updated_geo.root";
 
   Fun4AllServer *se = Fun4AllServer::instance();
 
@@ -69,7 +70,7 @@ void Fun4All_G4_FixCemcGeo(
   }
 
 
-  Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfilename);
+  Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outputFile);
   se->registerOutputManager(out);
 
   se->run(nEvents);
