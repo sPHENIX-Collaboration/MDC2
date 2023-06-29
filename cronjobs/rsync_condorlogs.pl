@@ -21,6 +21,8 @@ push(@fmrange,"single_particle");
 
 my @passes = ();
 push(@passes,"caloreco");
+push(@passes,"cemc_geo_fix/cemc_hits");
+push(@passes,"cemc_geo_fix/cemc_hits_pass2");
 push(@passes,"eventcombine");
 push(@passes,"job0");
 push(@passes,"pass1");

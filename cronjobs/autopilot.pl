@@ -12,9 +12,9 @@ my $nsafejobs = 80000;
 
 my $submittopdir = "/sphenix/u/sphnxpro/MDC2/submit";
 my %submitdir = (
-    "fm_0_20/pass2/condor" => (""),
+#    "fm_0_20/pass2/condor" => (""),
 #    "fm_0_20/pass2_nopileup/condor" => (""),
-    "fm_0_20/pass3trk/condor" => (""),
+#    "fm_0_20/pass3trk/condor" => (""),
     "fm_0_20/pass3calo/condor" => (""),
     "fm_0_20/pass3global/condor" => (""),
     "fm_0_20/pass3_job0_nopileup/condor" => (""),
