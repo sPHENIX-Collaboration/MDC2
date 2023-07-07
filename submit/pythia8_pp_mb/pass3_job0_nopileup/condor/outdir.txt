@@ -1,1 +1,1 @@
-/sphenix/lustre01/sphnxpro/mdc2/pythia8_pp_mb/trkrcluster/nopileup
+/sphenix/lustre01/sphnxpro/mdc2/pythia8_pp_mb/nopileup/trkrcluster
