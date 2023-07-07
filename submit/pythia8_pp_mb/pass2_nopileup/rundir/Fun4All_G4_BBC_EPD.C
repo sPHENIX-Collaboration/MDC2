@@ -3,12 +3,13 @@
 
 #include <GlobalVariables.C>
 
+#include <G4_Bbc.C>
 #include <G4_EPD.C>
 #include <G4_Input.C>
 #include <G4_Production.C>
 
 #include <ffamodules/FlagHandler.h>
-#include <ffamodules/XploadInterface.h>
+#include <ffamodules/CDBInterface.h>
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
@@ -20,10 +21,10 @@
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 
-int Fun4All_G4_Global(
+int Fun4All_G4_BBC_EPD(
     const int nEvents = 1,
     const string &inputFile = "G4Hits_pythia8_pp_mb-0000000006-00000.root",
-  const string &outputFile = "DST_GLOBAL_pythia8_pp_mb-0000000006-00000.root",
+  const string &outputFile = "DST_BBC_EPD_pythia8_pp_mb-0000000006-00000.root",
     const string &outdir = ".")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
@@ -43,10 +44,9 @@ int Fun4All_G4_Global(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
-  Enable::XPLOAD = true;
-  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
-  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
-  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
+  Enable::CDB = true;
+  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
   //===============
   // Input options
@@ -94,16 +94,11 @@ int Fun4All_G4_Global(
   //  Enable::OVERLAPCHECK = true;
   //  Enable::VERBOSITY = 1;
 
+  Enable::BBCRECO = true; // needed in Bbc_Reco()
 
-  Enable::EPD = true;
-  Enable::EPD_TILE = true;
+  Bbc_Reco();
 
-
-  //--------------
-  // EPD tile reconstruction
-  //--------------
-
-  if (Enable::EPD_TILE) EPD_Tiles();
+  EPD_Tiles();
 
   //--------------
   // Set up Input Managers
@@ -122,6 +117,8 @@ int Fun4All_G4_Global(
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     out->AddNode("Sync");
     out->AddNode("EventHeader");
+    out->AddNode("BbcPmtContainer");
+    out->AddNode("BbcVertexMap");
     out->AddNode("TOWERINFO_SIM_EPD");
     out->AddNode("TOWERINFO_CALIB_EPD");
     se->registerOutputManager(out);
@@ -146,7 +143,7 @@ int Fun4All_G4_Global(
   // Exit
   //-----
 
-  XploadInterface::instance()->Print(); // print used DB files
+  CDBInterface::instance()->Print(); // print used DB files
   se->End();
   se->PrintTimer();
   std::cout << "All done" << std::endl;
