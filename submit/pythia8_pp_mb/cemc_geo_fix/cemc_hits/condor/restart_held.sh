@@ -1,6 +1,6 @@
 #! /usr/bin/bash
 [ -f bla ] && rm bla
-condor_q | grep ' H ' | grep run_cemc_geo_fix_0_20fm.sh | grep G4HitsOld_sHijing_0_20fm > bla
+condor_q | grep ' H ' | grep run_cemc_geo_fix_pp_mb.sh > bla
 #condor_q | grep ' H ' | grep run_pileup.sh | grep sHijing_0_20 > bla
 [ ! -s bla ] && exit 0
 for i in `cat bla| awk '{print $1}'`; do condor_rm $i; done
