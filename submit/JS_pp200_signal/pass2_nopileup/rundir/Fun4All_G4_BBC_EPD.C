@@ -5,12 +5,11 @@
 
 #include <G4_Bbc.C>
 #include <G4_EPD.C>
-#include <G4_Global.C>
 #include <G4_Input.C>
 #include <G4_Production.C>
 
 #include <ffamodules/FlagHandler.h>
-#include <ffamodules/XploadInterface.h>
+#include <ffamodules/CDBInterface.h>
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
@@ -22,10 +21,10 @@
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 
-int Fun4All_G4_Global(
+int Fun4All_G4_BBC_EPD(
     const int nEvents = 1,
-    const string &inputFile = "G4Hits_pythia8_Jet10-0000000006-00000.root",
-  const string &outputFile = "DST_GLOBAL_pythia8_Jet10-0000000006-00000.root",
+    const string &inputFile = "G4Hits_pythia8_Jet30-0000000006-00000.root",
+    const string &outputFile = "DST_BBC_EPD_pythia8_Jet30-0000000006-00000.root",
     const string &outdir = ".")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
@@ -45,10 +44,9 @@ int Fun4All_G4_Global(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
-  Enable::XPLOAD = true;
-  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
-  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
-  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
+  Enable::CDB = true;
+  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
   //===============
   // Input options
@@ -96,15 +94,11 @@ int Fun4All_G4_Global(
   //  Enable::OVERLAPCHECK = true;
   //  Enable::VERBOSITY = 1;
 
-  Enable::GLOBAL_FASTSIM = true;
-  Enable::GLOBAL_RECO = true;
-  Enable::BBCRECO = true;
-  Enable::EPD_TILE = true;
+  Enable::BBCRECO = true; // needed in Bbc_Reco()
 
-  if (Enable::GLOBAL_FASTSIM)  Global_FastSim();
-  if (Enable::BBCRECO) Bbc_Reco();
-  if (Enable::EPD_TILE) EPD_Tiles();
-  if (Enable::GLOBAL_RECO) Global_Reco();
+  Bbc_Reco();
+
+  EPD_Tiles();
 
   //--------------
   // Set up Input Managers
@@ -123,11 +117,10 @@ int Fun4All_G4_Global(
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     out->AddNode("Sync");
     out->AddNode("EventHeader");
-    out->AddNode("BbcOut");
     out->AddNode("BbcPmtContainer");
+    out->AddNode("BbcVertexMap");
     out->AddNode("TOWERINFO_SIM_EPD");
     out->AddNode("TOWERINFO_CALIB_EPD");
-    out->AddNode("GlobalVertexMap");
     se->registerOutputManager(out);
   }
 
@@ -150,7 +143,7 @@ int Fun4All_G4_Global(
   // Exit
   //-----
 
-  XploadInterface::instance()->Print(); // print used DB files
+  CDBInterface::instance()->Print(); // print used DB files
   se->End();
   se->PrintTimer();
   std::cout << "All done" << std::endl;

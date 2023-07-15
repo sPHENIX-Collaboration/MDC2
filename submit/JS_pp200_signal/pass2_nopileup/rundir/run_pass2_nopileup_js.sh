@@ -12,9 +12,9 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-ana_calo=ana.349
-ana_global=ana.354
-ana_pass3trk=ana.349
+ana_calo=ana.366
+ana_global=ana.366
+ana_pass3trk=ana.366
 
 # just to get a working environment, the specific ana builds for each reconstruction are set later
 source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n
@@ -69,7 +69,7 @@ echo 'here comes your Calorimeter Reconstruction environment'
 printenv
 
 echo running root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
-#root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
+root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
 
 #---------------------------------------------------------------
 # Global Reconstruction
@@ -78,8 +78,8 @@ source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup
 echo 'here comes your Global Reconstruction environment'
 printenv
 
-echo running root.exe -q -b Fun4All_G4_Global.C\($1,\"$2\",\"$5\",\"$6\"\)
-root.exe -q -b  Fun4All_G4_Global.C\($1,\"$2\",\"$5\",\"$6\"\)
+echo running root.exe -q -b Fun4All_G4_BBC_EPD.C\($1,\"$2\",\"$5\",\"$6\"\)
+root.exe -q -b  Fun4All_G4_BBC_EPD.C\($1,\"$2\",\"$5\",\"$6\"\)
 
 #---------------------------------------------------------------
 # pass3 tracking
@@ -89,6 +89,6 @@ echo 'here comes your Pass3 Tracking environment'
 printenv
 
 echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$8\"\)
-#root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$8\"\)
+root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$8\"\)
 
 echo "script done"
