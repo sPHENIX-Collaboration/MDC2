@@ -10,7 +10,7 @@
 #include <G4_Production.C>
 
 #include <ffamodules/FlagHandler.h>
-#include <ffamodules/XploadInterface.h>
+#include <ffamodules/CDBInterface.h>
 
 #include <fun4all/Fun4AllInputManager.h>
 #include <fun4all/Fun4AllDstInputManager.h>
@@ -41,13 +41,9 @@ R__LOAD_LIBRARY(libffamodules.so)
   //===============
   // conditions DB flags
   //===============
-  Enable::XPLOAD = true;
-  // tag
-  rc->set_StringFlag("XPLOAD_TAG", XPLOAD::tag);
-  // database config
-  rc->set_StringFlag("XPLOAD_CONFIG", XPLOAD::config);
-  // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP", XPLOAD::timestamp);
+  Enable::CDB = true;
+  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
   Fun4AllInputManager *in = new Fun4AllDstInputManager("DSTTRUTH");
   in->fileopen(inputFile);
@@ -105,7 +101,7 @@ R__LOAD_LIBRARY(libffamodules.so)
   se->run(nEvents);
 
   // terminate
-  XploadInterface::instance()->Print();  // print used DB files
+  CDBInterface::instance()->Print();  // print used DB files
   se->End();
   std::cout << "All done" << std::endl;
   delete se;
