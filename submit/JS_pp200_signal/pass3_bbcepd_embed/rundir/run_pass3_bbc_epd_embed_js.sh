@@ -11,7 +11,7 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.354
+source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.366
 
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
@@ -55,7 +55,7 @@ echo arg8 \(sequence\): $8
 runnumber=$(printf "%010d" $7)
 sequence=$(printf "%05d" $8)
 
-echo running root.exe -q -b Fun4All_G4_Global.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
-root.exe -q -b  Fun4All_G4_Global.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
+echo running root.exe -q -b Fun4All_G4_BBC_EPD.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
+root.exe -q -b  Fun4All_G4_BBC_EPD.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
 
 echo "script done"
