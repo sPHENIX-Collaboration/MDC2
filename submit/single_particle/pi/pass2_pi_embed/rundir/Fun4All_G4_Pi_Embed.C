@@ -12,10 +12,11 @@
 #include <G4_User.C>
 
 #include <ffamodules/FlagHandler.h>
-#include <ffamodules/XploadInterface.h>
+#include <ffamodules/CDBInterface.h>
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
+#include <fun4all/Fun4AllRunNodeInputManager.h>
 #include <fun4all/Fun4AllServer.h>
 #include <fun4all/Fun4AllSyncManager.h>
 #include <fun4all/Fun4AllUtils.h>
@@ -41,6 +42,8 @@ int Fun4All_G4_Pi_Embed(
     const string &particle1 = "pi-",
     const string &particle2 = "pi+")
 {
+  const string &filefixedgeo = "cylindercellgeom_svtx.root";
+
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
 
@@ -62,13 +65,11 @@ int Fun4All_G4_Pi_Embed(
   //===============
   // conditions DB flags
   //===============
-  Enable::XPLOAD = true;
+  Enable::CDB = true;
   // tag
-  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
-  // database config
-  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
+  rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
+  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(embed_input_file0);
   int runnumber=runseg.first;
@@ -323,6 +324,9 @@ int Fun4All_G4_Pi_Embed(
   //--------------
 
   InputManagers();
+  Fun4AllRunNodeInputManager *ingeo = new Fun4AllRunNodeInputManager("CYLGEO");
+  ingeo->AddFile(filefixedgeo);
+  se->registerInputManager(ingeo);
 
   if (Enable::PRODUCTION)
   {
@@ -354,7 +358,7 @@ int Fun4All_G4_Pi_Embed(
   // Exit
   //-----
 
-  XploadInterface::instance()->Print(); // print used DB files
+  CDBInterface::instance()->Print(); // print used DB files
   se->End();
   std::cout << "All done" << std::endl;
   delete se;
