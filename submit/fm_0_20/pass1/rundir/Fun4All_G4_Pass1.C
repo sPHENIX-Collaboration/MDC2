@@ -7,11 +7,12 @@
 #include <G4_Bbc.C>
 #include <G4_Input.C>
 #include <G4_Production.C>
+#include <G4_TrkrSimulation.C>
 
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/HeadReco.h>
 #include <ffamodules/SyncReco.h>
-#include <ffamodules/XploadInterface.h>
+#include <ffamodules/CDBInterface.h>
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
@@ -54,14 +55,11 @@ int Fun4All_G4_Pass1(
   //===============
   // conditions DB flags
   //===============
-  Enable::XPLOAD = true;
-  XPLOAD::timestamp = 6;
-  // tag
-  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
-  // database config
-  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
+  Enable::CDB = true;
+  // global tag
+  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
+  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
 // this extracts the runnumber and segment from the output filename
 // and sets this so the server can pick it up
@@ -89,6 +87,8 @@ int Fun4All_G4_Pass1(
 
   // Event pile up simulation with collision rate in Hz MB collisions.
   //Input::PILEUPRATE = 100e3;
+  // Enable this is emulating the nominal pp/pA/AA collision vertex distribution
+  Input::BEAM_CONFIGURATION = Input::AA_COLLISION; // for 2023 sims we want the AA geometry for no pileup sims
 
   //-----------------
   // Initialize the selected Input/Event generation
@@ -161,12 +161,10 @@ int Fun4All_G4_Pass1(
   Enable::CEMC = true;
 
   Enable::HCALIN = true;
-  G4HCALIN::light_scint_model = 20;
 
   Enable::MAGNET = true;
 
   Enable::HCALOUT = true;
-  G4HCALOUT::light_scint_model = 20;
 
   Enable::EPD = true;
 
@@ -208,14 +206,6 @@ int Fun4All_G4_Pass1(
   if (!Input::READHITS)
   {
     G4Setup();
-  }
-
-  string outputroot = outputFile;
-  string remove_this = ".root";
-  size_t pos = outputroot.find(remove_this);
-  if (pos != string::npos)
-  {
-    outputroot.erase(pos, remove_this.length());
   }
 
   //--------------
@@ -260,7 +250,7 @@ int Fun4All_G4_Pass1(
   // Exit
   //-----
 
-  XploadInterface::instance()->Print(); // print used DB files
+  CDBInterface::instance()->Print(); // print used DB files
   se->End();
   se->PrintTimer();
   std::cout << "All done" << std::endl;
