@@ -3,7 +3,6 @@
 
 #include <GlobalVariables.C>
 
-#include <G4_Global.C>
 #include <G4_OutputManager_Pileup.C>
 #include <G4_Production.C>
 
@@ -47,12 +46,6 @@ int Fun4All_G4_Pileup(
   Enable::PRODUCTION = true;
   Enable::DSTOUT = true;
   DstOut::OutputDir = outdir;
-  Enable::GLOBAL_FASTSIM = true;
-
-  if (Enable::GLOBAL_FASTSIM)
-  {
-    Global_FastSim();
-  }
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
   int runnumber = runseg.first;
   int segment = abs(runseg.second);
