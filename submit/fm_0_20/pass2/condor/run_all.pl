@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 6;
+my $runnumber = 7;
 my $test;
 my $incremental;
 my $verbosity;
@@ -55,7 +55,6 @@ $outfiletype{"DST_BBC_G4HIT"} = 1;
 $outfiletype{"DST_CALO_G4HIT"} = 1;
 $outfiletype{"DST_TRKR_G4HIT"} = 1;
 $outfiletype{"DST_TRUTH_G4HIT"} = "DST_TRUTH";
-$outfiletype{"DST_VERTEX"} = 1;
 
 my $localdir=`pwd`;
 chomp $localdir;
