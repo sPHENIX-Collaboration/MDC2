@@ -72,10 +72,10 @@ OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
     for (my $n=0; $n<$nmax; $n+=$events)
     {
 	my $outfile = sprintf("G4Hits_sHijing_0_20fm-%010d-%06d.root",$runnumber,$sequence);
-if ($sequence < 100000)
-{
-	$outfile = sprintf("G4Hits_sHijing_0_20fm-%010d-%05d.root",$runnumber,$sequence);
-}
+	if ($sequence < 100000)
+	{
+	    $outfile = sprintf("G4Hits_sHijing_0_20fm-%010d-%05d.root",$runnumber,$sequence);
+	}
 	$chkfile->execute($outfile);
 	if ($chkfile->rows == 0)
 	{
