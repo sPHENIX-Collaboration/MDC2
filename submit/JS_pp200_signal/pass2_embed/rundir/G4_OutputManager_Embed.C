@@ -58,12 +58,6 @@ void CreateDstOutput(int runnumber, int segment, const string &jettrigger)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "DST_VERTEX_pythia8_" + jettrigger + "_sHijing_0_20fm_50kHz_bkg_0_20fm-" + string(segrun) + ".root";;
-  out = new Fun4AllDstOutputManager("VERTEXOUT", FullOutFile);
-  AddCommonNodes(out);
-  out->AddNode("GlobalVertexMap");
-  se->registerOutputManager(out);
-  OUTPUTMANAGER::outfiles.insert(FullOutFile);
 }
 
 void AddCommonNodes(Fun4AllOutputManager *out)
