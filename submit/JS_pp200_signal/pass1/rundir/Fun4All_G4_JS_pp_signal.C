@@ -3,29 +3,19 @@
 
 #include <GlobalVariables.C>
 
-#include <DisplayOn.C>
 #include <G4Setup_sPHENIX.C>
 #include <G4_Bbc.C>
-#include <G4_CaloTrigger.C>
-#include <G4_DSTReader.C>
 #include <G4_Global.C>
-#include <G4_HIJetReco.C>
 #include <G4_Input.C>
-#include <G4_Jets.C>
-#include <G4_KFParticle.C>
-#include <G4_ParticleFlow.C>
 #include <G4_Production.C>
-#include <G4_TopoClusterReco.C>
-#include <G4_Tracking.C>
-#include <G4_User.C>
-#include <QA.C>
+#include <G4_TrkrSimulation.C>
 
 #include <phpythia8/PHPy8JetTrigger.h>
 
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/HeadReco.h>
 #include <ffamodules/SyncReco.h>
-#include <ffamodules/XploadInterface.h>
+#include <ffamodules/CDBInterface.h>
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
@@ -72,13 +62,11 @@ int Fun4All_G4_JS_pp_signal(
   //===============
   // conditions DB flags
   //===============
-  Enable::XPLOAD = true;
-  // tag
-  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
-  // database config
-  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
+  Enable::CDB = true;
+  // global tag
+  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
+  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
   int runnumber=runseg.first;
@@ -300,15 +288,9 @@ int Fun4All_G4_JS_pp_signal(
   //Option to convert DST to human command readable TTree for quick poke around the outputs
   //  Enable::DSTREADER = true;
 
-  // turn the display on (default off)
-  Enable::DISPLAY = false;
-
   //======================
   // What to run
   //======================
-
-  // QA, main switch
-//  Enable::QA = true;
 
   // Global options (enabled for all enables subsystems - if implemented)
   //  Enable::ABSORBER = true;
@@ -323,61 +305,25 @@ int Fun4All_G4_JS_pp_signal(
 
   // central tracking
   Enable::MVTX = true;
-//  Enable::MVTX_CELL = Enable::MVTX && true;
-  Enable::MVTX_CLUSTER = Enable::MVTX_CELL && true;
-  Enable::MVTX_QA = Enable::MVTX_CLUSTER && Enable::QA && true;
 
   Enable::INTT = true;
-//  Enable::INTT_CELL = Enable::INTT && true;
-  Enable::INTT_CLUSTER = Enable::INTT_CELL && true;
-  Enable::INTT_QA = Enable::INTT_CLUSTER && Enable::QA && true;
 
   Enable::TPC = true;
-//  Enable::TPC_ABSORBER = false;
-//  Enable::TPC_CELL = Enable::TPC && true;
-  Enable::TPC_CLUSTER = Enable::TPC_CELL && true;
-  Enable::TPC_QA = Enable::TPC_CLUSTER && Enable::QA && true;
 
   Enable::MICROMEGAS = true;
-//  Enable::MICROMEGAS_CELL = Enable::MICROMEGAS && true;
-  Enable::MICROMEGAS_CLUSTER = Enable::MICROMEGAS_CELL && true;
-
-//  Enable::TRACKING_TRACK = true;
-  Enable::TRACKING_EVAL = Enable::TRACKING_TRACK && false;
-  Enable::TRACKING_QA = Enable::TRACKING_TRACK && Enable::QA && true;
 
   //  cemc electronics + thin layer of W-epoxy to get albedo from cemc
   //  into the tracking, cannot run together with CEMC
   //  Enable::CEMCALBEDO = true;
 
   Enable::CEMC = true;
-//  Enable::CEMC_ABSORBER = false;
-//  Enable::CEMC_CELL = Enable::CEMC && true;
-  Enable::CEMC_TOWER = Enable::CEMC_CELL && true;
-  Enable::CEMC_CLUSTER = Enable::CEMC_TOWER && true;
-  Enable::CEMC_EVAL = Enable::CEMC_CLUSTER && false;
-  Enable::CEMC_QA = Enable::CEMC_CLUSTER && Enable::QA && false;
 
   Enable::HCALIN = true;
-//  Enable::HCALIN_ABSORBER = false;
-//  Enable::HCALIN_CELL = Enable::HCALIN && true;
-  Enable::HCALIN_TOWER = Enable::HCALIN_CELL && true;
-  Enable::HCALIN_CLUSTER = Enable::HCALIN_TOWER && true;
-  Enable::HCALIN_EVAL = Enable::HCALIN_CLUSTER && false;
-  Enable::HCALIN_QA = Enable::HCALIN_CLUSTER && Enable::QA && false;
-  G4HCALIN::light_scint_model = 20;
 
   Enable::MAGNET = true;
 //  Enable::MAGNET_ABSORBER = false;
 
   Enable::HCALOUT = true;
-//  Enable::HCALOUT_ABSORBER = false;
-//  Enable::HCALOUT_CELL = Enable::HCALOUT && true;
-  Enable::HCALOUT_TOWER = Enable::HCALOUT_CELL && true;
-  Enable::HCALOUT_CLUSTER = Enable::HCALOUT_TOWER && true;
-  Enable::HCALOUT_EVAL = Enable::HCALOUT_CLUSTER && false;
-  Enable::HCALOUT_QA = Enable::HCALOUT_CLUSTER && Enable::QA && false;
-  G4HCALOUT::light_scint_model = 20;
 
   Enable::EPD = true;
 
@@ -398,29 +344,6 @@ int Fun4All_G4_JS_pp_signal(
 //  Enable::GLOBAL_RECO = true;
   //Enable::GLOBAL_FASTSIM = true;
   
-//  Enable::KFPARTICLE = true;
-  //Enable::KFPARTICLE_VERBOSITY = 1;
-  //Enable::KFPARTICLE_TRUTH_MATCH = true;
-  //Enable::KFPARTICLE_SAVE_NTUPLE = true;
-  KFParticleBaseCut::maxTrackchi2nDoF = 10;
-  KFParticleBaseCut::minTrackIPchi2 = 0;
-
-  Enable::CALOTRIGGER = Enable::CEMC_TOWER && Enable::HCALIN_TOWER && Enable::HCALOUT_TOWER && false;
-
-//  Enable::JETS = true;
-  Enable::JETS_EVAL = Enable::JETS && true;
-  Enable::JETS_QA = Enable::JETS && Enable::QA && true;
-
-  // HI Jet Reco for p+Au / Au+Au collisions (default is false for
-  // single particle / p+p-only simulations, or for p+Au / Au+Au
-  // simulations which don't particularly care about jets)
-  Enable::HIJETS = false && Enable::JETS && Enable::CEMC_TOWER && Enable::HCALIN_TOWER && Enable::HCALOUT_TOWER;
-
-  // 3-D topoCluster reconstruction, potentially in all calorimeter layers
-  Enable::TOPOCLUSTER = true && Enable::CEMC_TOWER && Enable::HCALIN_TOWER && Enable::HCALOUT_TOWER;
-  // particle flow jet reconstruction - needs topoClusters!
-  Enable::PARTICLEFLOW = true && Enable::TOPOCLUSTER;
-
   // new settings using Enable namespace in GlobalVariables.C
   Enable::BLACKHOLE = true;
   Enable::BLACKHOLE_FORWARD_SAVEHITS = false; // disable forward/backward hits
@@ -463,141 +386,6 @@ int Fun4All_G4_JS_pp_signal(
     G4Setup();
   }
 
-  //------------------
-  // Detector Division
-  //------------------
-
-  if (Enable::BBC || Enable::BBCFAKE) Bbc_Reco();
-
-  if (Enable::MVTX_CELL) Mvtx_Cells();
-  if (Enable::INTT_CELL) Intt_Cells();
-  if (Enable::TPC_CELL) TPC_Cells();
-  if (Enable::MICROMEGAS_CELL) Micromegas_Cells();
-
-  if (Enable::CEMC_CELL) CEMC_Cells();
-
-  if (Enable::HCALIN_CELL) HCALInner_Cells();
-
-  if (Enable::HCALOUT_CELL) HCALOuter_Cells();
-
-  //-----------------------------
-  // CEMC towering and clustering
-  //-----------------------------
-
-  if (Enable::CEMC_TOWER) CEMC_Towers();
-  if (Enable::CEMC_CLUSTER) CEMC_Clusters();
-
-  //-----------------------------
-  // HCAL towering and clustering
-  //-----------------------------
-
-  if (Enable::HCALIN_TOWER) HCALInner_Towers();
-  if (Enable::HCALIN_CLUSTER) HCALInner_Clusters();
-
-  if (Enable::HCALOUT_TOWER) HCALOuter_Towers();
-  if (Enable::HCALOUT_CLUSTER) HCALOuter_Clusters();
-
-  // if enabled, do topoClustering early, upstream of any possible jet reconstruction
-  if (Enable::TOPOCLUSTER) TopoClusterReco();
-
-  //--------------
-  // SVTX tracking
-  //--------------
-  if (Enable::MVTX_CLUSTER) Mvtx_Clustering();
-  if (Enable::INTT_CLUSTER) Intt_Clustering();
-  if (Enable::TPC_CLUSTER) TPC_Clustering();
-  if (Enable::MICROMEGAS_CLUSTER) Micromegas_Clustering();
-
-  if (Enable::TRACKING_TRACK)
-  {
-    TrackingInit();
-    Tracking_Reco();
-  }
-  //-----------------
-  // Global Vertexing
-  //-----------------
-
-  if (Enable::GLOBAL_RECO && Enable::GLOBAL_FASTSIM)
-  {
-    cout << "You can only enable Enable::GLOBAL_RECO or Enable::GLOBAL_FASTSIM, not both" << endl;
-    gSystem->Exit(1);
-  }
-  if (Enable::GLOBAL_RECO)
-  {
-    Global_Reco();
-  }
-  else if (Enable::GLOBAL_FASTSIM)
-  {
-    Global_FastSim();
-  }
-
-  //-----------------
-  // Calo Trigger Simulation
-  //-----------------
-
-  if (Enable::CALOTRIGGER)
-  {
-    CaloTrigger_Sim();
-  }
-
-  //---------
-  // Jet reco
-  //---------
-
-  if (Enable::JETS) Jet_Reco();
-  if (Enable::HIJETS) HIJetReco();
-
-  if (Enable::PARTICLEFLOW) ParticleFlow();
-
-  //----------------------
-  // Simulation evaluation
-  //----------------------
-
-  string outputroot = outputFile;
-  string remove_this = ".root";
-  size_t pos = outputroot.find(remove_this);
-  if (pos != string::npos)
-  {
-    outputroot.erase(pos, remove_this.length());
-  }
-
-  if (Enable::TRACKING_EVAL) Tracking_Eval(outputroot + "_" + Jet_Trigger + "_g4svtx_eval.root");
-
-  if (Enable::CEMC_EVAL) CEMC_Eval(outputroot + "_" + Jet_Trigger + "_g4cemc_eval.root");
-
-  if (Enable::HCALIN_EVAL) HCALInner_Eval(outputroot + "_" + Jet_Trigger + "_g4hcalin_eval.root");
-
-  if (Enable::HCALOUT_EVAL) HCALOuter_Eval(outputroot + "_" + Jet_Trigger + "_g4hcalout_eval.root");
-
-  if (Enable::JETS_EVAL) Jet_Eval(outputroot + "_" + Jet_Trigger + "_jet_eval.root");
-
-  if (Enable::DSTREADER) G4DSTreader(outputroot + "_" + Jet_Trigger + "_DSTReader.root");
-
-  if (Enable::USER) UserAnalysisInit();
-
-  //======================
-  // Run KFParticle on evt
-  //======================
-  if (Enable::KFPARTICLE) KFParticle_D0_Reco();
-  if (Enable::KFPARTICLE) KFParticle_Lambdac_Reco();
-     
-  //----------------------
-  // Standard QAs
-  //----------------------
-
-  if (Enable::CEMC_QA) CEMC_QA();
-  if (Enable::HCALIN_QA) HCALInner_QA();
-  if (Enable::HCALOUT_QA) HCALOuter_QA();
-
-  if (Enable::JETS_QA) Jet_QA();
-
-  if (Enable::MVTX_QA) Mvtx_QA();
-  if (Enable::INTT_QA) Intt_QA();
-  if (Enable::TPC_QA) TPC_QA();
-  if (Enable::TRACKING_QA) Tracking_QA();
-
-  if (Enable::TRACKING_QA && Enable::CEMC_QA && Enable::HCALIN_QA && Enable::HCALOUT_QA) QA_G4CaloTracking();
-
   //--------------
   // Set up Input Managers
   //--------------
@@ -612,32 +400,11 @@ int Fun4All_G4_JS_pp_signal(
   {
     string FullOutFile = DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
-    if (Enable::DSTOUT_COMPRESS)
-    {
-      ShowerCompress();
-      DstCompress(out);
-    }
     se->registerOutputManager(out);
   }
   //-----------------
   // Event processing
   //-----------------
-  if (Enable::DISPLAY)
-  {
-    DisplayOn();
-
-    gROOT->ProcessLine("Fun4AllServer *se = Fun4AllServer::instance();");
-    gROOT->ProcessLine("PHG4Reco *g4 = (PHG4Reco *) se->getSubsysReco(\"PHG4RECO\");");
-
-    cout << "-------------------------------------------------" << endl;
-    cout << "You are in event display mode. Run one event with" << endl;
-    cout << "se->run(1)" << endl;
-    cout << "Run Geant4 command with following examples" << endl;
-    gROOT->ProcessLine("displaycmd()");
-
-    return 0;
-  }
-
   // if we use a negative number of events we go back to the command line here
   if (nEvents < 0)
   {
@@ -655,16 +422,10 @@ int Fun4All_G4_JS_pp_signal(
   se->run(nEvents);
 
   //-----
-  // QA output
-  //-----
-
-  if (Enable::QA) QA_Output("QA_" + outputroot + ".root");
-
-  //-----
   // Exit
   //-----
 
-  XploadInterface::instance()->Print(); // print used DB files
+  CDBInterface::instance()->Print(); // print used DB files
   se->End();
   std::cout << "All done" << std::endl;
   delete se;
