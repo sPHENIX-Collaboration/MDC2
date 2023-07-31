@@ -21,13 +21,13 @@ R__LOAD_LIBRARY(libfun4all.so)
 //________________________________________________________________________________________________
 int Fun4All_G4_Global(
   const int nEvents = 0,
-  const std::string &inputFile1 = "DST_TRACKS_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
-  const std::string &inputFile2 = "DST_BBC_EPD_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
-  const std::string &outputFile = "DST_GLOBAL_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
+  const std::string &inputFile1 = "DST_TRACKS_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00001.root",
+  const std::string &inputFile2 = "DST_BBC_EPD_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00001.root",
+  const std::string &outputFile = "DST_GLOBAL_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00001.root",
   const std::string &outdir = "."
   )
 {
-
+  gSystem->Load("libg4dst.so");
   recoConsts *rc = recoConsts::instance();
 
   //===============
@@ -81,10 +81,6 @@ int Fun4All_G4_Global(
   out->AddNode("TOWERINFO_CALIB_EPD");
   out->AddNode("GlobalVertexMap");
   se->registerOutputManager(out);
-
-  // skip events if any specified
-  if( nSkipEvents > 0 )
-  { se->skip( nSkipEvents ); }
 
   // process events
   se->run(nEvents);
