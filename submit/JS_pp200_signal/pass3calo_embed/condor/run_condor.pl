@@ -22,12 +22,11 @@ my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_pass3calo_embed_js.sh",$rundir);
 my $nevents = $ARGV[0];
 my $jettrigger = $ARGV[1];
-my $infile0 = $ARGV[2];
-my $infile1 = $ARGV[3];
-my $dstoutfile = $ARGV[4];
-my $dstoutdir = $ARGV[5];
-my $runnumber = $ARGV[6];
-my $sequence = $ARGV[7];
+my $infile = $ARGV[2];
+my $dstoutfile = $ARGV[3];
+my $dstoutdir = $ARGV[4];
+my $runnumber = $ARGV[5];
+my $sequence = $ARGV[6];
 if ($sequence < 100)
 {
     $baseprio = 90;
@@ -55,7 +54,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $infile0 $infile1 $dstoutfile $dstoutdir $jettrigger $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $infile $dstoutfile $dstoutdir $jettrigger $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -83,5 +82,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile0 $infile1, $dstoutfile, $dstoutdir, $jettrigger, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $infile, $dstoutfile, $dstoutdir, $jettrigger, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);

@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=6;
+my $runnumber=7;
 my $test;
 my $incremental;
 my $shared;
@@ -98,7 +98,7 @@ foreach my $segment (sort keys %bbchash)
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_GLOBAL_%s-%010d-%05d.root",$outfilelike,$runnumber,$segment);
+	my $outfilename = sprintf("DST_BBC_EPD_%s-%010d-%05d.root",$outfilelike,$runnumber,$segment);
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{

@@ -29,7 +29,6 @@ R__LOAD_LIBRARY(libfun4all.so)
 int Fun4All_G4_Calo(
     const int nEvents = 1,
     const string &inputFile0 = "DST_CALO_G4HIT_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
-    const string &inputFile1 = "DST_VERTEX_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
     const string &outputFile = "DST_CALO_CLUSTER_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
     const string &outdir = ".")
 {
@@ -66,7 +65,6 @@ int Fun4All_G4_Calo(
   // about the number of layers used for the cell reco code
   Input::READHITS = true;
   INPUTREADHITS::filename[0] = inputFile0;
-  INPUTREADHITS::filename[1] = inputFile1;
 
   //-----------------
   // Initialize the selected Input/Event generation
@@ -193,7 +191,6 @@ int Fun4All_G4_Calo(
     out->AddNode("TOPOCLUSTER_ALLCALO");
     out->AddNode("TOPOCLUSTER_EMCAL");
     out->AddNode("TOPOCLUSTER_HCAL");
-    out->AddNode("GlobalVertexMap");
     se->registerOutputManager(out);
   }
   //-----------------

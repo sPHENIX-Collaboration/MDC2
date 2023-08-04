@@ -5,48 +5,44 @@
 
 #include <GlobalVariables.C>
 
-#include <G4_HIJetReco.C>
 #include <G4_Jets.C>
 #include <G4_Production.C>
 
 #include <ffamodules/FlagHandler.h>
-#include <ffamodules/XploadInterface.h>
+#include <ffamodules/CDBInterface.h>
 
+#include <fun4all/Fun4AllInputManager.h>
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
-#include <fun4all/Fun4AllInputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
 
 #include <phool/recoConsts.h>
 
 R__LOAD_LIBRARY(libffamodules.so)
-R__LOAD_LIBRARY(libfun4all.so)
+  R__LOAD_LIBRARY(libfun4all.so)
 
-void Fun4All_G4_Jets(
+  void Fun4All_G4_Jets(
     const int nEvents = 10,
-    const string &inputFile = "DST_TRUTH_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000040-00000.root",
-    const string &outputFile = "DST_TRUTH_JET_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000040-00000.root",
-    const string &outdir = ".")
+    const string &inputFile = "DST_TRUTH_pythia8_Jet10_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
+    const string &outputFile = "DST_TRUTH_JETS_pythia8_Jet10_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006--00000.root",
+    const string &outdir = "."
+    )
 {
-  // this convenience library knows all our i/o objects so you don't
-  // have to figure out what is in each dst type
+// this convenience library knows all our i/o objects so you don't
+// have to figure out what is in each dst type 
   gSystem->Load("libg4dst.so");
   Fun4AllServer *se = Fun4AllServer::instance();
-  se->Verbosity(1);  // set it to 1 if you want event printouts
+  se->Verbosity(1); // set it to 1 if you want event printouts
 
   recoConsts *rc = recoConsts::instance();
 
   //===============
   // conditions DB flags
   //===============
-  Enable::XPLOAD = true;
-  // tag
-  rc->set_StringFlag("XPLOAD_TAG", XPLOAD::tag);
-  // database config
-  rc->set_StringFlag("XPLOAD_CONFIG", XPLOAD::config);
-  // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP", XPLOAD::timestamp);
+  Enable::CDB = true;
+  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
   Fun4AllInputManager *in = new Fun4AllDstInputManager("DSTTRUTH");
   in->fileopen(inputFile);
@@ -57,7 +53,7 @@ void Fun4All_G4_Jets(
 
   JetReco *truthjetreco = new JetReco("TRUTHJETRECO");
   TruthJetInput *tji = new TruthJetInput(Jet::PARTICLE);
-  tji->add_embedding_flag(2);  // always (2) for production embedding
+  tji->add_embedding_flag(2);  // (1) for pythia simulations, (2) for pythia embedding into hijing
   truthjetreco->add_input(tji);
   truthjetreco->add_algo(new FastJetAlgo(Jet::ANTIKT, 0.2), "AntiKt_Truth_r02");
   truthjetreco->add_algo(new FastJetAlgo(Jet::ANTIKT, 0.3), "AntiKt_Truth_r03");
@@ -104,7 +100,7 @@ void Fun4All_G4_Jets(
   se->run(nEvents);
 
   // terminate
-  XploadInterface::instance()->Print();  // print used DB files
+  CDBInterface::instance()->Print();  // print used DB files
   se->End();
   std::cout << "All done" << std::endl;
   delete se;
@@ -115,4 +111,4 @@ void Fun4All_G4_Jets(
   gSystem->Exit(0);
 }
 
-#endif  //MACRO_FUN4ALLJETS_C
+#endif //MACRO_FUN4ALLJETS_C

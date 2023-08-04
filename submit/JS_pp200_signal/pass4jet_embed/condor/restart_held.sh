@@ -7,7 +7,6 @@ fi
 echo $1
 variable=$1
 #exit 0
-#condor_q | grep ' H ' | grep run_pass4jet_embed.sh | grep ${variable} | grep sHijing_0_20 > bla
 condor_q | grep ' H ' | grep run_pass4jet_embed_js.sh | grep ${variable} > bla
 
 [ -s bla ] ||  exit 1
