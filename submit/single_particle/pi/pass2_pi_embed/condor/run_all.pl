@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 6;
+my $runnumber = 7;
 my $test;
 my $incremental;
 my $particle = "pi";
@@ -52,7 +52,7 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/%s",$outdir,lc $particle);
+$outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,lc $particle);
 mkpath($outdir);
 
 my %outfiletype = ();
@@ -107,16 +107,6 @@ while (my @res = $getcalofiles->fetchrow_array())
 }
 $getcalofiles->finish();
 
-my %vertexhash = ();
-my $getvertexfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_VERTEX' and filename like 'DST_VERTEX_$embedfilelike%' and runnumber = $runnumber");
-$getvertexfiles->execute() || die $DBI::errstr;
-my $nvertex = $getvertexfiles->rows;
-while (my @res = $getvertexfiles->fetchrow_array())
-{
-    $vertexhash{sprintf("%05d",$res[1])} = $res[0];
-}
-$getvertexfiles->finish();
-
 
 #print "input files: $ncal, truth: $ntruth\n";
 foreach my $segment (sort keys %trkhash)
@@ -133,11 +123,6 @@ foreach my $segment (sort keys %trkhash)
     {
 	next;
     }
-    if (! exists $vertexhash{$segment})
-    {
-	next;
-    }
-
     my $lfn = $trkhash{$segment};
 #    print "found $lfn\n";
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
@@ -169,7 +154,7 @@ foreach my $segment (sort keys %trkhash)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %d %d %s", $outevents, $lfn, $bbchash{sprintf("%05d",$segment)}, $calohash{sprintf("%05d",$segment)}, $truthhash{sprintf("%05d",$segment)}, $vertexhash{sprintf("%05d",$segment)}, $outdir, $pmin, $pmax, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %d %d %d %d %s", $outevents, $lfn, $bbchash{sprintf("%05d",$segment)}, $calohash{sprintf("%05d",$segment)}, $truthhash{sprintf("%05d",$segment)}, $outdir, $pmin, $pmax, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

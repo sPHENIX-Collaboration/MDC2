@@ -1,15 +1,13 @@
-#ifndef MACRO_FUN4ALLG4EMBED_C
-#define MACRO_FUN4ALLG4EMBED_C
+#ifndef MACRO_FUN4ALLG4PIEMBED_C
+#define MACRO_FUN4ALLG4PIEMBED_C
 
 #include <GlobalVariables.C>
 
 #include <G4Setup_sPHENIX.C>
 #include <G4_Bbc.C>
 #include <G4_Input.C>
-#include <G4_Jets.C>
 #include <G4_OutputManager_Embed.C>
 #include <G4_Production.C>
-#include <G4_User.C>
 
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
@@ -30,20 +28,16 @@ R__LOAD_LIBRARY(libffamodules.so)
 
 int Fun4All_G4_Pi_Embed(
     const int nEvents = 1,
-    const string &embed_input_file0 = "DST_BBC_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00003.root",
-    const string &embed_input_file1 = "DST_CALO_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00003.root",
-    const string &embed_input_file2 = "DST_TRKR_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00003.root",
-    const string &embed_input_file3 = "DST_TRUTH_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00003.root",
-    const string &embed_input_file4 = "DST_VERTEX_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00003.root",
-    const int skip = 0,
+    const string &embed_input_file0 = "DST_BBC_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
+    const string &embed_input_file1 = "DST_CALO_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
+    const string &embed_input_file2 = "DST_TRKR_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
+    const string &embed_input_file3 = "DST_TRUTH_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
     const string &outdir = ".",
     const int pmin = 100,
     const int pmax = 5000,
     const string &particle1 = "pi-",
     const string &particle2 = "pi+")
 {
-  const string &filefixedgeo = "cylindercellgeom_svtx.root";
-
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
 
@@ -106,39 +100,14 @@ int Fun4All_G4_Pi_Embed(
   INPUTEMBED::filename[1] = embed_input_file1;
   INPUTEMBED::filename[2] = embed_input_file2;
   INPUTEMBED::filename[3] = embed_input_file3;
-  INPUTEMBED::filename[4] = embed_input_file4;
 // no repeating of embedding background, stop processing when end of file reached
   INPUTEMBED::REPEAT = false; 
 
-  // if you use a filelist
-  //INPUTEMBED::listfile[0] = embed_input_file;
 
    Input::SIMPLE = true;
    Input::SIMPLE_NUMBER = 2; // if you need 2 of them
   // Input::SIMPLE_VERBOSITY = 1;
 
-  //  Input::PYTHIA6 = true;
-
-  //  Input::GUN = true;
-  //  Input::GUN_NUMBER = 3; // if you need 3 of them
-  // Input::GUN_VERBOSITY = 1;
-
-  //D0 generator
-  //Input::DZERO = false;
-  //Input::DZERO_VERBOSITY = 0;
-  //Lambda_c generator //Not ready yet
-  //Input::LAMBDAC = false;
-  //Input::LAMBDAC_VERBOSITY = 0;
-  // Upsilon generator
-  //Input::UPSILON = true;
-  //Input::UPSILON_NUMBER = 3; // if you need 3 of them
-  //Input::UPSILON_VERBOSITY = 0;
-
-  Input::HEPMC = false;
-  // INPUTHEPMC::filename = inputFile;
-
-  // Event pile up simulation with collision rate in Hz MB collisions.
-  //Input::PILEUPRATE = 100e3;
 
   //-----------------
   // Initialize the selected Input/Event generation
@@ -324,14 +293,11 @@ int Fun4All_G4_Pi_Embed(
   //--------------
 
   InputManagers();
-  Fun4AllRunNodeInputManager *ingeo = new Fun4AllRunNodeInputManager("CYLGEO");
-  ingeo->AddFile(filefixedgeo);
-  se->registerInputManager(ingeo);
 
   if (Enable::PRODUCTION)
   {
     PRODUCTION::SaveOutputDir = DstOut::OutputDir;
-    std::string part = string("pi_") + to_string(pmin) + string("_") + to_string(pmax) + string("MeV");
+    std::string part = string("single_pi_") + to_string(pmin) + string("_") + to_string(pmax) + string("MeV");
     CreateDstOutput(runnumber, segment, part);
   }
 
@@ -351,7 +317,6 @@ int Fun4All_G4_Pi_Embed(
     return 0;
   }
 
-  se->skip(skip);
   se->run(nEvents);
 
   //-----

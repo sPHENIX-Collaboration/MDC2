@@ -7,7 +7,7 @@ use File::Path;
 
 my $test;
 GetOptions("test"=>\$test);
-if ($#ARGV < 10)
+if ($#ARGV < 9)
 {
     print "usage: run_condor.pl <events> <trk embedfile> <bbc embedfile> <calo embedfile> <truth embedfile> <vertex embedfile> <outdir> <pmin> <pmax> <runnumber> <sequence>\n";
     print "options:\n";
@@ -25,12 +25,11 @@ my $infile0 = $ARGV[1];
 my $infile1 = $ARGV[2];
 my $infile2 = $ARGV[3];
 my $infile3 = $ARGV[4];
-my $infile4 = $ARGV[5];
-my $dstoutdir = $ARGV[6];
-my $pmin = $ARGV[7];
-my $pmax = $ARGV[8];
-my $runnumber = $ARGV[9];
-my $sequence = $ARGV[10];
+my $dstoutdir = $ARGV[5];
+my $pmin = $ARGV[6];
+my $pmax = $ARGV[7];
+my $runnumber = $ARGV[8];
+my $sequence = $ARGV[9];
 if ($sequence < 100)
 {
     $baseprio = 90;
@@ -61,7 +60,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $infile0 $infile1 $infile2 $infile3 $infile4 $dstoutdir $pmin $pmax $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $infile0 $infile1 $infile2 $infile3 $dstoutdir $pmin $pmax $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -87,5 +86,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile0,  $infile1, $infile2, $infile3, $infile4, $dstoutdir, $pmin, $pmax, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $infile0,  $infile1, $infile2, $infile3, $dstoutdir, $pmin, $pmax, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);
