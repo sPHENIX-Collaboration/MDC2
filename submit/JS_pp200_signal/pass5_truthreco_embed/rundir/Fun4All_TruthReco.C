@@ -4,7 +4,7 @@
 #include <GlobalVariables.C>
 
 #include <G4_Production.C>
-#include <G4_Tracking.C>
+#include <Trkr_TruthTables.C>
 
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
@@ -31,6 +31,7 @@ void Fun4All_TruthReco(
   const std::string &outdir = "."
 )
 {
+  gSystem->Load("libg4dst.so");
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
 
