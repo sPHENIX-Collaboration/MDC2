@@ -9,14 +9,14 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=6;
+my $runnumber=7;
 my $test;
 my $incremental;
 my $shared;
 GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs>  <\"Charm\", \"CharmD0\", \"CharmD0piKJet5\", \"CharmD0piKJet12\", \"Bottom\", \"BottomD0\", \"JetD0\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Charm\", \"CharmD0\", \"CharmD0piKJet5\", \"CharmD0piKJet12\", \"Bottom\", \"BottomD0\", \"JetD0\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--shared : submit jobs to shared pool\n";
@@ -42,7 +42,7 @@ if ($quarkfilter  ne "Charm" &&
     $quarkfilter  ne "BottomD0" &&
     $quarkfilter  ne "JetD0")
 {
-    print "second argument has to be either Charm, CharmD0, Bottom, BottomD0 or JetD0\n";
+    print "second argument has to be either Charm, CharmD0, CharmD0piKJet5, CharmD0piKJet12, Bottom, BottomD0 or JetD0\n";
     exit(1);
 }
 
