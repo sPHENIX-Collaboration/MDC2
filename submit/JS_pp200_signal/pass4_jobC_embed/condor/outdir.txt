@@ -1,1 +1,1 @@
-/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal/tracks_embed
+/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal/embed_auau/tracks
