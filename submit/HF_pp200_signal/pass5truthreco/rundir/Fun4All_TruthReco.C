@@ -4,10 +4,10 @@
 #include <GlobalVariables.C>
 
 #include <G4_Production.C>
-#include <G4_Tracking.C>
+#include <Trkr_TruthTables.C>
 
 #include <ffamodules/FlagHandler.h>
-#include <ffamodules/XploadInterface.h>
+#include <ffamodules/CDBInterface.h>
 
 #include <fun4all/SubsysReco.h>
 #include <fun4all/Fun4AllDstInputManager.h>
@@ -42,13 +42,11 @@ void Fun4All_TruthReco(
   //===============
   // conditions DB flags
   //===============
-  Enable::XPLOAD = true;
+  Enable::CDB = true;
   // tag
-  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
-  // database config
-  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
+  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
+  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
   // set up production relatedstuff
   Enable::PRODUCTION = true;
@@ -82,13 +80,13 @@ void Fun4All_TruthReco(
   auto out = new Fun4AllDstOutputManager("DSTOUT", outputFile);
   out->AddNode("Sync");
   out->AddNode("EventHeader");
-out->AddNode("PHG4ParticleSvtxMap");
-out->AddNode("SvtxPHG4ParticleMap");
+  out->AddNode("PHG4ParticleSvtxMap");
+  out->AddNode("SvtxPHG4ParticleMap");
   se->registerOutputManager(out);
 
   se->run(nEvents);
   // terminate
-  XploadInterface::instance()->Print(); // print used DB files
+  CDBInterface::instance()->Print(); // print used DB files
   se->End();
   se->PrintTimer();
   std::cout << "All done" << std::endl;
