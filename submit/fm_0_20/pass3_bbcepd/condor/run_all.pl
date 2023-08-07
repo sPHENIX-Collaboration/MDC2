@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $inrunnumber=6;
+my $inrunnumber=7;
 #my $outrunnumber=40;
 my $outrunnumber=$inrunnumber;
 my $test;
@@ -96,7 +96,7 @@ while (my @res = $gettruthfiles->fetchrow_array())
 }
 $gettruthfiles->finish();
 
-foreach my $segment (sort keys %bbchash)
+foreach my $segment (sort { $a <=> $b } keys %bbchash)
 {
     if (! exists $truthhash{$segment})
     {
