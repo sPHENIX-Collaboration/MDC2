@@ -7,11 +7,12 @@
 #include <G4_Bbc.C>
 #include <G4_Input.C>
 #include <G4_Production.C>
+#include <G4_TrkrSimulation.C>
 
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/HeadReco.h>
 #include <ffamodules/SyncReco.h>
-#include <ffamodules/XploadInterface.h>
+#include <ffamodules/CDBInterface.h>
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
@@ -52,13 +53,11 @@ int Fun4All_G4_Pass1_pp(
   //===============
   // conditions DB flags
   //===============
-  Enable::XPLOAD = true;
-  // tag
-  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
-  // database config
-  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
+  Enable::CDB = true;
+  // global tag
+  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
+  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
 // this extracts the runnumber and segment from the output filename
 // and sets this so the server can pick it up
@@ -79,20 +78,13 @@ int Fun4All_G4_Pass1_pp(
 // set pp mode for extended readout
 //  TRACKING::pp_mode = true;
   // Enable this is emulating the nominal pp/pA/AA collision vertex distribution
-  Input::BEAM_CONFIGURATION = Input::AA_COLLISION; // for 2023 we want the AA beam config for no pileup sims
+  Input::BEAM_CONFIGURATION = Input::pp_COLLISION; // This is for pp
 
   // verbosity setting (applies to all input managers)
   Input::VERBOSITY = 1; // so we get prinouts of the event number
   Input::PYTHIA8 = true;
   PYTHIA8::config_file = string(getenv("CALIBRATIONROOT")) + "/Generators/HeavyFlavor_TG/phpythia8_minBias_MDC2.cfg";
   
-  //INPUTHEPMC::filename = inputFile;
-  //INPUTHEPMC::FLOW = true;
-  //INPUTHEPMC::FLOW_VERBOSITY = 3;
-  //INPUTHEPMC::FERMIMOTION = true;
-
-  // Event pile up simulation with collision rate in Hz MB collisions.
-  //Input::PILEUPRATE = 100e3;
 
   //-----------------
   // Initialize the selected Input/Event generation
@@ -108,27 +100,6 @@ int Fun4All_G4_Pass1_pp(
   if (Input::PYTHIA8)
   {
     Input::ApplysPHENIXBeamParameter(INPUTGENERATOR::Pythia8);
-  }
-  if (Input::HEPMC)
-  {
-    //! apply sPHENIX nominal beam parameter with 2mrad crossing as defined in sPH-TRG-2020-001
-    Input::ApplysPHENIXBeamParameter(INPUTMANAGER::HepMCInputManager);
-    INPUTMANAGER::HepMCInputManager->set_vertex_distribution_width(0.02, 0.02, 10., 0);  //collision vertex from CAD (sigma = 200um in x/y, 7.5cm in z)
-                                                                                           //    INPUTMANAGER::HepMCInputManager->set_vertex_distribution_mean(0,0,0,0);//optional collision central position shift in space, time
-    // //optional choice of vertex distribution function in space, time
-    INPUTMANAGER::HepMCInputManager->set_vertex_distribution_function(PHHepMCGenHelper::Gaus, PHHepMCGenHelper::Gaus, PHHepMCGenHelper::Gaus, PHHepMCGenHelper::Gaus);
-    //! embedding ID for the event
-    //! positive ID is the embedded event of interest, e.g. jetty event from pythia
-    //! negative IDs are backgrounds, .e.g out of time pile up collisions
-    //! Usually, ID = 0 means the primary Au+Au collision background
-    //INPUTMANAGER::HepMCInputManager->set_embedding_id(Input::EmbedID);
-    if (Input::PILEUPRATE > 0)
-    {
-      // Copy vertex settings from foreground hepmc input
-      INPUTMANAGER::HepMCPileupInputManager->CopyHelperSettings(INPUTMANAGER::HepMCInputManager);
-      // and then modify the ones you want to be different
-      // INPUTMANAGER::HepMCPileupInputManager->set_vertex_distribution_width(100e-4,100e-4,8,0);
-    }
   }
   // register all input generators with Fun4All
   InputRegister();
@@ -189,31 +160,11 @@ int Fun4All_G4_Pass1_pp(
   Enable::PLUGDOOR = true;
   //Enable::PLUGDOOR_BLACKHOLE = true;
 
-  //Enable::BEAMLINE = true;
-  G4BEAMLINE::skin_thickness = 0.5;
-
-  Enable::ZDC = true;
-
   // new settings using Enable namespace in GlobalVariables.C
   Enable::BLACKHOLE = true;
   Enable::BLACKHOLE_FORWARD_SAVEHITS = false; // disable forward/backward hits
   //Enable::BLACKHOLE_SAVEHITS = false; // turn off saving of bh hits
   //BlackHoleGeometry::visible = true;
-
-  //---------------
-  // World Settings
-  //---------------
-  // G4WORLD::PhysicsList = "FTFP_BERT_HP"; //FTFP_BERT_HP best for calo
-  //  G4WORLD::WorldMaterial = "G4_AIR"; // set to G4_GALACTIC for material scans
-
-  //---------------
-  // Magnet Settings
-  //---------------
-
-  //  const string magfield = "1.5"; // alternatively to specify a constant magnetic field, give a float number, which will be translated to solenoidal field in T, if string use as fieldmap name (including path)
-  //  G4MAGNET::magfield = string(getenv("CALIBRATIONROOT")) + string("/Field/Map/sPHENIX.2d.root");  // default map from the calibration database
-  // G4MAGNET::magfield_rescale = -1.4 / 1.5;  // make consistent with expected Babar field strength of 1.4T
-
 
   // Initialize the selected subsystems
   G4Init();
@@ -224,14 +175,6 @@ int Fun4All_G4_Pass1_pp(
   if (!Input::READHITS)
   {
     G4Setup();
-  }
-
-  string outputroot = outputFile;
-  string remove_this = ".root";
-  size_t pos = outputroot.find(remove_this);
-  if (pos != string::npos)
-  {
-    outputroot.erase(pos, remove_this.length());
   }
 
   //--------------
@@ -275,7 +218,7 @@ int Fun4All_G4_Pass1_pp(
   // Exit
   //-----
 
-  XploadInterface::instance()->Print(); // print used DB files
+  CDBInterface::instance()->Print(); // print used DB files
   se->End();
   se->PrintTimer();
   std::cout << "All done" << std::endl;

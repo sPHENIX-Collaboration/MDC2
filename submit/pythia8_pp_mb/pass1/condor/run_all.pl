@@ -9,7 +9,7 @@ my $test;
 my $incremental;
 my $killexist;
 my $shared;
-my $runnumber = 6;
+my $runnumber = 7;
 my $events = 1000;
 GetOptions("test"=>\$test, "increment"=>\$incremental, "killexist" => \$killexist, "shared" => \$shared);
 if ($#ARGV < 0)
