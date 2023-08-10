@@ -3,7 +3,6 @@
 
 #include <GlobalVariables.C>
 
-#include <G4_Global.C>
 #include <G4_OutputManager_Pileup_pp.C>
 #include <G4_Production.C>
 
@@ -28,7 +27,7 @@ R__LOAD_LIBRARY(libg4testbench.so)
 //________________________________________________________________________________________________
 int Fun4All_G4_Pileup_pp(
     const int nEvents = 0,
-    const string &inputFile = "G4Hits_pythia8_mb-0000000001-00000.root",
+    const string &inputFile = "G4Hits_pythia8_mb-0000000007-00000.root",
     const string &backgroundList = "pileupbkgppmb.list",
     const string &outdir = ".")
 
@@ -47,12 +46,7 @@ int Fun4All_G4_Pileup_pp(
   Enable::PRODUCTION = true;
   Enable::DSTOUT = true;
   DstOut::OutputDir = outdir;
-  Enable::GLOBAL_FASTSIM = true;
 
-  if (Enable::GLOBAL_FASTSIM)
-  {
-    Global_FastSim();
-  }
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
   int runnumber = runseg.first;
   int segment = abs(runseg.second);
@@ -73,6 +67,9 @@ int Fun4All_G4_Pileup_pp(
   // background input manager
   auto inpile = new Fun4AllDstPileupInputManager("DST_background");
   inpile->setCollisionRate(3e6); // 3MHz according to BUP
+  double low_time_window = -105.5 / (8.0 / 1000.0);
+  double high_time_window = -low_time_window + 7000;
+  inpile->setPileupTimeWindow(low_time_window, high_time_window);
   inpile->setDetectorActiveCrossings("BBC",1);
   inpile->setDetectorActiveCrossings("HCALIN",1);
   inpile->setDetectorActiveCrossings("HCALOUT",1);

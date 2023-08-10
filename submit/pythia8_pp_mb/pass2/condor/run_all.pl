@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 62;
+my $runnumber = 7;
 my $test;
 my $incremental;
 my $shared;
@@ -46,7 +46,6 @@ $outfiletype{"DST_BBC_G4HIT"} = 1;
 $outfiletype{"DST_CALO_G4HIT"} = 1;
 $outfiletype{"DST_TRKR_G4HIT"} = 1;
 $outfiletype{"DST_TRUTH_G4HIT"} = 1;
-$outfiletype{"DST_VERTEX"} = 1;
 
 my $localdir=`pwd`;
 chomp $localdir;
