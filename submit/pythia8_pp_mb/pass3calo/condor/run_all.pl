@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=62;
+my $runnumber=7;
 my $test;
 my $incremental;
 my $shared;
@@ -51,38 +51,18 @@ mkpath($outdir);
 my $outfilelike = sprintf("pythia8_pp_mb_3MHz");
 
 my %calohash = ();
-my %vtxhash = ();
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_G4HIT' and filename like '%$outfilelike%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
 print "select filename,segment from datasets where dsttype = 'DST_CALO_G4HIT' and filename like '%$outfilelike%' and runnumber = $runnumber order by filename\n";
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
-my $getvtxfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_VERTEX' and filename like '%$outfilelike%' and runnumber = $runnumber");
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
 my $ncal = $getfiles->rows;
 while (my @res = $getfiles->fetchrow_array())
 {
-    $calohash{sprintf("%05d",$res[1])} = $res[0];
-}
-$getfiles->finish();
-$getvtxfiles->execute() || die $DBI::errstr;
-my $nvtx = $getvtxfiles->rows;
-while (my @res = $getvtxfiles->fetchrow_array())
-{
-    $vtxhash{sprintf("%05d",$res[1])} = $res[0];
-}
-$getvtxfiles->finish();
-#print "input files: $ncal, vtx: $nvtx\n";
-foreach my $segment (sort keys %calohash)
-{
-    if (! exists $vtxhash{$segment})
-    {
-	next;
-    }
-
-    my $lfn = $calohash{$segment};
+    my $lfn = $res[0];
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
 	my $runnumber = int($2);
@@ -98,7 +78,7 @@ foreach my $segment (sort keys %calohash)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $vtxhash{sprintf("%05d",$segment)}, $outfilename, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %d %s", $outevents, $lfn, $outfilename, $outdir, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
@@ -121,6 +101,7 @@ foreach my $segment (sort keys %calohash)
 	}
     }
 }
+$getfiles->finish();
 $chkfile->finish();
 $dbh->disconnect;
 
