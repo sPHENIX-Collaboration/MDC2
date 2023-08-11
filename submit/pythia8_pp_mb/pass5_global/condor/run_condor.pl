@@ -39,7 +39,7 @@ if ($sequence < 100000)
 }
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/fm_0_20/pass5_global");
+my $condorlogdir = sprintf("/tmp/pythia8_pp_mb/pass5_global");
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor-%s.job",$logdir,$suffix);
 if (-f $jobfile)
