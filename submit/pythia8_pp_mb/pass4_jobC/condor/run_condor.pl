@@ -19,7 +19,7 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 57;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_jobC.sh",$rundir);
+my $executable = sprintf("%s/run_jobC_pythia8_pp_mb.sh",$rundir);
 my $nevents = $ARGV[0];
 my $infile1 = $ARGV[1];
 my $infile2 = $ARGV[2];
