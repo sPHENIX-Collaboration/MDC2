@@ -28,8 +28,6 @@ int Fun4All_G4_Pass3Trk(
   const string &inputFile0 = "G4Hits_sHijing_0_20fm-0000000006-00000.root",
   const string &outdir = ".")
 {
-  const string &filefixedgeo = "cylindercellgeom_svtx.root";
-
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
 
@@ -140,9 +138,6 @@ int Fun4All_G4_Pass3Trk(
   //--------------
 
   InputManagers();
-  Fun4AllRunNodeInputManager *ingeo = new Fun4AllRunNodeInputManager("CYLGEO");
-  ingeo->AddFile(filefixedgeo);
-  se->registerInputManager(ingeo);
 
   if (Enable::PRODUCTION)
   {
