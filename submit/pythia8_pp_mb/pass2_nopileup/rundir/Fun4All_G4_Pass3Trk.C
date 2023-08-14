@@ -25,10 +25,9 @@ R__LOAD_LIBRARY(libffamodules.so)
 
 int Fun4All_G4_Pass3Trk(
   const int nEvents = 0,
-  const string &inputFile0 = "G4Hits_pythia8_pp_mb-0000000006-00000.root",
+  const string &inputFile0 = "G4Hits_pythia8_pp_mb-0000000007-00000.root",
   const string &outdir = ".")
 {
-  const string &filefixedgeo = "cylindercellgeom_svtx.root";
 
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -106,6 +105,9 @@ int Fun4All_G4_Pass3Trk(
   //  Enable::VERBOSITY = 1;
 
 
+// set pp tracking mode
+  TRACKING::pp_mode = true;
+
   // central tracking
   Enable::MVTX = true;
   Enable::MVTX_CELL = Enable::MVTX && true;
@@ -140,9 +142,6 @@ int Fun4All_G4_Pass3Trk(
   //--------------
 
   InputManagers();
-  Fun4AllRunNodeInputManager *ingeo = new Fun4AllRunNodeInputManager("CYLGEO");
-  ingeo->AddFile(filefixedgeo);
-  se->registerInputManager(ingeo);
 
   if (Enable::PRODUCTION)
   {
