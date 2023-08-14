@@ -9,8 +9,8 @@ use DBI;
 
 
 my $outevents = 0;
-my $inrunnumber=6;
-my $outrunnumber=6;
+my $inrunnumber=7;
+my $outrunnumber=$inrunnumber;
 my $test;
 my $incremental;
 my $shared;
