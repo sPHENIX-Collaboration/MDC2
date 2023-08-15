@@ -7,19 +7,22 @@ use Cwd;
 sub ncondorjobs;
 sub condorcheck;
 
-my $nsubmit = 0;
+my $nsubmit = 15000;
 my $nsafejobs = 5000;
 
 my $submittopdir = "/sphenix/u/sphnxpro/MDC2/submit";
 my %submitdir = (
-    "fm_0_20/cemc_geo_fix/cemc_hits/condor" => ("")
-#    "fm_0_20/cemc_geo_fix/cemc_hits_pass2/condor" => (""),
+    "fm_0_20/cemc_geo_fix/cemc_hits/condor" => (""),
+    "fm_0_20/cemc_geo_fix/cemc_hits_pass2/condor" => (""),
+    "fm_0_20/cemc_geo_fix/cemc_hits_pass3trk/condor" => (""),
+    "pythia8_pp_mb/cemc_geo_fix/cemc_hits/condor" => (""),
+    "JS_pp200_signal/cemc_geo_fix/cemc_hits_pass2/condor" => ("")
     );
 
 #my @quarkfilters = ("Charm", "Bottom", "JetD0");
 my @quarkfilters = ("Charm", "CharmD0piKJet5", "CharmD0piKJet12");
 my @jettriggers1 = ("Jet10", "Jet20");
-my @jettriggers2 = ("Jet10", "Jet30", "PhotonJet");
+my @jettriggers2 = ("Jet10", "Jet30", "Jet40", "PhotonJet");
 #my @jettriggers = ("Jet10", "Jet30");
 #my @singleparticles = {"gamma 10000 10000"};
 
