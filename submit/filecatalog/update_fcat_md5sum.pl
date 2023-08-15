@@ -70,7 +70,7 @@ while (my @res = $getfiles->fetchrow_array())
     {
 	if (! defined $notest)
 	{
-	    print "would handling $fullfile\n";
+	    print "would handle $fullfile\n";
 	}
 	else
 	{

@@ -30,27 +30,35 @@ my $getfiles = $dbh->prepare("select full_file_path from files where lfn = ?");
 my $deldataset = $dbh->prepare("delete from datasets where filename = ?");
 my $delfcat = $dbh->prepare("delete from files where full_file_path = ?");
 my %daughters = (
-    "G4Hits" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_VERTEX" ],
-    "DST_BBC_G4HIT" => [ "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_VERTEX", "DST_GLOBAL" ],
-    "DST_CALO_G4HIT" => [ "DST_BBC_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_VERTEX", "DST_CALO_CLUSTER" ],
-    "DST_TRKR_G4HIT" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRUTH_G4HIT", "DST_VERTEX", "DST_TRKR_HIT", "DST_TRUTH_RECO"],
-    "DST_TRUTH_G4HIT" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_VERTEX", "DST_TRUTH" ],
-    "DST_VERTEX" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_CALO_CLUSTER" ],
-    "DST_TRKR_CLUSTER" => [ "DST_TRACKSEEDS", "DST_TRUTH_RECO"],
+    "G4Hits" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT"],
+    "DST_BBC_G4HIT" => [ "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_BBC_EPD", "DSTOLD_BBC_G4HIT" ],
+    "DST_CALO_G4HIT" => [ "DST_BBC_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_CALO_CLUSTER", "DSTOLD_CALO_G4HIT" ],
+    "DST_TRKR_G4HIT" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRUTH_G4HIT", "DST_TRKR_HIT", "DST_TRUTH_RECO", "DSTOLD_TRKR_G4HIT", "DST_TRUTH_RECO"],
+    "DST_TRUTH_G4HIT" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH", "DSTOLD_TRUTH_G4HIT" ],
+#    "DST_VERTEX" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_CALO_CLUSTER", "DSTOLD_VERTEX" ],
+    "DST_TRKR_CLUSTER" => [ "DST_TRACKSEEDS", "DST_TRUTH_RECO", "DST_TRUTH_RECO"],
     "DST_TRACKSEEDS" => [ "DST_TRACKS"],
-    "DST_TRKR_HIT" => [ "DST_TRUTH", "DST_TRKR_CLUSTER" ],
-    "DST_TRUTH" => [ "DST_TRKR_HIT", "DST_TRUTH_JET", "DST_TRUTH_RECO" ],
+    "DST_TRKR_HIT" => [ "DST_TRUTH", "DST_TRKR_CLUSTER", "DSTOLD_TRKR_HIT" ],
+    "DST_TRUTH" => [ "DST_TRKR_HIT", "DST_TRUTH_JET", "DST_TRUTH_RECO", "DSTOLD_TRUTH" , "DST_TRUTH_RECO"],
 #    "DST_TRKR_HIT" => [ "DST_TRUTH" ],
 #    "DST_TRUTH" => [ "DST_TRKR_HIT" ],
+    "DST_BBC_EPD" => [ "DST_GLOBAL" ],
     "DST_GLOBAL" => [ "" ],
     "DST_TRUTH_JET" => [ "" ],
     "DST_TRUTH_RECO" => [ "" ],
     "DST_TRKR_HIT_DISTORT" => [ "DST_TRUTH_DISTORT", "DST_TRACKS_DISTORT" ],
     "DST_TRUTH_DISTORT" => [ "DST_TRKR_HIT_DISTORT", "DST_TRACKS_DISTORT" ],
-    "DST_TRACKS" => [ "DST_TRUTH_RECO" ],
+    "DST_TRACKS" => [ "DST_GLOBAL", "DST_TRUTH_RECO" ],
     "DST_TRACKS_DISTORT" => [ "" ],
     "DST_CALO_CLUSTER" => [ "DST_TRACKS" ],
 #    "DST_CALO_CLUSTER" => [ "" ],
+    "DSTOLD_BBC_G4HIT" => [ "" ],
+    "DSTOLD_CALO_G4HIT" => [ "" ],
+    "DSTOLD_TRKR_G4HIT" => [ "DSTOLD_TRKR_HIT" ],
+    "DSTOLD_TRKR_HIT" => [ "DSTOLD_TRUTH" ],
+    "DSTOLD_TRUTH_G4HIT" => [ "DSTOLD_TRUTH" ],
+    "DSTOLD_TRUTH" => [ "DSTOLD_TRKR_HIT" ],
+#    "DSTOLD_VERTEX" => [ "" ],
     "DST_JETS" => [ "" ],
     "DST_HF_CHARM" => [ "JET_EVAL_DST_HF_CHARM", "QA_DST_HF_CHARM"],
     "JET_EVAL_DST_HF_CHARM" => [ "DST_HF_CHARM", "QA_DST_HF_CHARM"],
@@ -63,16 +71,19 @@ my %daughters = (
 if (defined $nopileup)
 {
     my $ref = $daughters{"DST_TRKR_HIT"};
-    push(@$ref,("DST_CALO_CLUSTER", "DST_GLOBAL"));
+    push(@$ref,("DST_CALO_CLUSTER", "DST_GLOBAL","DST_BBC_EPD"));
     @$ref = grep($_,@$ref); # removes empty strings from array
+
     $ref = $daughters{"DST_CALO_CLUSTER"};
-    push(@$ref,("DST_TRKR_HIT","DST_GLOBAL","DST_TRUTH"));
+    push(@$ref,("DST_TRKR_HIT","DST_GLOBAL","DST_BBC_EPD","DST_TRUTH"));
     @$ref = grep($_,@$ref); # removes empty strings from array
-#    $ref = $daughters{"DST_GLOBAL"};
-#    push(@$ref,("DST_CALO_CLUSTER", "DST_TRKR_HIT","DST_TRUTH"));
+
+    $ref = $daughters{"DST_BBC_EPD"};
+    push(@$ref,("DST_CALO_CLUSTER", "DST_TRKR_HIT","DST_TRUTH"));
     @$ref = grep($_,@$ref); # removes empty strings from array
+
     $ref = $daughters{"DST_TRUTH"};
-    push(@$ref,("DST_CALO_CLUSTER","DST_GLOBAL"));
+    push(@$ref,("DST_CALO_CLUSTER","DST_GLOBAL","DST_BBC_EPD"));
     @$ref = grep($_,@$ref); # removes empty strings from array
 }
 if (defined $verbose)
@@ -171,6 +182,7 @@ my $condorfileadd;
 my $pileupstring;
 my %specialcondorfileadd = ();
 my %productionsubdir = (
+    "DST_BBC_EPD"=> "pass3_bbcepd",
     "DST_BBC_G4HIT" => "pass2",
     "DST_CALO_CLUSTER" => "pass3calo",
     "DST_CALO_G4HIT"=> "pass2",
@@ -195,6 +207,7 @@ if (defined $nopileup)
 {
     $productionsubdir{"DST_TRKR_HIT"} = "pass2_nopileup";
     $productionsubdir{"DST_CALO_CLUSTER"} = "pass2_nopileup";
+    $productionsubdir{"DST_BBC_EPD"} = "pass2_nopileup";
     $productionsubdir{"DST_GLOBAL"} = "pass2_nopileup";
     $productionsubdir{"DST_TRKR_CLUSTER"} = "pass3_job0_nopileup";
     $productionsubdir{"DST_TRUTH"} = "pass2_nopileup";
@@ -213,6 +226,7 @@ if ($embed eq "pau")
     $productionsubdir{"DST_CALO_CLUSTER"} = sprintf("pass3calo%s",$embedpostfix);
     $productionsubdir{"DST_CALO_G4HIT"} = sprintf("pass2%s",$embedpostfix);
     $productionsubdir{"DST_GLOBAL"} = sprintf("pass3global%s",$embedpostfix);
+    $productionsubdir{"DST_BBC_EPD"} = sprintf("pass3global%s",$embedpostfix);
     $productionsubdir{"DST_TRUTH"} = sprintf("pass3trk%s",$embedpostfix);
     $productionsubdir{"DST_TRUTH_G4HIT"} = sprintf("pass2%s",$embedpostfix);
     $productionsubdir{"DST_TRACKS"} = sprintf("pass4_jobC%s",$embedpostfix);
@@ -616,7 +630,7 @@ foreach my $rem (keys %removethese)
     }
     else
     {
-	print "no entry for $rem\n";
+	print "productionsubdir for $rem\n";
 	$condor_subdir = sprintf("%s/condor/log",$condor_subdir);
     }
     my $condornameprefix = sprintf("condor");
