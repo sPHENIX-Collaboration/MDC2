@@ -39,6 +39,7 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
+$outdir = sprintf("%s/run%04d",$outdir,$runnumber);
 mkpath($outdir);
 
 my %outfiletype = ();
