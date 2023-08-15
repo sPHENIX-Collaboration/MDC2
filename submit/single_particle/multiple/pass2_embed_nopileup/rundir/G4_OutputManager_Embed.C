@@ -58,12 +58,6 @@ void CreateDstOutput(int runnumber, int segment, const string &particle)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "DST_VERTEX_" + particle + "_sHijing_0_20fm-" + string(segrun) + ".root";
-  out = new Fun4AllDstOutputManager("VERTEXOUT", FullOutFile);
-  AddCommonNodes(out);
-  out->AddNode("GlobalVertexMap");
-  se->registerOutputManager(out);
-  OUTPUTMANAGER::outfiles.insert(FullOutFile);
 }
 
 void AddCommonNodes(Fun4AllOutputManager *out)

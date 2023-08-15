@@ -37,7 +37,7 @@ my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s_%d_%dMeV-%010d-%05d",$particle,$ptmin,$ptmax,$runnumber,$sequence);
 my $logdir = sprintf("%s/log/%s",$localdir,$particle);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/single_particle/pass2_embed_nopileup/%s",$particle);
+my $condorlogdir = sprintf("/tmp/single_particle/multiple/pass2_embed_nopileup/%s",$particle);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);

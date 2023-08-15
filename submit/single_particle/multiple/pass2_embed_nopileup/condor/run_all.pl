@@ -14,11 +14,12 @@ my $nparticle=10;
 my $test;
 my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental, "nparticle"=>\$nparticle);
-if ($#ARGV < 0)
+if ($#ARGV < 3)
 {
     print "usage: run_all.pl <number of jobs> <particle> <ptmin> <ptmax>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
+    print "--nparticle : number of particles per event (default = 10)\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
@@ -59,7 +60,6 @@ $outfiletype{"DST_BBC_G4HIT"} = 1;
 $outfiletype{"DST_CALO_G4HIT"} = 1;
 $outfiletype{"DST_TRKR_G4HIT"} = 1;
 $outfiletype{"DST_TRUTH_G4HIT"} = 1;
-$outfiletype{"DST_VERTEX"} = 1;
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
