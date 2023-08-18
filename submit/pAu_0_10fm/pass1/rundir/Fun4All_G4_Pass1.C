@@ -7,6 +7,7 @@
 #include <G4_Bbc.C>
 #include <G4_Input.C>
 #include <G4_Production.C>
+#include <G4_TrkrSimulation.C>
 
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/HeadReco.h>
@@ -29,7 +30,6 @@ int Fun4All_G4_Pass1(
     const int nEvents = 1,
     const string &inputFile = "/sphenix/sim/sim01/sphnxpro/mdc2/sHijing_HepMC/pAu_0_10fm/pAu_0_10fm-0000000006-00000.dat",
     const string &outputFile = "G4Hits_sHijing_pAu_0_10fm-0000000006-00000.root",
-    const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
     const int skip = 0,
     const string &outdir = ".")
 {
@@ -58,7 +58,7 @@ int Fun4All_G4_Pass1(
   // tag
   rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
 
 // this extracts the runnumber and segment from the output filename
 // and sets this so the server can pick it up
@@ -81,13 +81,8 @@ int Fun4All_G4_Pass1(
   Input::BEAM_CONFIGURATION = Input::pA_COLLISION;
   
   INPUTHEPMC::filename = inputFile;
-//  No AuAu flow for pAu
-//  INPUTHEPMC::FLOW = true;
-//  INPUTHEPMC::FLOW_VERBOSITY = 3;
-  INPUTHEPMC::FERMIMOTION = true;
 
-  // Event pile up simulation with collision rate in Hz MB collisions.
-  //Input::PILEUPRATE = 100e3;
+  INPUTHEPMC::FERMIMOTION = true;
 
   //-----------------
   // Initialize the selected Input/Event generation
@@ -167,34 +162,11 @@ int Fun4All_G4_Pass1(
 
   Enable::EPD = true;
 
-//  Enable::BEAMLINE = true;
-  G4BEAMLINE::skin_thickness = 0.5;
-
-//  Enable::ZDC = true;
-  //! forward flux return plug door. Out of acceptance and off by default.
-//  Enable::PLUGDOOR = true;
-  Enable::PLUGDOOR_BLACKHOLE = true;
-
   // new settings using Enable namespace in GlobalVariables.C
   Enable::BLACKHOLE = true;
   Enable::BLACKHOLE_FORWARD_SAVEHITS = false; // disable forward/backward hits
   //Enable::BLACKHOLE_SAVEHITS = false; // turn off saving of bh hits
   //BlackHoleGeometry::visible = true;
-
-  //---------------
-  // World Settings
-  //---------------
-  //G4WORLD::PhysicsList = "FTFP_BERT_HP"; //FTFP_BERT_HP best for calo
-  //  G4WORLD::WorldMaterial = "G4_AIR"; // set to G4_GALACTIC for material scans
-
-  //---------------
-  // Magnet Settings
-  //---------------
-
-  //  const string magfield = "1.5"; // alternatively to specify a constant magnetic field, give a float number, which will be translated to solenoidal field in T, if string use as fieldmap name (including path)
-  //  G4MAGNET::magfield = string(getenv("CALIBRATIONROOT")) + string("/Field/Map/sPHENIX.2d.root");  // default map from the calibration database
-//  G4MAGNET::magfield_rescale = 1.;  // make consistent with expected Babar field strength of 1.4T
-
 
   // Initialize the selected subsystems
   G4Init();
@@ -205,14 +177,6 @@ int Fun4All_G4_Pass1(
   if (!Input::READHITS)
   {
     G4Setup();
-  }
-
-  string outputroot = outputFile;
-  string remove_this = ".root";
-  size_t pos = outputroot.find(remove_this);
-  if (pos != string::npos)
-  {
-    outputroot.erase(pos, remove_this.length());
   }
 
   //--------------
