@@ -69,7 +69,7 @@ print F "accounting_group_user = sphnxpro\n";
 #print F "Requirements = (CPU_Type == \"mdc2\")&& (TARGET.Machine != \"spool1011.sdcc.bnl.gov\")\n";
 print F "Requirements = (CPU_Type == \"mdc2\")\n";
 #print F "Requirements = (CPU_Type == \"mdc2_2gb\")\n";
-print F "request_memory = 2048MB\n";
+print F "request_memory = 1024MB\n";
 #print F "request_memory = 2000MB\n";
 print F "Priority = $baseprio\n";
 print F "job_lease_duration = 3600\n";
