@@ -55,7 +55,7 @@ mkpath($logdir);
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%pythia8_pp_mb%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%pythia8_pp_mb%' and runnumber = $runnumber order by segment") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
 my $getbkglastsegment = $dbh->prepare("select max(segment) from datasets where dsttype = 'G4Hits' and filename like '%pythia8_pp_mb%' and runnumber = $runnumber");
@@ -69,7 +69,7 @@ $getfiles->execute() || die $DBI::errstr;
 while (my @res = $getfiles->fetchrow_array())
 {
     my $lfn = $res[0];
-#    print "found $lfn\n";
+    print "found $lfn\n";
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
         my $prefix=$1;
@@ -113,7 +113,7 @@ while (my @res = $getfiles->fetchrow_array())
 	}
 	if ($foundall == 1)
 	{
-#	    print "foundall is 1\n";
+	    print "foundall is 1\n";
 	    next;
 	}
 # output file does not exist yet, check for 2 MB background files (n to n+1)
@@ -121,7 +121,7 @@ while (my @res = $getfiles->fetchrow_array())
 	my @bkgfiles = ();
 	my $bkgsegments = 0;
 	my $currsegment = $segment;
-	while ($bkgsegments <= 100)
+	while ($bkgsegments <= 99)
 	{
 	    $currsegment++;
 	    if ($currsegment > $lastsegment)
@@ -133,13 +133,17 @@ while (my @res = $getfiles->fetchrow_array())
 	    if ($chkfile->rows == 0)
 	    {
 		print "missing bkg $bckfile\n";
-#		$foundall = 0;
+		$foundall = 0;
 	    }
 	    else
 	    {
 		$bkgsegments++;
 		push(@bkgfiles,$bckfile);
 	    }
+	}
+	if ($foundall == 0)
+	{
+	    next;
 	}
 	my $bkglistfile = sprintf("%s/condor_3MHz-%010d-%05d.bkglist",$logdir,$runnumber,$segment);
 	open(F1,">$bkglistfile");
