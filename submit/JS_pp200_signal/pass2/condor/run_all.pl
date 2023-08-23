@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 50;
+my $runnumber = 7;
 my $test;
 my $incremental;
 my $shared;
@@ -63,7 +63,6 @@ $outfiletype{"DST_BBC_G4HIT"} = 1;
 $outfiletype{"DST_CALO_G4HIT"} = 1;
 $outfiletype{"DST_TRKR_G4HIT"} = 1;
 $outfiletype{"DST_TRUTH_G4HIT"} = "DST_TRUTH";
-$outfiletype{"DST_VERTEX"} = 1;
 
 my $jettriggerWithUnderScore = sprintf("%s-",$jettrigger);
 $jettrigger = sprintf("%s_3MHz",$jettrigger);
@@ -137,7 +136,7 @@ while (my @res = $getfiles->fetchrow_array())
 	my @bkgfiles = ();
 	my $bkgsegments = 0;
 	my $currsegment = $segment;
-	while ($bkgsegments <= 100)
+	while ($bkgsegments <= 99)
 	{
 	    $currsegment++;
 	    if ($currsegment > $lastsegment)

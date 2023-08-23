@@ -16,12 +16,12 @@ namespace OUTPUTMANAGER
 
 void AddCommonNodes(Fun4AllOutputManager *out);
 
-void CreateDstOutput(int runnumber, int segment, const string &quarkfilter)
+void CreateDstOutput(int runnumber, int segment, const string &jettrigger)
 {
   auto se = Fun4AllServer::instance();
 
   char segrun[100];
-  snprintf(segrun,100,"%s-%010d-%05d",quarkfilter.c_str(),runnumber,segment);
+  snprintf(segrun,100,"%s-%010d-%05d",jettrigger.c_str(),runnumber,segment);
   string FullOutFile = "DST_BBC_G4HIT_pythia8_" + string(segrun) + ".root";;
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("BBCOUT", FullOutFile);
   AddCommonNodes(out);
@@ -58,12 +58,6 @@ void CreateDstOutput(int runnumber, int segment, const string &quarkfilter)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "DST_VERTEX_pythia8_" + string(segrun) + ".root";;
-  out = new Fun4AllDstOutputManager("VERTEXOUT", FullOutFile);
-  AddCommonNodes(out);
-  out->AddNode("GlobalVertexMap");
-  se->registerOutputManager(out);
-  OUTPUTMANAGER::outfiles.insert(FullOutFile);
 }
 
 void AddCommonNodes(Fun4AllOutputManager *out)
