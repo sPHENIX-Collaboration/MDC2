@@ -30,7 +30,6 @@ int Fun4All_G4_Pass1(
     const int nEvents = 1,
     const string &inputFile = "/sphenix/sim/sim01/sphnxpro/MDC1/sHijing_HepMC/data/sHijing_0_20fm-0000000001-00000.dat",
     const string &outputFile = "G4Hits_sHijing_0_20fm-0000000050-00000.root",
-    const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
     const int skip = 0,
     const string &outdir = ".")
 {
@@ -168,10 +167,6 @@ int Fun4All_G4_Pass1(
 
   Enable::EPD = true;
 
-//  Enable::BEAMLINE = true;
-  G4BEAMLINE::skin_thickness = 0.5;
-
-//  Enable::ZDC = true;
   //! forward flux return plug door. Out of acceptance and off by default.
 //  Enable::PLUGDOOR = true;
   Enable::PLUGDOOR_BLACKHOLE = true;
@@ -182,31 +177,10 @@ int Fun4All_G4_Pass1(
   //Enable::BLACKHOLE_SAVEHITS = false; // turn off saving of bh hits
   //BlackHoleGeometry::visible = true;
 
-  //---------------
-  // World Settings
-  //---------------
-  //G4WORLD::PhysicsList = "FTFP_BERT_HP"; //FTFP_BERT_HP best for calo
-  //  G4WORLD::WorldMaterial = "G4_AIR"; // set to G4_GALACTIC for material scans
-
-  //---------------
-  // Magnet Settings
-  //---------------
-
-  //  const string magfield = "1.5"; // alternatively to specify a constant magnetic field, give a float number, which will be translated to solenoidal field in T, if string use as fieldmap name (including path)
-  //  G4MAGNET::magfield = string(getenv("CALIBRATIONROOT")) + string("/Field/Map/sPHENIX.2d.root");  // default map from the calibration database
-//  G4MAGNET::magfield_rescale = 1.;  // make consistent with expected Babar field strength of 1.4T
-
-
   // Initialize the selected subsystems
   G4Init();
 
-  //---------------------
-  // GEANT4 Detector description
-  //---------------------
-  if (!Input::READHITS)
-  {
-    G4Setup();
-  }
+  G4Setup();
 
   //--------------
   // Set up Input Managers
