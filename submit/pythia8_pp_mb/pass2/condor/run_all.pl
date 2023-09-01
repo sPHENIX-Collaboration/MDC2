@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 7;
+my $runnumber = 8;
 my $test;
 my $incremental;
 my $shared;
@@ -46,7 +46,7 @@ my %outfiletype = ();
 $outfiletype{"DST_BBC_G4HIT"} = 1;
 $outfiletype{"DST_CALO_G4HIT"} = 1;
 $outfiletype{"DST_TRKR_G4HIT"} = 1;
-$outfiletype{"DST_TRUTH_G4HIT"} = 1;
+$outfiletype{"DST_TRUTH_G4HIT"} = "DST_TRUTH";
 
 my $localdir=`pwd`;
 chomp $localdir;
@@ -69,7 +69,7 @@ $getfiles->execute() || die $DBI::errstr;
 while (my @res = $getfiles->fetchrow_array())
 {
     my $lfn = $res[0];
-    print "found $lfn\n";
+#    print "found $lfn\n";
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
         my $prefix=$1;
@@ -78,42 +78,30 @@ while (my @res = $getfiles->fetchrow_array())
 	my $foundall = 1;
 	foreach my $type (sort keys %outfiletype)
 	{
-	    my $outfilename = sprintf("%s/%s_pythia8_pp_mb_3MHz-%010d-%05d.root",$outdir,$type,$runnumber,$segment);
-#	    print "checking for $outfilename\n";
-	    if (! -f  $outfilename)
-	    {
-		my $outlfn = basename($outfilename);
-		$chkfile->execute($outlfn);
+	    my $lfn = sprintf("%s_pythia8_pp_mb_3MHz-%010d-%05d.root",$type,$runnumber,$segment);
+		$chkfile->execute($lfn);
 		if ($chkfile->rows > 0)
 		{
 		    next;
 		}
 		else
 		{
-# the DST_TRUTH_G4HIT files are temporary, replace by DST_TRUTH later on
-		    if ($outfilename =~ /DST_TRUTH_G4HIT/)
+		my $newlfn = $outfiletype{$type};
+		if ($newlfn ne "1")
+		{
+		    $lfn =~ s/$type/$outfiletype{$type}/;
+		    $chkfile->execute($lfn);
+		    if ($chkfile->rows > 0)
 		    {
-			$outfilename =~ s/DST_TRUTH_G4HIT/DST_TRUTH/;
-#			print "checking for $outfilename\n";
-			if (! -f  $outfilename)
-			{
-			    my $outlfn = basename($outfilename);
-			    $chkfile->execute($outlfn);
-			    if ($chkfile->rows > 0)
-			    {
-				next;
-			    }
-			}
+			next;
 		    }
-#		    print "missing $outlfn\n";
-		    $foundall = 0;
-		    last;
 		}
+		$foundall = 0;
+		last;
 	    }
 	}
 	if ($foundall == 1)
 	{
-	    print "foundall is 1\n";
 	    next;
 	}
 # output file does not exist yet, check for 2 MB background files (n to n+1)
