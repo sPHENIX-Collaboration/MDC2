@@ -11,7 +11,7 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.370
+source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.375
 
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
@@ -55,7 +55,19 @@ echo arg7 \(sequence\): $7
 runnumber=$(printf "%010d" $6)
 sequence=$(printf "%05d" $7)
 
+filename=timing
+
 echo running root.exe -q -b Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\"\)
 root.exe -q -b  Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\"\)
+
+timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/shijing_hepmc/fm_0_20/pass3_jobC_nopileup/timing.run${runnumber}
+if [ ! -d $timedirname ]
+then
+  mkdir -p $timedirname
+fi
+
+rootfilename=${timedirname}/${filename}-${runnumber}-${sequence}.root
+
+cp -v jobtime.root $rootfilename
 
 echo "script done"
