@@ -7,6 +7,8 @@
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
 
+#include <fun4allutils/TimerStats.h>
+
 #include <fun4all/SubsysReco.h>
 #include <fun4all/Fun4AllServer.h>
 #include <fun4all/Fun4AllDstInputManager.h>
@@ -18,6 +20,7 @@
 
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
+R__LOAD_LIBRARY(libfun4allutils.so)
 
 //________________________________________________________________________________________________
 int Fun4All_G4_sPHENIX_job0(
@@ -25,7 +28,7 @@ int Fun4All_G4_sPHENIX_job0(
   const int nSkipEvents = 0,
   const std::string &inputFile = "DST_TRKR_HIT_sHijing_0_20fm-0000000007-00000.root",
   const std::string &outputFile = "DST_TRKR_CLUSTER_sHijing_0_20fm-0000000007-00000.root",
-    const string &outdir = ".")
+  const string &outdir = ".")
 {
 
   // print inputs
@@ -85,8 +88,10 @@ int Fun4All_G4_sPHENIX_job0(
   TPC_Clustering();
   Micromegas_Clustering();
 
+  TimerStats *ts = new TimerStats();
+  ts->OutFileName("jobtime.root");
+  se->registerSubsystem(ts);
 
-  
   // input manager
   auto in = new Fun4AllDstInputManager("DSTin");
   in->fileopen(inputFile);
