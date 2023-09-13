@@ -8,8 +8,8 @@ use Getopt::Long;
 my $test;
 my $incremental;
 my $killexist;
-my $runnumber = 63;
-my $events = 100;
+my $runnumber = 7;
+my $events = 1000;
 GetOptions("test"=>\$test, "increment"=>\$incremental, "killexist" => \$killexist);
 if ($#ARGV < 3)
 {
@@ -51,7 +51,7 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/%s",$outdir,$partprop);
+$outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,$partprop);
 mkpath($outdir);
 
 my $localdir=`pwd`;
