@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=50;
+my $runnumber=8;
 my $test;
 my $incremental;
 my $shared;
@@ -55,7 +55,7 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/%s",$outdir,lc $jettrigger);
+$outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,lc $jettrigger);
 mkpath($outdir);
 
 $jettrigger = sprintf("%s_3MHz",$jettrigger);
