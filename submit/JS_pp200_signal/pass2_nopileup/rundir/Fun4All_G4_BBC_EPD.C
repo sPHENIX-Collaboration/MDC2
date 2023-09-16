@@ -8,15 +8,15 @@
 #include <G4_Input.C>
 #include <G4_Production.C>
 
-#include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
+#include <ffamodules/FlagHandler.h>
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
 
-#include <phool/recoConsts.h>
 #include <phool/PHRandomSeed.h>
+#include <phool/recoConsts.h>
 
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
@@ -30,7 +30,7 @@ int Fun4All_G4_BBC_EPD(
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
 
-  //Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
+  // Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
   PHRandomSeed::Verbosity(1);
 
   // just if we set some flags somewhere in this macro
@@ -45,8 +45,8 @@ int Fun4All_G4_BBC_EPD(
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
   Enable::CDB = true;
-  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
-  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
+  rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
+  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
 
   //===============
   // Input options
@@ -70,12 +70,12 @@ int Fun4All_G4_BBC_EPD(
   // register all input generators with Fun4All
   InputRegister();
 
-// register the flag handling
+  // register the flag handling
   FlagHandler *flag = new FlagHandler();
   se->registerSubsystem(flag);
 
   // set up production relatedstuff
-   Enable::PRODUCTION = true;
+  Enable::PRODUCTION = true;
 
   //======================
   // Write the DST
@@ -94,7 +94,7 @@ int Fun4All_G4_BBC_EPD(
   //  Enable::OVERLAPCHECK = true;
   //  Enable::VERBOSITY = 1;
 
-  Enable::BBCRECO = true; // needed in Bbc_Reco()
+  Enable::BBCRECO = true;  // needed in Bbc_Reco()
 
   Bbc_Reco();
 
@@ -117,7 +117,7 @@ int Fun4All_G4_BBC_EPD(
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     out->AddNode("Sync");
     out->AddNode("EventHeader");
-    out->AddNode("BbcPmtContainer");
+    out->AddNode("BbcPmtInfoContainer");
     out->AddNode("BbcVertexMap");
     out->AddNode("TOWERINFO_SIM_EPD");
     out->AddNode("TOWERINFO_CALIB_EPD");
@@ -143,7 +143,7 @@ int Fun4All_G4_BBC_EPD(
   // Exit
   //-----
 
-  CDBInterface::instance()->Print(); // print used DB files
+  CDBInterface::instance()->Print();  // print used DB files
   se->End();
   se->PrintTimer();
   std::cout << "All done" << std::endl;
