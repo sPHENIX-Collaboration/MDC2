@@ -7,13 +7,13 @@ fi
 echo $1
 variable=$1
 #exit 0
-condor_q | grep ' H ' | grep run_pass3trk_embed.sh | grep ${variable} | grep sHijing_0_20 > bla
+condor_q | grep ' H ' | grep run_pass3trk_embed_js.sh | grep ${variable} | grep sHijing_0_20 > bla
 for i in `cat bla| awk '{print $1}'`; do condor_rm $i; done
 if [ -f tmplist ]
 then
 rm tmplist
 fi
-for i in `cat bla | awk '{print $12}' | awk -F- '{print $3}' | awk -F. '{print "-0000000006-"$1".job"}'`; do echo $i >> tmplist ; done
+for i in `cat bla | awk '{print $12}' | awk -F- '{print $3}' | awk -F. '{print "-0000000007-"$1".job"}'`; do echo $i >> tmplist ; done
 if [ -f sedlist ]
 then
 rm sedlist

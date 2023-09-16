@@ -11,6 +11,8 @@
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
 
+#include <fun4allutils/TimerStats.h>
+
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
@@ -132,6 +134,10 @@ int Fun4All_G4_Pass3Trk(
   if (Enable::INTT_CELL) Intt_Cells();
   if (Enable::TPC_CELL) TPC_Cells();
   if (Enable::MICROMEGAS_CELL) Micromegas_Cells();
+
+  TimerStats *ts = new TimerStats();
+  ts->OutFileName("jobtime.root");
+  se->registerSubsystem(ts);
 
   //--------------
   // Set up Input Managers
