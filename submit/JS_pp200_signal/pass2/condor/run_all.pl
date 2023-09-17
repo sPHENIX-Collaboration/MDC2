@@ -185,7 +185,7 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $nsubmit++;
 	}
-	if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit > 20000)
+	if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit >= 20000)
 	{
 	    print "maximum number of submissions reached, exiting\n";
 	    last;

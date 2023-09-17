@@ -17,9 +17,9 @@ if ($#ARGV < 3)
 
 my $localdir=`pwd`;
 chomp $localdir;
-my $baseprio = 44;
+my $baseprio = 84;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_pass3trk.sh",$rundir);
+my $executable = sprintf("%s/run_pass3trk_js.sh",$rundir);
 my $nevents = $ARGV[0];
 my $jettrigger = $ARGV[1];
 my $infile0 = $ARGV[2];

@@ -23,6 +23,7 @@
 
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
+R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_Pass3Trk(
     const int nEvents = 1,
@@ -105,6 +106,9 @@ int Fun4All_G4_Pass3Trk(
 
   // Global options (enabled for all enables subsystems - if implemented)
   //  Enable::VERBOSITY = 1;
+
+  // Magnetic field until this is sorted out
+  G4MAGNET::magfield = std::string(getenv("CALIBRATIONROOT")) + std::string("/Field/Map/sphenix3dtrackingmapxyz.root");
 
   // central tracking
   Enable::MVTX = true;

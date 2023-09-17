@@ -39,7 +39,7 @@ my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s-%010d-%05d",$jettriggerMHz,$runnumber,$sequence);
 my $logdir = sprintf("%s/log/%s",$localdir,$jettriggerMHz);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass5_global_js/%s",$jettriggerMHz);
+my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass5_global/%s",$jettriggerMHz);
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
 if (-f $jobfile && ! defined $overwrite)

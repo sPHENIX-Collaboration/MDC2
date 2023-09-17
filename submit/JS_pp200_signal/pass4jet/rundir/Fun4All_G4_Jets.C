@@ -10,7 +10,8 @@
 #include <G4_Production.C>
 
 #include <ffamodules/FlagHandler.h>
-#include <ffamodules/XploadInterface.h>
+#include <ffamodules/CDBInterface.h>
+
 
 #include <fun4all/Fun4AllInputManager.h>
 #include <fun4all/Fun4AllDstInputManager.h>
@@ -24,9 +25,9 @@ R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 
 void Fun4All_G4_Jets(
-  const int nEvents = 10,
-  const string &inputFile = "DST_TRUTH_pythia8_Jet30_3MHz-0000000040-00000.root",
-  const string &outputFile = "DST_TRUTH_JETS_pythia8_Jet30_3MHz-0000000040-00000.root",
+  const int nEvents = 0,
+  const string &inputFile = "DST_TRUTH_pythia8_Jet30_3MHz-0000000008-00000.root",
+  const string &outputFile = "DST_TRUTH_JETS_pythia8_Jet30_3MHz-0000000008-00000.root",
   const string &outdir = "."
   )
 {
@@ -41,13 +42,9 @@ void Fun4All_G4_Jets(
   //===============
   // conditions DB flags
   //===============
-  Enable::XPLOAD = true;
-  // tag
-  rc->set_StringFlag("XPLOAD_TAG", XPLOAD::tag);
-  // database config
-  rc->set_StringFlag("XPLOAD_CONFIG", XPLOAD::config);
-  // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP", XPLOAD::timestamp);
+  Enable::CDB = true;
+  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
   Fun4AllInputManager *in = new Fun4AllDstInputManager("DSTTRUTH");
   in->fileopen(inputFile);
@@ -106,7 +103,7 @@ void Fun4All_G4_Jets(
   se->run(nEvents);
 
   // terminate
-  XploadInterface::instance()->Print();  // print used DB files
+  CDBInterface::instance()->Print();  // print used DB files
   se->End();
   std::cout << "All done" << std::endl;
   delete se;

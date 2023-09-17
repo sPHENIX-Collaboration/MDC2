@@ -8,7 +8,7 @@ use Getopt::Long;
 my $test;
 my $incremental;
 my $killexist;
-my $runnumber = 7;
+my $runnumber = 8;
 my $events = 1000;
 GetOptions("test"=>\$test, "increment"=>\$incremental, "killexist" => \$killexist);
 if ($#ARGV < 1)

@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=7;
+my $runnumber=8;
 my $test;
 my $incremental;
 my $shared;
@@ -54,13 +54,10 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/%s",$outdir,lc $jettrigger);
+$outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,lc $jettrigger);
 mkpath($outdir);
 
 $jettrigger = sprintf("%s_3MHz",$jettrigger);
-
-my %calohash = ();
-my %vtxhash = ();
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
@@ -68,6 +65,7 @@ my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttyp
 #print "select filename,segment from datasets where dsttype = 'DST_CALO_G4HIT' and filename like '%pythia8_$jettrigger%' and runnumber = $runnumber order by filename\n";
 
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
+my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
 while (my @res = $getfiles->fetchrow_array())
 {

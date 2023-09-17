@@ -19,7 +19,7 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 84;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_pass4jet.sh",$rundir);
+my $executable = sprintf("%s/run_pass4jet_js.sh",$rundir);
 my $nevents = $ARGV[0];
 my $jettrigger = $ARGV[1];
 my $infile = $ARGV[2];
