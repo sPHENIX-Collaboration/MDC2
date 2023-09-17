@@ -16,6 +16,10 @@ ana_calo=ana.374
 ana_global=ana.376
 ana_pass3trk=ana.374
 
+run_calo=1
+run_trk=1
+run_bbcepd=1
+
 source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
@@ -56,30 +60,35 @@ echo arg8 \(quarkfilter\): $8
 
 #---------------------------------------------------------------
 # Calorimeter Reconstruction
-#source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_calo
-#echo 'here comes your environment for Fun4All_G4_Calo.C'
-#printenv
-#echo running calo root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
-
-#root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
+if [ ${run_calo} -gt 0 ]
+then
+    source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_calo
+    echo 'here comes your environment for Fun4All_G4_Calo.C'
+    printenv
+    echo running calo root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
+    root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
+fi
 
 #---------------------------------------------------------------
 # Global Reconstruction
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_global
-echo 'here comes your environment for Fun4All_G4_BBC_EPD.C'
-printenv
-echo root.exe -q -b Fun4All_G4_BBC_EPD.C\($1,\"$2\",\"$5\",\"$6\"\)
-
-root.exe -q -b  Fun4All_G4_BBC_EPD.C\($1,\"$2\",\"$5\",\"$6\"\)
-
+if [ ${run_bbcepd} -gt 0 ]
+then
+    source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_global
+    echo 'here comes your environment for Fun4All_G4_BBC_EPD.C'
+    printenv
+    echo root.exe -q -b Fun4All_G4_BBC_EPD.C\($1,\"$2\",\"$5\",\"$6\"\)
+    root.exe -q -b  Fun4All_G4_BBC_EPD.C\($1,\"$2\",\"$5\",\"$6\"\)
+fi
 
 #---------------------------------------------------------------
 # pass3 tracking
-#source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_pass3trk
-#echo 'here comes your environment for Fun4All_G4_Pass3Trk.C'
-#printenv
-#echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$8\"\)
-
-#root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$8\"\)
+if [ ${run_trk} -gt 0 ]
+then
+    source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_pass3trk
+    echo 'here comes your environment for Fun4All_G4_Pass3Trk.C'
+    printenv
+    echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$8\"\)
+    root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$8\"\)
+fi
 
 echo "script done"
