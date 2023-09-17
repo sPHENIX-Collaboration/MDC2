@@ -48,6 +48,9 @@ int Fun4All_G4_sPHENIX_job0(
   DstOut::OutputDir = outdir;
   DstOut::OutputFile = outputFile;
 
+  // set pp tracking mode
+  TRACKING::pp_mode = true;
+
   // central tracking
   Enable::MVTX = true;
   Enable::INTT = true;
