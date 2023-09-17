@@ -14,7 +14,7 @@ my $topdir = "/sphenix/u/sphnxpro/MDC2/submit";
 my $kill;
 my $system = 0;
 my $dsttype = "none";
-my $runnumber = 6;
+my $runnumber = 7;
 my $nopileup;
 my $verbose;
 my $embed;
@@ -198,7 +198,7 @@ my %productionsubdir = (
     "DST_TRUTH_G4HIT" => "pass2",
     "DST_TRUTH" => "pass3trk",
     "DST_TRUTH_JET" => "pass4jet",
-    "DST_TRUTH_RECO" => "pass5truthreco",
+    "DST_TRUTH_RECO" => "pass5_truthreco",
     "DST_TRUTH_DISTORT" => "pass3distort",
     "DST_VERTEX" => "pass2",
     "G4Hits" => "pass1"
@@ -214,6 +214,7 @@ if (defined $nopileup)
     $productionsubdir{"DST_TRACKS"} = "pass3_jobC_nopileup";
     $productionsubdir{"DST_TRACKSEEDS"} = "pass3_jobA_nopileup";
     $productionsubdir{"DST_TRUTH_JET" } = "pass3jet_nopileup",
+    $productionsubdir{"DST_TRUTH_RECO"} = "pass4_truthreco_nopileup"
 }
 if (defined $embed)
 {
@@ -226,7 +227,7 @@ if ($embed eq "pau")
     $productionsubdir{"DST_CALO_CLUSTER"} = sprintf("pass3calo%s",$embedpostfix);
     $productionsubdir{"DST_CALO_G4HIT"} = sprintf("pass2%s",$embedpostfix);
     $productionsubdir{"DST_GLOBAL"} = sprintf("pass3global%s",$embedpostfix);
-    $productionsubdir{"DST_BBC_EPD"} = sprintf("pass3global%s",$embedpostfix);
+    $productionsubdir{"DST_BBC_EPD"} = sprintf("pass3_bbcepd%s",$embedpostfix);
     $productionsubdir{"DST_TRUTH"} = sprintf("pass3trk%s",$embedpostfix);
     $productionsubdir{"DST_TRUTH_G4HIT"} = sprintf("pass2%s",$embedpostfix);
     $productionsubdir{"DST_TRACKS"} = sprintf("pass4_jobC%s",$embedpostfix);

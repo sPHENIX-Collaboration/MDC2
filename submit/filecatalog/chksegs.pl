@@ -66,13 +66,14 @@ elsif ($system == 2)
 elsif ($system == 3)
 {
 #    $systemstring = "pythia8_pp_mb";
+    $g4hits_exist = 1;
     $systemstring_g4hits ="pythia8_pp_mb";
     $gpfsdir = "pythia8_pp_mb";
     if (! defined $nopileup)
     {
 	$systemstring = sprintf("%s_3MHz",$systemstring_g4hits);
     }
-else
+    else
     {
 	$systemstring = sprintf("%s-",$systemstring_g4hits);
     }
@@ -114,9 +115,9 @@ elsif ($system == 7)
     }
     else
     {
-	$systemstring = sprintf("%s",$systemstring_g4hits);
+	$systemstring = sprintf("%s-",$systemstring_g4hits);
     }
-    $systemstring_g4hits = sprintf("%s",$systemstring_g4hits);
+    $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
     $gpfsdir = "HF_pp200_signal";
 }
 elsif ($system == 8)
@@ -515,6 +516,9 @@ foreach my $dcdir (keys  %topdcachedir)
 #    if ($type eq "DST_TRUTH" || $type eq "G4Hits")
     {
 	$typeWithUnderscore = sprintf("%s_%s-%010d",$type,$systemstring,$runnumber);
+#        print "type: $type\n";
+#        print "systemstring: $systemstring\n";
+#        print "typeWithUnderscore: $typeWithUnderscore\n";
     }
     $conds = sprintf("datasets.runnumber = %d and datasets.filename = files.lfn and files.lfn like \'%s%\%\' and files.full_file_path like \'%s/\%%%s%\%\'",$runnumber,$typeWithUnderscore,$dcdir,$type);
 if (exists $notlike{$systemstring})
