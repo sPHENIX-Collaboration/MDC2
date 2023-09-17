@@ -38,7 +38,7 @@ my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s-%010d-%05d",$quarkfilter,$runnumber,$sequence);
 my $logdir = sprintf("%s/log/%s",$localdir,$quarkfilter);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/HF_pp200_signal/pass4_global_nopileup_hf/%s",$quarkfilter);
+my $condorlogdir = sprintf("/tmp/HF_pp200_signal/pass4_global_nopileup/%s",$quarkfilter);
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
 if (-f $jobfile && ! defined $overwrite)
