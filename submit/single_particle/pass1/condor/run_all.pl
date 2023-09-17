@@ -56,7 +56,7 @@ mkpath($outdir);
 
 my $localdir=`pwd`;
 chomp $localdir;
-my $logdir = sprintf("%s/log",$localdir);
+my $logdir = sprintf("%s/log/%s",$localdir,$particle);
 my $nsubmit = 0;
 my $njob = 0;
 for (my $isub = 0; $isub < $maxsubmit; $isub++)

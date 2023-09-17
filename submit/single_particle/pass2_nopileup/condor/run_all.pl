@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 6;
+my $runnumber = 7;
 my $test;
 my $incremental;
 my $shared;
@@ -54,7 +54,7 @@ open(F,"outdir.txt");
 while (my $line = <F>)
 {
     chomp $line;
-    $line = sprintf("%s/run%04d",$line,$runnumber);
+    $line = sprintf("%s/run%04d/%s",$line,$runnumber,$partprop);
     mkpath($line);
     push(@outdir,$line);
 }
@@ -110,7 +110,7 @@ while (my @res = $getfiles->fetchrow_array())
 	    $tstflag="--test";
 	}
 	my $calooutfilename = sprintf("DST_CALO_CLUSTER_%s-%010d-%05d.root",$filetype,$runnumber,$segment);
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %d %d %s", $outevents, $filetype, $lfn, $calooutfilename, $outdir[0], $outdir[1],$runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %s", $outevents, $filetype, $partprop, $lfn, $calooutfilename, $outdir[0], $outdir[1],$runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
@@ -134,6 +134,7 @@ while (my @res = $getfiles->fetchrow_array())
     }
 }
 
+$getfiles->finish();
 $chkfile->finish();
 $dbh->disconnect;
 

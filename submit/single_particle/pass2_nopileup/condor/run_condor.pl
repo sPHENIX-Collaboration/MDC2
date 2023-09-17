@@ -7,9 +7,9 @@ use File::Path;
 
 my $test;
 GetOptions("test"=>\$test);
-if ($#ARGV < 3)
+if ($#ARGV < 7)
 {
-    print "usage: run_condor.pl <events> <filetype> <infile> <calo outfile>  <calo outdir> <trk outdir> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <filetype> <partprop> <infile> <calo outfile> <calo outdir> <trk outdir> <runnumber> <sequence>\n";
     print "options:\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
@@ -19,24 +19,25 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 72;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_pass2_nopileup.sh",$rundir);
+my $executable = sprintf("%s/run_pass2_nopileup_single.sh",$rundir);
 my $nevents = $ARGV[0];
 my $filetype = $ARGV[1];
-my $infile = $ARGV[2];
-my $calooutfile = $ARGV[3];
-my $calodstoutdir = $ARGV[4];
-my $trkdstoutdir = $ARGV[5];
-my $runnumber = $ARGV[6];
-my $sequence = $ARGV[7];
+my $partprop = $ARGV[2];
+my $infile = $ARGV[3];
+my $calooutfile = $ARGV[4];
+my $calodstoutdir = $ARGV[5];
+my $trkdstoutdir = $ARGV[6];
+my $runnumber = $ARGV[7];
+my $sequence = $ARGV[8];
 if ($sequence < 100)
 {
     $baseprio = 90;
 }
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s-%010d-%05d",$filetype,$runnumber,$sequence);
-my $logdir = sprintf("%s/log",$localdir);
+my $logdir = sprintf("%s/log/%s",$localdir,$partprop);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/single_particle/pass2_nopileup");
+my $condorlogdir = sprintf("/tmp/single_particle/pass2_nopileup/%s",$partprop);
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
 if (-f $jobfile)

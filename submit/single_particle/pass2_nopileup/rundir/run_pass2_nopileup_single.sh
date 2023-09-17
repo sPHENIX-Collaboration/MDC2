@@ -12,8 +12,11 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n ana.348
+ana_calo=ana.375
+ana_bbcepd=ana.375
+ana_pass3trk=ana.375
 
+source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
@@ -49,9 +52,21 @@ echo arg5 \(trk output dir\): $5
 echo arg6 \(runnumber\): $6
 echo arg7 \(segment\): $7
 echo arg8 \(filetype\): $8
+
+
+source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_bbcepd
+echo 'here comes your environment'
+printenv
+
 echo running calo root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
 root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
 exit 0
+
+source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_pass3trk
+
+echo 'here comes your environment'
+printenv
+
 echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$5\",\"$8\"\)
 root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$5\",\"$8\"\)
 
