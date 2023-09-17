@@ -12,7 +12,7 @@ MAILTO="pinkenburg@bnl.gov"
 #-----------------
 # autopilot condor submission
 #-----------------
-17 21 * * * source /opt/sphenix/core/bin/sphenix_setup.sh -n; /sphenix/u/sphnxpro/MDC2/cronjobs/autopilot.pl >&  /sphenix/u/sphnxpro/MDC2/cronjobs/autopilot.log
+*/30 * * * * source /opt/sphenix/core/bin/sphenix_setup.sh -n; /sphenix/u/sphnxpro/MDC2/cronjobs/autopilot.pl >&  /sphenix/u/sphnxpro/MDC2/cronjobs/autopilot.log
 #
 #-----------------
 # tracking MB 50kHz Hijing daily QA
@@ -24,5 +24,5 @@ MAILTO="pinkenburg@bnl.gov"
 # tracking 3MHz streaming charm pythia8 daily QA
 #-----------------
 # This is paused for now because our streaming tracking is not the priority in commissioning
-#02 0 * * * /sphenix/u/sphnxpro/git/DataMonitoring/Tracking/DailyCronJobScripts/MinBias3MHzStreamingpp/submitJobs.sh >& /sphenix/user/sphnxpro/MinBias3MHzStreamingpp_submitJobs.log
-#30 22 * * * /sphenix/u/sphnxpro/git/DataMonitoring/Tracking/DailyCronJobScripts/MinBias3MHzStreamingpp/AnalyzeOutput.sh >& /sphenix/user/sphnxpro/MinBias3MHzStreamingpp_AnalyzeOutput.log
+02 0 * * * /sphenix/u/sphnxpro/git/DataMonitoring/Tracking/DailyCronJobScripts/MinBias3MHzStreamingpp/submitJobs.sh >& /sphenix/user/sphnxpro/MinBias3MHzStreamingpp_submitJobs.log
+30 22 * * * /sphenix/u/sphnxpro/git/DataMonitoring/Tracking/DailyCronJobScripts/MinBias3MHzStreamingpp/AnalyzeOutput.sh >& /sphenix/user/sphnxpro/MinBias3MHzStreamingpp_AnalyzeOutput.log
