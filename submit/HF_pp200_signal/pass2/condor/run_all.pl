@@ -9,14 +9,14 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 40;
+my $runnumber = 8;
 my $test;
 my $incremental;
 my $shared;
 GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Charm\", \"CharmD0\", \"Bottom\", \"BottomD0\" or \"JetD0\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Charm\", \"CharmD0\", \"Bottom\", \"CharmD0piKJet5\", \"CharmD0piKJet12\", \"BottomD0\" or \"JetD0\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--shared : submit jobs to shared pool\n";
@@ -36,11 +36,13 @@ my $maxsubmit = $ARGV[0];
 my $quarkfilter = $ARGV[1];
 if ($quarkfilter  ne "Charm" &&
     $quarkfilter  ne "CharmD0" &&
+    $quarkfilter  ne "CharmD0piKJet5" &&
+    $quarkfilter  ne "CharmD0piKJet12" &&
     $quarkfilter  ne "Bottom" &&
     $quarkfilter  ne "BottomD0" &&
     $quarkfilter  ne "JetD0")
 {
-    print "second argument has to be either Charm, CharmD0, Bottom, BottomD0 or JetD0\n";
+    print "second argument has to be either Charm, CharmD0, CharmD0piKJet5, CharmD0piKJet12, Bottom, BottomD0 or JetD0\n";
     exit(1);
 }
 
@@ -57,7 +59,7 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/%s",$outdir,lc $quarkfilter);
+$outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,lc $quarkfilter);
 mkpath($outdir);
 
 my %outfiletype = ();
@@ -65,7 +67,6 @@ $outfiletype{"DST_BBC_G4HIT"} = 1;
 $outfiletype{"DST_CALO_G4HIT"} = 1;
 $outfiletype{"DST_TRKR_G4HIT"} = 1;
 $outfiletype{"DST_TRUTH_G4HIT"} = "DST_TRUTH";
-$outfiletype{"DST_VERTEX"} = 1;
 
 my $quarkfilterWithUnderScore = sprintf("%s-",$quarkfilter);
 $quarkfilter = sprintf("%s_3MHz",$quarkfilter);
@@ -137,7 +138,7 @@ while (my @res = $getfiles->fetchrow_array())
 	my @bkgfiles = ();
 	my $bkgsegments = 0;
 	my $currsegment = $segment;
-	while ($bkgsegments <= 100)
+	while ($bkgsegments <= 99)
 	{
 	    $currsegment++;
 	    if ($currsegment > $lastsegment)
@@ -186,9 +187,9 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $nsubmit++;
 	}
-	if ($maxsubmit != 0 && $nsubmit >= $maxsubmit)
+	if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit >= 20000)
 	{
-	    print "maximum number of submissions reached, exiting\n";
+	    print "maximum number of submissions $nsubmit reached, exiting\n";
 	    last;
 	}
     }
