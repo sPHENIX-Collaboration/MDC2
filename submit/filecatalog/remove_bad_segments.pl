@@ -36,7 +36,7 @@ my %daughters = (
     "DST_TRKR_G4HIT" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRUTH_G4HIT", "DST_TRKR_HIT", "DST_TRUTH_RECO", "DSTOLD_TRKR_G4HIT", "DST_TRUTH_RECO"],
     "DST_TRUTH_G4HIT" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH", "DSTOLD_TRUTH_G4HIT" ],
 #    "DST_VERTEX" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_CALO_CLUSTER", "DSTOLD_VERTEX" ],
-    "DST_TRKR_CLUSTER" => [ "DST_TRACKSEEDS", "DST_TRUTH_RECO", "DST_TRUTH_RECO"],
+    "DST_TRKR_CLUSTER" => [ "DST_TRACKSEEDS", "DST_TRUTH_RECO" ],
     "DST_TRACKSEEDS" => [ "DST_TRACKS"],
     "DST_TRKR_HIT" => [ "DST_TRUTH", "DST_TRKR_CLUSTER", "DSTOLD_TRKR_HIT" ],
     "DST_TRUTH" => [ "DST_TRKR_HIT", "DST_TRUTH_JET", "DST_TRUTH_RECO", "DSTOLD_TRUTH" , "DST_TRUTH_RECO"],
@@ -71,11 +71,11 @@ my %daughters = (
 if (defined $nopileup)
 {
     my $ref = $daughters{"DST_TRKR_HIT"};
-    push(@$ref,("DST_CALO_CLUSTER", "DST_GLOBAL","DST_BBC_EPD"));
+    push(@$ref,("DST_CALO_CLUSTER", "DST_BBC_EPD"));
     @$ref = grep($_,@$ref); # removes empty strings from array
 
     $ref = $daughters{"DST_CALO_CLUSTER"};
-    push(@$ref,("DST_TRKR_HIT","DST_GLOBAL","DST_BBC_EPD","DST_TRUTH"));
+    push(@$ref,("DST_TRKR_HIT","DST_BBC_EPD","DST_TRUTH"));
     @$ref = grep($_,@$ref); # removes empty strings from array
 
     $ref = $daughters{"DST_BBC_EPD"};
@@ -83,7 +83,7 @@ if (defined $nopileup)
     @$ref = grep($_,@$ref); # removes empty strings from array
 
     $ref = $daughters{"DST_TRUTH"};
-    push(@$ref,("DST_CALO_CLUSTER","DST_GLOBAL","DST_BBC_EPD"));
+    push(@$ref,("DST_CALO_CLUSTER","DST_BBC_EPD"));
     @$ref = grep($_,@$ref); # removes empty strings from array
 }
 if (defined $verbose)
@@ -186,7 +186,7 @@ my %productionsubdir = (
     "DST_BBC_G4HIT" => "pass2",
     "DST_CALO_CLUSTER" => "pass3calo",
     "DST_CALO_G4HIT"=> "pass2",
-    "DST_GLOBAL"=> "pass3global",
+    "DST_GLOBAL"=> "pass5_global",
     "DST_JETS"=> "pass5jetreco",
     "DST_TRACKS" => "pass4_jobC",
     "DST_TRACKSEEDS" => "pass4_jobA",
@@ -208,7 +208,7 @@ if (defined $nopileup)
     $productionsubdir{"DST_TRKR_HIT"} = "pass2_nopileup";
     $productionsubdir{"DST_CALO_CLUSTER"} = "pass2_nopileup";
     $productionsubdir{"DST_BBC_EPD"} = "pass2_nopileup";
-    $productionsubdir{"DST_GLOBAL"} = "pass2_nopileup";
+    $productionsubdir{"DST_GLOBAL"} = "pass4_global_nopileup";
     $productionsubdir{"DST_TRKR_CLUSTER"} = "pass3_job0_nopileup";
     $productionsubdir{"DST_TRUTH"} = "pass2_nopileup";
     $productionsubdir{"DST_TRACKS"} = "pass3_jobC_nopileup";
