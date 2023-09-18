@@ -107,7 +107,7 @@ int Fun4All_G4_Pass3Trk(
   G4MAGNET::magfield = std::string(getenv("CALIBRATIONROOT")) + std::string("/Field/Map/sphenix3dtrackingmapxyz.root");
 
   // set pp tracking mode
-  TRACKING::pp_mode = true;
+//  TRACKING::pp_mode = true;
 
   // central tracking
   Enable::MVTX = true;
