@@ -12,5 +12,11 @@ echo $variable
 condor_q | grep ' H ' | grep run_pass3_job0_nopileup_hf.sh | grep ${grepvariable} > bla
 [ ! -s bla ] && exit 0
 for i in `cat bla| awk '{print $1}'`; do condor_rm $i; done
-for i in `cat bla | awk '{print $12}' | awk -F- '{print $3}' | awk -F. '{print "-0000000006-"$1".job"}'`; do echo $i;  condor_submit log/${variable}/condor_${variable}$i; done
-[ -f bla ] && rm bla
+
+[ -f tmplist ] && rm tmplist
+for i in `cat bla | awk '{print $12}' | awk -F- '{print $3}' | awk -F. '{print "-0000000008-"$1".job"}'`; do echo $i >> tmplist ; done
+
+[ -f sedlist ] && rm sedlist
+for i in `cat tmplist`; do echo log/${variable}/condor_${variable}$i >> sedlist; done
+for i in `cat sedlist`; do  sed -i 's/4096MB/512MB/' $i; echo $i; done
+for i in `cat sedlist`; do condor_submit $i; done
