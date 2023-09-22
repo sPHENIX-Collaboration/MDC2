@@ -9,10 +9,11 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 40;
+my $runnumber = 7;
 my $test;
 my $incremental;
-GetOptions("test"=>\$test, "increment"=>\$incremental);
+my $shared;
+GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
@@ -30,13 +31,20 @@ if ($hostname !~ /phnxsub/)
     exit(1);
 }
 my $maxsubmit = $ARGV[0];
+
+my $condorlistfile =  sprintf("condor.list");
+if (-f $condorlistfile)
+{
+    unlink $condorlistfile;
+}
+
 if (! -f "outdir.txt")
 {
     print "could not find outdir.txt\n";
     exit(1);
 }
 my $outdir = `cat outdir.txt`;
-chomp $outdir;
+$outdir = sprintf("%s/run%04d",$outdir,$runnumber);
 mkpath($outdir);
 
 my %outfiletype = ();
@@ -120,13 +128,31 @@ foreach my $segment (sort keys %trkhash)
 	{
 	    $nsubmit++;
 	}
-	if ($nsubmit >= $maxsubmit)
+	if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit >= 20000)
 	{
 	    print "maximum number of submissions reached, exiting\n";
-	    exit(0);
+	    last;
 	}
     }
 }
 
 $chkfile->finish();
 $dbh->disconnect;
+
+my $jobfile = sprintf("condor.job");
+if (defined $shared)
+{
+# $jobfile = sprintf("condor.job.shared");
+    $jobfile = sprintf("condor.job");
+}
+if (-f $condorlistfile)
+{
+    if (defined $test)
+    {
+	print "would submit $jobfile\n";
+    }
+    else
+    {
+	system("condor_submit $jobfile");
+    }
+}

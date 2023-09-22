@@ -3,16 +3,15 @@ export USER="$(id -u -n)"
 export LOGNAME=${USER}
 export HOME=/sphenix/u/${USER}
 
+hostname
+
 this_script=$BASH_SOURCE
 this_script=`readlink -f $this_script`
 this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
-
-source /opt/sphenix/core/bin/sphenix_setup.sh -n new
-
-hostname
-
 echo running: $this_script $*
+
+source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.376
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
@@ -50,12 +49,8 @@ echo arg6 \(sequence\): $6
 
 runnumber=$(printf "%010d" $5)
 sequence=$(printf "%05d" $6)
-filename=fm_0_488_pass3trk
 
-txtfilename=${filename}-${runnumber}-${sequence}.txt
-jsonfilename=${filename}-${runnumber}-${sequence}.json
-
-echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\"\)
-root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\"\)
+echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"$4\"\)
+root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"$4\"\)
 
 echo "script done"
