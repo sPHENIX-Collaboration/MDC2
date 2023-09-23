@@ -7,9 +7,9 @@ use File::Path;
 
 my $test;
 GetOptions("test"=>\$test);
-if ($#ARGV < 3)
+if ($#ARGV < 4)
 {
-    print "usage: run_condor.pl <events> <trk clusters> <outfile> <outdir> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <seeds infile> <cluster infile> <outfile> <outdir> <runnumber> <sequence>\n";
     print "options:\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
@@ -17,18 +17,29 @@ if ($#ARGV < 3)
 
 my $localdir=`pwd`;
 chomp $localdir;
+my $baseprio = 57;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_jobC.sh",$rundir);
+my $executable = sprintf("%s/run_pass4_jobC_fm_0_488.sh",$rundir);
 my $nevents = $ARGV[0];
-my $infile = $ARGV[1];
-my $dstoutfile = $ARGV[2];
-my $dstoutdir = $ARGV[3];
-my $runnumber = $ARGV[4];
-my $sequence = $ARGV[5];
-my $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
-my $logdir = sprintf("%s/log",$localdir);
+my $infile1 = $ARGV[1];
+my $infile2 = $ARGV[2];
+my $dstoutfile = $ARGV[3];
+my $dstoutdir = $ARGV[4];
+my $runnumber = $ARGV[5];
+my $sequence = $ARGV[6];
+if ($sequence < 100)
+{
+    $baseprio = 90;
+}
+my $condorlistfile = sprintf("condor.list");
+my $suffix = sprintf("%010d-%06d",$runnumber,$sequence);
+if ($sequence < 100000)
+{
+    $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
+}
+my $logdir = sprintf("%s/log/run%d",$localdir,$runnumber);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/fm_0_488/pass4_jobC");
+my $condorlogdir = sprintf("/tmp/fm_0_488/pass4_jobC/run%d",$runnumber);
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor-%s.job",$logdir,$suffix);
 if (-f $jobfile)
@@ -47,7 +58,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $infile $dstoutfile $dstoutdir $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $infile1 $infile2 $dstoutfile $dstoutdir $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -60,15 +71,19 @@ print F "Requirements = (CPU_Type == \"mdc2\")\n";
 #print F "Requirements = (CPU_Type == \"mdc2_2gb\")\n";
 print F "request_memory = 2048MB\n";
 #print F "request_memory = 2000MB\n";
-print F "Priority 	= 26\n";
+print F "Priority = $baseprio\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);
-if (defined $test)
-{
-    print "would submit $jobfile\n";
-}
-else
-{
-    system("condor_submit $jobfile");
-}
+#if (defined $test)
+#{
+#    print "would submit $jobfile\n";
+#}
+#else
+#{
+#    system("condor_submit $jobfile");
+#}
+
+open(F,">>$condorlistfile");
+print F "$executable, $nevents, $infile1, $infile2, $dstoutfile, $dstoutdir, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+close(F);
