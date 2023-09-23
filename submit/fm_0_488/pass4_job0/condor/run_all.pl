@@ -9,15 +9,19 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=40;
+my $runnumber=7;
 my $test;
 my $incremental;
-GetOptions("test"=>\$test, "increment"=>\$incremental);
+my $overwrite;
+my $shared;
+GetOptions("test"=>\$test, "increment"=>\$incremental, "overwrite"=>\$overwrite, "shared" => \$shared);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
+    print "--overwrite : overwrite existing jobfiles and restart\n";
+    print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
@@ -31,6 +35,13 @@ if ($hostname !~ /phnxsub/)
 }
 
 my $maxsubmit = $ARGV[0];
+
+my $condorlistfile =  sprintf("condor.list");
+if (-f $condorlistfile)
+{
+    unlink $condorlistfile;
+}
+
 if (! -f "outdir.txt")
 {
     print "could not find outdir.txt\n";
@@ -38,11 +49,12 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
+$outdir = sprintf("%s/run%04d",$outdir,$runnumber);
 mkpath($outdir);
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_HIT' and filename like 'DST_TRKR_HIT_sHijing_0_488fm_50kHz_bkg_0_20fm%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_HIT' and filename like 'DST_TRKR_HIT_sHijing_0_488fm_50kHz_bkg_0_20fm%' and runnumber = $runnumber order by segment") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
@@ -53,7 +65,11 @@ while (my @res = $getfiles->fetchrow_array())
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_TRKR_CLUSTER_sHijing_0_488fm_50kHz_bkg_0_20fm-%010d-%05d.root",$runnumber,$segment);
+	my $outfilename = sprintf("DST_TRKR_CLUSTER_sHijing_0_488fm_50kHz_bkg_0_20fm-%010d-%06d.root",$runnumber,$segment);
+	if ($segment < 100000)
+	{
+	    $outfilename = sprintf("DST_TRKR_CLUSTER_sHijing_0_488fm_50kHz_bkg_0_20fm-%010d-%05d.root",$runnumber,$segment);
+	}
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
@@ -63,6 +79,10 @@ while (my @res = $getfiles->fetchrow_array())
 	if (defined $test)
 	{
 	    $tstflag="--test";
+	}
+        elsif (defined $overwrite)
+	{
+	    $tstflag="--overwrite";
 	}
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %d %s", $outevents, $lfn, $outfilename, $outdir, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
@@ -80,13 +100,30 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $nsubmit++;
 	}
-	if ($nsubmit >= $maxsubmit)
+	if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit >= 20000)
 	{
-	    print "maximum number of submissions reached, exiting\n";
-	    exit(0);
+	    print "maximum number of submissions $nsubmit reached, submitting\n";
+	    last;
 	}
     }
 }
 $getfiles->finish();
 $chkfile->finish();
 $dbh->disconnect;
+
+my $jobfile = sprintf("condor.job");
+if (defined $shared)
+{
+ $jobfile = sprintf("condor.job.shared");
+}
+if (-f $condorlistfile)
+{
+    if (defined $test)
+    {
+	print "would submit $jobfile\n";
+    }
+    else
+    {
+	system("condor_submit $jobfile");
+    }
+}
