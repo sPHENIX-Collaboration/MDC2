@@ -1,12 +1,14 @@
 #include <GlobalVariables.C>
 
 #include <G4_Magnet.C>
-#include <G4_Micromegas.C>
 #include <G4_Production.C>
-#include <G4_Tracking.C>
+#include <Trkr_RecoInit.C>
+#include <Trkr_Reco.C>
 
 #include <ffamodules/FlagHandler.h>
-#include <ffamodules/XploadInterface.h>
+#include <ffamodules/CDBInterface.h>
+
+#include <fun4allutils/TimerStats.h>
 
 #include <fun4all/SubsysReco.h>
 #include <fun4all/Fun4AllServer.h>
@@ -18,13 +20,14 @@
 
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
+R__LOAD_LIBRARY(libfun4allutils.so)
 
 //________________________________________________________________________________________________
 int Fun4All_G4_sPHENIX_jobA(
   const int nEvents = 0,
   const int nSkipEvents = 0,
-  const string &inputFile = "DST_TRKR_CLUSTER_sHijing_0_488fm_50kHz_bkg_0_20fm-0000000040-00000.root",
-  const string &outputFile = "DST_TRACKSEEDS_sHijing_0_488fm_50kHz_bkg_0_20fm-0000000040-00000.root",
+  const string &inputFile = "DST_TRKR_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
+  const string &outputFile = "DST_TRACKSEEDS_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
   const string &outdir = "."
   )
 {
@@ -40,13 +43,10 @@ int Fun4All_G4_sPHENIX_jobA(
   //===============
   // conditions DB flags
   //===============
-  Enable::XPLOAD = true;
+  Enable::CDB = true;
   // tag
-  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
-  // database config
-  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
-  // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
+  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
   // set up production relatedstuff
   Enable::PRODUCTION = true;
@@ -67,7 +67,7 @@ int Fun4All_G4_sPHENIX_jobA(
   G4TPC::ENABLE_TIME_ORDERED_DISTORTIONS = false;
 
   /* distortion corrections */
-  G4TPC::ENABLE_CORRECTIONS = true;
+  G4TPC::ENABLE_CORRECTIONS = false;
   G4TPC::correction_filename = string(getenv("CALIBRATIONROOT")) + "/distortion_maps/distortion_corrections_empty.root";
   
   // tracking
@@ -84,14 +84,18 @@ int Fun4All_G4_sPHENIX_jobA(
   //------------------
   // New Flag Handling
   //------------------
-  FlagHandler *flg = new FlagHandler();
-  se->registerSubsystem(flg);
+  FlagHandler *flag = new FlagHandler();
+  se->registerSubsystem(flag);
 
   MagnetFieldInit();
   TrackingInit();
   
   // tracking
   Tracking_Reco_TrackSeed();
+
+  TimerStats *ts = new TimerStats();
+  ts->OutFileName("jobtime.root");
+  se->registerSubsystem(ts);
 
   // input manager
   auto in = new Fun4AllDstInputManager("DSTin");
@@ -132,7 +136,7 @@ int Fun4All_G4_sPHENIX_jobA(
   se->run(nEvents);
 
   // terminate
-  XploadInterface::instance()->Print(); // print used DB files
+  CDBInterface::instance()->Print();
   se->End();
   se->PrintTimer();
   std::cout << "All done" << std::endl;

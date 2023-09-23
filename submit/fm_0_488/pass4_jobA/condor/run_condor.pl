@@ -9,7 +9,7 @@ my $test;
 GetOptions("test"=>\$test);
 if ($#ARGV < 3)
 {
-    print "usage: run_condor.pl <events> <trk clusters> <outfile> <outdir> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <infile> <outfile> <outdir> <runnumber> <sequence>\n";
     print "options:\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
@@ -17,18 +17,28 @@ if ($#ARGV < 3)
 
 my $localdir=`pwd`;
 chomp $localdir;
+my $baseprio = 56;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_jobA.sh",$rundir);
+my $executable = sprintf("%s/run_pass4_jobA_fm_0_488.sh",$rundir);
 my $nevents = $ARGV[0];
 my $infile = $ARGV[1];
 my $dstoutfile = $ARGV[2];
 my $dstoutdir = $ARGV[3];
 my $runnumber = $ARGV[4];
 my $sequence = $ARGV[5];
-my $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
-my $logdir = sprintf("%s/log",$localdir);
+if ($sequence < 100)
+{
+    $baseprio = 90;
+}
+my $condorlistfile = sprintf("condor.list");
+my $suffix = sprintf("%010d-%06d",$runnumber,$sequence);
+if ($sequence < 100000)
+{
+    $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
+}
+my $logdir = sprintf("%s/log/run%d",$localdir,$runnumber);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/fm_0_488/pass4_jobA");
+my $condorlogdir = sprintf("/tmp/fm_0_488/pass4_jobA/run%d",$runnumber);
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor-%s.job",$logdir,$suffix);
 if (-f $jobfile)
@@ -59,15 +69,19 @@ print F "accounting_group_user = sphnxpro\n";
 print F "Requirements = (CPU_Type == \"mdc2\")\n";
 print F "request_memory = 2048MB\n";
 #print F "request_memory = 1900MB\n";
-print F "Priority 	= 25\n";
+print F "Priority = $baseprio\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);
-if (defined $test)
-{
-    print "would submit $jobfile\n";
-}
-else
-{
-    system("condor_submit $jobfile");
-}
+#if (defined $test)
+#{
+#    print "would submit $jobfile\n";
+#}
+#else
+#{
+#    system("condor_submit $jobfile");
+#}
+
+open(F,">>$condorlistfile");
+print F "$executable, $nevents, $infile, $dstoutfile, $dstoutdir, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+close(F);
