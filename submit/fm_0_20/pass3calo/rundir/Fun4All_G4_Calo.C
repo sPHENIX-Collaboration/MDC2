@@ -23,13 +23,10 @@
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 
-// For HepMC Hijing
-// try inputFile = /sphenix/sim/sim01/sphnxpro/sHijing_HepMC/sHijing_0-12fm.dat
-
 int Fun4All_G4_Calo(
     const int nEvents = 1,
-    const string &inputFile0 = "DST_CALO_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
-    const string &outputFile = "DST_CALO_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
+    const string &inputFile0 = "DST_CALO_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
+    const string &outputFile = "DST_CALO_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
     const string &outdir = ".")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
