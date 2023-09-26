@@ -12,9 +12,13 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-ana_calo=ana.368
+ana_calo=ana.376
 ana_global=ana.376
-ana_pass3trk=ana.368
+ana_pass3trk=ana.376
+
+run_calo=1
+run_trk=1
+run_bbcepd=1
 
 # just to get a working environment, the specific ana builds for each reconstruction are set later
 source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n
@@ -63,32 +67,38 @@ sequence=$(printf "%05d" ${10})
 
 #---------------------------------------------------------------
 # Calorimeter Reconstruction
-#source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_calo
+if [ ${run_calo} -gt 0 ]
+then
+    source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_calo
+    echo 'here comes your environment for Fun4All_G4_Calo.C'
+    printenv
 
-#echo 'here comes your Calorimeter Reconstruction environment'
-#printenv
-
-#echo running root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
-#root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
+    echo running root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
+    root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
+fi
 
 #---------------------------------------------------------------
 # Global Reconstruction
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_global
+if [ ${run_bbcepd} -gt 0 ]
+then
+    source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_global
+    echo 'here comes your environment for Fun4All_G4_BBC_EPD.C'
+    printenv
 
-echo 'here comes your Global Reconstruction environment'
-printenv
-
-echo running root.exe -q -b Fun4All_G4_BBC_EPD.C\($1,\"$2\",\"$5\",\"$6\"\)
-root.exe -q -b  Fun4All_G4_BBC_EPD.C\($1,\"$2\",\"$5\",\"$6\"\)
+    echo running root.exe -q -b Fun4All_G4_BBC_EPD.C\($1,\"$2\",\"$5\",\"$6\"\)
+    root.exe -q -b  Fun4All_G4_BBC_EPD.C\($1,\"$2\",\"$5\",\"$6\"\)
+fi
 
 #---------------------------------------------------------------
 # pass3 tracking
-#source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_pass3trk
+if [ ${run_trk} -gt 0 ]
+then
+    source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_pass3trk
+    echo 'here comes your environment for Fun4All_G4_Pass3Trk.C'
+    printenv
 
-#echo 'here comes your Pass3 Tracking environment'
-#printenv
-
-#echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$8\"\)
-#root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$8\"\)
+    echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$8\"\)
+    root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$8\"\)
+fi
 
 echo "script done"

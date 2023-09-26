@@ -106,6 +106,8 @@ int Fun4All_G4_Pass3Trk(
   // Global options (enabled for all enables subsystems - if implemented)
   //  Enable::VERBOSITY = 1;
 
+// set pp tracking mode
+  TRACKING::pp_mode = true;
 
   // central tracking
   Enable::MVTX = true;
