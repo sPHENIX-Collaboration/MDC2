@@ -22,7 +22,7 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 51;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_hepmc_0_20fm.sh",$rundir);
+my $executable = sprintf("%s/run_pass1_fm_0_20.sh",$rundir);
 my $nevents = $ARGV[0];
 my $infile = $ARGV[1];
 my $dstoutdir = $ARGV[2];
@@ -40,9 +40,9 @@ if ($sequence < 100000)
 {
     $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
 }
-my $logdir = sprintf("%s/log",$localdir);
+my $logdir = sprintf("%s/logg/run%d",$localdir,$runnumber);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/fm_0_20/pass1");
+my $condorlogdir = sprintf("/tmp/fm_0_20/pass1/run%d",$runnumber);
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor-%s.job",$logdir,$suffix);
 if (-f $jobfile)
