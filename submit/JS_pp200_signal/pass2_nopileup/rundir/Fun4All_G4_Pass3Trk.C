@@ -29,7 +29,9 @@ int Fun4All_G4_Pass3Trk(
   const string &outdir = ".",
   const string &jettrigger = "NONE")
 {
-  const string &filefixedgeo = "cylindercellgeom_svtx.root";
+  // set pp tracking mode
+  TRACKING::pp_mode = true;
+
 
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -106,8 +108,8 @@ int Fun4All_G4_Pass3Trk(
   // Global options (enabled for all enables subsystems - if implemented)
   //  Enable::VERBOSITY = 1;
 
-// set pp tracking mode
-  TRACKING::pp_mode = true;
+  // Magnetic field until this is sorted out
+  G4MAGNET::magfield = std::string(getenv("CALIBRATIONROOT")) + std::string("/Field/Map/sphenix3dtrackingmapxyz.root");
 
   // central tracking
   Enable::MVTX = true;
@@ -141,11 +143,6 @@ int Fun4All_G4_Pass3Trk(
   //--------------
   // Set up Input Managers
   //--------------
-
-  InputManagers();
-  Fun4AllRunNodeInputManager *ingeo = new Fun4AllRunNodeInputManager("CYLGEO");
-  ingeo->AddFile(filefixedgeo);
-  se->registerInputManager(ingeo);
 
   if (Enable::PRODUCTION)
   {
