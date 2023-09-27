@@ -33,9 +33,9 @@ if ($sequence < 100)
 }
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("_%s-%010d-%05d",$jettrigger,$runnumber,$sequence);
-my $logdir = sprintf("%s/log/%s",$localdir,$jettrigger);
+my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$jettrigger);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass3jet_nopileup/%s",$jettrigger);
+my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass3jet_nopileup/run%d/%s",$runnumber,$jettrigger);
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor%s.job",$logdir,$suffix);
 if (-f $jobfile)

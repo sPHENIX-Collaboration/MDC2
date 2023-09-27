@@ -28,6 +28,9 @@ int Fun4All_G4_sPHENIX_job0(
   const string &outdir = ".")
 {
 
+  // set pp tracking mode
+  TRACKING::pp_mode = true;
+
   // print inputs
   std::cout << "Fun4All_G4_sPHENIX_job0 - nEvents: " << nEvents << std::endl;
   std::cout << "Fun4All_G4_sPHENIX_job0 - nSkipEvents: " << nSkipEvents << std::endl;
