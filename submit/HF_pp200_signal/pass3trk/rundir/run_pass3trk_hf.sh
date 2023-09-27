@@ -4,21 +4,15 @@ export USER="$(id -u -n)"
 export LOGNAME=${USER}
 export HOME=/sphenix/u/${USER}
 
+hostname
+
 this_script=$BASH_SOURCE
 this_script=`readlink -f $this_script`
 this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n ana.319
-
-
-# add to the GSEARCHPATH
-cat /etc/auto.direct | grep lustre
-if [ $? -ne 0 ]
-then
-  export GSEARCHPATH=.:PG:LUSTRE:XROOTD
-fi
+source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.376
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
@@ -52,14 +46,14 @@ echo arg1 \(events\) : $1
 echo arg2 \(track g4hits file\): $2
 echo arg3 \(truth g4hits file\): $3
 echo arg4 \(output dir\): $4
-echo arg5 \(quarkfilter\): $5
+echo arg5 \(quark filter\): $5
 echo arg6 \(runnumber\): $6
 echo arg7 \(sequence\): $7
 
 runnumber=$(printf "%010d" $6)
 sequence=$(printf "%05d" $7)
 
-echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\",\"$5\"\)
-root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"\",\"\",0,\"$4\",\"$5\"\)
+echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
+root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
 
 echo "script done"
