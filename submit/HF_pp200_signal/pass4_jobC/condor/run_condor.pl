@@ -10,7 +10,7 @@ my $overwrite;
 GetOptions("test"=>\$test, "overwrite"=>\$overwrite);
 if ($#ARGV < 5)
 {
-    print "usage: run_condor.pl <events> <quarkfilter> <outfile> <outdir> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <quarkfilter> <seeds infile> <cluster infile> <outfile> <outdir> <runnumber> <sequence>\n";
     print "options:\n";
     print "--overwrite : overwrite existing jobfiles\n";
     print "-test: testmode - no condor submission\n";
@@ -21,23 +21,24 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 46;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_jobC.sh",$rundir);
+my $executable = sprintf("%s/run_pass4_jobC_hf.sh",$rundir);
 my $nevents = $ARGV[0];
 my $quarkfilter = $ARGV[1];
-my $infile = $ARGV[2];
-my $dstoutfile = $ARGV[3];
-my $dstoutdir = $ARGV[4];
-my $runnumber = $ARGV[5];
-my $sequence = $ARGV[6];
+my $infile1 = $ARGV[2];
+my $infile2 = $ARGV[3];
+my $dstoutfile = $ARGV[4];
+my $dstoutdir = $ARGV[5];
+my $runnumber = $ARGV[6];
+my $sequence = $ARGV[7];
 if ($sequence < 100)
 {
     $baseprio = 90;
 }
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s-%010d-%05d",$quarkfilter,$runnumber,$sequence);
-my $logdir = sprintf("%s/log/%s",$localdir,$quarkfilter);
+my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$quarkfilter);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/HF_pp200_signal/pass4_jobC/%s",$quarkfilter);
+my $condorlogdir = sprintf("/tmp/HF_pp200_signal/pass4_jobC/run%d/%s",$runnumber,$quarkfilter);
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
 if (-f $jobfile && ! defined $overwrite)
@@ -56,7 +57,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $infile $dstoutfile $dstoutdir $quarkfilter $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $quarkfilter $infile1 $infile2 $dstoutfile $dstoutdir $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -82,5 +83,5 @@ close(F);
 
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile, $dstoutfile, $dstoutdir, $quarkfilter, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $quarkfilter, $infile1, $infile2, $dstoutfile, $dstoutdir, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);

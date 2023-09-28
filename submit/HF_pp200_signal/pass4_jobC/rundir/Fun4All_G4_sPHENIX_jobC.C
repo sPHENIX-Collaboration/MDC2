@@ -1,12 +1,14 @@
 #include <GlobalVariables.C>
 
 #include <G4_Magnet.C>
-#include <G4_Micromegas.C>
 #include <G4_Production.C>
-#include <G4_Tracking.C>
+#include <Trkr_RecoInit.C>
+#include <Trkr_Reco.C>
 
 #include <ffamodules/FlagHandler.h>
-#include <ffamodules/XploadInterface.h>
+#include <ffamodules/CDBInterface.h>
+
+#include <fun4allutils/TimerStats.h>
 
 #include <fun4all/SubsysReco.h>
 #include <fun4all/Fun4AllServer.h>
@@ -19,13 +21,15 @@
 
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
+R__LOAD_LIBRARY(libfun4allutils.so)
 
 //________________________________________________________________________________________________
 int Fun4All_G4_sPHENIX_jobC(
   const int nEvents = 0,
   const int nSkipEvents = 0,
-  const std::string &inputFile = "DST_TRACKSEEDS_pythia8_Charm_3MHz-0000000040-00000.root",
-  const std::string &outputFile = "DST_TRACKS_pythia8_Charm_3MHz-0000000040-00000.root",
+  const std::string &inputFile1 = "DST_TRACKSEEDS_pythia8_Jet10_3MHz-0000000008-00000.root",
+  const std::string &inputFile2 = "DST_CALO_CLUSTER_pythia8_Jet10_3MHz-0000000008-00000.root",
+  const std::string &outputFile = "DST_TRACKS_pythia8_Jet10_3MHz-0000000008-00000.root",
   const std::string &outdir = "."
   )
 {
@@ -33,7 +37,8 @@ int Fun4All_G4_sPHENIX_jobC(
   // print inputs
   std::cout << "Fun4All_G4_sPHENIX_jobC - nEvents: " << nEvents << std::endl;
   std::cout << "Fun4All_G4_sPHENIX_jobC - nSkipEvents: " << nSkipEvents << std::endl;
-  std::cout << "Fun4All_G4_sPHENIX_jobC - inputFile: " << inputFile << std::endl;
+  std::cout << "Fun4All_G4_sPHENIX_jobC - seed inputFile: " << inputFile1 << std::endl;
+  std::cout << "Fun4All_G4_sPHENIX_jobC - cluster inputFile: " << inputFile2 << std::endl;
   std::cout << "Fun4All_G4_sPHENIX_jobC - outputFile: " << outputFile << std::endl;
 
   recoConsts *rc = recoConsts::instance();
@@ -41,19 +46,20 @@ int Fun4All_G4_sPHENIX_jobC(
   //===============
   // conditions DB flags
   //===============
-  Enable::XPLOAD = true;
+  Enable::CDB = true;
   // tag
-  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
-  // database config
-  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
+  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
+  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
   // set up production relatedstuff
   Enable::PRODUCTION = true;
   Enable::DSTOUT = true;
   DstOut::OutputDir = outdir;
   DstOut::OutputFile = outputFile;
+
+  // set pp tracking mode
+  TRACKING::pp_mode = true;
 
   // central tracking
   Enable::MVTX = true;
@@ -67,7 +73,7 @@ int Fun4All_G4_sPHENIX_jobC(
   G4TPC::ENABLE_TIME_ORDERED_DISTORTIONS = false;
 
   /* distortion corrections */
-//  G4TPC::ENABLE_CORRECTIONS = true;
+  G4TPC::ENABLE_CORRECTIONS = false;
   G4TPC::correction_filename = string(getenv("CALIBRATIONROOT")) + "/distortion_maps/distortion_corrections_empty.root";
   
   // tracking configuration
@@ -90,9 +96,16 @@ int Fun4All_G4_sPHENIX_jobC(
   /* we only run the track fit, starting with seed from JobA */
   Tracking_Reco_TrackFit();
   
+  TimerStats *ts = new TimerStats();
+  ts->OutFileName("jobtime.root");
+  se->registerSubsystem(ts);
+
   // input manager
-  auto in = new Fun4AllDstInputManager("DSTin");
-  in->fileopen(inputFile);
+  auto in = new Fun4AllDstInputManager("DSTin1");
+  in->fileopen(inputFile1);
+  se->registerInputManager(in);
+  in = new Fun4AllDstInputManager("DSTin2");
+  in->fileopen(inputFile2);
   se->registerInputManager(in);
 
   if (Enable::PRODUCTION)
@@ -106,8 +119,8 @@ int Fun4All_G4_sPHENIX_jobC(
    */
   out->AddNode("Sync");
   out->AddNode("EventHeader");
-//  out->AddNode("TRKR_CLUSTER");
-//  out->AddNode("TRKR_CLUSTERCROSSINGASSOC");
+  // out->AddNode("TRKR_CLUSTER");
+  // out->AddNode("TRKR_CLUSTERCROSSINGASSOC");
   out->AddNode("SvtxTrackMap");
   out->AddNode("SvtxVertexMap");
   se->registerOutputManager(out);
@@ -120,7 +133,7 @@ int Fun4All_G4_sPHENIX_jobC(
   se->run(nEvents);
 
   // terminate
-  XploadInterface::instance()->Print(); // print used DB files
+  CDBInterface::instance()->Print(); // print used DB files
   se->End();
   se->PrintTimer();
   std::cout << "All done" << std::endl;
