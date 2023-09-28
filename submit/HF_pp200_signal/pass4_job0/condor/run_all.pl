@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=40;
+my $runnumber=8;
 my $test;
 my $incremental;
 my $overwrite;
@@ -59,7 +59,7 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/%s",$outdir,lc $quarkfilter);
+$outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,lc $quarkfilter);
 mkpath($outdir);
 
 $quarkfilter = sprintf("%s_3MHz",$quarkfilter);

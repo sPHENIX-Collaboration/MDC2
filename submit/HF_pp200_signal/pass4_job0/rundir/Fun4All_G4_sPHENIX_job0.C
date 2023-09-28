@@ -1,13 +1,13 @@
 #include <GlobalVariables.C>
 
-#include <G4Setup_sPHENIX.C>
-#include <G4_Bbc.C>
-#include <G4_Global.C>
 #include <G4_Production.C>
-#include <G4_Tracking.C>
+#include <Trkr_RecoInit.C>
+#include <Trkr_Clustering.C>
 
 #include <ffamodules/FlagHandler.h>
-#include <ffamodules/XploadInterface.h>
+#include <ffamodules/CDBInterface.h>
+
+#include <fun4allutils/TimerStats.h>
 
 #include <fun4all/SubsysReco.h>
 #include <fun4all/Fun4AllServer.h>
@@ -20,14 +20,15 @@
 
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
+R__LOAD_LIBRARY(libfun4allutils.so)
 
 //________________________________________________________________________________________________
 int Fun4All_G4_sPHENIX_job0(
   const int nEvents = 0,
   const int nSkipEvents = 0,
-  const string &inputFile = "DST_TRKR_HIT_pythia8_Charm_3MHz-0000000040-00000.root",
-  const string &outputFile = "DST_TRKR_CLUSTER_pythia8_Charm_3MHz-0000000040-00000.root",
-  const string &outdir = ".")
+  const std::string &inputFile = "DST_TRKR_HIT_pythia8_Charm_3MHz-0000000008-00000.root",
+  const std::string &outputFile = "DST_TRKR_CLUSTER_pythia8_Charm_3MHz-0000000008-00000.root",
+    const string &outdir = ".")
 {
 
   // print inputs
@@ -41,19 +42,17 @@ int Fun4All_G4_sPHENIX_job0(
   //===============
   // conditions DB flags
   //===============
-  Enable::XPLOAD = true;
-  // tag
-  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
-  // database config
-  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
-  // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
-
+  Enable::CDB = true;
+  rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
+  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
   // set up production relatedstuff
   Enable::PRODUCTION = true;
   Enable::DSTOUT = true;
   DstOut::OutputDir = outdir;
   DstOut::OutputFile = outputFile;
+
+// set pp tracking mode
+  TRACKING::pp_mode = true;
 
   // central tracking
   Enable::MVTX = true;
@@ -80,8 +79,8 @@ int Fun4All_G4_sPHENIX_job0(
   // make sure to printout random seeds for reproducibility
   PHRandomSeed::Verbosity(1);
 
-  FlagHandler *flag = new FlagHandler();
-  se->registerSubsystem(flag);
+  FlagHandler *flg = new FlagHandler();
+  se->registerSubsystem(flg);
 
   // needed for makeActsGeometry, used in clustering
   TrackingInit();
@@ -91,6 +90,10 @@ int Fun4All_G4_sPHENIX_job0(
   Intt_Clustering();
   TPC_Clustering();
   Micromegas_Clustering();
+
+  TimerStats *ts = new TimerStats();
+  ts->OutFileName("jobtime.root");
+  se->registerSubsystem(ts);
 
   // input manager
   auto in = new Fun4AllDstInputManager("DSTin");
@@ -121,7 +124,7 @@ int Fun4All_G4_sPHENIX_job0(
   se->run(nEvents);
 
   // terminate
-  XploadInterface::instance()->Print(); // print used DB files
+  CDBInterface::instance()->Print();
   se->End();
   se->PrintTimer();
   std::cout << "All done" << std::endl;

@@ -21,7 +21,7 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 44;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_job0.sh",$rundir);
+my $executable = sprintf("%s/run_pass4_job0_hf.sh",$rundir);
 my $nevents = $ARGV[0];
 my $quarkfilter = $ARGV[1];
 my $infile = $ARGV[2];
@@ -35,9 +35,9 @@ if ($sequence < 100)
 }
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s-%010d-%05d",$quarkfilter,$runnumber,$sequence);
-my $logdir = sprintf("%s/log/%s",$localdir,$quarkfilter);
+my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$quarkfilter);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/HF_pp200_signal/pass4_job0/%s",$quarkfilter);
+my $condorlogdir = sprintf("/tmp/HF_pp200_signal/pass4_job0/run%d/%s",$runnumber,$quarkfilter);
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
 if (-f $jobfile && ! defined $overwrite)
