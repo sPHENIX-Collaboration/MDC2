@@ -25,9 +25,9 @@ R__LOAD_LIBRARY(libffamodules.so)
 
 int Fun4All_G4_Pass3Trk(
   const int nEvents = 0,
-  const string &inputFile0 = "G4Hits_pythia8_pp_mb-0000000006-00000.root",
+  const string &inputFile0 = "G4Hits_pythia8_Jet30-0000000007-00000.root",
   const string &outdir = ".",
-  const string &jettrigger = "NONE")
+  const string &jettrigger = "Jet30")
 {
   // set pp tracking mode
 //  TRACKING::pp_mode = true;
@@ -143,6 +143,8 @@ int Fun4All_G4_Pass3Trk(
   //--------------
   // Set up Input Managers
   //--------------
+
+  InputManagers();
 
   if (Enable::PRODUCTION)
   {
