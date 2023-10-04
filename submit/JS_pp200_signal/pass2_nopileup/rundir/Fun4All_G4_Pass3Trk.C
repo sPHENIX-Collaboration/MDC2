@@ -30,7 +30,7 @@ int Fun4All_G4_Pass3Trk(
   const string &jettrigger = "NONE")
 {
   // set pp tracking mode
-  TRACKING::pp_mode = true;
+//  TRACKING::pp_mode = true;
 
 
   Fun4AllServer *se = Fun4AllServer::instance();
