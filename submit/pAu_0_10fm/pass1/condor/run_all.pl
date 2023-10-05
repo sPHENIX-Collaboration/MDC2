@@ -35,7 +35,7 @@ my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::er
 my $maxsubmit = $ARGV[0];
 my $hijing_runnumber = 6;
 my $hijing_dir = sprintf("/sphenix/sim/sim01/sphnxpro/mdc2/sHijing_HepMC/pAu_0_10fm");
-my $runnumber = 7;
+my $runnumber = 9;
 my $events = 1000;
 my $evtsperfile = 100000;
 my $nmax = $evtsperfile;
