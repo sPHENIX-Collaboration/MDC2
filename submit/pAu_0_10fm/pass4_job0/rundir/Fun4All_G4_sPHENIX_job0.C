@@ -23,8 +23,8 @@ R__LOAD_LIBRARY(libfun4all.so)
 int Fun4All_G4_sPHENIX_job0(
   const int nEvents = 0,
   const int nSkipEvents = 0,
-  const std::string &inputFile = "DST_TRKR_HIT_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000006-00000.root",
-  const std::string &outputFile = "DST_TRKR_CLUSTER_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000006-00000.root",
+  const std::string &inputFile = "DST_TRKR_HIT_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000009-00000.root",
+  const std::string &outputFile = "DST_TRKR_CLUSTER_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000009-00000.root",
     const string &outdir = ".")
 {
 

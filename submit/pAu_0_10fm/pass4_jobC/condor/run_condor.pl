@@ -37,9 +37,9 @@ if ($sequence < 100000)
 {
     $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
 }
-my $logdir = sprintf("%s/log",$localdir);
+my $logdir = sprintf("%s/log/run%d",$localdir,$runnumber);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/pAu_0_10fm/pass4_jobC");
+my $condorlogdir = sprintf("/tmp/pAu_0_10fm/pass4_jobC/run%d",$runnumber);
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor-%s.job",$logdir,$suffix);
 if (-f $jobfile)
