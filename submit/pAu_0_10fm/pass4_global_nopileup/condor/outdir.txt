@@ -1,1 +1,1 @@
-/sphenix/lustre01/sphnxpro/mdc2/shijing_hepmc/fm_0_20/nopileup/global
+/sphenix/lustre01/sphnxpro/mdc2/shijing_hepmc/pAu_0_10fm/nopileup/global
