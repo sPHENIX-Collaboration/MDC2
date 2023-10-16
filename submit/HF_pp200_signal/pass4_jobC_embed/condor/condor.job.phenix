@@ -1,0 +1,18 @@
+Universe 	= vanilla
+Executable 	= $(executable)
+Arguments       = $(nevents) $(infile1) $(infile2) $(dstoutfile) $(dstoutdir) $(jettrigger) $(runnumber) $(sequence)
+Output  	= $(outfile)
+Error 		= $(errfile)
+Log  		= $(condorlogfile)
+Initialdir  	=  $(rundir)
+PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)
+accounting_group = group_phenix.anatrain
+#accounting_group = group_sphenix.prod
+#accounting_group_user = sphnxpro
+request_memory = 2048MB
+Priority = $(baseprio)
++Job_Type="cas"
++Experiment  = "phenix"
+Requirements = TARGET.Machine == "rcas2701.rcf.bnl.gov" || TARGET.Machine == "rcas2710.rcf.bnl.gov"
+job_lease_duration = 3600
+Queue executable, nevents, infile1, infile2, dstoutfile, dstoutdir, jettrigger, runnumber, sequence, outfile, errfile, condorlogfile, rundir, baseprio from condor.list
