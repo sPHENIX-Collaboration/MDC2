@@ -103,11 +103,13 @@ int Fun4All_G4_Calo(
   Enable::HCALIN_CELL = Enable::HCALIN && true;
   Enable::HCALIN_TOWER = Enable::HCALIN_CELL && true;
   Enable::HCALIN_CLUSTER = Enable::HCALIN_TOWER && true;
+  G4HCALIN::tower_emin = 0.;
 
   Enable::HCALOUT = true;
   Enable::HCALOUT_CELL = Enable::HCALOUT && true;
   Enable::HCALOUT_TOWER = Enable::HCALOUT_CELL && true;
   Enable::HCALOUT_CLUSTER = Enable::HCALOUT_TOWER && true;
+  G4HCALOUT::tower_emin = 0.;
 
   //------------------
   // Detector Reconstruction
