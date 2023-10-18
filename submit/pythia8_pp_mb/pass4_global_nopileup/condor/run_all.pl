@@ -9,7 +9,8 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=8;
+my $inrunnumber=8;
+my $outrunnumber=$inrunnumber;
 my $test;
 my $incremental;
 my $shared;
@@ -35,6 +36,7 @@ if ($hostname !~ /phnxsub/)
 my $maxsubmit = $ARGV[0];
 
 my $condorlistfile =  sprintf("condor.list");
+
 if (-f $condorlistfile)
 {
     unlink $condorlistfile;
@@ -47,25 +49,68 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/run%04d",$outdir,$runnumber);
+$outdir = sprintf("%s/run%04d",$outdir,$outrunnumber);
 mkpath($outdir);
 
-my $outfilestring = sprintf("pythia8_pp_mb-");
+my $outfilelike = sprintf("pythia8_pp_mb-");
+
+my %trkhash = ();
+my %bbcepdhash = ();
+
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH' and filename like '%$outfilestring%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRACKS' and filename like '%$outfilelike%' and runnumber = $inrunnumber order by segment") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
+
+my $getbbcepdfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_BBC_EPD' and filename like '%$outfilelike%' and runnumber = $inrunnumber");
+
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
 while (my @res = $getfiles->fetchrow_array())
 {
-    my $lfn = $res[0];
+    if ($res[1] < 100000)
+    {
+	$trkhash{sprintf("%05d",$res[1])} = $res[0];
+    }
+    else
+    {
+	$trkhash{sprintf("%06d",$res[1])} = $res[0];
+    }
+
+}
+$getfiles->finish();
+$getbbcepdfiles->execute() || die $DBI::errstr;
+my $nbbcepd = $getbbcepdfiles->rows;
+while (my @res = $getbbcepdfiles->fetchrow_array())
+{
+    if ($res[1] < 100000)
+    {
+	$bbcepdhash{sprintf("%05d",$res[1])} = $res[0];
+    }
+    else
+    {
+	$bbcepdhash{sprintf("%06d",$res[1])} = $res[0];
+    }
+}
+$getbbcepdfiles->finish();
+foreach my $segment (sort keys %trkhash)
+{
+    if (! exists $bbcepdhash{$segment})
+    {
+	next;
+    }
+
+    my $lfn = $trkhash{$segment};
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_TRUTH_JET_%s%010d-%05d.root",$outfilestring,$runnumber,$segment);
+	my $outfilename = sprintf("DST_GLOBAL_%s%010d-%06d.root",$outfilelike,$outrunnumber,$segment);
+	if ($segment < 100000)
+	{
+	    $outfilename = sprintf("DST_GLOBAL_%s%010d-%05d.root",$outfilelike,$outrunnumber,$segment);
+	}
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
@@ -76,7 +121,7 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %d %s", $outevents, $lfn, $outfilename, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $bbcepdhash{sprintf("%05d",$segment)}, $outfilename, $outdir, $outrunnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
@@ -92,28 +137,21 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $nsubmit++;
 	}
-	if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit >= 20000)
+	if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit>= 20000)
 	{
-	    print "maximum number of submissions $nsubmit reached, submitting\n";
+	    print "maximum number of submissions reached, exiting\n";
 	    last;
 	}
     }
 }
-$getfiles->finish();
 $chkfile->finish();
 $dbh->disconnect;
 
 my $jobfile = sprintf("condor.job");
 if (defined $shared)
 {
- $jobfile = sprintf("condor.job.shared");
+    $jobfile = sprintf("condor.job.shared");
 }
-if (! -f $jobfile)
-{
-    print "could not find $jobfile\n";
-    exit(1);
-}
-
 if (-f $condorlistfile)
 {
     if (defined $test)

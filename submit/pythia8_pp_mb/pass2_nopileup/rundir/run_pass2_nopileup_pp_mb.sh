@@ -12,9 +12,9 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-ana_calo=ana.370
-ana_global=ana.370
-ana_pass3trk=ana.370
+ana_calo=ana.373
+ana_global=ana.373
+ana_pass3trk=ana.373
 
 # just to get a working environment, the specific ana builds for each reconstruction are set later
 source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n
