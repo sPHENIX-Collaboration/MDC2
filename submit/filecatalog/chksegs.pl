@@ -10,14 +10,15 @@ use DBI;
 my $system = 0;
 my $verbosity;
 my $nopileup;
-my $runnumber = 6;
+my $runnumber = 7;
 my $embed;
 my $ptmin;
 my $ptmax;
 my $mom;
 my $particle;
 my $file_exist_check;
-GetOptions("embed:s" => \$embed, "exist" => \$file_exist_check, "run:i"=>\$runnumber, "type:i"=>\$system, "verbosity" => \$verbosity, "nopileup" => \$nopileup);
+my $fm = "0_20fm";
+GetOptions("embed:s" => \$embed, "exist" => \$file_exist_check, "fm:s" =>\$fm, "run:i"=>\$runnumber, "type:i"=>\$system, "verbosity" => \$verbosity, "nopileup" => \$nopileup);
 
 if ($system < 1 || $system > 21)
 {
@@ -111,7 +112,26 @@ elsif ($system == 7)
     $systemstring_g4hits = "pythia8_Charm";
     if (! defined $nopileup)
     {
-	$systemstring = sprintf("%s_3MHz",$systemstring_g4hits);
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s_50kHz_bkg_0_20fm",$systemstring_g4hits,$fm);
+	    }
+	    elsif ($embed eq "pau")
+	    {
+		$systemstring = sprintf("%s_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm",$systemstring_g4hits);
+	    }
+	    else
+	    {
+		print "bad embed val: $embed, valid values auau, pau\n";
+		exit(0);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s_3MHz",$systemstring_g4hits);
+	}
     }
     else
     {
@@ -177,7 +197,7 @@ elsif ($system == 11)
 	    {
 		if ($embed eq "auau")
 		{
-		    $systemstring = sprintf("%s_sHijing_0_20fm_50kHz_bkg_0_20fm",$systemstring_g4hits);
+		    $systemstring = sprintf("%s_sHijing_%s_50kHz_bkg_0_20fm",$systemstring_g4hits,$fm);
 		}
 		elsif ($embed eq "pau")
 		{
@@ -213,7 +233,7 @@ elsif ($system == 12)
 	    {
 		if ($embed eq "auau")
 		{
-		    $systemstring = sprintf("%s_sHijing_0_20fm_50kHz_bkg_0_20fm",$systemstring_g4hits);
+		    $systemstring = sprintf("%s_sHijing_%s_50kHz_bkg_0_20fm",$systemstring_g4hits,$fm);
 		}
 		elsif ($embed eq "pau")
 		{
@@ -247,7 +267,7 @@ elsif ($system == 13)
     {
 	    if (defined $embed)
 	    {
-		$systemstring = sprintf("%s_sHijing_0_20fm_50kHz_bkg_0_20fm",$systemstring_g4hits);
+		$systemstring = sprintf("%s_sHijing_%s_50kHz_bkg_0_20fm",$systemstring_g4hits,$fm);
 	    }
 	    else
 	    {
