@@ -32,15 +32,16 @@ my $outfilename = $ARGV[6];
 my $dstoutdir = $ARGV[7];
 my $runnumber = $ARGV[8];
 my $sequence = $ARGV[9];
+my $fm = $ARGV[10];
 if ($sequence < 100)
 {
     $baseprio = 90;
 }
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s-%010d-%05d",$jettrigger,$runnumber,$sequence);
-my $logdir = sprintf("%s/log/%s",$localdir,$jettrigger);
+my $logdir = sprintf("%s/log/%s/run%d/%s",$localdir,$fm,$runnumber,$jettrigger);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass5_truthreco_embed/%s",$jettrigger);
+my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass5_truthreco_embed/%s/run%d/%s",$fm,$runnumber,$jettrigger);
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
 if (-f $jobfile && ! defined $overwrite)
