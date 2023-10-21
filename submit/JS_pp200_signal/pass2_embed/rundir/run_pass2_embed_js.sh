@@ -43,6 +43,7 @@ fi
 # $7: jettrigger
 # $8: run number
 # $9: sequence
+# $10: fm range
 
 echo 'here comes your environment'
 printenv
@@ -55,11 +56,12 @@ echo arg6 \(output dir\): $6
 echo arg7 \(jettrigger\): $7
 echo arg8 \(runnumber\): $8
 echo arg9 \(sequence\): $9
+echo arg10 \(fm range\): ${10}
 
-runnumber=$(printf "%010d" $9)
-sequence=$(printf "%05d" ${10})
+runnumber=$(printf "%010d" $8)
+sequence=$(printf "%05d" $9)
 
-echo running root.exe -q -b Fun4All_G4_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\"\)
-root.exe -q -b  Fun4All_G4_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\"\)
+echo running root.exe -q -b Fun4All_G4_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"${10}\"\)
+root.exe -q -b  Fun4All_G4_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"${10}\"\)
 
 echo "script done"

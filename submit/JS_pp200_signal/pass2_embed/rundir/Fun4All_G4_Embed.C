@@ -36,7 +36,8 @@ int Fun4All_G4_Embed(
     const string &embed_input_file2 = "DST_TRKR_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000040-00000.root",
     const string &embed_input_file3 = "DST_TRUTH_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000040-00000.root",
     const string &outdir = ".",
-    const string &jettrigger = "Jet30")
+    const string &jettrigger = "Jet30",
+    const string &fmrange = "0_20fm")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -245,12 +246,12 @@ int Fun4All_G4_Embed(
   Enable::CEMC = true;
 
   Enable::HCALIN = true;
-  Enable::HCALIN_OLD = true;
+//  Enable::HCALIN_OLD = true;
 
   Enable::MAGNET = true;
 
   Enable::HCALOUT = true;
-  Enable::HCALOUT_OLD = true;
+//  Enable::HCALOUT_OLD = true;
 
   Enable::EPD = true;
 
@@ -281,7 +282,7 @@ int Fun4All_G4_Embed(
   if (Enable::PRODUCTION)
   {
     PRODUCTION::SaveOutputDir = DstOut::OutputDir;
-    CreateDstOutput(runnumber, segment, jettrigger);
+    CreateDstOutput(runnumber, segment, jettrigger, fmrange);
   }
 
   //-----------------
