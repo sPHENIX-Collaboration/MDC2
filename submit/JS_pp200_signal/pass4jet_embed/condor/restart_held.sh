@@ -8,9 +8,9 @@ echo $1
 variable=$1
 run=7
 fm=0_488fm
-
+withhijing=${fm}_50kHz_bkg_0_20fm
 #exit 0
-condor_q | grep ' H ' | grep run_pass4jet_embed_js.sh | grep ${variable} > bla
+condor_q | grep ' H ' | grep run_pass4jet_embed_js.sh | grep ${withhijing} | grep ${variable} > bla
 
 [ -s bla ] ||  exit 1
 
