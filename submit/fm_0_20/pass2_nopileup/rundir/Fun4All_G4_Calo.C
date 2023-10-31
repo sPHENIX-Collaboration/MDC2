@@ -25,8 +25,8 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_Calo(
     const int nEvents = 1,
-    const string &inputFile0 = "G4Hits_sHijing_0_20fm-0000000006-00000.root",
-    const string &outputFile = "DST_CALO_CLUSTER_sHijing_0_20fm-0000000006-00000.root",
+    const string &inputFile0 = "G4Hits_sHijing_0_20fm-0000000007-00000.root",
+    const string &outputFile = "DST_CALO_CLUSTER_sHijing_0_20fm-0000000007-00000.root",
     const string &outdir = ".")
 {
   Fun4AllServer *se = Fun4AllServer::instance();

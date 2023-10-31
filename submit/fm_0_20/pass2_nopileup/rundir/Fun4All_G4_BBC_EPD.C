@@ -23,8 +23,8 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_BBC_EPD(
     const int nEvents = 1,
-    const string &inputFile = "G4Hits_sHijing_0_20fm-0000000006-00000.root",
-    const string &outputFile = "DST_BBC_EPD_sHijing_0_20fm-0000000006-00000.root",
+    const string &inputFile = "G4Hits_sHijing_0_20fm-0000000007-00000.root",
+    const string &outputFile = "DST_BBC_EPD_sHijing_0_20fm-0000000007-00000.root",
     const string &outdir = ".")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
