@@ -39,6 +39,7 @@ fi
 # $5: jettrigger
 # $6: run number
 # $7: sequence
+# $8: fm range
 
 echo 'here comes your environment'
 printenv
@@ -49,16 +50,17 @@ echo arg4 \(output dir\): $4
 echo arg5 \(jettrigger\): $5
 echo arg6 \(runnumber\): $6
 echo arg7 \(sequence\): $7
+echo arg8 \(fm range\): $8
 
 runnumber=$(printf "%010d" $6)
 sequence=$(printf "%05d" $7)
 
-echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
-root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
+echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$8\"\)
+root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$8\"\)
 
 filename=timing
 
-timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/js_pp200_signal/pass3trk_embed/timing.run${6}/${5}
+timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/js_pp200_signal/pass3trk_embed/timing/$8/run${6}/${5}
 
 [ ! -d $timedirname ] && mkdir -p $timedirname
 

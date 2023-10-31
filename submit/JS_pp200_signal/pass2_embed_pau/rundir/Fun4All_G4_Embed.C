@@ -6,10 +6,8 @@
 #include <G4Setup_sPHENIX.C>
 #include <G4_Bbc.C>
 #include <G4_Input.C>
-#include <G4_Jets.C>
 #include <G4_OutputManager_Embed.C>
 #include <G4_Production.C>
-#include <G4_User.C>
 
 #include <phpythia8/PHPy8JetTrigger.h>
 
@@ -28,14 +26,15 @@
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
 
+// For HepMC Hijing
+// try inputFile = /sphenix/sim/sim01/sphnxpro/sHijing_HepMC/sHijing_0-12fm.dat
+
 int Fun4All_G4_Embed(
     const int nEvents = 1,
-    const string &embed_input_file0 = "DST_BBC_G4HIT_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000006-00000.root",
-    const string &embed_input_file1 = "DST_CALO_G4HIT_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000006-00000.root",
-    const string &embed_input_file2 = "DST_TRKR_G4HIT_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000006-00000.root",
-    const string &embed_input_file3 = "DST_TRUTH_G4HIT_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000006-00000.root",
-    const string &embed_input_file4 = "DST_VERTEX_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000006-00000.root",
-    const int skip = 0,
+    const string &embed_input_file0 = "DST_BBC_G4HIT_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000009-00000.root",
+    const string &embed_input_file1 = "DST_CALO_G4HIT_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000009-00000.root",
+    const string &embed_input_file2 = "DST_TRKR_G4HIT_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000009-00000.root",
+    const string &embed_input_file3 = "DST_TRUTH_G4HIT_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000009-00000.root",
     const string &outdir = ".",
     const string &jettrigger = "Jet30")
 {
@@ -65,6 +64,7 @@ int Fun4All_G4_Embed(
   rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
   // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
+
 
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(embed_input_file0);
   int runnumber=runseg.first;
@@ -101,7 +101,6 @@ int Fun4All_G4_Embed(
   INPUTEMBED::filename[1] = embed_input_file1;
   INPUTEMBED::filename[2] = embed_input_file2;
   INPUTEMBED::filename[3] = embed_input_file3;
-  INPUTEMBED::filename[4] = embed_input_file4;
 // no repeating of embedding background, stop processing when end of file reached
   INPUTEMBED::REPEAT = false; 
 
@@ -114,7 +113,7 @@ int Fun4All_G4_Embed(
 
   //  Input::PYTHIA6 = true;
   // Enable this is emulating the nominal pp/pA/AA collision vertex distribution
-  Input::BEAM_CONFIGURATION = Input::pA_COLLISION; // for 2023 sims we want the AA geometry for no pileup sims
+  Input::BEAM_CONFIGURATION = Input::pA_COLLISION;
 
   Input::PYTHIA8 = true;
   if (Input::PYTHIA8)
@@ -147,26 +146,6 @@ int Fun4All_G4_Embed(
     }
     PYTHIA8::config_file = pythia8_config_file;
   }
-  //  Input::GUN = true;
-  //  Input::GUN_NUMBER = 3; // if you need 3 of them
-  // Input::GUN_VERBOSITY = 1;
-
-  //D0 generator
-  //Input::DZERO = false;
-  //Input::DZERO_VERBOSITY = 0;
-  //Lambda_c generator //Not ready yet
-  //Input::LAMBDAC = false;
-  //Input::LAMBDAC_VERBOSITY = 0;
-  // Upsilon generator
-  //Input::UPSILON = true;
-  //Input::UPSILON_NUMBER = 3; // if you need 3 of them
-  //Input::UPSILON_VERBOSITY = 0;
-
-  Input::HEPMC = false;
-  // INPUTHEPMC::filename = inputFile;
-
-  // Event pile up simulation with collision rate in Hz MB collisions.
-  //Input::PILEUPRATE = 100e3;
 
   //-----------------
   // Initialize the selected Input/Event generation
@@ -190,7 +169,7 @@ int Fun4All_G4_Embed(
     }
     else if (jettrigger == "Jet20")
     {
-      p8_js_signal_trigger->SetMinJetPt(20); // require a 30 GeV minimum pT jet in the event
+      p8_js_signal_trigger->SetMinJetPt(20); // require a 20 GeV minimum pT jet in the event
     }
     else if (jettrigger == "Jet30")
     {
@@ -248,12 +227,6 @@ int Fun4All_G4_Embed(
 //    Production_CreateOutputDir();
   }
 
-  //Option to convert DST to human command readable TTree for quick poke around the outputs
-  //  Enable::DSTREADER = true;
-
-  // turn the display on (default off)
-   //Enable::DISPLAY = true;
-
   //======================
   // What to run
   //======================
@@ -265,8 +238,6 @@ int Fun4All_G4_Embed(
   //  Enable::VERBOSITY = 1;
 
    Enable::BBC = true;
-  // Enable::BBC_SUPPORT = true; // save hist in bbc support structure
-  //Enable::BBCFAKE = true;  // Smeared vtx and t0, use if you don't want real BBC in simulation
 
   Enable::PIPE = true;
 
@@ -278,30 +249,16 @@ int Fun4All_G4_Embed(
   Enable::TPC = true;
 
   Enable::MICROMEGAS = true;
-  //  cemc electronics + thin layer of W-epoxy to get albedo from cemc
-  //  into the tracking, cannot run together with CEMC
-  //  Enable::CEMCALBEDO = true;
 
   Enable::CEMC = true;
 
   Enable::HCALIN = true;
-//  Enable::HCALIN_OLD = true;
 
   Enable::MAGNET = true;
 
   Enable::HCALOUT = true;
-//  Enable::HCALOUT_OLD = true;
 
   Enable::EPD = true;
-
-//  Enable::BEAMLINE = true;
-//  Enable::BEAMLINE_ABSORBER = true;  // makes the beam line magnets sensitive volumes
-//  Enable::BEAMLINE_BLACKHOLE = true; // turns the beamline magnets into black holes
-//  Enable::ZDC = true;
-
-  //! forward flux return plug door. Out of acceptance and off by default.
-  //Enable::PLUGDOOR = true;
-  Enable::PLUGDOOR_ABSORBER = true;
 
   // new settings using Enable namespace in GlobalVariables.C
   Enable::BLACKHOLE = true;
@@ -309,30 +266,6 @@ int Fun4All_G4_Embed(
   //Enable::BLACKHOLE_SAVEHITS = false; // turn off saving of bh hits
   //BlackHoleGeometry::visible = true;
 
-  // run user provided code (from local G4_User.C)
-  //Enable::USER = true;
-
-  //---------------
-  // World Settings
-  //---------------
-  //  G4WORLD::PhysicsList = "FTFP_BERT"; //FTFP_BERT_HP best for calo
-  //  G4WORLD::WorldMaterial = "G4_AIR"; // set to G4_GALACTIC for material scans
-
-  //---------------
-  // Magnet Settings
-  //---------------
-
-  //  G4MAGNET::magfield =  string(getenv("CALIBRATIONROOT"))+ string("/Field/Map/sphenix3dbigmapxyz.root");  // default map from the calibration database
-  //  G4MAGNET::magfield = "1.5"; // alternatively to specify a constant magnetic field, give a float number, which will be translated to solenoidal field in T, if string use as fieldmap name (including path)
-//  G4MAGNET::magfield_rescale = 1.;  // make consistent with expected Babar field strength of 1.4T
-
-  //---------------
-  // Pythia Decayer
-  //---------------
-  // list of decay types in
-  // $OFFLINE_MAIN/include/g4decayer/EDecayType.hh
-  // default is All:
-  // G4P6DECAYER::decayType = EDecayType::kAll;
 
   // Initialize the selected subsystems
   G4Init();
@@ -373,7 +306,6 @@ int Fun4All_G4_Embed(
     return 0;
   }
 
-  se->skip(skip);
   se->run(nEvents);
 
   //-----

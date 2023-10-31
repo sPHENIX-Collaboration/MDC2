@@ -7,9 +7,9 @@ use File::Path;
 
 my $test;
 GetOptions("test"=>\$test);
-if ($#ARGV < 3)
+if ($#ARGV < 7)
 {
-    print "usage: run_condor.pl <events> <jettrigger> <trk infile> <truth infile> <outdir> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <jettrigger> <trk infile> <truth infile> <outdir> <runnumber> <sequence> <fm range>\n";
     print "options:\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
@@ -27,16 +27,23 @@ my $infile1 = $ARGV[3];
 my $dstoutdir = $ARGV[4];
 my $runnumber = $ARGV[5];
 my $sequence = $ARGV[6];
+my $fm = $ARGV[7];
 if ($sequence < 100)
 {
     $baseprio = 90;
 }
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s-%010d-%05d",$jettrigger,$runnumber,$sequence);
-my $logdir = sprintf("%s/log/%s",$localdir,$jettrigger);
-mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass3trk_embed/%s",$jettrigger);
-mkpath($condorlogdir);
+my $logdir = sprintf("%s/log/%s/run%d/%s",$localdir,$fm,$runnumber,$jettrigger);
+if (! -d $logdir)
+{
+  mkpath($logdir);
+}
+my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass3trk_embed/%s/run%d/%s",$fm,$runnumber,$jettrigger);
+if (! -d $condorlogdir)
+{
+  mkpath($condorlogdir);
+}
 my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
 if (-f $jobfile)
 {
@@ -54,7 +61,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $infile0 $infile1 $dstoutdir $jettrigger $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $infile0 $infile1 $dstoutdir $jettrigger $runnumber $sequence $fm\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -80,5 +87,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile0, $infile1, $dstoutdir, $jettrigger, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $infile0, $infile1, $dstoutdir, $jettrigger, $runnumber, $sequence, $fm, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);

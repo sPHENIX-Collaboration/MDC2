@@ -8,12 +8,12 @@ use Getopt::Long;
 my $test;
 my $incremental;
 my $killexist;
-my $runnumber = 9;
+my $runnumber = 7;
 my $events = 1000;
 GetOptions("test"=>\$test, "increment"=>\$incremental, "killexist" => \$killexist);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"Jet40\", \"PhotonJet\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet20\", \"Jet30\", \"Jet40\", \"PhotonJet\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--killexist : delete output file if it already exists (but no jobfile)\n";
@@ -33,6 +33,7 @@ my $maxsubmit = $ARGV[0];
 my $jettrigger = $ARGV[1];
 my $filetype="pythia8";
 if ($jettrigger  ne "Jet10" &&
+    $jettrigger  ne "Jet20" &&
     $jettrigger  ne "Jet30" &&
     $jettrigger  ne "Jet40" &&
     $jettrigger  ne "PhotonJet")

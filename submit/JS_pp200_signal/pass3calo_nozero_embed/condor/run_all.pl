@@ -63,7 +63,7 @@ if (! -f "outdir.txt")
 
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/%s/run%04d/%s",$outdir,$fm,$runnumber,lc $jettrigger);
+$outdir = sprintf("%s/%s/run%04d/%s",$outdir,$fm,$outrunnumber,lc $jettrigger);
 mkpath($outdir);
 
 my %calohash = ();
@@ -98,7 +98,7 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %d %s %s", $outevents, $lfn, $outfilename, $outdir, $outrunnumber, $segment,  $fm, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s %s", $outevents, $jettrigger, $lfn, $outfilename, $outdir, $outrunnumber, $segment,  $fm, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

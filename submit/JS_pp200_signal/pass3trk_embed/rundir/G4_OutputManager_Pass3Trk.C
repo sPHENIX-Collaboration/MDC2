@@ -16,13 +16,14 @@ namespace OUTPUTMANAGER
 
 void AddCommonNodes(Fun4AllOutputManager *out);
 
-void CreateDstOutput(int runnumber, int segment, const string &jettrigger)
+void CreateDstOutput(int runnumber, int segment, const string &jettrigger, const string &fmrange)
 {
   auto se = Fun4AllServer::instance();
 
+  string embedinto = "_sHijing_" + fmrange + "_50kHz_bkg_0_20fm";
   char segrun[100];
-  snprintf(segrun,100,"%010d-%05d",runnumber,segment);
-  string FullOutFile = "DST_TRUTH_pythia8_" + jettrigger + "_sHijing_0_20fm_50kHz_bkg_0_20fm-" + string(segrun) + ".root";;
+  snprintf(segrun,100,"%s-%010d-%05d",embedinto.c_str(),runnumber,segment);
+  string FullOutFile = "DST_TRUTH_pythia8_" + jettrigger + string(segrun) + ".root";;
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("TRUTHOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("PHHepMCGenEventMap");
@@ -32,7 +33,7 @@ void CreateDstOutput(int runnumber, int segment, const string &jettrigger)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "DST_TRKR_HIT_pythia8_" + jettrigger + "_sHijing_0_20fm_50kHz_bkg_0_20fm-" + string(segrun) + ".root";;
+  FullOutFile = "DST_TRKR_HIT_pythia8_" + jettrigger + string(segrun) + ".root";;
   out = new Fun4AllDstOutputManager("TRKROUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("TRKR_HITSET");

@@ -33,7 +33,7 @@ R__LOAD_LIBRARY(libffamodules.so)
 
 int Fun4All_G4_JS_pp_signal(
   const int nEvents = 1,
-  const string &Jet_Trigger = "Jet30", // or "PhotonJet"
+  const string &jettrigger = "Jet30", // or "PhotonJet"
   const string &outputFile = "G4Hits_pythia8_PhotonJet-0000008-00000.root",
   const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
   const int skip = 0,
@@ -86,8 +86,22 @@ int Fun4All_G4_JS_pp_signal(
 
   // Enable this is emulating the nominal pp/pA/AA collision vertex distribution
 //  Input::BEAM_CONFIGURATION = Input::AA_COLLISION; // for 2023 sims we want the AA geometry for no pileup sims
+  switch(runnumber)
+  {
+  case 7:
+  Input::BEAM_CONFIGURATION = Input::AA_COLLISION; // for 2023 sims we want the AA geometry for no pileup sims
+  break;
+  case 8:
+  Input::BEAM_CONFIGURATION = Input::pp_COLLISION; // for 2023 sims we want the AA geometry for no pileup sims
+  break;
+  case 9:
   Input::BEAM_CONFIGURATION = Input::pA_COLLISION; // for 2023 sims we want the AA geometry for no pileup sims
-
+  break;
+  default:
+    cout << "runnnumber " << runnumber << " not implemented" << endl;
+    gSystem->Exit(1);
+    break;
+  }
   Input::PYTHIA8 = true;
 
 
@@ -96,21 +110,25 @@ int Fun4All_G4_JS_pp_signal(
   //-----------------
   // This creates the input generator(s)
   string pythia8_config_file = string(getenv("CALIBRATIONROOT")) + "/Generators/JetStructure_TG/";
-  if (Jet_Trigger == "PhotonJet")
+  if (jettrigger == "PhotonJet")
   {
     pythia8_config_file += "phpythia8_JS_GJ_MDC2.cfg";
   }
-  else if (Jet_Trigger == "Jet10")
+  else if (jettrigger == "Jet10")
   {
     pythia8_config_file += "phpythia8_15GeV_JS_MDC2.cfg";
   }
-  else if (Jet_Trigger == "Jet30")
+  else if (jettrigger == "Jet20")
+  {
+    pythia8_config_file += "phpythia8_20GeV_JS_MDC2.cfg";
+  }
+  else if (jettrigger == "Jet30")
   {
     pythia8_config_file += "phpythia8_30GeV_JS_MDC2.cfg";
   }
   else
   {
-    std::cout << "Invalid jet trigger " << Jet_Trigger << std::endl;
+    std::cout << "Invalid jet trigger " << jettrigger << std::endl;
     gSystem->Exit(1);
   }
   PYTHIA8::config_file = pythia8_config_file;
@@ -127,15 +145,19 @@ int Fun4All_G4_JS_pp_signal(
     PHPy8JetTrigger *p8_js_signal_trigger = new PHPy8JetTrigger();
     p8_js_signal_trigger->SetEtaHighLow(1.5,-1.5); // Set eta acceptance for particles into the jet between +/- 1.5
     p8_js_signal_trigger->SetJetR(0.4);      //Set the radius for the trigger jet
-    if (Jet_Trigger == "Jet10")
+    if (jettrigger == "Jet10")
     {
       p8_js_signal_trigger->SetMinJetPt(10); // require a 10 GeV minimum pT jet in the event
     }
-    else if (Jet_Trigger == "Jet30")
+    else if (jettrigger == "Jet20")
+    {
+      p8_js_signal_trigger->SetMinJetPt(20); // require a 20 GeV minimum pT jet in the event
+    }
+    else if (jettrigger == "Jet30")
     {
       p8_js_signal_trigger->SetMinJetPt(30); // require a 30 GeV minimum pT jet in the event
     }
-    else if (Jet_Trigger == "PhotonJet")
+    else if (jettrigger == "PhotonJet")
     {
       delete p8_js_signal_trigger;
       p8_js_signal_trigger = nullptr;
@@ -143,7 +165,7 @@ int Fun4All_G4_JS_pp_signal(
     }
     else
     {
-      cout << "invalid jettrigger: " << Jet_Trigger << endl;
+      cout << "invalid jettrigger: " << jettrigger << endl;
       gSystem->Exit(1);
     }
     if (p8_js_signal_trigger)

@@ -9,7 +9,7 @@ my $test;
 GetOptions("test"=>\$test);
 if ($#ARGV < 6)
 {
-    print "usage: run_condor.pl <events> <jettrigger> <seeds infile> <cluster infile> <jettrigger> <outfile> <outdir> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <jettrigger> <seeds infile> <cluster infile> <outfile> <outdir> <runnumber> <sequence>\n";
     print "options:\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
@@ -35,9 +35,15 @@ if ($sequence < 100)
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("_%s-%010d-%05d",$jettrigger,$runnumber,$sequence);
 my $logdir = sprintf("%s/log/%s",$localdir,$jettrigger);
-mkpath($logdir);
+if (! -d $logdir)
+{
+  mkpath($logdir);
+}
 my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass4_jobC/%s",$jettrigger);
-mkpath($condorlogdir);
+if (! -d $condorlogdir)
+{
+  mkpath($condorlogdir);
+}
 my $jobfile = sprintf("%s/condor%s.job",$logdir,$suffix);
 if (-f $jobfile)
 {

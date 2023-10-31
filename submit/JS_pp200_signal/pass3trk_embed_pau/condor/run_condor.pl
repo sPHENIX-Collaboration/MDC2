@@ -7,7 +7,7 @@ use File::Path;
 
 my $test;
 GetOptions("test"=>\$test);
-if ($#ARGV < 3)
+if ($#ARGV < 6)
 {
     print "usage: run_condor.pl <events> <jettrigger> <trk infile> <truth infile> <outdir> <runnumber> <sequence>\n";
     print "options:\n";
@@ -33,10 +33,16 @@ if ($sequence < 100)
 }
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s-%010d-%05d",$jettrigger,$runnumber,$sequence);
-my $logdir = sprintf("%s/log/%s",$localdir,$jettrigger);
-mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass3trk_embed_pau/%s",$jettrigger);
-mkpath($condorlogdir);
+my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$jettrigger);
+if (! -d $logdir)
+{
+  mkpath($logdir);
+}
+my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass3trk_embed_pau/run%d/%s",$runnumber,$jettrigger);
+if (! -d $condorlogdir)
+{
+  mkpath($condorlogdir);
+}
 my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
 if (-f $jobfile)
 {

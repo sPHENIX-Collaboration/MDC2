@@ -12,11 +12,13 @@ my $outevents = 0;
 my $runnumber = 7;
 my $test;
 my $incremental;
-GetOptions("test"=>\$test, "increment"=>\$incremental);
+my $fm = "0_20fm";
+GetOptions("test"=>\$test, "fm:s" =>\$fm, "increment"=>\$incremental);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"Jet40\", \"PhotonJet\" production>\n";
     print "parameters:\n";
+    print "--fm : fermi range for embedding\n";
     print "--increment : submit jobs while processing running\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
@@ -40,7 +42,7 @@ if ($jettrigger  ne "Jet10" &&
     exit(1);
 }
 
-my $outfilelike = sprintf("pythia8_%s_sHijing_0_20fm_50kHz_bkg_0_20fm",$jettrigger);
+my $outfilelike = sprintf("pythia8_%s_sHijing_%s_50kHz_bkg_0_20fm",$jettrigger,$fm);
 
 my $condorlistfile =  sprintf("condor.list");
 if (-f $condorlistfile)
@@ -55,7 +57,7 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,lc $jettrigger);
+$outdir = sprintf("%s/%s/run%04d/%s",$outdir,$fm,$runnumber,lc $jettrigger);
 mkpath($outdir);
 
 
@@ -125,7 +127,7 @@ foreach my $segment (sort keys %trkhash)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $truthhash{sprintf("%05d",$segment)}, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s %s", $outevents, $jettrigger, $lfn, $truthhash{sprintf("%05d",$segment)}, $outdir, $runnumber, $segment, $fm, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

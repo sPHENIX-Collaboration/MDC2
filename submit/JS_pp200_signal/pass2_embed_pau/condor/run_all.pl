@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 6;
+my $runnumber = 9;
 my $test;
 my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
@@ -65,7 +65,6 @@ $outfiletype{"DST_BBC_G4HIT"} = 1;
 $outfiletype{"DST_CALO_G4HIT"} = 1;
 $outfiletype{"DST_TRKR_G4HIT"} = 1;
 $outfiletype{"DST_TRUTH_G4HIT"} = 1;
-$outfiletype{"DST_VERTEX"} = 1;
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
@@ -112,17 +111,6 @@ while (my @res = $getcalofiles->fetchrow_array())
 }
 $getcalofiles->finish();
 
-my %vertexhash = ();
-my $getvertexfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_VERTEX' and filename like 'DST_VERTEX_$embedfilelike%' and runnumber = $runnumber");
-$getvertexfiles->execute() || die $DBI::errstr;
-my $nvertex = $getvertexfiles->rows;
-while (my @res = $getvertexfiles->fetchrow_array())
-{
-    $vertexhash{sprintf("%05d",$res[1])} = $res[0];
-}
-$getvertexfiles->finish();
-
-
 #print "input files: $ncal, truth: $ntruth\n";
 foreach my $segment (sort keys %trkhash)
 {
@@ -138,11 +126,6 @@ foreach my $segment (sort keys %trkhash)
     {
 	next;
     }
-    if (! exists $vertexhash{$segment})
-    {
-	next;
-    }
-
     my $lfn = $trkhash{$segment};
 #    print "found $lfn\n";
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
@@ -173,7 +156,7 @@ foreach my $segment (sort keys %trkhash)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $bbchash{sprintf("%05d",$segment)}, $calohash{sprintf("%05d",$segment)}, $truthhash{sprintf("%05d",$segment)}, $vertexhash{sprintf("%05d",$segment)}, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $bbchash{sprintf("%05d",$segment)}, $calohash{sprintf("%05d",$segment)}, $truthhash{sprintf("%05d",$segment)}, $outdir, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

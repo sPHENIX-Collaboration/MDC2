@@ -8,9 +8,9 @@ use File::Path;
 my $test;
 my $overwrite;
 GetOptions("test"=>\$test, "overwrite"=>\$overwrite);
-if ($#ARGV < 7)
+if ($#ARGV < 8)
 {
-    print "usage: run_condor.pl <events> <seeds infile> <bbcepd infile> <jettrigger> <outfile> <outdir> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <seeds infile> <bbcepd infile> <jettrigger> <outfile> <outdir> <runnumber> <sequence> <fm range>\n";
     print "options:\n";
     print "--overwrite : overwrite existing jobfiles\n";
     print "--test: testmode - no condor submission\n";
@@ -30,16 +30,23 @@ my $dstoutfile = $ARGV[4];
 my $dstoutdir = $ARGV[5];
 my $runnumber = $ARGV[6];
 my $sequence = $ARGV[7];
+my $fm = $ARGV[8];
 if ($sequence < 100)
 {
     $baseprio = 90;
 }
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s-%010d-%05d",$jettrigger,$runnumber,$sequence);
-my $logdir = sprintf("%s/log/%s",$localdir,$jettrigger);
-mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass5_global_embed/%s",$jettrigger);
-mkpath($condorlogdir);
+my $logdir = sprintf("%s/log/%s/run%d/%s",$localdir,$fm,$runnumber,$jettrigger);
+if (! -d $logdir)
+{
+  mkpath($logdir);
+}
+my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass5_global_embed/%s/run%d/%s",$fm,$runnumber,$jettrigger);
+if (! -d $condorlogdir)
+{
+  mkpath($condorlogdir);
+}
 my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
 if (-f $jobfile && ! defined $overwrite)
 {

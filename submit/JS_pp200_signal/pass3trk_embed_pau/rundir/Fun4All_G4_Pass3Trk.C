@@ -24,8 +24,8 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_Pass3Trk(
   const int nEvents = 0,
-  const string &inputFile0 = "DST_TRKR_G4HIT_pythia8_Jet10_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000006-00000.root",
-  const string &inputFile1 = "DST_TRUTH_G4HIT_pythia8_Jet10_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000006-00000.root",
+  const string &inputFile0 = "DST_TRKR_G4HIT_pythia8_Jet10_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000009-00000.root",
+  const string &inputFile1 = "DST_TRUTH_G4HIT_pythia8_Jet10_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm-0000000009-00000.root",
   const string &outdir = ".",
    const string &jettrigger = "Jet10")
 {
@@ -105,6 +105,8 @@ int Fun4All_G4_Pass3Trk(
   // Global options (enabled for all enables subsystems - if implemented)
   //  Enable::VERBOSITY = 1;
 
+  // Magnetic field until this is sorted out
+  G4MAGNET::magfield = std::string(getenv("CALIBRATIONROOT")) + std::string("/Field/Map/sphenix3dtrackingmapxyz.root");
 
   // central tracking
   Enable::MVTX = true;

@@ -21,5 +21,5 @@ for i in `cat bla | awk '{print $12}' | awk -F- '{print $3}' | awk -F. -v run=${
 
 [ -f sedlist ] && rm sedlist
 for i in `cat tmplist`; do echo log/${fm}/run${run}/${variable}/condor_${variable}$i >> sedlist; done
-#for i in `cat sedlist`; do  sed -i 's/6144MB/12288MB/' $i; echo $i; done
+for i in `cat sedlist`; do  sed -i 's/12288MB/24576MB/' $i; echo $i; done
 for i in `cat sedlist`; do condor_submit $i; done

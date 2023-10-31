@@ -9,7 +9,7 @@ my $test;
 GetOptions("test"=>\$test);
 if ($#ARGV < 3)
 {
-    print "usage: run_condor.pl <events> <jettrigger> <trk embedfile> <bbc embedfile> <calo embedfile> <truth embedfile> <vertex embedfile> <outdir> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <jettrigger> <trk embedfile> <bbc embedfile> <calo embedfile> <truth embedfile> <outdir> <runnumber> <sequence>\n";
     print "options:\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
@@ -26,20 +26,25 @@ my $infile0 = $ARGV[2];
 my $infile1 = $ARGV[3];
 my $infile2 = $ARGV[4];
 my $infile3 = $ARGV[5];
-my $infile4 = $ARGV[6];
-my $dstoutdir = $ARGV[7];
-my $runnumber = $ARGV[8];
-my $sequence = $ARGV[9];
+my $dstoutdir = $ARGV[6];
+my $runnumber = $ARGV[7];
+my $sequence = $ARGV[8];
 if ($sequence < 100)
 {
     $baseprio = 90;
 }
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s-%010d-%05d",$jettrigger,$runnumber,$sequence);
-my $logdir = sprintf("%s/log/%s",$localdir,$jettrigger);
-mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass2_embed_pau/%s",$jettrigger);
-mkpath($condorlogdir);
+my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$jettrigger);
+if (! -d $logdir)
+{
+  mkpath($logdir);
+}
+my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass2_embed_pau/run%d/%s",$runnumber,$jettrigger);
+if (! -d $condorlogdir)
+{
+  mkpath($condorlogdir);
+}
 my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
 if (-f $jobfile)
 {
@@ -57,7 +62,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $infile0 $infile1 $infile2 $infile3 $infile4 $dstoutdir $jettrigger $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $infile0 $infile1 $infile2 $infile3 $dstoutdir $jettrigger $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -83,5 +88,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile0,  $infile1, $infile2, $infile3, $infile4, $dstoutdir, $jettrigger, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $infile0,  $infile1, $infile2, $infile3, $dstoutdir, $jettrigger, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);
