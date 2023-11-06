@@ -6,13 +6,11 @@
 #include <G4Setup_sPHENIX.C>
 #include <G4_Bbc.C>
 #include <G4_Input.C>
-#include <G4_Jets.C>
 #include <G4_OutputManager_Embed.C>
 #include <G4_Production.C>
-#include <G4_User.C>
 
 #include <ffamodules/FlagHandler.h>
-#include <ffamodules/XploadInterface.h>
+#include <ffamodules/CDBInterface.h>
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
@@ -36,7 +34,6 @@ int Fun4All_G4_Single_Embed(
     const string &embed_input_file1 = "DST_CALO_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
     const string &embed_input_file2 = "DST_TRKR_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
     const string &embed_input_file3 = "DST_TRUTH_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
-    const string &embed_input_file4 = "DST_VERTEX_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
     const string &outdir = ".")
 {
   string filetype = "single_" + particle + "_" + to_string(ptmin) + "_" + to_string(ptmax) + "MeV";
@@ -61,13 +58,11 @@ int Fun4All_G4_Single_Embed(
   //===============
   // conditions DB flags
   //===============
-  Enable::XPLOAD = true;
+  Enable::CDB = true;
   // tag
-  rc->set_StringFlag("XPLOAD_TAG",XPLOAD::tag);
-  // database config
-  rc->set_StringFlag("XPLOAD_CONFIG",XPLOAD::config);
+  rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP",XPLOAD::timestamp);
+  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(embed_input_file0);
   int runnumber=runseg.first;
@@ -104,7 +99,6 @@ int Fun4All_G4_Single_Embed(
   INPUTEMBED::filename[1] = embed_input_file1;
   INPUTEMBED::filename[2] = embed_input_file2;
   INPUTEMBED::filename[3] = embed_input_file3;
-  INPUTEMBED::filename[4] = embed_input_file4;
 // no repeating of embedding background, stop processing when end of file reached
   INPUTEMBED::REPEAT = false; 
 
@@ -262,9 +256,6 @@ int Fun4All_G4_Single_Embed(
   //Enable::BLACKHOLE_SAVEHITS = false; // turn off saving of bh hits
   //BlackHoleGeometry::visible = true;
 
-  // run user provided code (from local G4_User.C)
-  //Enable::USER = true;
-
   //---------------
   // World Settings
   //---------------
@@ -340,7 +331,7 @@ int Fun4All_G4_Single_Embed(
   // Exit
   //-----
 
-  XploadInterface::instance()->Print(); // print used DB files
+  CDBInterface::instance()->Print(); // print used DB files
   se->End();
   std::cout << "All done" << std::endl;
   delete se;

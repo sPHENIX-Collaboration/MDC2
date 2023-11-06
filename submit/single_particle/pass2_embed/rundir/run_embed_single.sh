@@ -11,7 +11,7 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.348
+source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.376
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
@@ -21,7 +21,6 @@ then
     echo $6 >> inputfiles.list
     echo $7 >> inputfiles.list
     echo $8 >> inputfiles.list
-    echo $9 >> inputfiles.list
     getinputfiles.pl  --filelist inputfiles.list
     if [ $? -ne 0 ]
     then
@@ -43,10 +42,9 @@ fi
 # $6: calo g4hits embed file
 # $7: track g4hits embed file
 # $8: truth g4hits embed file
-# $9: vertex embed file
-# $10: output directory
-# $11: run number
-# $12: sequence
+# $9: output directory
+# $10: run number
+# $11: sequence
 
 echo 'here comes your environment'
 printenv
@@ -58,15 +56,14 @@ echo arg5 \(bbc g4hits embed file\): $5
 echo arg6 \(calo g4hits embed file\): $6
 echo arg7 \(track g4hits embed file\): $7
 echo arg8 \(truth g4hits embed file\): $8
-echo arg9 \(vertex embed file\): $9
-echo arg10 \(output dir\): ${10}
-echo arg11 \(runnumber\): ${11}
-echo arg12 \(sequence\): ${12}
+echo arg9 \(output dir\): ${9}
+echo arg10 \(runnumber\): ${10}
+echo arg11 \(sequence\): ${11}
 
-runnumber=$(printf "%010d" ${11})
-sequence=$(printf "%05d" ${12})
+runnumber=$(printf "%010d" ${10})
+sequence=$(printf "%05d" ${11})
 
-echo running root.exe -q -b Fun4All_G4_Single_Embed.C\($1,\"$2\",$3, $4, \"$5\",\"$6\",\"$7\",\"$8\",\"$9\",\"${10}\"\)
-root.exe -q -b  Fun4All_G4_Single_Embed.C\($1,\"$2\",$3,$4,\"$5\",\"$6\",\"$7\",\"$8\",\"$9\",\"${10}\"\)
+echo running root.exe -q -b Fun4All_G4_Single_Embed.C\($1,\"$2\",$3, $4, \"$5\",\"$6\",\"$7\",\"$8\",\"$9\"\)
+root.exe -q -b  Fun4All_G4_Single_Embed.C\($1,\"$2\",$3,$4,\"$5\",\"$6\",\"$7\",\"$8\",\"$9\"\)
 
 echo "script done"
