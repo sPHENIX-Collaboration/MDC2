@@ -7,9 +7,9 @@ use File::Path;
 
 my $test;
 GetOptions("test"=>\$test);
-if ($#ARGV < 10)
+if ($#ARGV < 9)
 {
-    print "usage: run_condor.pl <events> <particle> <trk embedfile> <bbc embedfile> <calo embedfile> <truth embedfile> <vertex embedfile> <outdir> <ntupoutfile> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <particle> <trk embedfile> <bbc embedfile> <calo embedfile> <truth embedfile> <outdir> <ntupoutfile> <runnumber> <sequence>\n";
     print "options:\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
@@ -26,20 +26,22 @@ my $infile0 = $ARGV[2];
 my $infile1 = $ARGV[3];
 my $infile2 = $ARGV[4];
 my $infile3 = $ARGV[5];
-my $infile4 = $ARGV[6];
-my $dstoutdir = $ARGV[7];
-my $ntupoutfile = $ARGV[8];
-my $runnumber = $ARGV[9];
-my $sequence = $ARGV[10];
+my $dstoutdir = $ARGV[6];
+my $ntupoutfile = $ARGV[7];
+my $runnumber = $ARGV[8];
+my $sequence = $ARGV[9];
 if ($sequence < 100)
 {
     $baseprio = 90;
 }
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s-%010d-%05d",$particle,$runnumber,$sequence);
-my $logdir = sprintf("%s/log",$localdir);
-mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/single_particle/eta/pass2_eta_embed");
+my $logdir = sprintf("%s/log/run%d",$localdir,$runnumber);
+if (! -d $condorlogdir)
+{
+  mkpath($condorlogdir);
+}
+my $condorlogdir = sprintf("/tmp/single_particle/eta/pass2_eta_embed/run%d",$runnumber);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);
@@ -61,7 +63,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $infile0 $infile1 $infile2 $infile3 $infile4 $dstoutdir $particle $ntupoutfile $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $infile0 $infile1 $infile2 $infile3 $dstoutdir $particle $ntupoutfile $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -87,5 +89,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile0,  $infile1, $infile2, $infile3, $infile4, $dstoutdir, $particle, $ntupoutfile, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $infile0,  $infile1, $infile2, $infile3, $dstoutdir, $particle, $ntupoutfile, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);
