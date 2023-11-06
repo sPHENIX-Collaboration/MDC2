@@ -197,12 +197,6 @@ int Fun4All_G4_Single_Embed(
 //    Production_CreateOutputDir();
   }
 
-  //Option to convert DST to human command readable TTree for quick poke around the outputs
-  //  Enable::DSTREADER = true;
-
-  // turn the display on (default off)
-   //Enable::DISPLAY = true;
-
   //======================
   // What to run
   //======================
