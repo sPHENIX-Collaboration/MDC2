@@ -20,7 +20,7 @@ if ($#ARGV < 7)
 my $localdir=`pwd`;
 chomp $localdir;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_single_pass3trk_embed.sh",$rundir);
+my $executable = sprintf("%s/run_pass3trk_embed_single.sh",$rundir);
 my $nevents = $ARGV[0];
 my $particle = $ARGV[1];
 my $ptmin = $ARGV[2];
@@ -36,10 +36,16 @@ if ($sequence < 100 && $baseprio < 90)
 }
 my $condorlistfile = sprintf("condor.list");
 my $suffix =  sprintf("_%s_%d_%dMeV-%010d-%05d",$particle,$ptmin,$ptmax,$runnumber,$sequence);
-my $logdir = sprintf("%s/log/%s",$localdir,$particle);
-mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/single/pass3trk_embed/%s",$particle);
-mkpath($condorlogdir);
+my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$particle);
+if (! -d $logdir)
+{
+  mkpath($logdir);
+}
+my $condorlogdir = sprintf("/tmp/single/pass3trk_embed/run%d/%s",$runnumber,$particle);
+if (! -d $condorlogdir)
+{
+  mkpath($condorlogdir);
+}
 my $jobfile = sprintf("%s/condor%s.job",$logdir,$suffix);
 if (-f $jobfile)
 {
