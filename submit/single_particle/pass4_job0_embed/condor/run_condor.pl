@@ -36,10 +36,16 @@ if ($sequence < 100&& $baseprio < 90)
 }
 my $condorlistfile = sprintf("condor.list");
 my $suffix =  sprintf("_%s_%d_%dMeV-%010d-%05d",$particle,$ptmin,$ptmax,$runnumber,$sequence);
-my $logdir = sprintf("%s/log/%s",$localdir,$particle);
-mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/single/pass4_job0_embed/%s",$particle);
-mkpath($condorlogdir);
+my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$particle);
+if (! -d $logdir)
+{
+  mkpath($logdir);
+}
+my $condorlogdir = sprintf("/tmp/single/pass4_job0_embed/run%d/%s",$runnumber,$particle);
+if (! -d $condorlogdir)
+{
+  mkpath($condorlogdir);
+}
 my $jobfile = sprintf("%s/condor%s.job",$logdir,$suffix);
 if (-f $jobfile)
 {

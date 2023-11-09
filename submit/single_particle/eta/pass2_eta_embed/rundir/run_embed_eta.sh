@@ -61,7 +61,7 @@ echo arg10 \(sequence\): ${10}
 runnumber=$(printf "%010d" ${10})
 sequence=$(printf "%05d" ${11})
 
-echo running root.exe -q -b Fun4All_G4_Pi0_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",0,\"$7\",\"$8\"\)
-root.exe -q -b  Fun4All_G4_Eta_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",0,\"$7\",\"$8\"\)
+echo running root.exe -q -b Fun4All_G4_Pi0_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",0,\"$6\",\"$7\",\"$8\"\)
+root.exe -q -b  Fun4All_G4_Eta_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",0,\"$6\",\"$7\",\"$8\"\)
 
 echo "script done"

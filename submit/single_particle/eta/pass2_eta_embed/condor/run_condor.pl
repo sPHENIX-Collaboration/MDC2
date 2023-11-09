@@ -37,9 +37,9 @@ if ($sequence < 100)
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s-%010d-%05d",$particle,$runnumber,$sequence);
 my $logdir = sprintf("%s/log/run%d",$localdir,$runnumber);
-if (! -d $condorlogdir)
+if (! -d $logdir)
 {
-  mkpath($condorlogdir);
+  mkpath($logdir);
 }
 my $condorlogdir = sprintf("/tmp/single_particle/eta/pass2_eta_embed/run%d",$runnumber);
 if (! -d $condorlogdir)
