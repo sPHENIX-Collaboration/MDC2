@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 6;
+my $runnumber = 7;
 my $nparticle=10;
 my $test;
 my $incremental;
