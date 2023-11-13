@@ -65,15 +65,12 @@ my $getfiles = $dbh->prepare("select filename,segment,runnumber from datasets wh
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
-my $icnt = 0;
-my $nseg = -1;
 #print "input files: $ncal, vtx: $nvtx\n";
-foreach (my @res = $getfiles->fetchrow_array())
+while (my @res = $getfiles->fetchrow_array())
 {
     my $lfn = $res[0];
     my $segment = $res[1];
     my $runnumber = $res[2];
-    $icnt++;
     my $outfilename = sprintf("DST_CALOR-%08d-%04d.root",$runnumber,$segment);
 
     $chkfile->execute($outfilename);
