@@ -55,17 +55,14 @@ void Fun4All_Year1(int nEvents = 5,
 
 
   Fun4AllServer *se = Fun4AllServer::instance();
-  se->Verbosity(0);
+  se->Verbosity(1);
 
   recoConsts *rc = recoConsts::instance();
 
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(lfn);
   int runnumber = runseg.first;
   int segment = runseg.second;
-  // char outfileA[100];
-  // sprintf(outfileA, "%s-%08d-%04d.root", outfile.c_str(), runnumber, segment);
-  // //string fulloutfile = string("./") + outfile;
-  // string fulloutfile = string("/sphenix/lustre01/sphnxpro/commissioning/DST_ana.387_2023p003/") + outfileA;
+
   //===============
   // conditions DB flags
   //===============

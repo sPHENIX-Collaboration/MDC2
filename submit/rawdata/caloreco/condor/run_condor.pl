@@ -8,7 +8,7 @@ use File::Path;
 my $test;
 my $overwrite;
 GetOptions("test"=>\$test);
-if ($#ARGV < 7)
+if ($#ARGV < 6)
 {
     print "usage: run_condor.pl <events> <runnumber> <sequence> <prdffile> <rawdatadir> <outfile> <outdir> <runnumber>\n";
     print "options:\n";
@@ -57,7 +57,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $runnumber $sequence $dstoutfile $dstoutdir $calolist $vtxlist $rawrun $rawsequence $rawdatadir\"\n";
+print F "Arguments       = \"$nevents $runnumber $sequence $lfn $rawdatadir $dstoutfile $dstoutdir\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -84,5 +84,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $runnumber, $sequence, $lfn, $rawdatadir, $dstoutfile, $dstoutdir, $calolist, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $runnumber, $sequence, $lfn, $rawdatadir, $dstoutfile, $dstoutdir, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);

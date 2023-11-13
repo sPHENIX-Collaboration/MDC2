@@ -1,1 +1,1 @@
-/sphenix/lustre01/sphnxpro/mdc2/auau/calocluster
+/sphenix/lustre01/sphnxpro/commissioning

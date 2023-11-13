@@ -50,7 +50,7 @@ echo arg7 \(output dir\): $7
 runnumber=$(printf "%010d" $2)
 sequence=$(printf "%05d" $3)
 
-echo running root.exe -q -b Fun4All_Year1.C\(\"$4\",\"$6\",\"$7\"\)
-root.exe -q -b  Fun4All_Year1.C\(\"$4\",\"$6\",\"$7\"\)
+echo running root.exe -q -b Fun4All_Year1.C\($1,\"$4\",\"$6\",\"$7\"\)
+root.exe -q -b  Fun4All_Year1.C\($1,\"$4\",\"$6\",\"$7\"\)
 
 echo "script done"

@@ -14,7 +14,7 @@ my $incremental;
 my $overwrite;
 my $shared;
 my $rawdatadir = sprintf("/sphenix/lustre01/sphnxpro/commissioning/aligned_2Gprdf");
-my $outsubdir = sprintf("DST_ana.387_2023p003");
+my $outsubdir = sprintf("DST_ana.387_2023p003_test");
 GetOptions("test"=>\$test, "increment"=>\$incremental, "overwrite"=>\$overwrite, "shared" => \$shared);
 if ($#ARGV < 0)
 {
@@ -92,11 +92,8 @@ foreach (my @res = $getfiles->fetchrow_array())
     }
 # create run and segment number to pass down
     my $subcmd = sprintf("perl run_condor.pl %d %d %d %s %s %s %s %s", $outevents, $runnumber, $segment, $lfn, $rawdatadir, $outfilename, $outdir, $tstflag);
-
-#	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $vtxhash{sprintf("%05d",$segment)}, $outfilename, $outdir, $outrunnumber, $segment, $tstflag);
     print "cmd: $subcmd\n";
-#    system($subcmd);
-    system("true");
+    system($subcmd);
     my $exit_value  = $? >> 8;
     if ($exit_value != 0)
     {
