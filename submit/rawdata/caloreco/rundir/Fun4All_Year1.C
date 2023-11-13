@@ -1,6 +1,8 @@
 #ifndef FUN4ALL_YEAR1_C
 #define FUN4ALL_YEAR1_C
 
+#include <G4_Production.C>
+
 #include <caloreco/CaloTowerBuilder.h>
 #include <caloreco/CaloTowerCalib.h>
 #include <caloreco/CaloTowerStatus.h>
@@ -40,8 +42,8 @@ R__LOAD_LIBRARY(libglobalvertex.so)
 
 void Fun4All_Year1(int nEvents = 5, 
 		   const std::string &lfn = "beam-00023053-0201.prdf",
-		   const std::string &outfile = "DST_CALOR";
-		   const std::string &outdir = "/sphenix/lustre01/sphnxpro/commissioning/DST_ana.387_2023p003")
+		   const std::string &outputFile = "DST_CALOR-00023053-0201.root",
+		   const std::string &outdir = ".")
 {
   bool enableMasking = 0;
   // v1 uncomment:
@@ -51,18 +53,19 @@ void Fun4All_Year1(int nEvents = 5,
   // v3 uncomment:
   // CaloTowerDefs::BuilderType buildertype = CaloTowerDefs::kPRDFWaveform;
 
+
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(0);
 
   recoConsts *rc = recoConsts::instance();
 
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(fname);
+  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(lfn);
   int runnumber = runseg.first;
   int segment = runseg.second;
-  char outfileA[100];
-  sprintf(outfileA, "%s-%08d-%04d.root", outfile.c_str(), runnumber, segment);
-  //string fulloutfile = string("./") + outfile;
-  string fulloutfile = string("/sphenix/lustre01/sphnxpro/commissioning/DST_ana.387_2023p003/") + outfileA;
+  // char outfileA[100];
+  // sprintf(outfileA, "%s-%08d-%04d.root", outfile.c_str(), runnumber, segment);
+  // //string fulloutfile = string("./") + outfile;
+  // string fulloutfile = string("/sphenix/lustre01/sphnxpro/commissioning/DST_ana.387_2023p003/") + outfileA;
   //===============
   // conditions DB flags
   //===============
@@ -72,6 +75,17 @@ void Fun4All_Year1(int nEvents = 5,
   // // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP", runnumber);
   CDBInterface::instance()->Verbosity(1);
+
+  // set up production relatedstuff
+   Enable::PRODUCTION = true;
+  //======================
+  // Write the DST
+  //======================
+
+  Enable::DSTOUT = true;
+  Enable::DSTOUT_COMPRESS = false;
+  DstOut::OutputDir = outdir;
+  DstOut::OutputFile = outputFile;
 
   // MBD/BBC Reconstruction
   MbdReco *mbdreco = new MbdReco();
@@ -216,14 +230,27 @@ void Fun4All_Year1(int nEvents = 5,
   In->AddFile(lfn);
   se->registerInputManager(In);
 
-  Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", fulloutfile);
+  if (Enable::PRODUCTION)
+  {
+    Production_CreateOutputDir();
+  }
+
+  if (Enable::DSTOUT)
+  {
+    string FullOutFile = DstOut::OutputFile;
+  Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
   se->registerOutputManager(out);
+  }
 
   se->run(nEvents);
   se->End();
   CDBInterface::instance()->Print();  // print used DB files
   se->PrintTimer();
   delete se;
+  if (Enable::PRODUCTION)
+  {
+    Production_MoveOutput();
+  }
   std::cout << "All done!" << std::endl;
   gSystem->Exit(0);
 }
