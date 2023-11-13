@@ -39,10 +39,16 @@ if ($sequence < 100)
 }
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
-my $logdir = sprintf("%s/log",$localdir);
-mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/single_particle/multiple/pass1");
-mkpath($condorlogdir);
+my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$particle);
+if (! -d $logdir)
+{
+  mkpath($logdir);
+}
+my $condorlogdir = sprintf("/tmp/single_particle/multiple/pass1/run%d/%s",$runnumber,$particle);
+if (! -d $condorlogdir)
+{
+  mkpath($condorlogdir);
+}
 my $partprop = sprintf("%s_%d_%d",$particle,$pmin,$pmax);
 my $jobfile = sprintf("%s/condor_%s-%s.job",$logdir,$partprop,$suffix);
 if (-f $jobfile)
