@@ -18,7 +18,7 @@ if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
     cd $_CONDOR_SCRATCH_DIR
     rsync -av $this_dir/* .
-    getinputfiles.pl $2
+    getinputfiles.pl $4
     if [ $? -ne 0 ]
     then
 	echo error from getinputfiles.pl $2, exiting
@@ -50,7 +50,7 @@ echo arg7 \(output dir\): $7
 runnumber=$(printf "%010d" $2)
 sequence=$(printf "%05d" $3)
 
-echo running root.exe -q -b Fun4All_CaloReco.C\($1,\"$4\",\"$5\",\"$6\",\"$7\",$8,$9,\"${10}\"\)
-root.exe -q -b  Fun4All_CaloReco.C\($1,\"$4\",\"$5\",\"$6\",\"$7\",$8,$9,\"${10}\"\)
+echo running root.exe -q -b Fun4All_Year1.C\(\"$4\",\"$6\",\"$7\"\)
+root.exe -q -b  Fun4All_Year1.C\(\"$4\",\"$6\",\"$7\"\)
 
 echo "script done"
