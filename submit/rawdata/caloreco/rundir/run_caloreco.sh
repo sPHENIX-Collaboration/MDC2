@@ -11,13 +11,19 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-source /opt/sphenix/core/bin/sphenix_setup.sh
+source /opt/sphenix/core/bin/sphenix_setup.sh ana.387
 
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
     cd $_CONDOR_SCRATCH_DIR
     rsync -av $this_dir/* .
+    getinputfiles.pl $2
+    if [ $? -ne 0 ]
+    then
+	echo error from getinputfiles.pl $2, exiting
+	exit -1
+    fi
 else
     echo condor scratch NOT set
     exit 1
@@ -25,26 +31,21 @@ fi
 # arguments 
 # $1: number of events
 # $2: run number
-# $3: output file
-# $4: output dir
-# $5: calo g4hits file list
-# $6: vertex file list
-# $7: raw run number
-# $8: raw sequence
-# $9: raw data dir
+# $3: sequence
+# $4: lfn
+# $5: raw data dir
+# $6: output file
+# $7: output dir
 
 echo 'here comes your environment'
 printenv
 echo arg1 \(events\) : $1
 echo arg2 \(runnumber\): $2
 echo arg3 \(sequence\): $3
-echo arg4 \(output file\): $4
-echo arg5 \(output dir\): $5
-echo arg6 \(calo g4hits file\): $6
-echo arg7 \(vertex file\): $7
-echo arg8 \(raw runnumber\): $8
-echo arg9 \(raw sequence\): $9
-echo arg10 \(raw data dir\): ${10}
+echo arg4 \(lfn\): $4
+echo arg5 \(raw data dir\): ${5}
+echo arg6 \(output file\): $6
+echo arg7 \(output dir\): $7
 
 runnumber=$(printf "%010d" $2)
 sequence=$(printf "%05d" $3)

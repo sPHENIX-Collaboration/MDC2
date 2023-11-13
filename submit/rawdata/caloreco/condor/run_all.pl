@@ -9,16 +9,12 @@ use DBI;
 
 
 my $outevents = 0;
-my $inrunnumber=6;
-#my $outrunnumber=40;
-my $numsegs_to_process = 1000;
-my $outrunnumber=$inrunnumber;
 my $test;
 my $incremental;
 my $overwrite;
 my $shared;
-my $rawdatadir = sprintf("/sphenix/lustre01/sphnxpro/mdc2/rawdata/stripe5");
-my $startrun = 250;
+my $rawdatadir = sprintf("/sphenix/lustre01/sphnxpro/commissioning/aligned_2Gprdf");
+my $outsubdir = sprintf("DST_ana.387_2023p003");
 GetOptions("test"=>\$test, "increment"=>\$incremental, "overwrite"=>\$overwrite, "shared" => \$shared);
 if ($#ARGV < 0)
 {
@@ -55,7 +51,7 @@ if (! -f "outdir.txt")
 
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/run%04d",$outdir,$inrunnumber);
+$outdir = sprintf("%s/%s",$outdir,$outsubdir);
 mkpath($outdir);
 
 my $localdir=`pwd`;
@@ -63,73 +59,22 @@ chomp $localdir;
 my $logdir = sprintf("%s/log",$localdir);
 mkpath($logdir);
 
-my %calohash = ();
-my %vtxhash = ();
-
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_G4HIT' and filename like 'DST_CALO_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm%' and runnumber = $inrunnumber order by filename") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename,segment,runnumber from datasets where dsttype = 'beam' and filename like 'beam-%' order by runnumber,segment") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
-my $getvtxfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_VERTEX' and filename like 'DST_VERTEX_sHijing_0_20fm_50kHz_bkg_0_20fm%' and runnumber = $inrunnumber");
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
-my $ncal = $getfiles->rows;
-while (my @res = $getfiles->fetchrow_array())
-{
-    $calohash{sprintf("%05d",$res[1])} = $res[0];
-}
-$getfiles->finish();
-$getvtxfiles->execute() || die $DBI::errstr;
-my $nvtx = $getvtxfiles->rows;
-while (my @res = $getvtxfiles->fetchrow_array())
-{
-    $vtxhash{sprintf("%05d",$res[1])} = $res[0];
-}
-$getvtxfiles->finish();
-
-my @vtxfiles = ();
-my @calofiles = ();
 my $icnt = 0;
-my $outseg = 0;
-my $nrun = $startrun;
 my $nseg = -1;
 #print "input files: $ncal, vtx: $nvtx\n";
-foreach my $segment (sort keys %calohash)
+foreach (my @res = $getfiles->fetchrow_array())
 {
-    if (! exists $vtxhash{$segment})
-    {
-	next;
-    }
-
-    my $lfn = $calohash{$segment};
-    push(@calofiles,$lfn);
-    push(@vtxfiles,$vtxhash{$segment});
+    my $lfn = $res[0];
+    my $segment = $res[1];
+    my $runnumber = $res[2];
     $icnt++;
-    if ($icnt < $numsegs_to_process)
-    {
-	next;
-    }
-    $icnt = 0;
-
-    my $outfilename = sprintf("DST_RECO_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%05d.root",$outrunnumber,$outseg);
-    my $vtxlistfile = sprintf("%s/condor-%010d-%05d.vtxlist",$logdir,$outrunnumber,$outseg);
-    my $calolistfile = sprintf("%s/condor-%010d-%05d.calolist",$logdir,$outrunnumber,$outseg);
-    open(F1,">$vtxlistfile");
-    foreach my $bf (@vtxfiles)
-    {
-	print F1 "$bf\n";
-    }
-    close(F1);
-    open(F1,">$calolistfile");
-    foreach my $bf (@calofiles)
-    {
-	print F1 "$bf\n";
-    }
-    close(F1);
-    @vtxfiles = ();
-    @calofiles = ();
-    my $outsegused = $outseg;
-    $outseg++;
+    my $outfilename = sprintf("DST_CALOR-%08d-%04d.root",$runnumber,$segment);
 
     $chkfile->execute($outfilename);
     if ($chkfile->rows > 0)
@@ -146,26 +91,12 @@ foreach my $segment (sort keys %calohash)
 	$tstflag="--overwrite";
     }
 # create run and segment number to pass down
-    my $rawfilename;
-    do
-    {
-	$nseg++;
-	if ($nseg > 16)
-	{
-	    $nseg = 0;
-	    $nrun++;
-	}
-	if ($nrun > 299)
-	{
-	    $nrun = $startrun;
-	}
-	$rawfilename = sprintf("%s/seb02_junk-%08d-%04d.evt",$rawdatadir,$nrun,$nseg);
-    } until (-f $rawfilename);
-    my $subcmd = sprintf("perl run_condor.pl %d %d %d %s %s %s %s %d %d %s %s", $outevents, $outrunnumber, $outsegused, $outfilename, $outdir, $calolistfile, $vtxlistfile, $nrun, $nseg, $rawdatadir, $tstflag);
+    my $subcmd = sprintf("perl run_condor.pl %d %d %d %s %s %s %s %s", $outevents, $runnumber, $segment, $lfn, $rawdatadir, $outfilename, $outdir, $tstflag);
 
 #	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $vtxhash{sprintf("%05d",$segment)}, $outfilename, $outdir, $outrunnumber, $segment, $tstflag);
     print "cmd: $subcmd\n";
-    system($subcmd);
+#    system($subcmd);
+    system("true");
     my $exit_value  = $? >> 8;
     if ($exit_value != 0)
     {
@@ -186,6 +117,7 @@ foreach my $segment (sort keys %calohash)
     }
     
 }
+$getfiles->finish();
 $chkfile->finish();
 $dbh->disconnect;
 

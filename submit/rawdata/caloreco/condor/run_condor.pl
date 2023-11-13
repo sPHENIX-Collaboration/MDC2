@@ -8,9 +8,9 @@ use File::Path;
 my $test;
 my $overwrite;
 GetOptions("test"=>\$test);
-if ($#ARGV < 3)
+if ($#ARGV < 7)
 {
-    print "usage: run_condor.pl <events> <calolist> <vtxlist> <outfile> <outdir> <runnumber> <sequence> <rawdata dir>\n";
+    print "usage: run_condor.pl <events> <runnumber> <sequence> <prdffile> <rawdatadir> <outfile> <outdir> <runnumber>\n";
     print "options:\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
@@ -24,23 +24,22 @@ my $executable = sprintf("%s/run_caloreco.sh",$rundir);
 my $nevents = $ARGV[0];
 my $runnumber = $ARGV[1];
 my $sequence = $ARGV[2];
-my $dstoutfile = $ARGV[3];
-my $dstoutdir = $ARGV[4];
-my $calolist = $ARGV[5];
-my $vtxlist = $ARGV[6];
-my $rawrun = $ARGV[7];
-my $rawsequence = $ARGV[8];
-my $rawdatadir = $ARGV[9];
-if ($sequence < 100)
-{
-    $baseprio = 90;
-}
+my $lfn = $ARGV[3];
+my $rawdatadir = $ARGV[4];
+my $dstoutfile = $ARGV[5];
+my $dstoutdir = $ARGV[6];
 my $condorlistfile = sprintf("condor.list");
-my $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
+my $suffix = sprintf("%08d-%04d",$runnumber,$sequence);
 my $logdir = sprintf("%s/log",$localdir);
-mkpath($logdir);
+if (! -d $logdir)
+{
+  mkpath($logdir);
+}
 my $condorlogdir = sprintf("/tmp/rawdata/caloreco");
-mkpath($condorlogdir);
+if (! -d $condorlogdir)
+{
+  mkpath($condorlogdir);
+}
 my $jobfile = sprintf("%s/condor-%s.job",$logdir,$suffix);
 if (-f $jobfile && ! defined $overwrite)
 {
@@ -85,5 +84,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $runnumber, $sequence, $dstoutfile, $dstoutdir, $calolist, $vtxlist, $rawrun, $rawsequence, $rawdatadir, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $runnumber, $sequence, $lfn, $rawdatadir, $dstoutfile, $dstoutdir, $calolist, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);
