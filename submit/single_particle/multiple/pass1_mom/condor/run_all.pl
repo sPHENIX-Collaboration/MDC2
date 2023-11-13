@@ -8,7 +8,7 @@ use Getopt::Long;
 my $test;
 my $incremental;
 my $killexist;
-my $runnumber = 6;
+my $runnumber = 7;
 my $events = 1000;
 GetOptions("test"=>\$test, "increment"=>\$incremental, "killexist" => \$killexist);
 if ($#ARGV < 4)
@@ -58,10 +58,10 @@ mkpath($outdir);
 
 my $localdir=`pwd`;
 chomp $localdir;
-my $logdir = sprintf("%s/log",$localdir);
+my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$particle);
 my $nsubmit = 0;
 my $njob = 0;
-for (my $isub = 0; $isub < $maxsubmit; $isub++)
+OUTER: for (my $isub = 0; $isub < $maxsubmit; $isub++)
 {
     my $jobfile = sprintf("%s/condor_%s-%010d-%05d.job",$logdir,$logsuffix,$runnumber,$njob);
     while (-f $jobfile)
@@ -104,7 +104,7 @@ for (my $isub = 0; $isub < $maxsubmit; $isub++)
 	if ($nsubmit >= $maxsubmit || $nsubmit >= 20000)
 	{
 	    print "maximum number of submissions $nsubmit reached, exiting\n";
-	    last;
+	    last OUTER;
 	}
     }
     else
