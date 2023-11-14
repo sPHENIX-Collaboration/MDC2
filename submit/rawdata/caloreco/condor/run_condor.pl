@@ -8,9 +8,9 @@ use File::Path;
 my $test;
 my $overwrite;
 GetOptions("test"=>\$test);
-if ($#ARGV < 6)
+if ($#ARGV < 8)
 {
-    print "usage: run_condor.pl <events> <runnumber> <sequence> <prdffile> <rawdatadir> <outfile> <outdir> <runnumber>\n";
+    print "usage: run_condor.pl <events> <runnumber> <sequence> <prdffile> <rawdatadir> <outfile> <outdir> <runnumber> <buildtag> <cdbtag>\n";
     print "options:\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
@@ -28,14 +28,16 @@ my $lfn = $ARGV[3];
 my $rawdatadir = $ARGV[4];
 my $dstoutfile = $ARGV[5];
 my $dstoutdir = $ARGV[6];
+my $buildtag = $ARGV[7];
+my $cdbtag = $ARGV[8];
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%08d-%04d",$runnumber,$sequence);
-my $logdir = sprintf("%s/log",$localdir);
+my $logdir = sprintf("%s/log/%s/%s",$localdir,$buildtag,$cdbtag);
 if (! -d $logdir)
 {
   mkpath($logdir);
 }
-my $condorlogdir = sprintf("/tmp/rawdata/caloreco");
+my $condorlogdir = sprintf("/tmp/rawdata/caloreco/%s/%s",$buildtag,$cdbtag);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);
@@ -57,7 +59,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $runnumber $sequence $lfn $rawdatadir $dstoutfile $dstoutdir\"\n";
+print F "Arguments       = \"$nevents $runnumber $sequence $lfn $rawdatadir $dstoutfile $dstoutdir $buildtag $cdbtag\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -84,5 +86,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $runnumber, $sequence, $lfn, $rawdatadir, $dstoutfile, $dstoutdir, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $runnumber, $sequence, $lfn, $rawdatadir, $dstoutfile, $dstoutdir, $buildtag, $cdbtag, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);

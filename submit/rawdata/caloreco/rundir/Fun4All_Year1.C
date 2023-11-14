@@ -43,7 +43,8 @@ R__LOAD_LIBRARY(libglobalvertex.so)
 void Fun4All_Year1(int nEvents = 5, 
 		   const std::string &lfn = "beam-00023053-0201.prdf",
 		   const std::string &outputFile = "DST_CALOR-00023053-0201.root",
-		   const std::string &outdir = ".")
+		   const std::string &outdir = ".",
+                   const std::string &cdbtag = "2023p003")
 {
   bool enableMasking = 0;
   // v1 uncomment:
@@ -68,7 +69,7 @@ void Fun4All_Year1(int nEvents = 5,
   //===============
   // ENABLE::CDB = true;
   // global tag
-  rc->set_StringFlag("CDB_GLOBALTAG", "2023p003");
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP", runnumber);
   CDBInterface::instance()->Verbosity(1);

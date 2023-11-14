@@ -15,6 +15,15 @@ my $overwrite;
 my $shared;
 my $rawdatadir = sprintf("/sphenix/lustre01/sphnxpro/commissioning/aligned_2Gprdf");
 my $outsubdir = sprintf("DST_ana.387_2023p003_test");
+my $buildtag = sprintf("ana.387");
+my $cdbtag = sprintf("2023p003");
+my $cdbnametag = $cdbtag;
+my $version; # temporary - if we use different parameters for testing
+if (defined $version)
+{
+    $cdbnametag = sprintf("%s%s",$cdbtag,$version);
+}
+
 GetOptions("test"=>\$test, "increment"=>\$incremental, "overwrite"=>\$overwrite, "shared" => \$shared);
 if ($#ARGV < 0)
 {
@@ -71,7 +80,7 @@ while (my @res = $getfiles->fetchrow_array())
     my $lfn = $res[0];
     my $segment = $res[1];
     my $runnumber = $res[2];
-    my $outfilename = sprintf("DST_CALOR-%08d-%04d.root",$runnumber,$segment);
+    my $outfilename = sprintf("DST_CALO_run1auau_%s_%s-%08d-%04d.root",$buildtag,$cdbnametag,$runnumber,$segment);
 
     $chkfile->execute($outfilename);
     if ($chkfile->rows > 0)
@@ -88,7 +97,7 @@ while (my @res = $getfiles->fetchrow_array())
 	$tstflag="--overwrite";
     }
 # create run and segment number to pass down
-    my $subcmd = sprintf("perl run_condor.pl %d %d %d %s %s %s %s %s", $outevents, $runnumber, $segment, $lfn, $rawdatadir, $outfilename, $outdir, $tstflag);
+    my $subcmd = sprintf("perl run_condor.pl %d %d %d %s %s %s %s %s %s %s", $outevents, $runnumber, $segment, $lfn, $rawdatadir, $outfilename, $outdir, $buildtag, $cdbtag, $tstflag);
     print "cmd: $subcmd\n";
     system($subcmd);
     my $exit_value  = $? >> 8;
