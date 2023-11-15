@@ -286,7 +286,7 @@ if ($attempts > 0)
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $chkfile = $dbh->prepare("select size,full_file_path from files where full_file_path = ?");
 my $insertfile = $dbh->prepare("insert into files (lfn,full_host_name,full_file_path,time,size,md5) values (?,?,?,'now',?,?)");
-my $insertdataset = $dbh->prepare("insert into datasets (filename,runnumber,segment,size,dataset,dsttype,events) values (?,?,?,?,'mdc2',?,?)");
+my $insertdataset = $dbh->prepare("insert into datasets (filename,runnumber,segment,size,dataset,dsttype,events) values (?,?,?,?,'beam',?,?)");
 my $chkdataset = $dbh->prepare("select size from datasets where filename=? and dataset='mdc2'");
 my $delfile = $dbh->prepare("delete from files where full_file_path = ?");
 my $delcat = $dbh->prepare("delete from datasets where filename = ?");
@@ -323,6 +323,10 @@ if ($lfn =~ /single/)
 if ($lfn =~ /special/)
 {
     $splitstring = "_special";
+}
+if ($lfn =~ /run1auau/)
+{
+    $splitstring = "_run1auau";
 }
 my @sp1 = split(/$splitstring/,$lfn);
 if (! defined $test)

@@ -70,7 +70,7 @@ mkpath($logdir);
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment,runnumber from datasets where dsttype = 'beam' and filename like 'beam-%' order by runnumber,segment") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename,segment,runnumber from datasets where runnumber > 0 and dsttype = 'beam' and filename like 'beam-%' order by runnumber,segment") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
