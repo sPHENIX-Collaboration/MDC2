@@ -80,7 +80,9 @@ while (my @res = $getfiles->fetchrow_array())
     my $lfn = $res[0];
     my $segment = $res[1];
     my $runnumber = $res[2];
-    my $outfilename = sprintf("DST_CALO_run1auau_%s_%s-%08d-%04d.root",$buildtag,$cdbnametag,$runnumber,$segment);
+    my $buildtag_clean = $buildtag;
+    $buildtag_clean =~ s/\.//g;
+    my $outfilename = sprintf("DST_CALO_run1auau_%s_%s-%08d-%04d.root",$buildtag_clean,$cdbnametag,$runnumber,$segment);
 
     $chkfile->execute($outfilename);
     if ($chkfile->rows > 0)
