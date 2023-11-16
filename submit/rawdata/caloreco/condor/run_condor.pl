@@ -7,12 +7,13 @@ use File::Path;
 
 my $test;
 my $overwrite;
-GetOptions("test"=>\$test);
+GetOptions("test"=>\$test, "overwrite"=>\$overwrite);
 if ($#ARGV < 8)
 {
     print "usage: run_condor.pl <events> <runnumber> <sequence> <prdffile> <rawdatadir> <outfile> <outdir> <runnumber> <buildtag> <cdbtag>\n";
     print "options:\n";
     print "-test: testmode - no condor submission\n";
+    print "--overwrite : ignore existing jobfiles and overwrite\n";
     exit(-2);
 }
 

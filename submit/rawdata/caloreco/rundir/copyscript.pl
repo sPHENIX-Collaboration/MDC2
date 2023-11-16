@@ -26,6 +26,8 @@ my $use_rsync;
 my $use_mcs3;
 my $use_dd;
 my $verbosity;
+my $dataset="mdc2";
+
 GetOptions("dd" => \$use_dd, "mcs3" => \$use_mcs3, "outdir:s"=>\$outdir, "rsync"=>\$use_rsync, "test"=>\$test, "verbosity" => \$verbosity, "xrdcp"=>\$use_xrdcp);
 
 
@@ -286,7 +288,7 @@ if ($attempts > 0)
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $chkfile = $dbh->prepare("select size,full_file_path from files where full_file_path = ?");
 my $insertfile = $dbh->prepare("insert into files (lfn,full_host_name,full_file_path,time,size,md5) values (?,?,?,'now',?,?)");
-my $insertdataset = $dbh->prepare("insert into datasets (filename,runnumber,segment,size,dataset,dsttype,events) values (?,?,?,?,'beam',?,?)");
+my $insertdataset = $dbh->prepare("insert into datasets (filename,runnumber,segment,size,dataset,dsttype,events) values (?,?,?,?,?,?,?)");
 my $chkdataset = $dbh->prepare("select size from datasets where filename=? and dataset='mdc2'");
 my $delfile = $dbh->prepare("delete from files where full_file_path = ?");
 my $delcat = $dbh->prepare("delete from datasets where filename = ?");
@@ -306,8 +308,10 @@ if ($chkdataset->rows > 0)
 }
 my $runnumber = 0;
 my $segment = -1;
+my $dsttype;
 if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/)
 {
+    $dsttype = $1;
     $runnumber = int($2);
     $segment = int($3);
 }
@@ -326,12 +330,16 @@ if ($lfn =~ /special/)
 }
 if ($lfn =~ /run1auau/)
 {
-    $splitstring = "_run1auau";
+    $splitstring = "_run1auau_";
 }
-my @sp1 = split(/$splitstring/,$lfn);
+my @sp1 = split(/$splitstring/,$dsttype);
+if ($lfn =~ /run1auau/)
+{
+    $dataset = $sp1[1];
+}
 if (! defined $test)
 {
-    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries);
+    $insertdataset->execute($lfn,$runnumber,$segment,$size,$dataset,$sp1[0],$entries);
 }
 else
 {

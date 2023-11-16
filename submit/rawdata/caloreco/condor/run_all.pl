@@ -14,7 +14,7 @@ my $incremental;
 my $overwrite;
 my $shared;
 my $rawdatadir = sprintf("/sphenix/lustre01/sphnxpro/commissioning/aligned_2Gprdf");
-my $outsubdir = sprintf("DST_ana.387_2023p003_test");
+my $outsubdir = sprintf("DST_ana387_2023p003_test"); # don't use . in dir names
 my $buildtag = sprintf("ana.387");
 my $cdbtag = sprintf("2023p003");
 my $cdbnametag = $cdbtag;
