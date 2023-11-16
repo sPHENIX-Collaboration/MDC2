@@ -13,6 +13,10 @@
 #include <caloreco/RawClusterPositionCorrection.h>
 #include <caloreco/TowerInfoDeadHotMask.h>
 
+#include <mbd/MbdReco.h>
+
+#include <globalvertex/GlobalVertexReco.h>
+
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/HeadReco.h>
@@ -27,9 +31,6 @@
 #include <fun4all/Fun4AllServer.h>
 #include <fun4all/Fun4AllUtils.h>
 #include <fun4all/SubsysReco.h>
-
-#include <mbd/MbdReco.h>
-#include <globalvertex/GlobalVertexReco.h>
 
 #include <phool/recoConsts.h>
 
@@ -84,6 +85,16 @@ void Fun4All_Year1(int nEvents = 5,
   Enable::DSTOUT_COMPRESS = false;
   DstOut::OutputDir = outdir;
   DstOut::OutputFile = outputFile;
+
+// Sync Headers and Flags
+  SyncReco *sync = new SyncReco();
+  se->registerSubsystem(sync);
+
+  HeadReco *head = new HeadReco();
+  se->registerSubsystem(head);
+
+  FlagHandler *flag = new FlagHandler();
+  se->registerSubsystem(flag);
 
   // MBD/BBC Reconstruction
   MbdReco *mbdreco = new MbdReco();
