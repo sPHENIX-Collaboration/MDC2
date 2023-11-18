@@ -43,9 +43,9 @@ R__LOAD_LIBRARY(libglobalvertex.so)
 
 void Fun4All_Year1(int nEvents = 5, 
 		   const std::string &lfn = "beam-00023053-0201.prdf",
-		   const std::string &outputFile = "DST_CALOR-00023053-0201.root",
+		   const std::string &outputFile = "DST_CALO-00023053-0201.root",
 		   const std::string &outdir = ".",
-                   const std::string &cdbtag = "2023p003")
+                   const std::string &cdbtag = "2023p004")
 {
   bool enableMasking = 0;
   // v1 uncomment:
