@@ -41,20 +41,20 @@ R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libmbd.so)
 R__LOAD_LIBRARY(libglobalvertex.so)
 
-void Fun4All_Year1(int nEvents = 5, 
-		   const std::string &lfn = "beam-00023053-0201.prdf",
-		   const std::string &outputFile = "DST_CALO-00023053-0201.root",
-		   const std::string &outdir = ".",
+void Fun4All_Year1(int nEvents = 5,
+                   const std::string &lfn = "beam-00023053-0201.prdf",
+                   const std::string &outputFile = "DST_CALO-00023053-0201.root",
+                   const std::string &outdir = ".",
                    const std::string &cdbtag = "2023p004")
 {
   bool enableMasking = 0;
+  bool addZeroSupCaloNodes = 1;
   // v1 uncomment:
   // CaloTowerDefs::BuilderType buildertype = CaloTowerDefs:::kPRDFTowerv1;
   // v2 uncomment:
   CaloTowerDefs::BuilderType buildertype = CaloTowerDefs::kWaveformTowerv2;
   // v3 uncomment:
   // CaloTowerDefs::BuilderType buildertype = CaloTowerDefs::kPRDFWaveform;
-
 
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -76,7 +76,7 @@ void Fun4All_Year1(int nEvents = 5,
   CDBInterface::instance()->Verbosity(1);
 
   // set up production relatedstuff
-   Enable::PRODUCTION = true;
+  Enable::PRODUCTION = true;
   //======================
   // Write the DST
   //======================
@@ -86,7 +86,7 @@ void Fun4All_Year1(int nEvents = 5,
   DstOut::OutputDir = outdir;
   DstOut::OutputFile = outputFile;
 
-// Sync Headers and Flags
+  // Sync Headers and Flags
   SyncReco *sync = new SyncReco();
   se->registerSubsystem(sync);
 
@@ -101,7 +101,7 @@ void Fun4All_Year1(int nEvents = 5,
   se->registerSubsystem(mbdreco);
 
   // Official vertex storage
-  GlobalVertexReco* gvertex = new GlobalVertexReco();
+  GlobalVertexReco *gvertex = new GlobalVertexReco();
   se->registerSubsystem(gvertex);
 
   /////////////////
@@ -130,6 +130,7 @@ void Fun4All_Year1(int nEvents = 5,
   CaloTowerBuilder *ca4 = new CaloTowerBuilder("zdc");
   ca4->set_detector_type(CaloTowerDefs::ZDC);
   ca4->set_nsamples(31);
+  ca4->set_builder_type(CaloTowerDefs::kPRDFWaveform);
   ca4->set_processing_type(CaloWaveformProcessing::FAST);
   se->registerSubsystem(ca4);
 
@@ -235,6 +236,53 @@ void Fun4All_Year1(int nEvents = 5,
   clusterCorrection->set_UseTowerInfo(1);  // to use towerinfo objects rather than old RawTower
   se->registerSubsystem(clusterCorrection);
 
+  ///////////////////////////////////////////
+  // Calo node with software zero supression
+  if (addZeroSupCaloNodes)
+  {
+    CaloTowerBuilder *ctbEMCal_SZ = new CaloTowerBuilder("EMCalBUILDER_ZS");
+    ctbEMCal_SZ->set_detector_type(CaloTowerDefs::CEMC);
+    ctbEMCal_SZ->set_processing_type(CaloWaveformProcessing::TEMPLATE);
+    ctbEMCal_SZ->set_nsamples(8);
+    ctbEMCal_SZ->set_outputNodePrefix("TOWERS_SZ_");
+    ctbEMCal_SZ->set_softwarezerosuppression(true, 100000000);
+    se->registerSubsystem(ctbEMCal_SZ);
+
+    CaloTowerBuilder *ctbIHCal_SZ = new CaloTowerBuilder("HCALINBUILDER_ZS");
+    ctbIHCal_SZ->set_detector_type(CaloTowerDefs::HCALIN);
+    ctbIHCal_SZ->set_processing_type(CaloWaveformProcessing::TEMPLATE);
+    ctbIHCal_SZ->set_nsamples(8);
+    ctbIHCal_SZ->set_outputNodePrefix("TOWERS_SZ_");
+    ctbIHCal_SZ->set_softwarezerosuppression(true, 100000000);
+    se->registerSubsystem(ctbIHCal_SZ);
+
+    CaloTowerBuilder *ctbOHCal_SZ = new CaloTowerBuilder("HCALOUTBUILDER_SZ");
+    ctbOHCal_SZ->set_detector_type(CaloTowerDefs::HCALOUT);
+    ctbOHCal_SZ->set_processing_type(CaloWaveformProcessing::TEMPLATE);
+    ctbOHCal_SZ->set_nsamples(8);
+    ctbOHCal_SZ->set_outputNodePrefix("TOWERS_SZ_");
+    ctbOHCal_SZ->set_softwarezerosuppression(true, 100000000);
+    se->registerSubsystem(ctbOHCal_SZ);
+
+    CaloTowerCalib *calibEMC_SZ = new CaloTowerCalib("CEMCCALIB_SZ");
+    calibEMC_SZ->set_detector_type(CaloTowerDefs::CEMC);
+    calibEMC_SZ->set_inputNodePrefix("TOWERS_SZ_");
+    calibEMC_SZ->set_outputNodePrefix("TOWERINFO_SZ_CALIB_");
+    se->registerSubsystem(calibEMC_SZ);
+
+    CaloTowerCalib *calibIHCal_SZ = new CaloTowerCalib("IHCALCALIB_SZ");
+    calibIHCal_SZ->set_detector_type(CaloTowerDefs::HCALIN);
+    calibIHCal_SZ->set_inputNodePrefix("TOWERS_SZ_");
+    calibIHCal_SZ->set_outputNodePrefix("TOWERINFO_SZ_CALIB_");
+    se->registerSubsystem(calibIHCal_SZ);
+
+    CaloTowerCalib *calibOHCal_SZ = new CaloTowerCalib("OHCALCALIB_SZ");
+    calibOHCal_SZ->set_detector_type(CaloTowerDefs::HCALOUT);
+    calibOHCal_SZ->set_inputNodePrefix("TOWERS_SZ_");
+    calibOHCal_SZ->set_outputNodePrefix("TOWERINFO_SZ_CALIB_");
+    se->registerSubsystem(calibOHCal_SZ);
+  }
+
   Fun4AllInputManager *In = new Fun4AllPrdfInputManager("in");
   In->AddFile(lfn);
   se->registerInputManager(In);
@@ -247,8 +295,8 @@ void Fun4All_Year1(int nEvents = 5,
   if (Enable::DSTOUT)
   {
     string FullOutFile = DstOut::OutputFile;
-  Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
-  se->registerOutputManager(out);
+    Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
+    se->registerOutputManager(out);
   }
 
   se->run(nEvents);
