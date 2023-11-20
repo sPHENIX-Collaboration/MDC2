@@ -36,9 +36,12 @@ if ($sequence < 100)
 }
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
-my $logdir = sprintf("%s/log",$localdir);
-mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/single_particle/upsilon/pass1");
+my $logdir = sprintf("%s/log/run%d",$localdir,$runnumber);
+if (! -d $logdir)
+{
+  mkpath($logdir);
+}
+my $condorlogdir = sprintf("/tmp/single_particle/upsilon/pass1/run%d",$runnumber);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);
