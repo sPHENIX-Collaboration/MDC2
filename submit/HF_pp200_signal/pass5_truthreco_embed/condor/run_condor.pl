@@ -40,9 +40,15 @@ if ($sequence < 100)
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s-%010d-%05d",$quarkfilter,$runnumber,$sequence);
 my $logdir = sprintf("%s/log/%s/run%d/%s",$localdir,$fm,$runnumber,$quarkfilter);
-mkpath($logdir);
+if (! -d $logdir)
+{
+  mkpath($logdir);
+}
 my $condorlogdir = sprintf("/tmp/HF_pp200_signal/pass5_truthreco_embed/%s/run%d/%s",$fm,$runnumber,$quarkfilter);
-mkpath($condorlogdir);
+if (! -d $condorlogdir)
+{
+  mkpath($condorlogdir);
+}
 my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
 if (-f $jobfile && ! defined $overwrite)
 {

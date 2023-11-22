@@ -65,7 +65,7 @@ mkpath($outdir);
 
 my $localdir=`pwd`;
 chomp $localdir;
-my $logdir = sprintf("%s/log/%s",$localdir,$quarkfilter);
+my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$quarkfilter);
 my $nsubmit = 0;
 my $njob = 0;
 OUTER: for (my $isub = 0; $isub < $maxsubmit; $isub++)

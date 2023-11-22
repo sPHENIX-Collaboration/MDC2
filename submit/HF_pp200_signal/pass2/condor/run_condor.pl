@@ -33,9 +33,9 @@ if ($sequence < 100)
 }
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s-%010d-%05d",$quarkfilter,$runnumber,$sequence);
-my $logdir = sprintf("%s/log/%s",$localdir,$quarkfilter);
+my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$quarkfilter);
 mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/HF_pp200_signal/pass2/%s",$quarkfilter);
+my $condorlogdir = sprintf("/tmp/HF_pp200_signal/pass2/run%d/%s",$runnumber,$quarkfilter);
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
 if (-f $jobfile)
