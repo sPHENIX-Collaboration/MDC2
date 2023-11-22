@@ -13,12 +13,12 @@ echo rsyncing from $this_dir
 echo running: $this_script $*
 
 ana_calo=ana.374
-ana_global=ana.376
+ana_mbdepd=ana.388
 ana_pass3trk=ana.374
 
-run_calo=1
-run_trk=1
-run_bbcepd=1
+run_calo=0
+run_trk=0
+run_mbdepd=1
 
 source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n
 
@@ -70,14 +70,14 @@ then
 fi
 
 #---------------------------------------------------------------
-# Global Reconstruction
-if [ ${run_bbcepd} -gt 0 ]
+# Mbd/epd Reconstruction
+if [ ${run_mbdepd} -gt 0 ]
 then
-    source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_global
-    echo 'here comes your environment for Fun4All_G4_BBC_EPD.C'
+    source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_mbdepd
+    echo 'here comes your environment for Fun4All_G4_MBD_EPD.C'
     printenv
-    echo root.exe -q -b Fun4All_G4_BBC_EPD.C\($1,\"$2\",\"$5\",\"$6\"\)
-    root.exe -q -b  Fun4All_G4_BBC_EPD.C\($1,\"$2\",\"$5\",\"$6\"\)
+    echo root.exe -q -b Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$5\",\"$6\"\)
+    root.exe -q -b  Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$5\",\"$6\"\)
 fi
 
 #---------------------------------------------------------------
