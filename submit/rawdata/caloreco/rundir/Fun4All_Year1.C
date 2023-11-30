@@ -139,14 +139,17 @@ void Fun4All_Year1(int nEvents = 5,
   std::cout << "status setters" << std::endl;
   CaloTowerStatus *statusEMC = new CaloTowerStatus("CEMCSTATUS");
   statusEMC->set_detector_type(CaloTowerDefs::CEMC);
+  statusEMC->set_time_cut(1);
   se->registerSubsystem(statusEMC);
 
   CaloTowerStatus *statusHCalIn = new CaloTowerStatus("HCALINSTATUS");
   statusHCalIn->set_detector_type(CaloTowerDefs::HCALIN);
+  statusHCalIn->set_time_cut(2);
   se->registerSubsystem(statusHCalIn);
 
   CaloTowerStatus *statusHCALOUT = new CaloTowerStatus("HCALOUTSTATUS");
   statusHCALOUT->set_detector_type(CaloTowerDefs::HCALOUT);
+  statusHCALOUT->set_time_cut(2);
   se->registerSubsystem(statusHCALOUT);
 
   ////////////////////
