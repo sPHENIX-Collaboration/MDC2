@@ -4,7 +4,7 @@
 #include <GlobalVariables.C>
 
 #include <G4Setup_sPHENIX.C>
-#include <G4_Bbc.C>
+#include <G4_Mbd.C>
 #include <G4_Global.C>
 #include <G4_Input.C>
 #include <G4_Production.C>
@@ -119,8 +119,7 @@ int Fun4All_G4_Cosmic(
   //  Enable::OVERLAPCHECK = true;
   //  Enable::VERBOSITY = 1;
 
-  Enable::BBC = true;
-//  Enable::BBCFAKE = true;  // Smeared vtx and t0, use if you don't want real BBC in simulation
+  Enable::MBD = true;
 
   Enable::PIPE = true;
 //  Enable::PIPE_ABSORBER = true;
@@ -210,7 +209,6 @@ int Fun4All_G4_Cosmic(
     return 0;
   }
 
-  se->skip(skip);
   se->run(nEvents);
 
   //-----
