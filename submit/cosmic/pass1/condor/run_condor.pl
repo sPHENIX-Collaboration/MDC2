@@ -7,9 +7,9 @@ use File::Path;
 
 my $test;
 GetOptions("test"=>\$test);
-if ($#ARGV < 4)
+if ($#ARGV < 5)
 {
-    print "usage: run_condor.pl <events> <outdir> <outfile> <skip> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <outdir> <outfile> <field> <runnumber> <sequence>\n";
     print "options:\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
@@ -26,20 +26,21 @@ my $executable = sprintf("%s/run_pass1_cosmic.sh",$rundir);
 my $nevents = $ARGV[0];
 my $dstoutdir = $ARGV[1];
 my $dstoutfile = $ARGV[2];
-my $runnumber = $ARGV[3];
-my $sequence = $ARGV[4];
+my $field = $ARGV[3];
+my $runnumber = $ARGV[4];
+my $sequence = $ARGV[5];
 if ($sequence < 100)
 {
     $baseprio = 90;
 }
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
-my $logdir = sprintf("%s/log/run%d",$localdir,$runnumber);
+my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$field);
 if (! -d $logdir)
 {
   mkpath($logdir);
 }
-my $condorlogdir = sprintf("/tmp/cosmic/pass1/run%d/%s",$runnumber,$jettrigger);
+my $condorlogdir = sprintf("/tmp/cosmic/pass1/run%d/%s",$runnumber,$field);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);
@@ -61,7 +62,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $dstoutfile $dstoutdir $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $dstoutfile $dstoutdir $field $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -86,5 +87,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $dstoutfile, $dstoutdir, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $dstoutfile, $dstoutdir, $field, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);

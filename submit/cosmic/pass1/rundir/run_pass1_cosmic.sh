@@ -26,8 +26,9 @@ fi
 # $1: number of events
 # $2: output file
 # $3: output dir
-# $4: runnumber
-# $5: sequence
+# $4: magnetic field on/off
+# $5: runnumber
+# $6: sequence
 
 echo 'here comes your environment'
 
@@ -36,13 +37,14 @@ printenv
 echo arg1 \(events\) : $1
 echo arg2 \(output file\): $2
 echo arg3 \(output dir\): $3
-echo arg4 \(runnumber\): $4
-echo arg5 \(sequence\): $5
+echo arg4 \(magnetic field\): $4
+echo arg5 \(runnumber\): $5
+echo arg6 \(sequence\): $6
 
-runnumber=$(printf "%010d" $4)
-sequence=$(printf "%05d" $5)
+runnumber=$(printf "%010d" $5)
+sequence=$(printf "%05d" $6)
 
-echo running root.exe -q -b Fun4All_G4_Cosmic.C\($1,\"$2\",\"$3\"\)
-root.exe -q -b Fun4All_G4_Cosmic.C\($1,\"$2\",\"$3\"\)
+echo running root.exe -q -b Fun4All_G4_Cosmic.C\($1,\"$2\",\"$3\",\"$4\"\)
+root.exe -q -b Fun4All_G4_Cosmic.C\($1,\"$2\",\"$3\",\"$4\"\)
 
 echo "script done"

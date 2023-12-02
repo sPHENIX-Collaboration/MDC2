@@ -32,7 +32,8 @@ R__LOAD_LIBRARY(libffamodules.so)
 int Fun4All_G4_Cosmic(
   const int nEvents = 1,
   const string &outputFile = "G4Hits_cosmic-0000011-00000.root",
-  const string &outdir = ".")
+  const string &outdir = ".",
+  const string &field = "on")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -164,10 +165,10 @@ int Fun4All_G4_Cosmic(
   // Magnet Settings
   //---------------
 
-  //  const string magfield = "1.5"; // alternatively to specify a constant magnetic field, give a float number, which will be translated to solenoidal field in T, if string use as fieldmap name (including path)
-  //  G4MAGNET::magfield = string(getenv("CALIBRATIONROOT")) + string("/Field/Map/sPHENIX.2d.root");  // default map from the calibration database
-//  G4MAGNET::magfield_rescale = -1.4 / 1.5;  // make consistent with expected Babar field strength of 1.4T
-
+  if (field == "off")
+  {
+    G4MAGNET::magfield = "0";
+  }
 
   // Initialize the selected subsystems
   G4Init();

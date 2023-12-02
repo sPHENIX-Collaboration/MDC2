@@ -11,9 +11,9 @@ my $killexist;
 my $runnumber = 11;
 my $events = 1000;
 GetOptions("test"=>\$test, "increment"=>\$incremental, "killexist" => \$killexist);
-if ($#ARGV < 0)
+if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs>\n";
+    print "usage: run_all.pl <number of jobs> <field: on/off>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--killexist : delete output file if it already exists (but no jobfile)\n";
@@ -30,7 +30,15 @@ if ($hostname !~ /phnxsub/)
 }
 
 my $maxsubmit = $ARGV[0];
-my $filetype = sprintf("cosmic");
+my $field = $ARGV[1];
+if ($field ne "on" &&
+    $field ne "off")
+{
+    print "second argument has to be either on or off\n";
+    exit(1);
+}
+
+my $filetype = sprintf("cosmic_magnet_%s",$field);
 my $condorlistfile =  sprintf("condor.list");
 if (-f $condorlistfile)
 {
@@ -44,12 +52,12 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber);
+$outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,$field);
 mkpath($outdir);
 
 my $localdir=`pwd`;
 chomp $localdir;
-my $logdir = sprintf("%s/log/run%d",$localdir,$runnumber);
+my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$field);
 my $nsubmit = 0;
 my $njob = 0;
 OUTER: for (my $isub = 0; $isub < $maxsubmit; $isub++)
@@ -78,7 +86,7 @@ OUTER: for (my $isub = 0; $isub < $maxsubmit; $isub++)
 	{
 	    $tstflag="--test";
 	}
-	system("perl run_condor.pl $events $outdir $outfile $runnumber $njob $tstflag");
+	system("perl run_condor.pl $events $outdir $outfile $field $runnumber $njob $tstflag");
 	my $exit_value  = $? >> 8;
 	if ($exit_value != 0)
 	{
