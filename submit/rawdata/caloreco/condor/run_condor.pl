@@ -31,14 +31,16 @@ my $dstoutfile = $ARGV[5];
 my $dstoutdir = $ARGV[6];
 my $buildtag = $ARGV[7];
 my $cdbtag = $ARGV[8];
+my $buildtag_clean = $buildtag;
+$buildtag_clean =~ s/\.//g;
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%08d-%04d",$runnumber,$sequence);
-my $logdir = sprintf("%s/log/%s/%s",$localdir,$buildtag,$cdbtag);
+my $logdir = sprintf("%s/log/%s/%s",$localdir,$buildtag_clean,$cdbtag);
 if (! -d $logdir)
 {
   mkpath($logdir);
 }
-my $condorlogdir = sprintf("/tmp/rawdata/caloreco/%s/%s",$buildtag,$cdbtag);
+my $condorlogdir = sprintf("/tmp/rawdata/caloreco/%s/%s",$buildtag_clean,$cdbtag);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);

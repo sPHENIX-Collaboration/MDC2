@@ -14,27 +14,44 @@ my $incremental;
 my $overwrite;
 my $shared;
 my $rawdatadir = sprintf("/sphenix/lustre01/sphnxpro/commissioning/aligned_2Gprdf");
-my $outsubdir = sprintf("DST_ana387_2023p003_test"); # don't use . in dir names
-my $buildtag = sprintf("ana.387");
-my $cdbtag = sprintf("2023p003");
-my $cdbnametag = $cdbtag;
-my $version; # temporary - if we use different parameters for testing
-if (defined $version)
-{
-    $cdbnametag = sprintf("%s%s",$cdbtag,$version);
-}
-
-GetOptions("test"=>\$test, "increment"=>\$incremental, "overwrite"=>\$overwrite, "shared" => \$shared);
+my $buildtag;
+my $cdbtag;
+my $version;
+GetOptions("buildtag:s" => \$buildtag, "cdbtag:s" => \$cdbtag, "increment"=>\$incremental, "overwrite"=>\$overwrite, "shared" => \$shared, "test"=>\$test, "version:s" => \$version);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
+    print "--build : build tag\n";
+    print "--cdb : cdb tag\n";
     print "--increment : submit jobs while processing running\n";
     print "--overwrite : overwrite existing jobfiles and restart\n";
     print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
+    print "--version : optional version (v1,v2,...)\n";
     exit(1);
 }
+
+if (! defined $buildtag)
+{
+    print "need --build <buildtag>\n";
+    exit(1);
+}
+if (! defined $cdbtag)
+{
+    print "need --cdbtag < cdb tag>\n";
+    exit(1);
+}
+my $buildtag_clean = $buildtag;
+$buildtag_clean =~ s/\.//g;
+my $outsubdir = sprintf("DST_%s_%s",$buildtag_clean,$cdbtag); # don't use . in dir names
+my $cdbnametag = $cdbtag;
+if (defined $version)
+{
+    $cdbnametag = sprintf("%s_%s",$cdbtag,$version);
+    $outsubdir = sprintf("%s_%s",$outsubdir,$version);
+}
+
 
 my $hostname = `hostname`;
 chomp $hostname;
@@ -80,8 +97,6 @@ while (my @res = $getfiles->fetchrow_array())
     my $lfn = $res[0];
     my $segment = $res[1];
     my $runnumber = $res[2];
-    my $buildtag_clean = $buildtag;
-    $buildtag_clean =~ s/\.//g;
     my $outfilename = sprintf("DST_CALO_run1auau_%s_%s-%08d-%04d.root",$buildtag_clean,$cdbnametag,$runnumber,$segment);
 
     $chkfile->execute($outfilename);
