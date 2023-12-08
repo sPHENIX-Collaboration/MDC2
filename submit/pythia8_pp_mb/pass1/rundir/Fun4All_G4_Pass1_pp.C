@@ -4,7 +4,7 @@
 #include <GlobalVariables.C>
 
 #include <G4Setup_sPHENIX.C>
-#include <G4_Bbc.C>
+#include <G4_Mbd.C>
 #include <G4_Input.C>
 #include <G4_Production.C>
 #include <G4_TrkrSimulation.C>
@@ -133,7 +133,7 @@ int Fun4All_G4_Pass1_pp(
   //  Enable::OVERLAPCHECK = true;
   //  Enable::VERBOSITY = 1;
 
-  Enable::BBC = true;
+  Enable::MBD = true;
 
   Enable::PIPE = true;
 

@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 8;
+my $runnumber = 11;
 my $test;
 my $incremental;
 my $shared;
@@ -50,9 +50,11 @@ $outfiletype{"DST_TRUTH_G4HIT"} = "DST_TRUTH";
 
 my $localdir=`pwd`;
 chomp $localdir;
-my $logdir = sprintf("%s/log",$localdir);
-mkpath($logdir);
-
+my $logdir = sprintf("%s/log/run%d",$localdir,$runnumber);
+if (! -d $logdir)
+{
+  mkpath($logdir);
+}
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%pythia8_pp_mb%' and runnumber = $runnumber order by segment") || die $DBI::errstr;

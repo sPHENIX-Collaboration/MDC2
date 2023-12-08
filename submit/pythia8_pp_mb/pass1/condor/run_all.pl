@@ -9,7 +9,7 @@ my $test;
 my $incremental;
 my $killexist;
 my $shared;
-my $runnumber = 8;
+my $runnumber = 11;
 my $events = 1000;
 GetOptions("test"=>\$test, "increment"=>\$incremental, "killexist" => \$killexist, "shared" => \$shared);
 if ($#ARGV < 0)
@@ -52,7 +52,7 @@ mkpath($outdir);
 
 my $localdir=`pwd`;
 chomp $localdir;
-my $logdir = sprintf("%s/log",$localdir);
+my $logdir = sprintf("%s/log/run%d",$localdir,$runnumber);
 my $nsubmit = 0;
 my $njob = 0;
 OUTER: for (my $isub = 0; $isub < $maxsubmit; $isub++)
