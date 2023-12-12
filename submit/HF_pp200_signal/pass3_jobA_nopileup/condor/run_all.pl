@@ -60,7 +60,10 @@ if (! -f "outdir.txt")
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 $outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber, lc $quarkfilter);
-mkpath($outdir);
+if (! -d $outdir)
+{
+ mkpath($outdir);
+}
 
 my $quarkfilterWithDash = sprintf("%s-",$quarkfilter);
 

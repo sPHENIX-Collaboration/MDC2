@@ -47,6 +47,7 @@ int Fun4All_G4_MBD_EPD(
   Enable::CDB = true;
   rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
   rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  CDBInterface::instance()->Verbosity(1);
 
   //===============
   // Input options
@@ -94,7 +95,7 @@ int Fun4All_G4_MBD_EPD(
   //  Enable::OVERLAPCHECK = true;
   //  Enable::VERBOSITY = 1;
 
-  Enable::MBDRECO = true;  // needed in Bbc_Reco()
+  Enable::MBDRECO = true;  // needed in Mbd_Reco()
 
   Mbd_Reco();
 

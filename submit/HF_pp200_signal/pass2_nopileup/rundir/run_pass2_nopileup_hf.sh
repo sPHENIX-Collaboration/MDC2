@@ -12,12 +12,12 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-ana_calo=ana.374
-ana_mbdepd=ana.388
-ana_pass3trk=ana.374
+ana_calo=ana.389
+ana_mbdepd=ana.389
+ana_pass3trk=ana.389
 
-run_calo=0
-run_trk=0
+run_calo=1
+run_trk=1
 run_mbdepd=1
 
 source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n

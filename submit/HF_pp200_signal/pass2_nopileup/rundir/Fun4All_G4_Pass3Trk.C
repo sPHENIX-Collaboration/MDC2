@@ -54,6 +54,7 @@ int Fun4All_G4_Pass3Trk(
   rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
   // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
+  CDBInterface::instance()->Verbosity(1);
 
   //===============
   // Input options

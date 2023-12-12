@@ -49,6 +49,7 @@ int Fun4All_G4_Calo(
   Enable::CDB = true;
   rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
   rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
+  CDBInterface::instance()->Verbosity(1);
 
   //===============
   // Input options
