@@ -10,8 +10,6 @@
 #include <G4_Production.C>
 #include <G4_TrkrSimulation.C>
 
-#include <phpythia8/PHPy8JetTrigger.h>
-
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/HeadReco.h>
 #include <ffamodules/SyncReco.h>
@@ -151,12 +149,12 @@ int Fun4All_G4_Cosmic(
 
   //! forward flux return plug door. Out of acceptance and off by default.
 //  Enable::PLUGDOOR = true;
-  Enable::PLUGDOOR_BLACKHOLE = true;
+//  Enable::PLUGDOOR_BLACKHOLE = true;
 //  Enable::PLUGDOOR_ABSORBER = true;
 
   // new settings using Enable namespace in GlobalVariables.C
-  Enable::BLACKHOLE = true;
-  Enable::BLACKHOLE_FORWARD_SAVEHITS = false; // disable forward/backward hits
+//  Enable::BLACKHOLE = true;
+//  Enable::BLACKHOLE_FORWARD_SAVEHITS = false; // disable forward/backward hits
   //Enable::BLACKHOLE_SAVEHITS = false; // turn off saving of bh hits
   //BlackHoleGeometry::visible = true;
 
