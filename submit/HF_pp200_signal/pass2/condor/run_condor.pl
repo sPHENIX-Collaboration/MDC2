@@ -19,7 +19,7 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 42;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_pileup_hf.sh",$rundir);
+my $executable = sprintf("%s/run_pass2_hf.sh",$rundir);
 my $nevents = $ARGV[0];
 my $quarkfilter = $ARGV[1];
 my $infile = $ARGV[2];
@@ -34,9 +34,15 @@ if ($sequence < 100)
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s-%010d-%05d",$quarkfilter,$runnumber,$sequence);
 my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$quarkfilter);
-mkpath($logdir);
+if (! -d $logdir)
+{
+  mkpath($logdir);
+}
 my $condorlogdir = sprintf("/tmp/HF_pp200_signal/pass2/run%d/%s",$runnumber,$quarkfilter);
-mkpath($condorlogdir);
+if (! -d $condorlogdir)
+{
+  mkpath($condorlogdir);
+}
 my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
 if (-f $jobfile)
 {

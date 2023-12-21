@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=8;
+my $runnumber=11;
 my $test;
 my $incremental;
 my $shared;
@@ -116,6 +116,7 @@ while (my @res = $getfiles->fetchrow_array())
     }
 }
 $chkfile->finish();
+$getfiles->finish();
 $dbh->disconnect;
 
 my $jobfile = sprintf("condor.job");

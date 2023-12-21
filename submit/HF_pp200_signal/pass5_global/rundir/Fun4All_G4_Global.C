@@ -74,7 +74,7 @@ int Fun4All_G4_Global(
   auto out = new Fun4AllDstOutputManager("DSTOUT", outputFile);
   out->AddNode("Sync");
   out->AddNode("EventHeader");
-  out->AddNode("BbcPmtInfoContainer");
+  out->AddNode("MbdPmtContainer");
   out->AddNode("TOWERINFO_SIM_EPD");
   out->AddNode("TOWERINFO_CALIB_EPD");
   out->AddNode("GlobalVertexMap");

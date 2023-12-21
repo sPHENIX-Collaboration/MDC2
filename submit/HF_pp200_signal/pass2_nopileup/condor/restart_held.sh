@@ -6,6 +6,7 @@ then
 fi
 echo $1
 variable=$1
+run=11
 #exit 0
 condor_q | grep ' H ' | grep run_pass2_nopileup_hf.sh | grep ${variable} > bla
 [ -s bla ] || exit 1
@@ -14,5 +15,5 @@ if [ -f tmplist ]
 then
 rm tmplist
 fi
-for i in `cat bla | awk '{print $12}' | awk -F- '{print $3}' | awk -F. '{print "-0000000008-"$1".job"}'`; do echo $i >> tmplist ; done
-for i in `cat tmplist`; do condor_submit log/${variable}/condor_${variable}$i; done
+for i in `cat bla | awk '{print $12}' | awk -F- '{print $3}' | awk -F. -v run=${run} '{print "-00000000"run"-"$1".job"}'`; do echo $i >> tmplist ; done
+for i in `cat tmplist`; do condor_submit log/run${run}/${variable}/condor_${variable}$i; done

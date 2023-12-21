@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 8;
+my $runnumber = 11;
 my $test;
 my $incremental;
 my $shared;
@@ -73,7 +73,7 @@ $quarkfilter = sprintf("%s_3MHz",$quarkfilter);
 
 my $localdir=`pwd`;
 chomp $localdir;
-my $logdir = sprintf("%s/log/%s",$localdir,$quarkfilter);
+my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$quarkfilter);
 mkpath($logdir);
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
