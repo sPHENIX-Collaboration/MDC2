@@ -18,7 +18,8 @@ my $mom;
 my $particle;
 my $file_exist_check;
 my $fm = "0_20fm";
-GetOptions("embed:s" => \$embed, "exist" => \$file_exist_check, "fm:s" =>\$fm, "run:i"=>\$runnumber, "type:i"=>\$system, "verbosity" => \$verbosity, "nopileup" => \$nopileup);
+my $pileup;
+GetOptions("embed:s" => \$embed, "exist" => \$file_exist_check, "fm:s" =>\$fm, "pileup:s" => \$pileup, "run:i"=>\$runnumber, "type:i"=>\$system, "verbosity" => \$verbosity, "nopileup" => \$nopileup);
 
 if ($system < 1 || $system > 21)
 {
@@ -67,12 +68,16 @@ elsif ($system == 2)
 elsif ($system == 3)
 {
 #    $systemstring = "pythia8_pp_mb";
+    if (! defined $pileup)
+    {
+	$pileup = "3MHz";
+    }
     $g4hits_exist = 1;
     $systemstring_g4hits ="pythia8_pp_mb";
     $gpfsdir = "pythia8_pp_mb";
     if (! defined $nopileup)
     {
-	$systemstring = sprintf("%s_3MHz",$systemstring_g4hits);
+	$systemstring = sprintf("%s_%s",$systemstring_g4hits,$pileup);
     }
     else
     {
@@ -104,7 +109,15 @@ elsif ($system == 6)
 {
     $g4hits_exist = 1;
     $systemstring_g4hits = "sHijing_0_488fm";
-    $systemstring = sprintf("%s_50kHz_bkg_0_20fm",$systemstring_g4hits);
+    if (! defined $nopileup)
+    {
+	$systemstring = sprintf("%s_50kHz_bkg_0_20fm",$systemstring_g4hits);
+    }
+    else
+    {
+	$systemstring = sprintf("%s-",$systemstring_g4hits);
+    }
+    $notlike{$systemstring} = ["pythia8" ,"single", "special"];
 }
 elsif ($system == 7)
 {
@@ -295,6 +308,7 @@ elsif ($system == 14)
     else
     {
 	print "needs arguments particle p or pt ptmin ptmax\n";
+	print "seen $#ARGV args @ARGV\n";
         exit(1)
     }
     $g4hits_exist = 1;

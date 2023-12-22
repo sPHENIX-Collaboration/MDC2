@@ -23,7 +23,13 @@ my $mom;
 my $ptmin;
 my $ptmax;
 my $particle;
-GetOptions("dsttype:s"=>\$dsttype, "embed:s"=>\$embed, "fm:s" =>\$fm, "kill"=>\$kill, "nopileup"=>\$nopileup, "runnumber:i" => \$runnumber, "type:i"=>\$system, "verbose" => \$verbose);
+my $pileup;
+GetOptions("dsttype:s"=>\$dsttype, "embed:s"=>\$embed, "fm:s" =>\$fm, "kill"=>\$kill, "nopileup"=>\$nopileup, "pileup:s" => \$pileup, "runnumber:i" => \$runnumber, "type:i"=>\$system, "verbose" => \$verbose);
+
+if (! defined $pileup)
+{
+   $pileup = "3MHz";
+}
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
@@ -32,17 +38,24 @@ my $deldataset = $dbh->prepare("delete from datasets where filename = ?");
 my $delfcat = $dbh->prepare("delete from files where full_file_path = ?");
 my %daughters = (
     "G4Hits" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT"],
-    "DST_BBC_G4HIT" => [ "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_BBC_EPD", "DSTOLD_BBC_G4HIT" ],
-    "DST_CALO_G4HIT" => [ "DST_BBC_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_CALO_CLUSTER", "DSTOLD_CALO_G4HIT" ],
-    "DST_TRKR_G4HIT" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRUTH_G4HIT", "DST_TRKR_HIT", "DST_TRUTH_RECO", "DSTOLD_TRKR_G4HIT"],
-    "DST_TRUTH_G4HIT" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH", "DSTOLD_TRUTH_G4HIT" ],
+#    "DST_BBC_G4HIT" => [ "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_MBD_EPD", "DSTOLD_BBC_G4HIT" ],
+#    "DST_CALO_G4HIT" => [ "DST_BBC_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_CALO_CLUSTER", "DSTOLD_CALO_G4HIT" ],
+#    "DST_TRKR_G4HIT" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRUTH_G4HIT", "DST_TRKR_HIT", "DST_TRUTH_RECO", "DSTOLD_TRKR_G4HIT"],
+#    "DST_TRUTH_G4HIT" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH", "DSTOLD_TRUTH_G4HIT" ],
+#    "DST_TRKR_HIT" => [ "DST_TRUTH", "DST_TRKR_CLUSTER", "DSTOLD_TRKR_HIT" ],
+#    "DST_TRUTH" => [ "DST_TRKR_HIT", "DST_TRUTH_JET", "DST_TRUTH_RECO", "DSTOLD_TRUTH"],
+    "DST_BBC_G4HIT" => [ "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_MBD_EPD" ],
+    "DST_CALO_G4HIT" => [ "DST_BBC_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_CALO_CLUSTER" ],
+    "DST_TRKR_G4HIT" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRUTH_G4HIT", "DST_TRKR_HIT", "DST_TRUTH_RECO" ],
+    "DST_TRUTH_G4HIT" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH" ],
     "DST_TRKR_CLUSTER" => [ "DST_TRACKSEEDS", "DST_TRUTH_RECO" ],
     "DST_TRACKSEEDS" => [ "DST_TRACKS" ],
-    "DST_TRKR_HIT" => [ "DST_TRUTH", "DST_TRKR_CLUSTER", "DSTOLD_TRKR_HIT" ],
-    "DST_TRUTH" => [ "DST_TRKR_HIT", "DST_TRUTH_JET", "DST_TRUTH_RECO", "DSTOLD_TRUTH"],
+    "DST_TRKR_HIT" => [ "DST_TRUTH", "DST_TRKR_CLUSTER" ],
+    "DST_TRUTH" => [ "DST_TRKR_HIT", "DST_TRUTH_JET", "DST_TRUTH_RECO" ],
 #    "DST_TRKR_HIT" => [ "DST_TRUTH" ],
 #    "DST_TRUTH" => [ "DST_TRKR_HIT" ],
     "DST_BBC_EPD" => [ "DST_GLOBAL" ],
+    "DST_MBD_EPD" => [ "DST_GLOBAL" ],
     "DST_GLOBAL" => [ "" ],
     "DST_TRUTH_JET" => [ "" ],
     "DST_TRUTH_RECO" => [ "" ],
@@ -52,6 +65,7 @@ my %daughters = (
     "DST_TRACKS_DISTORT" => [ "" ],
     "DST_CALO_CLUSTER" => [ "DST_TRACKS" ],
 #    "DST_CALO_CLUSTER" => [ "" ],
+    "DST_CALO_NOZERO" => [ "" ],
     "DSTOLD_BBC_G4HIT" => [ "" ],
     "DSTOLD_CALO_G4HIT" => [ "" ],
     "DSTOLD_TRKR_G4HIT" => [ "DSTOLD_TRKR_HIT" ],
@@ -71,19 +85,19 @@ my %daughters = (
 if (defined $nopileup)
 {
     my $ref = $daughters{"DST_TRKR_HIT"};
-    push(@$ref,("DST_CALO_CLUSTER", "DST_BBC_EPD"));
+    push(@$ref,("DST_CALO_CLUSTER", "DST_MBD_EPD"));
     @$ref = grep($_,@$ref); # removes empty strings from array
 
     $ref = $daughters{"DST_CALO_CLUSTER"};
-    push(@$ref,("DST_TRKR_HIT","DST_BBC_EPD","DST_TRUTH"));
+    push(@$ref,("DST_TRKR_HIT","DST_MBD_EPD","DST_TRUTH"));
     @$ref = grep($_,@$ref); # removes empty strings from array
 
-    $ref = $daughters{"DST_BBC_EPD"};
+    $ref = $daughters{"DST_MBD_EPD"};
     push(@$ref,("DST_CALO_CLUSTER", "DST_TRKR_HIT","DST_TRUTH"));
     @$ref = grep($_,@$ref); # removes empty strings from array
 
     $ref = $daughters{"DST_TRUTH"};
-    push(@$ref,("DST_CALO_CLUSTER","DST_BBC_EPD"));
+    push(@$ref,("DST_CALO_CLUSTER","DST_MBD_EPD"));
     @$ref = grep($_,@$ref); # removes empty strings from array
 }
 if (defined $verbose)
@@ -184,10 +198,12 @@ my %specialcondorfileadd = ();
 my %productionsubdir = (
     "DST_BBC_EPD"=> "pass3_bbcepd",
     "DST_BBC_G4HIT" => "pass2",
+    "DST_CALO_CLUSTER" => "pass3calo_nozero",
     "DST_CALO_CLUSTER" => "pass3calo",
     "DST_CALO_G4HIT"=> "pass2",
     "DST_GLOBAL"=> "pass5_global",
     "DST_JETS"=> "pass5jetreco",
+    "DST_MBD_EPD"=> "pass3_mbdepd",
     "DST_TRACKS" => "pass4_jobC",
     "DST_TRACKSEEDS" => "pass4_jobA",
     "DST_TRACKS_DISTORT" => "pass4distort",
@@ -206,7 +222,9 @@ if (defined $nopileup)
 {
     $productionsubdir{"DST_TRKR_HIT"} = "pass2_nopileup";
     $productionsubdir{"DST_CALO_CLUSTER"} = "pass2_nopileup";
+    $productionsubdir{"DST_CALO_NOZERO"} = "pass2calo_nopileup_nozero";
     $productionsubdir{"DST_BBC_EPD"} = "pass2_nopileup";
+    $productionsubdir{"DST_MBD_EPD"} = "pass2_nopileup";
     $productionsubdir{"DST_GLOBAL"} = "pass4_global_nopileup";
     $productionsubdir{"DST_TRKR_CLUSTER"} = "pass3_job0_nopileup";
     $productionsubdir{"DST_TRUTH"} = "pass2_nopileup";
@@ -215,6 +233,20 @@ if (defined $nopileup)
     $productionsubdir{"DST_TRUTH_JET" } = "pass3jet_nopileup",
     $productionsubdir{"DST_TRUTH_RECO"} = "pass4_truthreco_nopileup"
 }
+
+if (defined $pileup)
+{
+    if ($pileup ne "3MHz")
+    {
+	$productionsubdir{"DST_BBC_G4HIT"} = sprintf("pass2_%s",$pileup);
+	$productionsubdir{"DST_CALO_G4HIT"} = sprintf("pass2_%s",$pileup);
+	$productionsubdir{"DST_TRKR_G4HIT"} = sprintf("pass2_%s",$pileup);
+	$productionsubdir{"DST_TRUTH_G4HIT"} = sprintf("pass2_%s",$pileup);
+	$productionsubdir{"DST_TRKR_HIT"} = sprintf("pass3trk_%s",$pileup);
+	$productionsubdir{"DST_TRUTH"} = sprintf("pass3trk_%s",$pileup);
+    }
+}
+
 if (defined $embed)
 {
     my $embedpostfix = "_embed";
@@ -224,6 +256,7 @@ if ($embed eq "pau")
 }
     $productionsubdir{"DST_BBC_G4HIT"} = sprintf("pass2%s",$embedpostfix);
     $productionsubdir{"DST_CALO_CLUSTER"} = sprintf("pass3calo%s",$embedpostfix);
+    $productionsubdir{"DST_CALO_NOZERO"} = "pass3calo_nozero_embed";
     $productionsubdir{"DST_CALO_G4HIT"} = sprintf("pass2%s",$embedpostfix);
     $productionsubdir{"DST_BBC_EPD"} = sprintf("pass3_bbcepd%s",$embedpostfix);
     $productionsubdir{"DST_TRUTH"} = sprintf("pass3trk%s",$embedpostfix);
@@ -257,7 +290,7 @@ elsif ($system == 3)
 {
     $systemstring = "pythia8_pp_mb";
     $specialsystemstring{"G4Hits"} = "pythia8_pp_mb-";
-    $pileupstring = "_3MHz";
+    $pileupstring = sprintf("_%s",$pileup);
 #    $systemstring = "pythia8_pp_mb_";
     $topdir = sprintf("%s/pythia8_pp_mb",$topdir);
 }
@@ -287,6 +320,7 @@ elsif ($system == 6)
     $topdir = sprintf("%s/fm_0_488",$topdir);
 #    $pileupdir = "50kHz_0_20fm";
     $pileupstring = "_50kHz_bkg_0_20fm";
+    $notlike{$systemstring} = ["pythia8" ,"single", "special"];
 }
 elsif ($system == 7)
 {
@@ -603,7 +637,7 @@ foreach my $rem (keys %removethese)
     {
 	if (! defined $pileupstring)
 	{
-	    $loopsystemstring = sprintf("%s3MHz-",$loopsystemstring);
+	    $loopsystemstring = sprintf("%s%s-",$loopsystemstring,$pileup);
 	}
 	else
 	{
@@ -623,14 +657,14 @@ foreach my $rem (keys %removethese)
     my $condor_subdir = sprintf("%s",$topdir);
     if (exists $productionsubdir{$rem})
     {
-if (defined $embed)
-{
-	$condor_subdir = sprintf("%s/%s/condor/log/%s/run%d",$condor_subdir,$productionsubdir{$rem},$fm,$runnumber);
-}
-else
-{
-	$condor_subdir = sprintf("%s/%s/condor/log/run%d",$condor_subdir,$productionsubdir{$rem},$runnumber);
-}
+	if (defined $embed)
+	{
+	    $condor_subdir = sprintf("%s/%s/condor/log/%s/run%d",$condor_subdir,$productionsubdir{$rem},$fm,$runnumber);
+	}
+	else
+	{
+	    $condor_subdir = sprintf("%s/%s/condor/log/run%d",$condor_subdir,$productionsubdir{$rem},$runnumber);
+	}
 	if (defined $condorfileadd)
 	{
 	    my $condorsubdir = sprintf("%s/%s",$condor_subdir,$condorfileadd);
