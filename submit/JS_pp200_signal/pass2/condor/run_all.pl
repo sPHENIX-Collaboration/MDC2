@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 8;
+my $runnumber = 11;
 my $test;
 my $incremental;
 my $shared;
@@ -56,7 +56,10 @@ if (! -f "outdir.txt")
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 $outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,lc $jettrigger);
-mkpath($outdir);
+if (! -d $outdir)
+{
+  mkpath($outdir);
+}
 
 my %outfiletype = ();
 $outfiletype{"DST_BBC_G4HIT"} = 1;
@@ -70,8 +73,10 @@ $jettrigger = sprintf("%s_3MHz",$jettrigger);
 my $localdir=`pwd`;
 chomp $localdir;
 my $logdir = sprintf("%s/log/%s",$localdir,$jettrigger);
-mkpath($logdir);
-
+if (! -d $logdir)
+{
+  mkpath($logdir);
+}
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like 'G4Hits_pythia8_$jettriggerWithUnderScore%' and runnumber = $runnumber order by filename") || die $DBI::errstr;

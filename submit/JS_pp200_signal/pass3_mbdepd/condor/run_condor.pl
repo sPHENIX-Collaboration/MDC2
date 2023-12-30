@@ -9,7 +9,7 @@ my $test;
 GetOptions("test"=>\$test);
 if ($#ARGV < 6)
 {
-    print "usage: run_condor.pl <events> <bbc infile> <truth infile> <outfile> <outdir> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <mbd infile> <truth infile> <outfile> <outdir> <runnumber> <sequence>\n";
     print "options:\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
@@ -19,7 +19,7 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 53;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_pass3_bbcepd_js.sh",$rundir);
+my $executable = sprintf("%s/run_pass3_mbdepd_js.sh",$rundir);
 my $nevents = $ARGV[0];
 my $jettrigger = $ARGV[1];
 my $infile0 = $ARGV[2];
@@ -38,12 +38,12 @@ if ($sequence < 100000)
 {
     $suffix = sprintf("%s-%010d-%05d",$jettrigger,$runnumber,$sequence);
 }
-my $logdir = sprintf("%s/log/%s",$localdir,$jettrigger);
+my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$jettrigger);
 if (! -d $logdir)
 {
   mkpath($logdir);
 }
-my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass3_bbcepd/%s",$jettrigger);
+my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass3_mbdepd/run%d/%s",$runnumber,$jettrigger);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);

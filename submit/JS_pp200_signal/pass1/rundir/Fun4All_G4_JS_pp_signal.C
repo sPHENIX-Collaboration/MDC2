@@ -4,7 +4,7 @@
 #include <GlobalVariables.C>
 
 #include <G4Setup_sPHENIX.C>
-#include <G4_Bbc.C>
+#include <G4_Mbd.C>
 #include <G4_Global.C>
 #include <G4_Input.C>
 #include <G4_Production.C>
@@ -90,12 +90,16 @@ int Fun4All_G4_JS_pp_signal(
   {
   case 7:
   Input::BEAM_CONFIGURATION = Input::AA_COLLISION; // for 2023 sims we want the AA geometry for no pileup sims
+  cout << "using Input::AA_COLLISION" << endl;
   break;
   case 8:
+  case 11:
   Input::BEAM_CONFIGURATION = Input::pp_COLLISION; // for 2023 sims we want the AA geometry for no pileup sims
+  cout << "using Input::pp_COLLISION" << endl;
   break;
   case 9:
   Input::BEAM_CONFIGURATION = Input::pA_COLLISION; // for 2023 sims we want the AA geometry for no pileup sims
+  cout << "using Input::pA_COLLISION" << endl;
   break;
   default:
     cout << "runnnumber " << runnumber << " not implemented" << endl;
@@ -212,8 +216,8 @@ int Fun4All_G4_JS_pp_signal(
   //  Enable::OVERLAPCHECK = true;
   //  Enable::VERBOSITY = 1;
 
-  Enable::BBC = true;
-//  Enable::BBCFAKE = true;  // Smeared vtx and t0, use if you don't want real BBC in simulation
+  Enable::MBD = true;
+//  Enable::MBDFAKE = true;  // Smeared vtx and t0, use if you don't want real MBD in simulation
 
   Enable::PIPE = true;
 //  Enable::PIPE_ABSORBER = true;
@@ -234,13 +238,11 @@ int Fun4All_G4_JS_pp_signal(
   Enable::CEMC = true;
 
   Enable::HCALIN = true;
-  Enable::HCALIN_OLD = true;
 
   Enable::MAGNET = true;
 //  Enable::MAGNET_ABSORBER = false;
 
   Enable::HCALOUT = true;
-  Enable::HCALOUT_OLD = true;
 
   Enable::EPD = true;
 
@@ -266,31 +268,6 @@ int Fun4All_G4_JS_pp_signal(
   Enable::BLACKHOLE_FORWARD_SAVEHITS = false; // disable forward/backward hits
   //Enable::BLACKHOLE_SAVEHITS = false; // turn off saving of bh hits
   //BlackHoleGeometry::visible = true;
-
-  // run user provided code (from local G4_User.C)
-  //Enable::USER = true;
-
-  //---------------
-  // World Settings
-  //---------------
-  //  G4WORLD::PhysicsList = "QGSP_BERT"; //FTFP_BERT_HP best for calo
-  //  G4WORLD::WorldMaterial = "G4_AIR"; // set to G4_GALACTIC for material scans
-
-  //---------------
-  // Magnet Settings
-  //---------------
-
-  //  const string magfield = "1.5"; // alternatively to specify a constant magnetic field, give a float number, which will be translated to solenoidal field in T, if string use as fieldmap name (including path)
-  //  G4MAGNET::magfield = string(getenv("CALIBRATIONROOT")) + string("/Field/Map/sPHENIX.2d.root");  // default map from the calibration database
-//  G4MAGNET::magfield_rescale = -1.4 / 1.5;  // make consistent with expected Babar field strength of 1.4T
-
-  //---------------
-  // Pythia Decayer
-  //---------------
-  // list of decay types in
-  // $OFFLINE_MAIN/include/g4decayer/EDecayType.hh
-  // default is All:
-  // G4P6DECAYER::decayType = EDecayType::kAll;
 
   // Initialize the selected subsystems
   G4Init();

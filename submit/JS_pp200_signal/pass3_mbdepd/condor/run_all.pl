@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $inrunnumber=8;
+my $inrunnumber=11;
 #my $outrunnumber=40;
 my $outrunnumber=$inrunnumber;
 my $test;
@@ -59,11 +59,14 @@ if (! -f "outdir.txt")
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 $outdir = sprintf("%s/run%04d/%s",$outdir,$inrunnumber,lc $jettrigger);
-mkpath($outdir);
+if (! -d $outdir)
+{
+  mkpath($outdir);
+}
 
 $jettrigger = sprintf("%s_3MHz",$jettrigger);
 
-my %bbchash = ();
+my %mbdhash = ();
 my %truthhash = ();
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
@@ -75,17 +78,17 @@ my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where d
 
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
-my $nbbc = $getfiles->rows;
+my $nmbd = $getfiles->rows;
 
 while (my @res = $getfiles->fetchrow_array())
 {
     if ($res[1] < 100000)
     {
-	$bbchash{sprintf("%05d",$res[1])} = $res[0];
+	$mbdhash{sprintf("%05d",$res[1])} = $res[0];
     }
     else
     {
-	$bbchash{sprintf("%06d",$res[1])} = $res[0];
+	$mbdhash{sprintf("%06d",$res[1])} = $res[0];
     }
 }
 $getfiles->finish();
@@ -105,22 +108,22 @@ while (my @res = $gettruthfiles->fetchrow_array())
 }
 $gettruthfiles->finish();
 
-foreach my $segment (sort { $a <=> $b } keys %bbchash)
+foreach my $segment (sort { $a <=> $b } keys %mbdhash)
 {
     if (! exists $truthhash{$segment})
     {
 	next;
     }
 
-    my $lfn = $bbchash{$segment};
+    my $lfn = $mbdhash{$segment};
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_BBC_EPD_pythia8_$jettrigger-%010d-%06d.root",$outrunnumber,$segment);
+	my $outfilename = sprintf("DST_MBD_EPD_pythia8_$jettrigger-%010d-%06d.root",$outrunnumber,$segment);
 	if ($segment < 100000)
 	{
-	    $outfilename = sprintf("DST_BBC_EPD_pythia8_$jettrigger-%010d-%05d.root",$outrunnumber,$segment);
+	    $outfilename = sprintf("DST_MBD_EPD_pythia8_$jettrigger-%010d-%05d.root",$outrunnumber,$segment);
 	}
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)

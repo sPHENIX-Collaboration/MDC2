@@ -19,7 +19,7 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 42;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_pileup_js.sh",$rundir);
+my $executable = sprintf("%s/run_pass2_js.sh",$rundir);
 my $nevents = $ARGV[0];
 my $jettrigger = $ARGV[1];
 my $infile = $ARGV[2];
@@ -33,12 +33,12 @@ if ($sequence < 100)
 }
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s-%010d-%05d",$jettrigger,$runnumber,$sequence);
-my $logdir = sprintf("%s/log/%s",$localdir,$jettrigger);
+my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$jettrigger);
 if (! -d $logdir)
 {
   mkpath($logdir);
 }
-my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass2/%s",$jettrigger);
+my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass2/run%d/%s",$runnumber,$jettrigger);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);

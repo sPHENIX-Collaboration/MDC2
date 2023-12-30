@@ -11,7 +11,7 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.378
+source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.391
 
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
@@ -36,7 +36,7 @@ fi
 # arguments 
 # $1: number of events
 # $2: tracks input file
-# $3: bbc_epd input file
+# $3: mbd_epd input file
 # $4: output file
 # $5: output dir
 # $6: run number
@@ -46,7 +46,7 @@ echo 'here comes your environment'
 printenv
 echo arg1 \(events\) : $1
 echo arg2 \(tracks file\): $2
-echo arg3 \(bbc/epd file\): $3
+echo arg3 \(mbd/epd file\): $3
 echo arg4 \(output file\): $4
 echo arg5 \(output dir\): $5
 echo arg6 \(runnumber\): $6

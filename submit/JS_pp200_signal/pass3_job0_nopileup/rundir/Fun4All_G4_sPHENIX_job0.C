@@ -23,13 +23,13 @@ R__LOAD_LIBRARY(libfun4all.so)
 int Fun4All_G4_sPHENIX_job0(
   const int nEvents = 0,
   const int nSkipEvents = 0,
-  const std::string &inputFile = "DST_TRKR_HIT_pythia8_Jet30-0000000006-00000.root",
-  const std::string &outputFile = "DST_TRKR_CLUSTER_pythia8_Jet30-0000000006-00000.root",
+  const std::string &inputFile = "DST_TRKR_HIT_pythia8_Jet30-0000000011-00000.root",
+  const std::string &outputFile = "DST_TRKR_CLUSTER_pythia8_Jet30-0000000011-00000.root",
   const string &outdir = ".")
 {
 
   // set pp tracking mode
-//  TRACKING::pp_mode = true;
+  TRACKING::pp_mode = true;
 
   // print inputs
   std::cout << "Fun4All_G4_sPHENIX_job0 - nEvents: " << nEvents << std::endl;

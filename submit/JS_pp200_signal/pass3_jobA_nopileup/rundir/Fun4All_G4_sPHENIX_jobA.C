@@ -30,7 +30,7 @@ int Fun4All_G4_sPHENIX_jobA(
 {
 
   // set pp tracking mode
-//  TRACKING::pp_mode = true;
+  TRACKING::pp_mode = true;
 
   // print inputs
   std::cout << "Fun4All_G4_sPHENIX_jobA - nEvents: " << nEvents << std::endl;
