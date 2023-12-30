@@ -20,9 +20,9 @@ R__LOAD_LIBRARY(libfun4all.so)
 //________________________________________________________________________________________________
 int Fun4All_G4_Global(
     const int nEvents = 0,
-    const std::string &inputFile1 = "DST_TRACKS_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000008-00000.root",
-    const std::string &inputFile2 = "DST_BBC_EPD_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000008-00000.root",
-    const std::string &outputFile = "DST_GLOBAL_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000008-00000.root",
+    const std::string &inputFile1 = "DST_TRACKS_pythia8_pp_mb_3MHz-0000000011-00000.root",
+    const std::string &inputFile2 = "DST_BBC_EPD_pythia8_pp_mb_3MHz-0000000011-00000.root",
+    const std::string &outputFile = "DST_GLOBAL_pythia8_pp_mb_3MHz-0000000011-00000.root",
     const std::string &outdir = ".")
 {
   gSystem->Load("libg4dst.so");
@@ -74,7 +74,7 @@ int Fun4All_G4_Global(
   auto out = new Fun4AllDstOutputManager("DSTOUT", outputFile);
   out->AddNode("Sync");
   out->AddNode("EventHeader");
-  out->AddNode("BbcPmtInfoContainer");
+  out->AddNode("MbdPmtContainer");
   out->AddNode("TOWERINFO_SIM_EPD");
   out->AddNode("TOWERINFO_CALIB_EPD");
   out->AddNode("GlobalVertexMap");

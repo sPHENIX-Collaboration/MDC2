@@ -55,7 +55,7 @@ close(F);
 
 my %outfiletype = ();
 $outfiletype{"DST_CALO_CLUSTER"} = $outdir[0];
-$outfiletype{"DST_BBC_EPD"} = $outdir[1];
+$outfiletype{"DST_MBD_EPD"} = $outdir[1];
 $outfiletype{"DST_TRKR_HIT"} = $outdir[2];
 $outfiletype{"DST_TRUTH"} = $outdir[2];
 foreach my $type (sort keys %outfiletype)
@@ -103,7 +103,7 @@ while (my @res = $getfiles->fetchrow_array())
 	    $tstflag="--test";
 	}
 	my $calooutfilename = sprintf("DST_CALO_CLUSTER_pythia8_pp_mb-%010d-%05d.root",$runnumber,$segment);
-	my $globaloutfilename = sprintf("DST_BBC_EPD_pythia8_pp_mb-%010d-%05d.root",$runnumber,$segment);
+	my $globaloutfilename = sprintf("DST_MBD_EPD_pythia8_pp_mb-%010d-%05d.root",$runnumber,$segment);
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %s", $outevents, $lfn, $calooutfilename, $outdir[0], $globaloutfilename, $outdir[1], $outdir[2], $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);

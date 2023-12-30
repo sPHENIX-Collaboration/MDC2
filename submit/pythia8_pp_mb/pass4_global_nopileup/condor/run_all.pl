@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $inrunnumber=8;
+my $inrunnumber=11;
 my $outrunnumber=$inrunnumber;
 my $test;
 my $incremental;
@@ -55,7 +55,7 @@ mkpath($outdir);
 my $outfilelike = sprintf("pythia8_pp_mb-");
 
 my %trkhash = ();
-my %bbcepdhash = ();
+my %mbdepdhash = ();
 
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
@@ -63,7 +63,7 @@ $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRACKS' and filename like '%$outfilelike%' and runnumber = $inrunnumber order by segment") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
-my $getbbcepdfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_BBC_EPD' and filename like '%$outfilelike%' and runnumber = $inrunnumber");
+my $getmbdepdfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_MBD_EPD' and filename like '%$outfilelike%' and runnumber = $inrunnumber");
 
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
@@ -80,23 +80,23 @@ while (my @res = $getfiles->fetchrow_array())
 
 }
 $getfiles->finish();
-$getbbcepdfiles->execute() || die $DBI::errstr;
-my $nbbcepd = $getbbcepdfiles->rows;
-while (my @res = $getbbcepdfiles->fetchrow_array())
+$getmbdepdfiles->execute() || die $DBI::errstr;
+my $nmbdepd = $getmbdepdfiles->rows;
+while (my @res = $getmbdepdfiles->fetchrow_array())
 {
     if ($res[1] < 100000)
     {
-	$bbcepdhash{sprintf("%05d",$res[1])} = $res[0];
+	$mbdepdhash{sprintf("%05d",$res[1])} = $res[0];
     }
     else
     {
-	$bbcepdhash{sprintf("%06d",$res[1])} = $res[0];
+	$mbdepdhash{sprintf("%06d",$res[1])} = $res[0];
     }
 }
-$getbbcepdfiles->finish();
+$getmbdepdfiles->finish();
 foreach my $segment (sort keys %trkhash)
 {
-    if (! exists $bbcepdhash{$segment})
+    if (! exists $mbdepdhash{$segment})
     {
 	next;
     }
@@ -121,7 +121,7 @@ foreach my $segment (sort keys %trkhash)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $bbcepdhash{sprintf("%05d",$segment)}, $outfilename, $outdir, $outrunnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $mbdepdhash{sprintf("%05d",$segment)}, $outfilename, $outdir, $outrunnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

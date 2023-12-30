@@ -1,6 +1,6 @@
 #! /usr/bin/bash
 
-run=8
+run=11
 
 condor_q | grep ' H ' | grep run_pass4_truthreco_nopileup_pp_mb.sh  > bla
 
@@ -9,7 +9,7 @@ condor_q | grep ' H ' | grep run_pass4_truthreco_nopileup_pp_mb.sh  > bla
 for i in `cat bla| awk '{print $1}'`; do condor_rm $i; done
 
 [ -f tmplist ] && rm tmplist
-for i in `cat bla | awk '{print $12}' | awk -F- '{print $3}' | awk -F.  -v run=${run} '{print "000000000"run"-"$1".job"}'`; do echo $i >> tmplist ; done
+for i in `cat bla | awk '{print $12}' | awk -F- '{print $3}' | awk -F.  -v run=${run} '{print "00000000"run"-"$1".job"}'`; do echo $i >> tmplist ; done
 
 [ -f sedlist ] && rm sedlist
 for i in `cat tmplist`; do echo log/run${run}/condor_$i >> sedlist; done

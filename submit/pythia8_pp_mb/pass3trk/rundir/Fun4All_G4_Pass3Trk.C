@@ -157,13 +157,6 @@ int Fun4All_G4_Pass3Trk(
   {
     return 0;
   }
-  // if we run the particle generator and use 0 it'll run forever
-  if (nEvents == 0 && !Input::HEPMC && !Input::READHITS)
-  {
-    cout << "using 0 for number of events is a bad idea when using particle generators" << endl;
-    cout << "it will run forever, so I just return without running anything" << endl;
-    return 0;
-  }
 
   se->run(nEvents);
 
