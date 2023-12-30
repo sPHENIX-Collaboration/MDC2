@@ -1,9 +1,9 @@
-#ifndef MACRO_FUN4ALLG4GLOBAL_C
-#define MACRO_FUN4ALLG4GLOBAL_C
+#ifndef MACRO_FUN4ALLG4MBDEPD_C
+#define MACRO_FUN4ALLG4MBDEPD_C
 
 #include <GlobalVariables.C>
 
-#include <G4_Bbc.C>
+#include <G4_Mbd.C>
 #include <G4_EPD.C>
 #include <G4_Input.C>
 #include <G4_Production.C>
@@ -21,10 +21,10 @@
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 
-int Fun4All_G4_BBC_EPD(
+int Fun4All_G4_MBD_EPD(
     const int nEvents = 1,
-    const string &inputFile = "G4Hits_sHijing_0_20fm-0000000007-00000.root",
-    const string &outputFile = "DST_BBC_EPD_sHijing_0_20fm-0000000007-00000.root",
+    const string &inputFile = "G4Hits_sHijing_0_20fm-0000000010-00000.root",
+    const string &outputFile = "DST_MBD_EPD_sHijing_0_20fm-0000000010-00000.root",
     const string &outdir = ".")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
@@ -47,6 +47,7 @@ int Fun4All_G4_BBC_EPD(
   Enable::CDB = true;
   rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
   rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  CDBInterface::instance()->Verbosity(1);
 
   //===============
   // Input options
@@ -94,9 +95,9 @@ int Fun4All_G4_BBC_EPD(
   //  Enable::OVERLAPCHECK = true;
   //  Enable::VERBOSITY = 1;
 
-  Enable::BBCRECO = true;  // needed in Bbc_Reco()
+  Enable::MBDRECO = true;  // needed in Mbd_Reco()
 
-  Bbc_Reco();
+  Mbd_Reco();
 
   EPD_Tiles();
 
@@ -117,8 +118,9 @@ int Fun4All_G4_BBC_EPD(
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     out->AddNode("Sync");
     out->AddNode("EventHeader");
-    out->AddNode("BbcPmtInfoContainer");
-    out->AddNode("BbcVertexMap");
+    out->AddNode("MbdPmtContainer");
+    out->AddNode("MbdOut");
+    out->AddNode("MbdVertexMap");
     out->AddNode("TOWERINFO_SIM_EPD");
     out->AddNode("TOWERINFO_CALIB_EPD");
     se->registerOutputManager(out);

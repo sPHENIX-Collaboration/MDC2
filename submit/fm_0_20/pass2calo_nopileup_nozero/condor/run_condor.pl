@@ -37,9 +37,15 @@ if ($sequence < 100000)
     $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
 }
 my $logdir = sprintf("%s/log/run%d",$localdir,$runnumber);
-mkpath($logdir);
+if (! -d $logdir)
+{
+  mkpath($logdir);
+}
 my $condorlogdir = sprintf("/tmp/fm_0_20/pass2calo_nopileup_nozero/run%d",$runnumber);
-mkpath($condorlogdir);
+if (! -d $condorlogdir)
+{
+  mkpath($condorlogdir);
+}
 my $jobfile = sprintf("%s/condor-%s.job",$logdir,$suffix);
 if (-f $jobfile)
 {
@@ -67,8 +73,7 @@ print F "accounting_group = group_sphenix.mdc2\n";
 print F "accounting_group_user = sphnxpro\n";
 print F "Requirements = (CPU_Type == \"mdc2\")\n";
 #print F "accounting_group = group_sphenix.prod\n";
-#print F "request_memory = 4096MB\n";
-print F "request_memory = 1024MB\n";
+print F "request_memory = 4096MB\n";
 print F "Priority = $baseprio\n";
 #print F "concurrency_limits = PHENIX_100\n";
 print F "job_lease_duration = 3600\n";

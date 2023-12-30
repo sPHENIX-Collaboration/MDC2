@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 7;
+my $runnumber = 10;
 my $test;
 my $incremental;
 my $verbosity;
@@ -58,8 +58,11 @@ $outfiletype{"DST_TRUTH_G4HIT"} = "DST_TRUTH";
 
 my $localdir=`pwd`;
 chomp $localdir;
-my $logdir = sprintf("%s/log",$localdir);
-mkpath($logdir);
+my $logdir = sprintf("%s/log/run%d",$localdir,$runnumber);
+if (! -d $logdir)
+{
+  mkpath($logdir);
+}
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here

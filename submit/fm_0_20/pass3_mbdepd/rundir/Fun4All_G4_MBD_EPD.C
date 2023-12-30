@@ -25,7 +25,7 @@ int Fun4All_G4_MBD_EPD(
     const int nEvents = 1,
      const string &inputFile1 = "DST_BBC_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000010-00000.root",
      const string &inputFile2 = "DST_TRUTH_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000010-00000.root",
-     const string &outputFile = "DST_BBC_EPD_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000010-00000.root",
+     const string &outputFile = "DST_MBD_EPD_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000010-00000.root",
     const string &outdir = ".")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
