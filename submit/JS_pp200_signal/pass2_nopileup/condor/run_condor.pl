@@ -6,11 +6,13 @@ use Getopt::Long;
 use File::Path;
 
 my $test;
-GetOptions("test"=>\$test);
+my $overwrite;
+GetOptions("overwrite" => \$overwrite, "test"=>\$test);
 if ($#ARGV < 9)
 {
     print "usage: run_condor.pl <events> <jettrigger> <infile> <calo outfile>  <calo outdir> <global outfile> <global outdir>  <trk outdir> <runnumber> <sequence>\n";
     print "options:\n";
+    print "-overwrite: overwrite existing job files\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
 }
@@ -49,8 +51,15 @@ if (! -d $condorlogdir)
 my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
 if (-f $jobfile)
 {
-    print "jobfile $jobfile exists, possible overlapping names\n";
-    exit(1);
+    if (defined $overwrite)
+    {
+	print "rerunning  $jobfile\n";
+    }
+    else
+    {
+	print "jobfile $jobfile exists, possible overlapping names\n";
+	exit(1);
+    }
 }
 my $condorlogfile = sprintf("%s/condor_%s.log",$condorlogdir,$suffix);
 if (-f $condorlogfile)

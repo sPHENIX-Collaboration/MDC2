@@ -13,12 +13,14 @@ my $runnumber = 11;
 my $test;
 my $incremental;
 my $shared;
-GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
+my $overwrite;
+GetOptions("test"=>\$test, "increment"=>\$incremental, "overwrite" => \$overwrite, "shared" => \$shared);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet20\", \"Jet30\", \"Jet40\",\"PhotonJet\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
+    print "--overwrite : overwrite existing job files\n";
     print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
@@ -119,6 +121,11 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $tstflag="--test";
 	}
+	if (defined $overwrite)
+	{
+	    $tstflag= sprintf("%s --overwrite", $tstflag)
+	}
+
 	my $calooutfilename = sprintf("DST_CALO_CLUSTER_pythia8_%s-%010d-%05d.root",$jettrigger,$runnumber,$segment);
 	my $globaloutfilename = sprintf("DST_MBD_EPD_pythia8_%s-%010d-%05d.root",$jettrigger,$runnumber,$segment);
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $calooutfilename, $outdir[0], $globaloutfilename, $outdir[1], $outdir[2], $runnumber, $segment, $tstflag);
