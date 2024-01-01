@@ -1,0 +1,3 @@
+/sphenix/lustre01/sphnxpro/mdc2/shijing_hepmc/fm_0_488/nopileup/calocluster
+/sphenix/lustre01/sphnxpro/mdc2/shijing_hepmc/fm_0_488/nopileup/mbdepd
+/sphenix/lustre01/sphnxpro/mdc2/shijing_hepmc/fm_0_488/nopileup/trkrhit
