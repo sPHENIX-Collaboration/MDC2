@@ -57,13 +57,6 @@ void CreateDstOutput(int runnumber, int segment)
   out->AddNode("PHHepMCGenEventMap");
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
-
-  FullOutFile = "DST_VERTEX_sHijing_0_488fm_50kHz_bkg_0_20fm-" + string(segrun) + ".root";;
-  out = new Fun4AllDstOutputManager("VERTEXOUT", FullOutFile);
-  AddCommonNodes(out);
-  out->AddNode("GlobalVertexMap");
-  se->registerOutputManager(out);
-  OUTPUTMANAGER::outfiles.insert(FullOutFile);
 }
 
 void AddCommonNodes(Fun4AllOutputManager *out)

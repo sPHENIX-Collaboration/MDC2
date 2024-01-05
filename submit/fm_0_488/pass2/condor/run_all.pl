@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $input_runnumber = 40;
+my $runnumber = 10;
 my $test;
 my $incremental;
 GetOptions("test"=>\$test, "increment"=>\$incremental);
@@ -31,6 +31,13 @@ if ($hostname !~ /phnxsub/)
 }
 
 my $maxsubmit = $ARGV[0];
+
+my $condorlistfile =  sprintf("condor.list");
+if (-f $condorlistfile)
+{
+    unlink $condorlistfile;
+}
+
 if (! -f "outdir.txt")
 {
     print "could not find outdir.txt\n";
@@ -38,26 +45,32 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-mkpath($outdir);
+$outdir = sprintf("%s/run%04d",$outdir,$runnumber);
+if (! -d $outdir)
+{
+  mkpath($outdir);
+}
 
 my %outfiletype = ();
 $outfiletype{"DST_BBC_G4HIT"} = 1;
 $outfiletype{"DST_CALO_G4HIT"} = 1;
 $outfiletype{"DST_TRKR_G4HIT"} = 1;
 $outfiletype{"DST_TRUTH_G4HIT"} = "DST_TRUTH";
-$outfiletype{"DST_VERTEX"} = 1;
 
 my $localdir=`pwd`;
 chomp $localdir;
-my $logdir = sprintf("%s/log",$localdir);
-mkpath($logdir);
+my $logdir = sprintf("%s/log/run%d",$localdir,$runnumber);
+if (! -d $logdir)
+{
+  mkpath($logdir);
+}
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%sHijing_0_488fm%' and runnumber = $input_runnumber order by filename") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%sHijing_0_488fm%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
-my $getbkglastsegment = $dbh->prepare("select max(segment) from datasets where dsttype = 'G4Hits' and filename like '%sHijing_0_20fm%' and runnumber = $input_runnumber");
+my $getbkglastsegment = $dbh->prepare("select max(segment) from datasets where dsttype = 'G4Hits' and filename like '%sHijing_0_20fm%' and runnumber = $runnumber");
 $getbkglastsegment->execute();
 my @res1 = $getbkglastsegment->fetchrow_array();
 my $lastsegment = $res1[0];
@@ -156,10 +169,10 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $nsubmit++;
 	}
-	if ($nsubmit >= $maxsubmit)
+	if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit >= 20000)
 	{
-	    print "maximum number of submissions reached, exiting\n";
-	    exit(0);
+	    print "maximum number of submissions $nsubmit reached, exiting\n";
+	    last;
 	}
     }
 }
@@ -167,3 +180,15 @@ while (my @res = $getfiles->fetchrow_array())
 $getfiles->finish();
 $chkfile->finish();
 $dbh->disconnect;
+
+if (-f $condorlistfile)
+{
+    if (defined $test)
+    {
+	print "would submit condor.job\n";
+    }
+    else
+    {
+	system("condor_submit condor.job");
+    }
+}

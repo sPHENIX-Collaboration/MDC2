@@ -13,12 +13,14 @@ my $runnumber = 10;
 my $test;
 my $incremental;
 my $shared;
-GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
+my $overwrite;
+GetOptions("test"=>\$test, "increment"=>\$incremental,  "overwrite" => \$overwrite, "shared" => \$shared);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
+    print "--overwrite : overwrite existing job files\n";
     print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
@@ -107,6 +109,10 @@ while (my @res = $getfiles->fetchrow_array())
 	if (defined $test)
 	{
 	    $tstflag="--test";
+	}
+	if (defined $overwrite)
+	{
+	    $tstflag= sprintf("%s --overwrite", $tstflag)
 	}
 	my $calooutfilename = sprintf("DST_CALO_CLUSTER_sHijing_0_488fm-%010d-%05d.root",$runnumber,$segment);
 	my $globaloutfilename = sprintf("DST_MBD_EPD_sHijing_0_488fm-%010d-%05d.root",$runnumber,$segment);

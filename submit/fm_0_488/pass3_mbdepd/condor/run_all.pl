@@ -7,9 +7,8 @@ use File::Basename;
 use Getopt::Long;
 use DBI;
 
-
 my $outevents = 0;
-my $inrunnumber=7;
+my $inrunnumber=10;
 #my $outrunnumber=40;
 my $outrunnumber=$inrunnumber;
 my $test;
@@ -52,9 +51,12 @@ my $outdir = `cat outdir.txt`;
 chomp $outdir;
 my $outdirsubdir = sprintf("run%04d",$inrunnumber);
 $outdir = sprintf("%s/%s",$outdir,$outdirsubdir);
- mkpath($outdir);
+if (! -d $outdir)
+{
+  mkpath($outdir);
+}
 
-my %bbchash = ();
+my %mbdhash = ();
 my %truthhash = ();
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
@@ -66,17 +68,17 @@ my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where d
 
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
-my $nbbc = $getfiles->rows;
+my $nmbd = $getfiles->rows;
 
 while (my @res = $getfiles->fetchrow_array())
 {
     if ($res[1] < 100000)
     {
-	$bbchash{sprintf("%05d",$res[1])} = $res[0];
+	$mbdhash{sprintf("%05d",$res[1])} = $res[0];
     }
     else
     {
-	$bbchash{sprintf("%06d",$res[1])} = $res[0];
+	$mbdhash{sprintf("%06d",$res[1])} = $res[0];
     }
 }
 $getfiles->finish();
@@ -96,22 +98,22 @@ while (my @res = $gettruthfiles->fetchrow_array())
 }
 $gettruthfiles->finish();
 
-foreach my $segment (sort { $a <=> $b } keys %bbchash)
+foreach my $segment (sort { $a <=> $b } keys %mbdhash)
 {
     if (! exists $truthhash{$segment})
     {
 	next;
     }
 
-    my $lfn = $bbchash{$segment};
+    my $lfn = $mbdhash{$segment};
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_BBC_EPD_sHijing_0_488fm_50kHz_bkg_0_20fm-%010d-%06d.root",$outrunnumber,$segment);
+	my $outfilename = sprintf("DST_MBD_EPD_sHijing_0_488fm_50kHz_bkg_0_20fm-%010d-%06d.root",$outrunnumber,$segment);
 	if ($segment < 100000)
 	{
-	    $outfilename = sprintf("DST_BBC_EPD_sHijing_0_488fm_50kHz_bkg_0_20fm-%010d-%05d.root",$outrunnumber,$segment);
+	    $outfilename = sprintf("DST_MBD_EPD_sHijing_0_488fm_50kHz_bkg_0_20fm-%010d-%05d.root",$outrunnumber,$segment);
 	}
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)

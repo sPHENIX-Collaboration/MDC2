@@ -17,6 +17,7 @@ if ($#ARGV < 3)
 
 my $localdir=`pwd`;
 chomp $localdir;
+my $baseprio = 54;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_pass3trk_fm_0_488.sh",$rundir);
 my $nevents = $ARGV[0];
@@ -31,10 +32,16 @@ if ($sequence < 100)
 }
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
-my $logdir = sprintf("%s/log",$localdir);
-mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/fm_0_488/pass3trk");
-mkpath($condorlogdir);
+my $logdir = sprintf("%s/log/run%d",$localdir,$runnumber);
+if (! -d $logdir)
+{
+  mkpath($logdir);
+}
+my $condorlogdir = sprintf("/tmp/fm_0_488/pass3trk/run%d",$runnumber);
+if (! -d $condorlogdir)
+{
+  mkpath($condorlogdir);
+}
 my $jobfile = sprintf("%s/condor-%s.job",$logdir,$suffix);
 if (-f $jobfile)
 {

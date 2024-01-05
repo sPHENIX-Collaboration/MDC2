@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $inrunnumber=7;
+my $inrunnumber=10;
 my $outrunnumber=$inrunnumber;
 my $test;
 my $incremental;
@@ -50,7 +50,10 @@ if (! -f "outdir.txt")
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 $outdir = sprintf("%s/run%04d",$outdir,$outrunnumber);
-mkpath($outdir);
+if (! -d $outdir)
+{
+  mkpath($outdir);
+}
 
 my %trkhash = ();
 my %clusterhash = ();

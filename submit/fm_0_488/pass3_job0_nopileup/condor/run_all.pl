@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=7;
+my $runnumber=10;
 my $test;
 my $incremental;
 my $shared;
@@ -41,7 +41,10 @@ if (! -f "outdir.txt")
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 $outdir = sprintf("%s/run%04d",$outdir,$runnumber);
-mkpath($outdir);
+if (! -d $outdir)
+{
+  mkpath($outdir);
+}
 
 my $condorlistfile =  sprintf("condor.list");
 if (-f $condorlistfile)

@@ -35,7 +35,7 @@ my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::er
 my $maxsubmit = $ARGV[0];
 my $hijing_runnumber = 1;
 my $hijing_dir = sprintf("/sphenix/sim/sim01/sphnxpro/MDC1/sHijing_HepMC/data");
-my $runnumber = 6;
+my $runnumber = 10;
 my $events = 50;
 my $evtsperfile = 10000;
 my $nmax = $evtsperfile;
@@ -54,7 +54,10 @@ if (! -f "outdir.txt")
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 $outdir = sprintf("%s/run%04d",$outdir,$runnumber);
-mkpath($outdir);
+if (! -d $outdir)
+{
+  mkpath($outdir);
+}
 
 my $nsubmit = 0;
 my $lastsegment=getlastsegment();

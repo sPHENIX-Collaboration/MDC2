@@ -4,9 +4,10 @@
 #include <GlobalVariables.C>
 
 #include <G4Setup_sPHENIX.C>
-#include <G4_Bbc.C>
+#include <G4_Mbd.C>
 #include <G4_Input.C>
 #include <G4_Production.C>
+#include <G4_TrkrSimulation.C>
 
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/HeadReco.h>
@@ -25,14 +26,10 @@
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
 
-// For HepMC Hijing
-// try inputFile = /sphenix/sim/sim01/sphnxpro/sHijing_HepMC/sHijing_0-12fm.dat
-
 int Fun4All_G4_Pass1(
     const int nEvents = 1,
-    const string &inputFile = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
-    const string &outputFile = "G4sPHENIX.root",
-    const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
+    const string &inputFile = "/sphenix/sim/sim01/sphnxpro/MDC1/sHijing_HepMC/data/sHijing_0_488fm-0000000001-00000.dat",
+    const string &outputFile = "G4Hits_sHijing_0_488fm-0000000007-00000.root",
     const int skip = 0,
     const string &outdir = ".")
 {
@@ -53,12 +50,15 @@ int Fun4All_G4_Pass1(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
+
   //===============
   // conditions DB flags
   //===============
   Enable::CDB = true;
-  rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
-  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  // global tag
+  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  // 64 bit timestamp
+  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
 // this extracts the runnumber and segment from the output filename
 // and sets this so the server can pick it up
@@ -78,7 +78,6 @@ int Fun4All_G4_Pass1(
   // verbosity setting (applies to all input managers)
   Input::VERBOSITY = 1; // so we get prinouts of the event number
   Input::HEPMC = true;
-  Input::BEAM_CONFIGURATION = Input::AA_COLLISION;
   
   INPUTHEPMC::filename = inputFile;
   INPUTHEPMC::FLOW = true;
@@ -87,6 +86,8 @@ int Fun4All_G4_Pass1(
 
   // Event pile up simulation with collision rate in Hz MB collisions.
   //Input::PILEUPRATE = 100e3;
+  // Enable this is emulating the nominal pp/pA/AA collision vertex distribution
+  Input::BEAM_CONFIGURATION = Input::AA_COLLISION; // for 2023 sims we want the AA geometry for no pileup sims
 
   //-----------------
   // Initialize the selected Input/Event generation
@@ -103,7 +104,6 @@ int Fun4All_G4_Pass1(
   {
     //! apply sPHENIX nominal beam parameter with 2mrad crossing as defined in sPH-TRG-2020-001
     Input::ApplysPHENIXBeamParameter(INPUTMANAGER::HepMCInputManager);
-
     if (Input::PILEUPRATE > 0)
     {
       // Copy vertex settings from foreground hepmc input
@@ -144,7 +144,7 @@ int Fun4All_G4_Pass1(
   //  Enable::OVERLAPCHECK = true;
   //  Enable::VERBOSITY = 1;
 
-  Enable::BBC = true;
+  Enable::MBD = true;
 
   Enable::PIPE = true;
 
@@ -167,10 +167,6 @@ int Fun4All_G4_Pass1(
 
   Enable::EPD = true;
 
-//  Enable::BEAMLINE = true;
-  G4BEAMLINE::skin_thickness = 0.5;
-
-//  Enable::ZDC = true;
   //! forward flux return plug door. Out of acceptance and off by default.
 //  Enable::PLUGDOOR = true;
   Enable::PLUGDOOR_BLACKHOLE = true;
@@ -181,39 +177,10 @@ int Fun4All_G4_Pass1(
   //Enable::BLACKHOLE_SAVEHITS = false; // turn off saving of bh hits
   //BlackHoleGeometry::visible = true;
 
-  //---------------
-  // World Settings
-  //---------------
-  // G4WORLD::PhysicsList = "FTFP_BERT_HP"; //FTFP_BERT_HP best for calo
-  //  G4WORLD::WorldMaterial = "G4_AIR"; // set to G4_GALACTIC for material scans
-
-  //---------------
-  // Magnet Settings
-  //---------------
-
-  //  const string magfield = "1.5"; // alternatively to specify a constant magnetic field, give a float number, which will be translated to solenoidal field in T, if string use as fieldmap name (including path)
-  //  G4MAGNET::magfield = string(getenv("CALIBRATIONROOT")) + string("/Field/Map/sPHENIX.2d.root");  // default map from the calibration database
-//  G4MAGNET::magfield_rescale = 1.;  // make consistent with expected Babar field strength of 1.4T
-
-
   // Initialize the selected subsystems
   G4Init();
 
-  //---------------------
-  // GEANT4 Detector description
-  //---------------------
-  if (!Input::READHITS)
-  {
-    G4Setup();
-  }
-
-  string outputroot = outputFile;
-  string remove_this = ".root";
-  size_t pos = outputroot.find(remove_this);
-  if (pos != string::npos)
-  {
-    outputroot.erase(pos, remove_this.length());
-  }
+  G4Setup();
 
   //--------------
   // Set up Input Managers

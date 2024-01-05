@@ -9,7 +9,7 @@ my $test;
 GetOptions("test"=>\$test);
 if ($#ARGV < 6)
 {
-    print "usage: run_condor.pl <events> <bbc infile> <truth infile> <outfile> <outdir> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <mbd infile> <truth infile> <outfile> <outdir> <runnumber> <sequence>\n";
     print "options:\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
@@ -19,7 +19,7 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 53;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_pass3_bbcepd_fm_0_488.sh",$rundir);
+my $executable = sprintf("%s/run_pass3_mbdepd_fm_0_488.sh",$rundir);
 my $nevents = $ARGV[0];
 my $infile0 = $ARGV[1];
 my $infile1 = $ARGV[2];
@@ -38,9 +38,15 @@ if ($sequence < 100000)
     $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
 }
 my $logdir = sprintf("%s/log/run%d",$localdir,$runnumber);
-mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/fm_0_488/pass3_bbcepd/run%d",$runnumber);
-mkpath($condorlogdir);
+if (! -d $logdir)
+{
+  mkpath($logdir);
+}
+my $condorlogdir = sprintf("/tmp/fm_0_488/pass3_mbdepd/run%d",$runnumber);
+if (! -d $condorlogdir)
+{
+  mkpath($condorlogdir);
+}
 my $jobfile = sprintf("%s/condor-%s.job",$logdir,$suffix);
 if (-f $jobfile)
 {

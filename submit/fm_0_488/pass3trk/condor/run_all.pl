@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 7;
+my $runnumber = 10;
 my $test;
 my $incremental;
 my $shared;
@@ -44,8 +44,12 @@ if (! -f "outdir.txt")
     exit(1);
 }
 my $outdir = `cat outdir.txt`;
+chomp $outdir;
 $outdir = sprintf("%s/run%04d",$outdir,$runnumber);
-mkpath($outdir);
+if (! -d $outdir)
+{
+  mkpath($outdir);
+}
 
 my %outfiletype = ();
 $outfiletype{"DST_TRKR_HIT"} = 1;
@@ -56,9 +60,9 @@ my %truthhash = ();
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like '%sHijing_0_488fm_50kHz_bkg_0_20fm%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like 'DST_TRKR_G4HIT_sHijing_0_488fm_50kHz_bkg_0_20fm%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
-my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH_G4HIT' and filename like '%sHijing_0_488fm_50kHz_bkg_0_20fm%'and runnumber = $runnumber");
+my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH_G4HIT' and filename like 'DST_TRUTH_G4HIT_sHijing_0_488fm_50kHz_bkg_0_20fm%'and runnumber = $runnumber");
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
 my $ncal = $getfiles->rows;

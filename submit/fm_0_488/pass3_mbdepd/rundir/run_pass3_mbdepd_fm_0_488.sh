@@ -11,7 +11,7 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.376
+source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.391
 
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
@@ -33,7 +33,7 @@ else
 fi
 # arguments 
 # $1: number of events
-# $2: bbc g4hits input file
+# $2: mbd g4hits input file
 # $3: truth g4hits input file
 # $4: output file
 # $5: output dir
@@ -43,7 +43,7 @@ fi
 echo 'here comes your environment'
 printenv
 echo arg1 \(events\) : $1
-echo arg2 \(bbc g4hits file\): $2
+echo arg2 \(mbd g4hits file\): $2
 echo arg3 \(truth g4hits file\): $3
 echo arg4 \(output file\): $4
 echo arg5 \(output dir\): $5
@@ -53,7 +53,7 @@ echo arg7 \(sequence\): $7
 runnumber=$(printf "%010d" $6)
 sequence=$(printf "%05d" $7)
 
-echo running root.exe -q -b Fun4All_G4_BBC_EPD.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
-root.exe -q -b  Fun4All_G4_BBC_EPD.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
+echo running root.exe -q -b Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
+root.exe -q -b  Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
 
 echo "script done"
