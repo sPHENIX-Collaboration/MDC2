@@ -108,7 +108,7 @@ int Fun4All_G4_Geantino(
       INPUTGENERATOR::SimpleEventGenerator[0]->set_vertex_distribution_mean(0., 0., 0.);
       INPUTGENERATOR::SimpleEventGenerator[0]->set_vertex_distribution_width(0., 0., 60.);
     }
-    INPUTGENERATOR::SimpleEventGenerator[0]->set_eta_range(-2, 2);
+    INPUTGENERATOR::SimpleEventGenerator[0]->set_eta_range(-6, 6);
     INPUTGENERATOR::SimpleEventGenerator[0]->set_phi_range(-M_PI, M_PI);
     INPUTGENERATOR::SimpleEventGenerator[0]->set_p_range(1, 1);
   }
