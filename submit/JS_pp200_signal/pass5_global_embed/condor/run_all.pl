@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=7;
+my $runnumber=10;
 my $test;
 my $incremental;
 my $overwrite;
@@ -65,11 +65,13 @@ if (! -f "outdir.txt")
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 $outdir = sprintf("%s/%s/run%04d/%s",$outdir,$fm,$runnumber,lc $jettrigger);
-mkpath($outdir);
-
+if (! -d $outdir)
+{
+  mkpath($outdir);
+}
 
 my %trkhash = ();
-my %bbcepdhash = ();
+my %mbdepdhash = ();
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
@@ -77,7 +79,7 @@ my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttyp
 
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
-my $getbbcepdfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_BBC_EPD' and filename like '%$outfilelike%' and runnumber = $runnumber");
+my $getmbdepdfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_MBD_EPD' and filename like '%$outfilelike%' and runnumber = $runnumber");
 
 my $nsubmit = 0;
 
@@ -87,17 +89,17 @@ while (my @res = $getfiles->fetchrow_array())
     $trkhash{sprintf("%05d",$res[1])} = $res[0];
 }
 $getfiles->finish();
-$getbbcepdfiles->execute() || die $DBI::errstr;
-my $nbbcepd = $getbbcepdfiles->rows;
-while (my @res = $getbbcepdfiles->fetchrow_array())
+$getmbdepdfiles->execute() || die $DBI::errstr;
+my $nmbdepd = $getmbdepdfiles->rows;
+while (my @res = $getmbdepdfiles->fetchrow_array())
 {
-    $bbcepdhash{sprintf("%05d",$res[1])} = $res[0];
+    $mbdepdhash{sprintf("%05d",$res[1])} = $res[0];
 }
-$getbbcepdfiles->finish();
+$getmbdepdfiles->finish();
 
 foreach my $segment (sort keys %trkhash)
 {
-    if (! exists $bbcepdhash{$segment})
+    if (! exists $mbdepdhash{$segment})
     {
 	next;
     }
@@ -122,7 +124,7 @@ foreach my $segment (sort keys %trkhash)
 	{
 	    $tstflag="--overwrite";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %d %d %s %s", $outevents, $jettrigger, $lfn, $bbcepdhash{sprintf("%05d",$segment)}, $outfilename, $outdir, $runnumber, $segment, $fm, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %d %d %s %s", $outevents, $jettrigger, $lfn, $mbdepdhash{sprintf("%05d",$segment)}, $outfilename, $outdir, $runnumber, $segment, $fm, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

@@ -89,6 +89,7 @@ int Fun4All_G4_JS_pp_signal(
   switch(runnumber)
   {
   case 7:
+  case 10:
   Input::BEAM_CONFIGURATION = Input::AA_COLLISION; // for 2023 sims we want the AA geometry for no pileup sims
   cout << "using Input::AA_COLLISION" << endl;
   break;
@@ -98,6 +99,7 @@ int Fun4All_G4_JS_pp_signal(
   cout << "using Input::pp_COLLISION" << endl;
   break;
   case 9:
+  case 12:
   Input::BEAM_CONFIGURATION = Input::pA_COLLISION; // for 2023 sims we want the AA geometry for no pileup sims
   cout << "using Input::pA_COLLISION" << endl;
   break;

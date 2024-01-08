@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 11;
+my $runnumber = 10;
 my $test;
 my $incremental;
 my $overwrite;
@@ -60,7 +60,10 @@ if (! -f "outdir.txt")
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 $outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,lc $jettrigger);
-mkpath($outdir);
+if (! -d $outdir)
+{
+  mkpath($outdir);
+}
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here

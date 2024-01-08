@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 11;
+my $runnumber = 10;
 my $test;
 my $incremental;
 my $shared;

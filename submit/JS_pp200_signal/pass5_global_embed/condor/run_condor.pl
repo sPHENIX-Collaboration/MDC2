@@ -10,7 +10,7 @@ my $overwrite;
 GetOptions("test"=>\$test, "overwrite"=>\$overwrite);
 if ($#ARGV < 8)
 {
-    print "usage: run_condor.pl <events> <seeds infile> <bbcepd infile> <jettrigger> <outfile> <outdir> <runnumber> <sequence> <fm range>\n";
+    print "usage: run_condor.pl <events> <seeds infile> <mbdepd infile> <jettrigger> <outfile> <outdir> <runnumber> <sequence> <fm range>\n";
     print "options:\n";
     print "--overwrite : overwrite existing jobfiles\n";
     print "--test: testmode - no condor submission\n";

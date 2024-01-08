@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $inrunnumber=7;
+my $inrunnumber=10;
 #my $outrunnumber=40;
 my $outrunnumber=$inrunnumber;
 my $test;
@@ -64,7 +64,10 @@ if (! -f "outdir.txt")
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 $outdir = sprintf("%s/%s/run%04d/%s",$outdir,$fm,$outrunnumber,lc $jettrigger);
-mkpath($outdir);
+if (! -d $outdir)
+{
+  mkpath($outdir);
+}
 
 my %calohash = ();
 
