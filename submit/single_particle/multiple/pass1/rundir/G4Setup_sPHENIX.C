@@ -3,7 +3,7 @@
 
 #include <GlobalVariables.C>
 
-#include <G4_Bbc.C>
+#include <G4_Mbd.C>
 #include <G4_BlackHole.C>
 #include <G4_CEmc_Albedo.C>
 #include <G4_CEmc_Spacal.C>
@@ -11,14 +11,12 @@
 #include <G4_HcalIn_ref.C>
 #include <G4_HcalOut_ref.C>
 #include <G4_BeamLine.C>
-#include <G4_Intt.C>
 #include <G4_Magnet.C>
-#include <G4_Micromegas.C>
-#include <G4_Mvtx.C>
+
+#include <G4_TrkrSimulation.C>
 #include <G4_PSTOF.C>
 #include <G4_Pipe.C>
 #include <G4_PlugDoor.C>
-#include <G4_TPC.C>
 #include <G4_User.C>
 #include <G4_World.C>
 #include <G4_ZDC.C>
@@ -55,7 +53,7 @@ void G4Init()
   if (Enable::INTT) InttInit();
   if (Enable::TPC) TPCInit();
   if (Enable::MICROMEGAS) MicromegasInit();
-  if (Enable::BBC) BbcInit();
+  if (Enable::MBD) MbdInit();
   if (Enable::CEMCALBEDO) CEmcAlbedoInit();
   if (Enable::CEMC) CEmcInit();
   if (Enable::HCALIN) HCalInnerInit();
@@ -87,10 +85,13 @@ int G4Setup()
   PHG4Reco *g4Reco = new PHG4Reco();
   g4Reco->set_rapidity_coverage(1.1);  // according to drawings
   WorldInit(g4Reco);
+  //PYTHIA 6
   if (G4P6DECAYER::decayType != EDecayType::kAll)
   {
     g4Reco->set_force_decay(G4P6DECAYER::decayType);
   }
+  //EvtGen 
+  g4Reco->CustomizeEvtGenDecay(EVTGENDECAYER::DecayFile); 
 
   double fieldstrength;
   istringstream stringline(G4MAGNET::magfield);
@@ -98,7 +99,8 @@ int G4Setup()
   if (stringline.fail())
   {  // conversion to double fails -> we have a string
 
-    if (G4MAGNET::magfield.find("sphenix3dbigmapxyz") != string::npos)
+    if (G4MAGNET::magfield.find("sphenix3dbigmapxyz") != string::npos ||
+        G4MAGNET::magfield == "CDB")
     {
       g4Reco->set_field_map(G4MAGNET::magfield, PHFieldConfig::Field3DCartesian);
     }
@@ -122,7 +124,7 @@ int G4Setup()
   if (Enable::INTT) radius = Intt(g4Reco, radius);
   if (Enable::TPC) radius = TPC(g4Reco, radius);
   if (Enable::MICROMEGAS) Micromegas(g4Reco);
-  if (Enable::BBC) Bbc(g4Reco);
+  if (Enable::MBD) Mbd(g4Reco);
   if (Enable::CEMCALBEDO) CEmcAlbedo(g4Reco);
   if (Enable::CEMC) radius = CEmc(g4Reco, radius, 8);
   if (Enable::HCALIN) radius = HCalInner(g4Reco, radius, 4);
@@ -177,7 +179,7 @@ void ShowerCompress(int verbosity = 0)
   compress->AddHitContainer("G4HIT_BH_1");
   compress->AddHitContainer("G4HIT_BH_FORWARD_PLUS");
   compress->AddHitContainer("G4HIT_BH_FORWARD_NEG");
-  compress->AddHitContainer("G4HIT_BBC");
+  compress->AddHitContainer("G4HIT_MBD");
   compress->AddCellContainer("G4CELL_CEMC");
   compress->AddCellContainer("G4CELL_HCALIN");
   compress->AddCellContainer("G4CELL_HCALOUT");
@@ -214,7 +216,7 @@ void DstCompress(Fun4AllDstOutputManager *out)
     out->StripNode("G4HIT_BH_1");
     out->StripNode("G4HIT_BH_FORWARD_PLUS");
     out->StripNode("G4HIT_BH_FORWARD_NEG");
-    out->StripNode("G4HIT_BBC");
+    out->StripNode("G4HIT_MBD");
     out->StripNode("G4CELL_CEMC");
     out->StripNode("G4CELL_HCALIN");
     out->StripNode("G4CELL_HCALOUT");

@@ -8,7 +8,7 @@ use Getopt::Long;
 my $test;
 my $incremental;
 my $killexist;
-my $runnumber = 7;
+my $runnumber = 13;
 my $events = 1000;
 GetOptions("test"=>\$test, "increment"=>\$incremental, "killexist" => \$killexist);
 if ($#ARGV < 4)
@@ -53,11 +53,14 @@ if (! -f "outdir.txt")
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 $outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber, lc $partprop);
-mkpath($outdir);
+if (! -d $outdir)
+{
+  mkpath($outdir);
+}
 
 my $localdir=`pwd`;
 chomp $localdir;
-my $logdir = sprintf("%s/log",$localdir);
+my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber, lc $particle);
 my $nsubmit = 0;
 my $njob = 0;
 for (my $isub = 0; $isub < $maxsubmit; $isub++)
