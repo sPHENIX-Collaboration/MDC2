@@ -6,14 +6,14 @@
 #include <G4_Production.C>
 #include <Trkr_TruthTables.C>
 
-#include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
+#include <ffamodules/FlagHandler.h>
 
-#include <fun4all/SubsysReco.h>
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
+#include <fun4all/SubsysReco.h>
 
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
@@ -22,14 +22,14 @@ R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 
 void Fun4All_TruthReco(
-  const int nEvents = 0,
-  const std::string &dst_trkr_g4hit = "DST_TRKR_G4HIT_pythia8_Jet10-0000000007-00000.root",
-  const std::string &dst_trkr_cluster = "DST_TRKR_CLUSTER_pythia8_Jet10-0000000007-00000.root",
-  const std::string &dst_tracks = "DST_TRACKS_pythia8_Jet10-0000000007-00000.root",
-  const std::string &dst_truth = "DST_TRUTH_pythia8_Jet10-0000000007-00000.root",
-  const std::string &outputFile = "DST_TRUTH_RECO_pythia8_Jet10-0000000007-00000.root",
-  const std::string &outdir = "."
-)
+    const int nEvents = 0,
+    const std::string &dst_trkr_g4hit = "DST_TRKR_G4HIT_pythia8_Jet10-0000000007-00000.root",
+    const std::string &dst_trkr_cluster = "DST_TRKR_CLUSTER_pythia8_Jet10-0000000007-00000.root",
+    const std::string &dst_tracks = "DST_TRACKS_pythia8_Jet10-0000000007-00000.root",
+    const std::string &dst_truth = "DST_TRUTH_pythia8_Jet10-0000000007-00000.root",
+    const std::string &outputFile = "DST_TRUTH_RECO_pythia8_Jet10-0000000007-00000.root",
+    const std::string &outdir = ".",
+    const string &cdbtag = "MDC2_ana.398")
 {
   gSystem->Load("libg4dst.so");
   Fun4AllServer *se = Fun4AllServer::instance();
@@ -45,9 +45,10 @@ void Fun4All_TruthReco(
   //===============
   Enable::CDB = true;
   // tag
-  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  CDBInterface::instance()->Verbosity(1);
 
   // set up production relatedstuff
   Enable::PRODUCTION = true;
@@ -87,7 +88,7 @@ void Fun4All_TruthReco(
 
   se->run(nEvents);
   // terminate
-  CDBInterface::instance()->Print(); // print used DB files
+  CDBInterface::instance()->Print();  // print used DB files
   se->End();
   se->PrintTimer();
   std::cout << "All done" << std::endl;
