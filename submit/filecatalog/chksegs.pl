@@ -456,7 +456,25 @@ else
 }
 
 open(F,">missing.files");
-my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
+#my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
+my $attempts = 0;
+CONNECTAGAIN:
+if ($attempts > 0)
+{
+    print "connection attempt failed, sleeping and trying again\n";
+    sleep(int(rand(21) + 10)); # sleep 10-30 seconds before retrying
+}
+$attempts++;
+if ($attempts > 100)
+{
+    print "giving up connecting to DB after $attempts attempts\n";
+    exit(1);
+}
+my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || goto CONNECTAGAIN;
+if ($attempts > 1)
+{
+    print "connections succeded after $attempts attempts\n";
+}
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $conds = sprintf("filename like \'\%%%s%\%\' and runnumber = %s",$systemstring,$runnumber);
 if (exists $notlike{$systemstring})
