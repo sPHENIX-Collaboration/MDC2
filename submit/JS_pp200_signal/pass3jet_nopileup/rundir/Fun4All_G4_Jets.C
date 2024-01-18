@@ -1,7 +1,7 @@
 // these include guards are not really needed, but if we ever include this
 // file somewhere they would be missed and we will have to refurbish all macros
-#ifndef MACRO_FUN4ALLJETS_C
-#define MACRO_FUN4ALLJETS_C
+#ifndef MACRO_FUN4ALLG4JETS_C
+#define MACRO_FUN4ALLG4JETS_C
 
 #include <GlobalVariables.C>
 
@@ -9,32 +9,32 @@
 #include <G4_Jets.C>
 #include <G4_Production.C>
 
-#include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
+#include <ffamodules/FlagHandler.h>
 
-#include <fun4all/Fun4AllInputManager.h>
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
+#include <fun4all/Fun4AllInputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
 
 #include <phool/recoConsts.h>
 
 R__LOAD_LIBRARY(libffamodules.so)
-  R__LOAD_LIBRARY(libfun4all.so)
+R__LOAD_LIBRARY(libfun4all.so)
 
-  void Fun4All_G4_Jets(
+void Fun4All_G4_Jets(
     const int nEvents = 10,
     const string &inputFile = "DST_TRUTH_pythia8_Jet10-0000000050-00000.root",
     const string &outputFile = "DST_TRUTH_JETS_pythia8_Jet10-0000000050-00000.root",
-    const string &outdir = "."
-    )
+    const string &outdir = ".",
+    const string &cdbtag = "MDC2_ana.398")
 {
-// this convenience library knows all our i/o objects so you don't
-// have to figure out what is in each dst type 
+  // this convenience library knows all our i/o objects so you don't
+  // have to figure out what is in each dst type
   gSystem->Load("libg4dst.so");
   Fun4AllServer *se = Fun4AllServer::instance();
-  se->Verbosity(1); // set it to 1 if you want event printouts
+  se->Verbosity(1);  // set it to 1 if you want event printouts
 
   recoConsts *rc = recoConsts::instance();
 
@@ -42,8 +42,9 @@ R__LOAD_LIBRARY(libffamodules.so)
   // conditions DB flags
   //===============
   Enable::CDB = true;
-  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
-  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
+  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  CDBInterface::instance()->Verbosity(1);
 
   Fun4AllInputManager *in = new Fun4AllDstInputManager("DSTTRUTH");
   in->fileopen(inputFile);
@@ -112,4 +113,4 @@ R__LOAD_LIBRARY(libffamodules.so)
   gSystem->Exit(0);
 }
 
-#endif //MACRO_FUN4ALLJETS_C
+#endif  // MACRO_FUN4ALLG4JETS_C
