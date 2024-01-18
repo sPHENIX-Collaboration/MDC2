@@ -20,7 +20,7 @@ namespace PRODUCTION
 void Production_CreateOutputDir()
 {
   PRODUCTION::SaveOutputDir = DstOut::OutputDir;
-// check if directory already exists, mkdirs can hang up the system if we have gazillions of them
+  // check if directory already exists, mkdirs can hang up the system if we have gazillions of them
   DIR *dr;
   struct dirent *en;
   dr = opendir(DstOut::OutputDir.c_str());

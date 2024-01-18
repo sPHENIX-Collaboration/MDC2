@@ -21,8 +21,9 @@ void CreateDstOutput(int runnumber, int segment, const string &quarkfilter)
   auto se = Fun4AllServer::instance();
 
   char segrun[100];
-  snprintf(segrun,100,"%s-%010d-%05d",quarkfilter.c_str(),runnumber,segment);
-  string FullOutFile = "DST_TRUTH_pythia8_" + string(segrun) + ".root";;
+  snprintf(segrun, 100, "%s-%010d-%05d", quarkfilter.c_str(), runnumber, segment);
+  string FullOutFile = "DST_TRUTH_pythia8_" + string(segrun) + ".root";
+  ;
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("TRUTHOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("PHHepMCGenEventMap");
@@ -32,7 +33,8 @@ void CreateDstOutput(int runnumber, int segment, const string &quarkfilter)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "DST_TRKR_HIT_pythia8_" + string(segrun) + ".root";;
+  FullOutFile = "DST_TRKR_HIT_pythia8_" + string(segrun) + ".root";
+  ;
   out = new Fun4AllDstOutputManager("TRKROUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("TRKR_HITSET");
@@ -62,16 +64,16 @@ void DstOutput_move()
     }
     for (auto iter = OUTPUTMANAGER::outfiles.begin(); iter != OUTPUTMANAGER::outfiles.end(); ++iter)
     {
-//   string mvcmd = "mv " + *iter + " " + PRODUCTION::SaveOutputDir;
+      //   string mvcmd = "mv " + *iter + " " + PRODUCTION::SaveOutputDir;
       string mvcmd;
       if (scriptexists)
       {
-//        mvcmd = copyscript + " -outdir " + PRODUCTION::SaveOutputDir + " " + *iter + " --test";
+        //        mvcmd = copyscript + " -outdir " + PRODUCTION::SaveOutputDir + " " + *iter + " --test";
         mvcmd = copyscript + " -outdir " + PRODUCTION::SaveOutputDir + " " + *iter;
       }
       else
       {
-	mvcmd = "cp " + *iter + " " + PRODUCTION::SaveOutputDir;
+        mvcmd = "cp " + *iter + " " + PRODUCTION::SaveOutputDir;
       }
       gSystem->Exec(mvcmd.c_str());
     }

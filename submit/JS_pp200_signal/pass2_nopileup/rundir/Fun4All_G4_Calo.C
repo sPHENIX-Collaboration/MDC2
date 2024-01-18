@@ -10,8 +10,8 @@
 #include <G4_Production.C>
 #include <G4_TopoClusterReco.C>
 
-#include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
+#include <ffamodules/FlagHandler.h>
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
@@ -25,14 +25,15 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_Calo(
     const int nEvents = 1,
-    const string &inputFile0 = "G4Hits_pythia8_Jet30-0000000006-00000.root",
-    const string &outputFile = "DST_CALO_CLUSTER_pythia8_Jet30-0000000006-00000.root",
-    const string &outdir = ".")
+    const string &inputFile0 = "G4Hits_pythia8_Jet30-0000000010-00000.root",
+    const string &outputFile = "DST_CALO_CLUSTER_pythia8_Jet30-0000000010-00000.root",
+    const string &outdir = ".",
+    const string &cdbtag = "MDC2_ana.398")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
 
-  //Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
+  // Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
   PHRandomSeed::Verbosity(1);
 
   // just if we set some flags somewhere in this macro
@@ -47,8 +48,9 @@ int Fun4All_G4_Calo(
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
   Enable::CDB = true;
-  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
-  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
+  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  CDBInterface::instance()->Verbosity(1);
 
   //===============
   // Input options
@@ -72,12 +74,12 @@ int Fun4All_G4_Calo(
   // register all input generators with Fun4All
   InputRegister();
 
-// register the flag handling
+  // register the flag handling
   FlagHandler *flag = new FlagHandler();
   se->registerSubsystem(flag);
 
   // set up production relatedstuff
-   Enable::PRODUCTION = true;
+  Enable::PRODUCTION = true;
 
   //======================
   // Write the DST
@@ -156,7 +158,7 @@ int Fun4All_G4_Calo(
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     out->AddNode("Sync");
     out->AddNode("EventHeader");
-// Inner Hcal
+    // Inner Hcal
     out->AddNode("TOWER_SIM_HCALIN");
     out->AddNode("TOWER_RAW_HCALIN");
     out->AddNode("TOWER_CALIB_HCALIN");
@@ -165,7 +167,7 @@ int Fun4All_G4_Calo(
     out->AddNode("TOWERINFO_CALIB_HCALIN");
     out->AddNode("CLUSTER_HCALIN");
 
-// Outer Hcal
+    // Outer Hcal
     out->AddNode("TOWER_SIM_HCALOUT");
     out->AddNode("TOWER_RAW_HCALOUT");
     out->AddNode("TOWER_CALIB_HCALOUT");
@@ -174,7 +176,7 @@ int Fun4All_G4_Calo(
     out->AddNode("TOWERINFO_CALIB_HCALOUT");
     out->AddNode("CLUSTER_HCALOUT");
 
-// CEmc
+    // CEmc
     out->AddNode("TOWER_SIM_CEMC");
     out->AddNode("TOWER_RAW_CEMC");
     out->AddNode("TOWER_CALIB_CEMC");
@@ -184,7 +186,7 @@ int Fun4All_G4_Calo(
     out->AddNode("CLUSTER_CEMC");
     out->AddNode("CLUSTER_POS_COR_CEMC");
 
-// leave the topo cluster here in case we run this during pass3
+    // leave the topo cluster here in case we run this during pass3
     out->AddNode("TOPOCLUSTER_ALLCALO");
     out->AddNode("TOPOCLUSTER_EMCAL");
     out->AddNode("TOPOCLUSTER_HCAL");
@@ -204,7 +206,7 @@ int Fun4All_G4_Calo(
   // Exit
   //-----
 
-  CDBInterface::instance()->Print(); // print used DB files
+  CDBInterface::instance()->Print();  // print used DB files
   se->End();
   se->PrintTimer();
   std::cout << "All done" << std::endl;
