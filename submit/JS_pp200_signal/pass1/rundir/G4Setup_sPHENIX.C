@@ -3,20 +3,20 @@
 
 #include <GlobalVariables.C>
 
-#include <G4_Mbd.C>
+#include <G4_BeamLine.C>
 #include <G4_BlackHole.C>
 #include <G4_CEmc_Albedo.C>
 #include <G4_CEmc_Spacal.C>
 #include <G4_EPD.C>
 #include <G4_HcalIn_ref.C>
 #include <G4_HcalOut_ref.C>
-#include <G4_BeamLine.C>
 #include <G4_Magnet.C>
+#include <G4_Mbd.C>
 
-#include <G4_TrkrSimulation.C>
 #include <G4_PSTOF.C>
 #include <G4_Pipe.C>
 #include <G4_PlugDoor.C>
+#include <G4_TrkrSimulation.C>
 #include <G4_User.C>
 #include <G4_World.C>
 #include <G4_ZDC.C>
@@ -43,8 +43,8 @@ void G4Init()
   // Check on invalid combinations
   if (Enable::CEMC && Enable::CEMCALBEDO)
   {
-      cout << "Enable::CEMCALBEDO and Enable::CEMC cannot be set simultanously" << endl;
-      gSystem->Exit(1);
+    cout << "Enable::CEMCALBEDO and Enable::CEMC cannot be set simultanously" << endl;
+    gSystem->Exit(1);
   }
   // load detector/material macros and execute Init() function
 
@@ -58,7 +58,7 @@ void G4Init()
   if (Enable::CEMC) CEmcInit();
   if (Enable::HCALIN) HCalInnerInit();
   if (Enable::MAGNET) MagnetInit();
-  MagnetFieldInit(); // We want the field - even if the magnet volume is disabled
+  MagnetFieldInit();  // We want the field - even if the magnet volume is disabled
   if (Enable::HCALOUT) HCalOuterInit();
   if (Enable::PLUGDOOR) PlugDoorInit();
   if (Enable::EPD) EPDInit();
@@ -85,12 +85,12 @@ int G4Setup()
   PHG4Reco *g4Reco = new PHG4Reco();
   g4Reco->set_rapidity_coverage(1.1);  // according to drawings
   WorldInit(g4Reco);
-  //PYTHIA 6
+  // PYTHIA 6
   if (G4P6DECAYER::decayType != EDecayType::kAll)
   {
     g4Reco->set_force_decay(G4P6DECAYER::decayType);
   }
-  //EvtGen
+  // EvtGen
   g4Reco->CustomizeEvtGenDecay(EVTGENDECAYER::DecayFile);
 
   double fieldstrength;
@@ -115,8 +115,8 @@ int G4Setup()
   }
   g4Reco->set_field_rescale(G4MAGNET::magfield_rescale);
 
-// the radius is an older protection against overlaps, it is not
-// clear how well this works nowadays but it doesn't hurt either
+  // the radius is an older protection against overlaps, it is not
+  // clear how well this works nowadays but it doesn't hurt either
   double radius = 0.;
 
   if (Enable::PIPE) radius = Pipe(g4Reco, radius);
@@ -142,7 +142,6 @@ int G4Setup()
     }
   }
   if (Enable::USER) UserDetector(g4Reco);
-
 
   //----------------------------------------
   // BLACKHOLE

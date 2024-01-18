@@ -4,18 +4,18 @@
 #include <GlobalVariables.C>
 
 #include <G4Setup_sPHENIX.C>
-#include <G4_Mbd.C>
 #include <G4_Global.C>
 #include <G4_Input.C>
+#include <G4_Mbd.C>
 #include <G4_Production.C>
 #include <G4_TrkrSimulation.C>
 
 #include <phpythia8/PHPy8JetTrigger.h>
 
+#include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/HeadReco.h>
 #include <ffamodules/SyncReco.h>
-#include <ffamodules/CDBInterface.h>
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
@@ -32,17 +32,18 @@ R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
 
 int Fun4All_G4_JS_pp_signal(
-  const int nEvents = 1,
-  const string &jettrigger = "Jet30", // or "PhotonJet"
-  const string &outputFile = "G4Hits_pythia8_PhotonJet-0000008-00000.root",
-  const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
-  const int skip = 0,
-  const string &outdir = ".")
+    const int nEvents = 1,
+    const string &jettrigger = "Jet30",  // or "PhotonJet"
+    const string &outputFile = "G4Hits_pythia8_PhotonJet-0000008-00000.root",
+    const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
+    const int skip = 0,
+    const string &outdir = ".",
+    const string &cdbtag = "MDC2_ana.398")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
 
-  //Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
+  // Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
   PHRandomSeed::Verbosity(1);
 
   // just if we set some flags somewhere in this macro
@@ -56,24 +57,24 @@ int Fun4All_G4_JS_pp_signal(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
-  //int seedValue = 491258969;
-  //rc->set_IntFlag("RANDOMSEED", seedValue);
+  // int seedValue = 491258969;
+  // rc->set_IntFlag("RANDOMSEED", seedValue);
 
   //===============
   // conditions DB flags
   //===============
   Enable::CDB = true;
   // global tag
-  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
 
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
-  int runnumber=runseg.first;
-  int segment=runseg.second;
+  int runnumber = runseg.first;
+  int segment = runseg.second;
   if (runnumber != 0)
   {
-    rc->set_IntFlag("RUNNUMBER",runnumber);
+    rc->set_IntFlag("RUNNUMBER", runnumber);
     Fun4AllSyncManager *syncman = se->getSyncManager();
     syncman->SegmentNumber(segment);
   }
@@ -85,31 +86,30 @@ int Fun4All_G4_JS_pp_signal(
   Input::VERBOSITY = 0;
 
   // Enable this is emulating the nominal pp/pA/AA collision vertex distribution
-//  Input::BEAM_CONFIGURATION = Input::AA_COLLISION; // for 2023 sims we want the AA geometry for no pileup sims
-  switch(runnumber)
+  //  Input::BEAM_CONFIGURATION = Input::AA_COLLISION; // for 2023 sims we want the AA geometry for no pileup sims
+  switch (runnumber)
   {
   case 7:
   case 10:
-  Input::BEAM_CONFIGURATION = Input::AA_COLLISION; // for 2023 sims we want the AA geometry for no pileup sims
-  cout << "using Input::AA_COLLISION" << endl;
-  break;
+    Input::BEAM_CONFIGURATION = Input::AA_COLLISION;  // for 2023 sims we want the AA geometry for no pileup sims
+    cout << "using Input::AA_COLLISION" << endl;
+    break;
   case 8:
   case 11:
-  Input::BEAM_CONFIGURATION = Input::pp_COLLISION; // for 2023 sims we want the AA geometry for no pileup sims
-  cout << "using Input::pp_COLLISION" << endl;
-  break;
+    Input::BEAM_CONFIGURATION = Input::pp_COLLISION;  // for 2023 sims we want the AA geometry for no pileup sims
+    cout << "using Input::pp_COLLISION" << endl;
+    break;
   case 9:
   case 12:
-  Input::BEAM_CONFIGURATION = Input::pA_COLLISION; // for 2023 sims we want the AA geometry for no pileup sims
-  cout << "using Input::pA_COLLISION" << endl;
-  break;
+    Input::BEAM_CONFIGURATION = Input::pA_COLLISION;  // for 2023 sims we want the AA geometry for no pileup sims
+    cout << "using Input::pA_COLLISION" << endl;
+    break;
   default:
     cout << "runnnumber " << runnumber << " not implemented" << endl;
     gSystem->Exit(1);
     break;
   }
   Input::PYTHIA8 = true;
-
 
   //-----------------
   // Initialize the selected Input/Event generation
@@ -149,19 +149,19 @@ int Fun4All_G4_JS_pp_signal(
   if (Input::PYTHIA8)
   {
     PHPy8JetTrigger *p8_js_signal_trigger = new PHPy8JetTrigger();
-    p8_js_signal_trigger->SetEtaHighLow(1.5,-1.5); // Set eta acceptance for particles into the jet between +/- 1.5
-    p8_js_signal_trigger->SetJetR(0.4);      //Set the radius for the trigger jet
+    p8_js_signal_trigger->SetEtaHighLow(1.5, -1.5);  // Set eta acceptance for particles into the jet between +/- 1.5
+    p8_js_signal_trigger->SetJetR(0.4);              // Set the radius for the trigger jet
     if (jettrigger == "Jet10")
     {
-      p8_js_signal_trigger->SetMinJetPt(10); // require a 10 GeV minimum pT jet in the event
+      p8_js_signal_trigger->SetMinJetPt(10);  // require a 10 GeV minimum pT jet in the event
     }
     else if (jettrigger == "Jet20")
     {
-      p8_js_signal_trigger->SetMinJetPt(20); // require a 20 GeV minimum pT jet in the event
+      p8_js_signal_trigger->SetMinJetPt(20);  // require a 20 GeV minimum pT jet in the event
     }
     else if (jettrigger == "Jet30")
     {
-      p8_js_signal_trigger->SetMinJetPt(30); // require a 30 GeV minimum pT jet in the event
+      p8_js_signal_trigger->SetMinJetPt(30);  // require a 30 GeV minimum pT jet in the event
     }
     else if (jettrigger == "PhotonJet")
     {
@@ -206,8 +206,8 @@ int Fun4All_G4_JS_pp_signal(
   DstOut::OutputDir = outdir;
   DstOut::OutputFile = outputFile;
 
-  //Option to convert DST to human command readable TTree for quick poke around the outputs
-  //  Enable::DSTREADER = true;
+  // Option to convert DST to human command readable TTree for quick poke around the outputs
+  //   Enable::DSTREADER = true;
 
   //======================
   // What to run
@@ -219,10 +219,10 @@ int Fun4All_G4_JS_pp_signal(
   //  Enable::VERBOSITY = 1;
 
   Enable::MBD = true;
-//  Enable::MBDFAKE = true;  // Smeared vtx and t0, use if you don't want real MBD in simulation
+  //  Enable::MBDFAKE = true;  // Smeared vtx and t0, use if you don't want real MBD in simulation
 
   Enable::PIPE = true;
-//  Enable::PIPE_ABSORBER = true;
+  //  Enable::PIPE_ABSORBER = true;
 
   // central tracking
   Enable::MVTX = true;
@@ -242,34 +242,34 @@ int Fun4All_G4_JS_pp_signal(
   Enable::HCALIN = true;
 
   Enable::MAGNET = true;
-//  Enable::MAGNET_ABSORBER = false;
+  //  Enable::MAGNET_ABSORBER = false;
 
   Enable::HCALOUT = true;
 
   Enable::EPD = true;
 
   //! forward flux return plug door. Out of acceptance and off by default.
-//  Enable::PLUGDOOR = true;
+  //  Enable::PLUGDOOR = true;
   Enable::PLUGDOOR_BLACKHOLE = true;
-//  Enable::PLUGDOOR_ABSORBER = true;
+  //  Enable::PLUGDOOR_ABSORBER = true;
 
-//  Enable::BEAMLINE = true;
+  //  Enable::BEAMLINE = true;
   G4BEAMLINE::skin_thickness = 0.5;
-//  Enable::BEAMLINE_ABSORBER = true;  // makes the beam line magnets sensitive volumes
-//  Enable::BEAMLINE_BLACKHOLE = true; // turns the beamline magnets into black holes
-//  Enable::ZDC = true;
-//  Enable::ZDC_ABSORBER = true;
-//  Enable::ZDC_SUPPORT = true;
-//  Enable::ZDC_TOWER = Enable::ZDC && true;
+  //  Enable::BEAMLINE_ABSORBER = true;  // makes the beam line magnets sensitive volumes
+  //  Enable::BEAMLINE_BLACKHOLE = true; // turns the beamline magnets into black holes
+  //  Enable::ZDC = true;
+  //  Enable::ZDC_ABSORBER = true;
+  //  Enable::ZDC_SUPPORT = true;
+  //  Enable::ZDC_TOWER = Enable::ZDC && true;
   Enable::ZDC_EVAL = Enable::ZDC_TOWER && true;
-//  Enable::GLOBAL_RECO = true;
-  //Enable::GLOBAL_FASTSIM = true;
-  
+  //  Enable::GLOBAL_RECO = true;
+  // Enable::GLOBAL_FASTSIM = true;
+
   // new settings using Enable namespace in GlobalVariables.C
   Enable::BLACKHOLE = true;
-  Enable::BLACKHOLE_FORWARD_SAVEHITS = false; // disable forward/backward hits
-  //Enable::BLACKHOLE_SAVEHITS = false; // turn off saving of bh hits
-  //BlackHoleGeometry::visible = true;
+  Enable::BLACKHOLE_FORWARD_SAVEHITS = false;  // disable forward/backward hits
+  // Enable::BLACKHOLE_SAVEHITS = false; // turn off saving of bh hits
+  // BlackHoleGeometry::visible = true;
 
   // Initialize the selected subsystems
   G4Init();
@@ -321,7 +321,7 @@ int Fun4All_G4_JS_pp_signal(
   // Exit
   //-----
 
-  CDBInterface::instance()->Print(); // print used DB files
+  CDBInterface::instance()->Print();  // print used DB files
   se->End();
   std::cout << "All done" << std::endl;
   delete se;
