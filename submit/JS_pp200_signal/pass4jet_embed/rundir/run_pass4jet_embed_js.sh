@@ -11,7 +11,11 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.391
+anabuild=ana.398
+
+source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
+
+cdbtag=MDC2_$anabuild
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
@@ -49,7 +53,8 @@ echo arg4 \(output dir\): $4
 echo arg5 \(jettrigger\): $5
 echo arg6 \(runnumber\): $6
 echo arg7 \(sequence\): $7
+echo cdbtag: $cdbtag
 
-echo running root.exe -q -b Fun4All_G4_Jets.C\($1,\"$2\",\"$3\",\"$4\"\)
-root.exe -q -b  Fun4All_G4_Jets.C\($1,\"$2\",\"$3\",\"$4\"\)
+echo running root.exe -q -b Fun4All_G4_Jets.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
+root.exe -q -b  Fun4All_G4_Jets.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
 echo "script done"

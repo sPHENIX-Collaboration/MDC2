@@ -8,12 +8,12 @@
 #include <G4_Jets.C>
 #include <G4_Production.C>
 
-#include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
+#include <ffamodules/FlagHandler.h>
 
-#include <fun4all/Fun4AllInputManager.h>
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
+#include <fun4all/Fun4AllInputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
 
@@ -23,17 +23,17 @@ R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 
 void Fun4All_G4_Jets(
-  const int nEvents = 0,
-  const string &inputFile = "DST_TRUTH_pythia8_Jet10_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
-  const string &outputFile = "DST_TRUTH_JETS_pythia8_Jet10_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006--00000.root",
-  const string &outdir = "."
-  )
+    const int nEvents = 0,
+    const string &inputFile = "DST_TRUTH_pythia8_Jet10_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
+    const string &outputFile = "DST_TRUTH_JETS_pythia8_Jet10_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006--00000.root",
+    const string &outdir = ".",
+    const string &cdbtag = "MDC2_ana.398")
 {
-// this convenience library knows all our i/o objects so you don't
-// have to figure out what is in each dst type 
+  // this convenience library knows all our i/o objects so you don't
+  // have to figure out what is in each dst type
   gSystem->Load("libg4dst.so");
   Fun4AllServer *se = Fun4AllServer::instance();
-  se->Verbosity(1); // set it to 1 if you want event printouts
+  se->Verbosity(1);  // set it to 1 if you want event printouts
 
   recoConsts *rc = recoConsts::instance();
 
@@ -41,8 +41,9 @@ void Fun4All_G4_Jets(
   // conditions DB flags
   //===============
   Enable::CDB = true;
-  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
-  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
+  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  CDBInterface::instance()->Verbosity(1);
 
   Fun4AllInputManager *in = new Fun4AllDstInputManager("DSTTRUTH");
   in->fileopen(inputFile);
@@ -111,4 +112,4 @@ void Fun4All_G4_Jets(
   gSystem->Exit(0);
 }
 
-#endif //MACRO_FUN4ALLJETS_C
+#endif  // MACRO_FUN4ALLJETS_C

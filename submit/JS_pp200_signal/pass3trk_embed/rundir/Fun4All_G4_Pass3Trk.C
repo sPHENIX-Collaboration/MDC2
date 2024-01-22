@@ -8,8 +8,8 @@
 #include <G4_Production.C>
 #include <G4_TrkrSimulation.C>
 
-#include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
+#include <ffamodules/FlagHandler.h>
 
 #include <fun4allutils/TimerStats.h>
 
@@ -31,12 +31,13 @@ int Fun4All_G4_Pass3Trk(
     const string &inputFile1 = "DST_TRUTH_G4HIT_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
     const string &outdir = ".",
     const string &jettrigger = "Jet30",
-    const string &fmrange = "0_20fm")
+    const string &fmrange = "0_20fm",
+    const string &cdbtag = "MDC2_ana.398")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
 
-  //Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
+  // Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
   PHRandomSeed::Verbosity(1);
 
   // just if we set some flags somewhere in this macro
@@ -52,9 +53,10 @@ int Fun4All_G4_Pass3Trk(
   //  rc->set_IntFlag("RANDOMSEED", 12345);
   Enable::CDB = true;
   // tag
-  rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  CDBInterface::instance()->Verbosity(1);
 
   //===============
   // Input options
@@ -82,7 +84,6 @@ int Fun4All_G4_Pass3Trk(
   // set up production relatedstuff
   Enable::PRODUCTION = true;
 
-
   //======================
   // Write the DST
   //======================
@@ -97,9 +98,8 @@ int Fun4All_G4_Pass3Trk(
   if (Enable::PRODUCTION)
   {
     PRODUCTION::SaveOutputDir = DstOut::OutputDir;
-//    Production_CreateOutputDir();
+    //    Production_CreateOutputDir();
   }
-
 
   //======================
   // What to run
@@ -123,7 +123,6 @@ int Fun4All_G4_Pass3Trk(
 
   Enable::MICROMEGAS = true;
   Enable::MICROMEGAS_CELL = Enable::MICROMEGAS && true;
-
 
   //------------------
   // New Flag Handling
@@ -152,8 +151,8 @@ int Fun4All_G4_Pass3Trk(
 
   if (Enable::PRODUCTION)
   {
-    CreateDstOutput(runnumber, segment,jettrigger, fmrange);
-//    Production_CreateOutputDir();
+    CreateDstOutput(runnumber, segment, jettrigger, fmrange);
+    //    Production_CreateOutputDir();
   }
 
   // if we use a negative number of events we go back to the command line here
@@ -168,7 +167,7 @@ int Fun4All_G4_Pass3Trk(
   // Exit
   //-----
 
-  CDBInterface::instance()->Print(); // print used DB files
+  CDBInterface::instance()->Print();  // print used DB files
   se->End();
   se->PrintTimer();
   std::cout << "All done" << std::endl;
