@@ -1,8 +1,6 @@
 #ifndef FUN4ALL_YEAR1_C
 #define FUN4ALL_YEAR1_C
 
-#include <G4_Production.C>
-
 #include <caloreco/CaloTowerBuilder.h>
 #include <caloreco/CaloTowerCalib.h>
 #include <caloreco/CaloTowerStatus.h>
@@ -34,18 +32,22 @@
 
 #include <phool/recoConsts.h>
 
+#include <centrality/CentralityReco.h>
+#include <calotrigger/MinimumBiasClassifier.h>
+
+#include <calovalid/CaloValid.h>
+
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libfun4allraw.so)
 R__LOAD_LIBRARY(libcalo_reco.so)
+R__LOAD_LIBRARY(libcalotrigger.so)
+R__LOAD_LIBRARY(libcentrality.so)
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libmbd.so)
 R__LOAD_LIBRARY(libglobalvertex.so)
+R__LOAD_LIBRARY(libcalovalid.so)
 
-void Fun4All_Year1(int nEvents = 5,
-                   const std::string &lfn = "beam-00023053-0201.prdf",
-                   const std::string &outputFile = "DST_CALO-00023053-0201.root",
-                   const std::string &outdir = ".",
-                   const std::string &cdbtag = "2023p004")
+void Fun4All_Year1(const std::string &fname = "/sphenix/lustre01/sphnxpro/commissioning/aligned_prdf/beam-00021774-0000.prdf", int nEvents = 10)
 {
   bool enableMasking = 0;
   bool addZeroSupCaloNodes = 1;
@@ -57,34 +59,28 @@ void Fun4All_Year1(int nEvents = 5,
   // CaloTowerDefs::BuilderType buildertype = CaloTowerDefs::kPRDFWaveform;
 
   Fun4AllServer *se = Fun4AllServer::instance();
-  se->Verbosity(1);
+  se->Verbosity(0);
 
   recoConsts *rc = recoConsts::instance();
 
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(lfn);
+  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(fname);
   int runnumber = runseg.first;
   int segment = runseg.second;
-
+  char outfile[100];
+  char outfile_hist[100];
+  sprintf(outfile, "DST_CALOR-%08d-%04d.root", runnumber, segment);
+  sprintf(outfile_hist, "HIST_CALOR-%08d-%04d.root", runnumber, segment);
+  string fulloutfile = string("./") + outfile;
+  string fulloutfile_hist = string("./") + outfile_hist;
   //===============
   // conditions DB flags
   //===============
   // ENABLE::CDB = true;
   // global tag
-  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
+  rc->set_StringFlag("CDB_GLOBALTAG", "ProdA_2023");
   // // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP", runnumber);
   CDBInterface::instance()->Verbosity(1);
-
-  // set up production relatedstuff
-  Enable::PRODUCTION = true;
-  //======================
-  // Write the DST
-  //======================
-
-  Enable::DSTOUT = true;
-  Enable::DSTOUT_COMPRESS = false;
-  DstOut::OutputDir = outdir;
-  DstOut::OutputFile = outputFile;
 
   // Sync Headers and Flags
   SyncReco *sync = new SyncReco();
@@ -286,31 +282,33 @@ void Fun4All_Year1(int nEvents = 5,
     se->registerSubsystem(calibOHCal_SZ);
   }
 
+  CentralityReco *centralityreco = new CentralityReco();
+  se->registerSubsystem(centralityreco);
+
+  MinimumBiasClassifier *minimumbiasclassifier = new MinimumBiasClassifier();
+  se->registerSubsystem(minimumbiasclassifier);
+
+  ///////////////////////////////////
+  // Validation 
+  CaloValid *ca = new CaloValid("calomodulename",fulloutfile_hist);
+  ca->set_timing_cut_width(200);  //integers for timing width, > 1 : wider cut around max peak time
+  ca->apply_vertex_cut(false);
+  ca->set_vertex_cut(20.);
+  se->registerSubsystem(ca);
+
+
   Fun4AllInputManager *In = new Fun4AllPrdfInputManager("in");
-  In->AddFile(lfn);
+  In->AddFile(fname);
   se->registerInputManager(In);
 
-  if (Enable::PRODUCTION)
-  {
-    Production_CreateOutputDir();
-  }
-
-  if (Enable::DSTOUT)
-  {
-    string FullOutFile = DstOut::OutputFile;
-    Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
-    se->registerOutputManager(out);
-  }
+  Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", fulloutfile);
+  se->registerOutputManager(out);
 
   se->run(nEvents);
   se->End();
   CDBInterface::instance()->Print();  // print used DB files
   se->PrintTimer();
   delete se;
-  if (Enable::PRODUCTION)
-  {
-    Production_MoveOutput();
-  }
   std::cout << "All done!" << std::endl;
   gSystem->Exit(0);
 }
