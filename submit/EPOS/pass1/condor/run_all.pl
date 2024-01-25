@@ -37,7 +37,6 @@ my $epos_runnumber = 1;
 my $epos_dir = sprintf("/sphenix/sim/sim01/sphnxpro/mdc2/EPOS/AuAu");
 my $runnumber = 10;
 my $events = 400;
-$events = 200;
 #$events = 100; # for ftfp_bert_hp
 my $evtsperfile = 400;
 my $nmax = $evtsperfile;
@@ -68,7 +67,7 @@ OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
 	print "could not locate $eposdatfile\n";
 	next;
     }
-#    print "epos: $eposdatfile\n";
+#    print "epos: $eposdatfile, nmax: $nmax, events $events\n";
     my $sequence = $segment*$evtsperfile/$events;
     for (my $n=0; $n<$nmax; $n+=$events)
     {
@@ -129,7 +128,7 @@ sub getlastsegment()
     my @files = ();
     foreach my $f (@tmpfiles)
     {
-	if ($f =~ /0_20fm/)
+	if ($f =~ /EPOS_AuAu/)
 	{
 	    push(@files,$f);
 	}
