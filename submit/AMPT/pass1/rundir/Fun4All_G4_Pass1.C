@@ -165,8 +165,8 @@ int Fun4All_G4_Pass1(
   Enable::EPD = true;
 
   //! forward flux return plug door. Out of acceptance and off by default.
-  Enable::PLUGDOOR = true;
-  // Enable::PLUGDOOR_BLACKHOLE = true;
+  // Enable::PLUGDOOR = true;
+  Enable::PLUGDOOR_BLACKHOLE = true;
 
   // new settings using Enable namespace in GlobalVariables.C
   Enable::BLACKHOLE = true;
