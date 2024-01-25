@@ -47,11 +47,12 @@ echo arg3 \(output file\): $3
 echo arg4 \(output dir\): $4
 echo arg5 \(runnumber\): $5
 echo arg6 \(sequence\): $6
+echo cdbtag: $cdbtag
 
 runnumber=$(printf "%010d" $5)
 sequence=$(printf "%05d" $6)
 
-echo running root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\"$cdbtag\"\)
-root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\"$cdbtag\"\)
+echo running root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
+root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
 
 echo "script done"

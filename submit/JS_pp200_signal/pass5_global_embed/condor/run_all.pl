@@ -16,7 +16,7 @@ my $overwrite;
 my $shared;
 my $phenix;
 my $fm = "0_20fm";
-GetOptions("test"=>\$test, "fm:s" =>\$fm, "increment"=>\$incremental,  "overwrite"=>\$overwrite,"phenix" => \$phenix, "shared" => \$shared);
+GetOptions("test"=>\$test, "fm:s" =>\$fm, "increment"=>\$incremental, "overwrite"=>\$overwrite, "phenix" => \$phenix, "shared" => \$shared);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"Jet40\", \"PhotonJet\" production>\n";

@@ -17,7 +17,7 @@ ana_mbdepd=ana.391
 ana_pass3trk=ana.391
 
 run_calo=1
-run_trk=1
+run_trk=0
 run_mbdepd=1
 
 source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n

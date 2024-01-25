@@ -49,6 +49,8 @@ int Fun4All_G4_Pass1_pp(
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
 
+  TRACKING::pp_mode = true;
+  TRACKING::pp_extended_readout_time = 90000;
 
   //===============
   // conditions DB flags

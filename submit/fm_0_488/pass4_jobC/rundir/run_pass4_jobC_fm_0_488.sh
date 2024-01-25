@@ -14,6 +14,7 @@ echo running: $this_script $*
 anabuild=ana.398
 
 source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
+#export NOPAYLOADCLIENT_CONF=/cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/etc/sPHENIX_newcdb_debug.json
 
 cdbtag=MDC2_$anabuild
 

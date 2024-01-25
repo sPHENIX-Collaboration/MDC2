@@ -22,15 +22,21 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 80;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_pass1_single.sh",$rundir);
 my $nevents = $ARGV[0];
 my $particle = $ARGV[1];
 my $pmin = $ARGV[2];
 my $pmax = $ARGV[3];
-my $dstoutdir = $ARGV[4];
-my $dstoutfile = $ARGV[5];
-my $runnumber = $ARGV[6];
-my $sequence = $ARGV[7];
+my $mom = $ARGV[4];
+my $dstoutdir = $ARGV[5];
+my $dstoutfile = $ARGV[6];
+my $runnumber = $ARGV[7];
+my $sequence = $ARGV[8];
+my $executable = sprintf("%s/run_pass1_%s_single.sh",$rundir,$mom);
+if (! -f $executable)
+{
+    print "could not locate $executable\n";
+    exit(-1);
+}
 
 if ($sequence < 100)
 {
@@ -38,11 +44,19 @@ if ($sequence < 100)
 }
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
-my $logdir = sprintf("%s/log/%s",$localdir,$particle);
-mkpath($logdir);
-my $condorlogdir = sprintf("/tmp/single_particle/pass1/%s",$particle);
-mkpath($condorlogdir);
-my $partprop = sprintf("%s_%d_%d",$particle,$pmin,$pmax);
+my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$particle);
+if (! -d $logdir)
+{
+  mkpath($logdir);
+}
+
+my $condorlogdir = sprintf("/tmp/single_particle/pass1/run%d/%s",$runnumber,$particle);
+if (! -d $condorlogdir)
+{
+  mkpath($condorlogdir);
+}
+
+my $partprop = sprintf("%s_%s_%d_%d",$particle,$mom,$pmin,$pmax);
 my $jobfile = sprintf("%s/condor_%s-%s.job",$logdir,$partprop,$suffix);
 if (-f $jobfile)
 {

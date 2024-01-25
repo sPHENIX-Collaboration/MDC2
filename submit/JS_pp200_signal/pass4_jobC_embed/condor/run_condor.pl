@@ -48,10 +48,17 @@ if (! -d $condorlogdir)
   mkpath($condorlogdir);
 }
 my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
-if (-f $jobfile && ! defined $overwrite)
+if (-f $jobfile)
 {
-    print "jobfile $jobfile exists, possible overlapping names\n";
-    exit(1);
+    if (defined $overwrite)
+    {
+	print "jobfile $jobfile exists, overwriting it\n";
+    }
+    else
+    {
+      print "jobfile $jobfile exists, possible overlapping names\n";
+      exit(1);
+    }
 }
 my $condorlogfile = sprintf("%s/condor_%s.log",$condorlogdir,$suffix);
 if (-f $condorlogfile)

@@ -332,8 +332,16 @@ if ($lfn =~ /run1auau/)
 {
     $splitstring = "_run1auau_";
 }
+if ($lfn =~ /run23auau/)
+{
+    $splitstring = "_run23auau_";
+}
 my @sp1 = split(/$splitstring/,$dsttype);
 if ($lfn =~ /run1auau/)
+{
+    $dataset = $sp1[1];
+}
+if ($lfn =~ /run23auau/)
 {
     $dataset = $sp1[1];
 }

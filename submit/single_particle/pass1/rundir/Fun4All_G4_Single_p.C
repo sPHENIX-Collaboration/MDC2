@@ -1,10 +1,10 @@
-#ifndef MACRO_FUN4ALLG4SINGLE_C
-#define MACRO_FUN4ALLG4SINGLE_C
+#ifndef MACRO_FUN4ALLG4SINGLE_P_C
+#define MACRO_FUN4ALLG4SINGLE_P_C
 
 #include <GlobalVariables.C>
 
 #include <G4Setup_sPHENIX.C>
-#include <G4_Bbc.C>
+#include <G4_Mbd.C>
 #include <G4_Input.C>
 #include <G4_Production.C>
 #include <G4_TrkrSimulation.C>
@@ -26,13 +26,14 @@
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
 
-int Fun4All_G4_Single(
+int Fun4All_G4_Single_p(
   const int nEvents = 1,
   const string &particle = "pi-", 
   const int pmin = 10000,
   const int pmax = 10000,
-  const string &outputFile = "G4Hits_single_pi-_10000_10000MeV-0000000007-00000.root",
-  const string &outdir = ".")
+  const string &outputFile = "G4Hits_single_pi-_p_10000_10000MeV-0000000013-00000.root",
+  const string &outdir = ".",
+  const string &cdbtag = "MDC2_ana.398")
 {
   int skip = 0;
   Fun4AllServer *se = Fun4AllServer::instance();
@@ -60,7 +61,7 @@ int Fun4All_G4_Single(
   //===============
   Enable::CDB = true;
   // global tag
-  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG",cdbtag);
   // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
@@ -151,7 +152,7 @@ int Fun4All_G4_Single(
   //  Enable::OVERLAPCHECK = true;
   //  Enable::VERBOSITY = 1;
 
-  Enable::BBC = true;
+  Enable::MBD = true;
 
   Enable::PIPE = true;
 

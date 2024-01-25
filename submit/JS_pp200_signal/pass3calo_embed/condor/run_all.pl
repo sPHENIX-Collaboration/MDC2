@@ -14,13 +14,15 @@ my $test;
 my $incremental;
 my $shared;
 my $fm = "0_20fm";
-GetOptions("test"=>\$test, "fm:s" =>\$fm, "increment"=>\$incremental, "shared" => \$shared);
+my $overwrite;
+GetOptions("test"=>\$test, "fm:s" =>\$fm, "increment"=>\$incremental, "overwrite"=>\$overwrite, "shared" => \$shared);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"Jet40\", \"PhotonJet\" production>\n";
     print "parameters:\n";
     print "--fm : fermi range for embedding\n";
     print "--increment : submit jobs while processing running\n";
+    print "--overwrite : overwrite existing jobfiles and restart\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
@@ -95,6 +97,10 @@ while (my @res = $getfiles->fetchrow_array())
 	if (defined $test)
 	{
 	    $tstflag="--test";
+	}
+        elsif (defined $overwrite)
+	{
+	    $tstflag = sprintf("%s --overwrite",$tstflag);
 	}
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s %s", $outevents, $jettrigger, $lfn, $outfilename, $outdir, $runnumber, $segment, $fm, $tstflag);
 	print "cmd: $subcmd\n";

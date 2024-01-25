@@ -100,7 +100,7 @@ while (my @res = $gettruthfiles->fetchrow_array())
 $gettruthfiles->finish();
 
 
-print "input files g4hit: $ng4hit, cluster: $ncluster, track: $ntrack, truth: $ntruth\n";
+#print "input files g4hit: $ng4hit, cluster: $ncluster, track: $ntrack, truth: $ntruth\n";
 
 my $nsubmit = 0;
 

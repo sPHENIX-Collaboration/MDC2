@@ -23,7 +23,8 @@ int Fun4All_G4_Global(
     const std::string &inputFile1 = "DST_TRACKS_sHijing_0_488fm_50kHz_bkg_0_20fm-0000000010-00000.root",
     const std::string &inputFile2 = "DST_MBD_EPD_sHijing_0_488fm_50kHz_bkg_0_20fm-0000000010-00000.root",
     const std::string &outputFile = "DST_GLOBAL_sHijing_0_488fm_50kHz_bkg_0_20fm-0000000010-00000.root",
-    const std::string &outdir = ".")
+    const std::string &outdir = ".",
+    const string &cdbtag = "MDC2_ana.398")
 {
   gSystem->Load("libg4dst.so");
   recoConsts *rc = recoConsts::instance();
@@ -33,9 +34,10 @@ int Fun4All_G4_Global(
   //===============
   Enable::CDB = true;
   // tag
-  rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG",cdbtag);
   // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  CDBInterface::instance()->Verbosity(1);
 
   // set up production relatedstuff
   Enable::PRODUCTION = true;

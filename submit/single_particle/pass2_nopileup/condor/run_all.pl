@@ -9,17 +9,24 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 7;
+my $runnumber = 13;
 my $test;
 my $incremental;
 my $shared;
-GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
+my $mom;
+GetOptions("test"=>\$test, "increment"=>\$incremental,  "mom:s" => \$mom, "shared" => \$shared);
 if ($#ARGV < 3)
 {
     print "usage: run_all.pl <number of jobs> <particle> <pmin> <pmax>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
+    print "--mom <p or pt> : use p or pt for momentum\n";
     print "--test : dryrun - create jobfiles\n";
+    exit(1);
+}
+if (! defined $mom || ($mom ne "pt" and $mom ne "p"))
+{
+    print "need to give p or pt for -mom\n";
     exit(1);
 }
 
@@ -27,7 +34,7 @@ my $hostname = `hostname`;
 chomp $hostname;
 if ($hostname !~ /phnxsub/)
 {
-    print "submit only from phnxsub01 or phnxsub02\n";
+    print "submit only from phnxsub01, phnxsub02, phnxsub03 or phnxsub04\n";
     exit(1);
 }
 my $maxsubmit = $ARGV[0];
@@ -35,7 +42,7 @@ my $particle = lc $ARGV[1];
 my $pmin = $ARGV[2];
 my $pmax = $ARGV[3];
 my $filetype="single";
-my $partprop = sprintf("%s_%d_%d",$particle,$pmin,$pmax);
+my $partprop = sprintf("%s_%s_%d_%d",$particle,$mom,$pmin,$pmax);
 $filetype=sprintf("%s_%sMeV",$filetype,$partprop);
 
 my $condorlistfile =  sprintf("condor.list");
@@ -55,7 +62,10 @@ while (my $line = <F>)
 {
     chomp $line;
     $line = sprintf("%s/run%04d/%s",$line,$runnumber,$partprop);
-    mkpath($line);
+    if (! -d $line)
+    {
+	mkpath($line);
+    }
     push(@outdir,$line);
 }
 close(F);

@@ -8,16 +8,23 @@ use Getopt::Long;
 my $test;
 my $incremental;
 my $killexist;
-my $runnumber = 7;
+my $runnumber = 13;
 my $events = 1000;
-GetOptions("test"=>\$test, "increment"=>\$incremental, "killexist" => \$killexist);
+my $mom;
+GetOptions("test"=>\$test, "increment"=>\$incremental, "killexist" => \$killexist, "mom:s" => \$mom);
 if ($#ARGV < 3)
 {
-    print "usage: run_all.pl <number of jobs> <particle> <pmin> <pmax>\n";
+    print "usage: run_all.pl <number of jobs> <particle> <pmin> <pmax> <--mom>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--killexist : delete output file if it already exists (but no jobfile)\n";
+    print "--mom <p or pt> : use p or pt for momentum\n";
     print "--test : dryrun - create jobfiles\n";
+    exit(1);
+}
+if (! defined $mom || ($mom ne "pt" and $mom ne "p"))
+{
+    print "need to give p or pt for -mom\n";
     exit(1);
 }
 
@@ -34,7 +41,7 @@ my $particle = lc $ARGV[1];
 my $pmin = $ARGV[2];
 my $pmax = $ARGV[3];
 my $filetype="single";
-my $partprop = sprintf("%s_%d_%d",$particle,$pmin,$pmax);
+my $partprop = sprintf("%s_%s_%d_%d",$particle,$mom,$pmin,$pmax);
 $filetype=sprintf("%s_%sMeV",$filetype,$partprop);
 
 my $condorlistfile =  sprintf("condor.list");
@@ -52,11 +59,14 @@ if (! -f "outdir.txt")
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 $outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,$partprop);
-mkpath($outdir);
+if (! -d $outdir)
+{
+  mkpath($outdir);
+}
 
 my $localdir=`pwd`;
 chomp $localdir;
-my $logdir = sprintf("%s/log/%s",$localdir,$particle);
+my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$particle);
 my $nsubmit = 0;
 my $njob = 0;
 for (my $isub = 0; $isub < $maxsubmit; $isub++)
@@ -85,7 +95,7 @@ for (my $isub = 0; $isub < $maxsubmit; $isub++)
 	{
 	    $tstflag="--test";
 	}
-	system("perl run_condor.pl $events $particle $pmin $pmax $outdir $outfile $runnumber $njob $tstflag");
+	system("perl run_condor.pl $events $particle $pmin $pmax $mom $outdir $outfile $runnumber $njob $tstflag");
 	my $exit_value  = $? >> 8;
 	if ($exit_value != 0)
 	{

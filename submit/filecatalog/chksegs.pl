@@ -605,7 +605,7 @@ if (exists $notlike{$systemstring})
     $getsegsdc->finish();
 }
 my $lowercasegpfsdir = lc $gpfsdir;
-my $chklfn = $dbh->prepare("select lfn from files where lfn = ? and (full_file_path like '/pnfs/rcf.bnl.gov/sphenix/disk/MDC2/$gpfsdir/%' or full_file_path like '/sphenix/lustre01/sphnxpro/dcsphst004/mdc2/$lowercasegpfsdir/%' or full_file_path like '/sphenix/lustre01/sphnxpro/mdc2/$lowercasegpfsdir/%')");
+my $chklfn = $dbh->prepare("select lfn from files where lfn = ? and  full_file_path like '/sphenix/lustre01/sphnxpro/mdc2/$lowercasegpfsdir/%'");
 for (my $iseg = 0; $iseg <= $lastseg; $iseg++)
 {
     if (!exists $seglist{$iseg})

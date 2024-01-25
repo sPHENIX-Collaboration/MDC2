@@ -24,8 +24,8 @@ fi
 # arguments 
 # $1: number of events
 # $2: particle
-# $3: pmin
-# $4: pmax
+# $3: ptmin
+# $4: ptmax
 # $5: output file
 # $6: output dir
 # $7: runnumber
@@ -37,8 +37,8 @@ printenv
 
 echo arg1 \(events\) : $1
 echo arg2 \(particle\): $2
-echo arg3 \(pmin \(MeV\)\): $3
-echo arg4 \(pmax \(MeV\)\): $4
+echo arg3 \(ptmin \(MeV\)\): $3
+echo arg4 \(ptmax \(MeV\)\): $4
 echo arg5 \(output file\): $5
 echo arg6 \(output dir\): $6
 echo arg7 \(runnumber\): $7
@@ -47,7 +47,7 @@ echo arg8 \(sequence\): $8
 runnumber=$(printf "%010d" $7)
 sequence=$(printf "%05d" $8)
 
-echo running root.exe -q -b Fun4All_G4_Single.C\($1,\"$2\",$3,$4,\"$5\",\"$6\"\)
-root.exe -q -b Fun4All_G4_Single.C\($1,\"$2\",$3,$4,\"$5\",\"$6\"\)
+echo running root.exe -q -b Fun4All_G4_Single_pt.C\($1,\"$2\",$3,$4,\"$5\",\"$6\"\)
+root.exe -q -b Fun4All_G4_Single_pt.C\($1,\"$2\",$3,$4,\"$5\",\"$6\"\)
 
 echo "script done"

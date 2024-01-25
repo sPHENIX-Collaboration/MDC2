@@ -9,15 +9,17 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 7;
+my $runnumber = 13;
 my $test;
 my $incremental;
 my $shared;
-GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
+my $mom;
+GetOptions("test"=>\$test, "increment"=>\$incremental, "mom" => \$mom, "shared" => \$shared);
 if ($#ARGV < 3)
 {
     print "usage: run_all.pl <number of jobs> <particle> <pmin> <pmax>\n";
     print "parameters:\n";
+    print "--mom: use momentum, not pt\n";
     print "--increment : submit jobs while processing running\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
@@ -35,8 +37,17 @@ my $particle = lc $ARGV[1];
 my $pmin = $ARGV[2];
 my $pmax = $ARGV[3];
 my $filetype="single";
-my $partprop = sprintf("%s_p_%d_%d",$particle,$pmin,$pmax);
-$filetype=sprintf("%s_%sMeV",$filetype,$partprop);
+my $partprop = sprintf("%s_%d_%d",$particle,$pmin,$pmax);
+
+if (defined $mom)
+{
+  $filetype=sprintf("%s_p_%sMeV",$filetype,$partprop);
+  $partprop = sprintf("%s_p_%d_%d",$particle,$pmin,$pmax);
+}
+else
+{
+  $filetype=sprintf("%s_%sMeV",$filetype,$partprop);
+}
 
 my $condorlistfile =  sprintf("condor.list");
 if (-f $condorlistfile)
@@ -54,7 +65,7 @@ open(F,"outdir.txt");
 while (my $line = <F>)
 {
     chomp $line;
-    $line = sprintf("%s/run%04d/%s",$line,$runnumber,$particle);
+    $line = sprintf("%s/run%04d/%s",$line,$runnumber,lc $partprop);
     mkpath($line);
     push(@outdir,$line);
 }

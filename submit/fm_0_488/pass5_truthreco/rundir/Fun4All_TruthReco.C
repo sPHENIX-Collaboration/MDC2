@@ -28,8 +28,8 @@ void Fun4All_TruthReco(
   const std::string &dst_tracks = "DST_TRACKS_sHijing_0_488fm_50kHz_bkg_0_20fm-0000000007-00000.root",
   const std::string &dst_truth = "DST_TRUTH_sHijing_0_488fm_50kHz_bkg_0_20fm-0000000007-00000.root",
   const std::string &outputFile = "DST_TRUTH_RECO_sHijing_0_488fm_50kHz_bkg_0_20fm-0000000007-00000.root",
-  const std::string &outdir = "."
-)
+  const std::string &outdir = ".",
+  const string &cdbtag = "MDC2_ana.398")
 {
   gSystem->Load("libg4dst.so");
   Fun4AllServer *se = Fun4AllServer::instance();
@@ -45,9 +45,10 @@ void Fun4All_TruthReco(
   //===============
   Enable::CDB = true;
   // tag
-  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG",cdbtag);
   // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
+  CDBInterface::instance()->Verbosity(1);
 
   // set up production relatedstuff
   Enable::PRODUCTION = true;

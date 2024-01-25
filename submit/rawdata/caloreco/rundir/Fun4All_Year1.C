@@ -1,6 +1,8 @@
 #ifndef FUN4ALL_YEAR1_C
 #define FUN4ALL_YEAR1_C
 
+#include <G4_Production.C>
+
 #include <caloreco/CaloTowerBuilder.h>
 #include <caloreco/CaloTowerCalib.h>
 #include <caloreco/CaloTowerStatus.h>
@@ -47,7 +49,11 @@ R__LOAD_LIBRARY(libmbd.so)
 R__LOAD_LIBRARY(libglobalvertex.so)
 R__LOAD_LIBRARY(libcalovalid.so)
 
-void Fun4All_Year1(const std::string &fname = "/sphenix/lustre01/sphnxpro/commissioning/aligned_prdf/beam-00021774-0000.prdf", int nEvents = 10)
+void Fun4All_Year1(int nEvents = 5,
+                   const std::string &lfn = "beam-00023053-0201.prdf",
+                   const std::string &outputFile = "DST_CALO-00023053-0201.root",
+                   const std::string &outdir = ".",
+                   const std::string &cdbtag = "2023p004")
 {
   bool enableMasking = 0;
   bool addZeroSupCaloNodes = 1;
@@ -59,28 +65,39 @@ void Fun4All_Year1(const std::string &fname = "/sphenix/lustre01/sphnxpro/commis
   // CaloTowerDefs::BuilderType buildertype = CaloTowerDefs::kPRDFWaveform;
 
   Fun4AllServer *se = Fun4AllServer::instance();
-  se->Verbosity(0);
+  se->Verbosity(1);
 
   recoConsts *rc = recoConsts::instance();
 
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(fname);
+  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(lfn);
   int runnumber = runseg.first;
   int segment = runseg.second;
-  char outfile[100];
+
   char outfile_hist[100];
-  sprintf(outfile, "DST_CALOR-%08d-%04d.root", runnumber, segment);
   sprintf(outfile_hist, "HIST_CALOR-%08d-%04d.root", runnumber, segment);
-  string fulloutfile = string("./") + outfile;
-  string fulloutfile_hist = string("./") + outfile_hist;
+  //string fulloutfile_hist = string("./") + outfile_hist;
+  string fulloutfile_hist = string("/sphenix/lustre01/sphnxpro/commissioning/calovalid_ana399_2023p008/") + outfile_hist;
+
   //===============
   // conditions DB flags
   //===============
   // ENABLE::CDB = true;
   // global tag
-  rc->set_StringFlag("CDB_GLOBALTAG", "ProdA_2023");
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP", runnumber);
   CDBInterface::instance()->Verbosity(1);
+
+  // set up production relatedstuff
+  Enable::PRODUCTION = true;
+  //======================
+  // Write the DST
+  //======================
+
+  Enable::DSTOUT = true;
+  Enable::DSTOUT_COMPRESS = false;
+  DstOut::OutputDir = outdir;
+  DstOut::OutputFile = outputFile;
 
   // Sync Headers and Flags
   SyncReco *sync = new SyncReco();
@@ -298,19 +315,33 @@ void Fun4All_Year1(const std::string &fname = "/sphenix/lustre01/sphnxpro/commis
 
 
   Fun4AllInputManager *In = new Fun4AllPrdfInputManager("in");
-  In->AddFile(fname);
+  In->AddFile(lfn);
   se->registerInputManager(In);
 
-  Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", fulloutfile);
-  se->registerOutputManager(out);
+  if (Enable::PRODUCTION)
+  {
+    Production_CreateOutputDir();
+  }
+
+  if (Enable::DSTOUT)
+  {
+    string FullOutFile = DstOut::OutputFile;
+    Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
+    se->registerOutputManager(out);
+  }
 
   se->run(nEvents);
   se->End();
   CDBInterface::instance()->Print();  // print used DB files
   se->PrintTimer();
   delete se;
+  if (Enable::PRODUCTION)
+  {
+    Production_MoveOutput();
+  }
   std::cout << "All done!" << std::endl;
   gSystem->Exit(0);
 }
 
 #endif
+

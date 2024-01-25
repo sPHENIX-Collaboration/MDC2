@@ -324,6 +324,18 @@ if ($lfn =~ /special/)
 {
     $splitstring = "_special";
 }
+if ($lfn =~ /cosmic/)
+{
+    $splitstring = "_cosmic";
+}
+if ($lfn =~ /_EPOS/)
+{
+    $splitstring = "_EPOS";
+}
+if ($lfn =~ /_AMPT/)
+{
+    $splitstring = "_AMPT";
+}
 my @sp1 = split(/$splitstring/,$lfn);
 if (! defined $test)
 {

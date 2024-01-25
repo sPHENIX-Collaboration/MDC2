@@ -12,11 +12,15 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-ana_calo=ana.375
-ana_bbcepd=ana.375
-ana_pass3trk=ana.375
+ana_calo=ana.398
+ana_bbcepd=ana.398
+ana_pass3trk=ana.398
 
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana
+run_calo=1
+run_trk=1
+run_mbdepd=1
+
+source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
@@ -54,13 +58,46 @@ echo arg7 \(segment\): $7
 echo arg8 \(filetype\): $8
 
 
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_bbcepd
-echo 'here comes your environment'
-printenv
+#---------------------------------------------------------------
+# Calorimeter Reconstruction
+if [ ${run_calo} -gt 0 ]
+then
+    source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_calo
+    echo 'here comes your environment for Fun4All_G4_Calo.C'
+    cdbtag=MDC2_$ana_calo
+    printenv
 
-echo running calo root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
-root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
+    echo running root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
+    root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
+fi
+
 exit 0
+
+#---------------------------------------------------------------
+# Global Reconstruction
+if [ ${run_mbdepd} -gt 0 ]
+then
+    source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_mbdepd
+    echo 'here comes your environment for Fun4All_G4_MBD_EPD.C'
+    cdbtag=MDC2_$ana_mbdepd
+    printenv
+
+    echo running root.exe -q -b Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$5\",\"$6\",\"$cdbtag\"\)
+    root.exe -q -b  Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$5\",\"$6\",\"$cdbtag\"\)
+fi
+
+#---------------------------------------------------------------
+# pass3 tracking
+if [ ${run_trk} -gt 0 ]
+then
+    source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_pass3trk
+    echo 'here comes your environment for Fun4All_G4_Pass3Trk.C'
+    cdbtag=MDC2_$ana_pass3trk
+    printenv
+
+    echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$8\",\"$cdbtag\"\)
+    root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$8\",\"$cdbtag\"\)
+fi
 
 source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_pass3trk
 
