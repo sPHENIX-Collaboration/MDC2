@@ -1,0 +1,3 @@
+/sphenix/lustre01/sphnxpro/mdc2/ampt/nopileup/calocluster
+/sphenix/lustre01/sphnxpro/mdc2/ampt/nopileup/mbdepd
+/sphenix/lustre01/sphnxpro/mdc2/ampt/nopileup/trkrhit
