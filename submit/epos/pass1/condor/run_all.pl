@@ -71,7 +71,7 @@ OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
     my $sequence = $segment*$evtsperfile/$events;
     for (my $n=0; $n<$nmax; $n+=$events)
     {
-	my $outfile = sprintf("G4Hits_EPOS-%010d-%06d.root",$runnumber,$sequence);
+	my $outfile = sprintf("G4Hits_epos-%010d-%06d.root",$runnumber,$sequence);
 	$chkfile->execute($outfile);
 	if ($chkfile->rows == 0)
 	{

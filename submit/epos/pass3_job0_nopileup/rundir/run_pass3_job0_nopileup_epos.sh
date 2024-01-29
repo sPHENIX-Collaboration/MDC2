@@ -56,7 +56,7 @@ filename=timing
 echo running root.exe -q -b Fun4All_G4_sPHENIX_job0.C\($1,0,\"$2\",\"$3\",\"$4\"\)
 root.exe -q -b  Fun4All_G4_sPHENIX_job0.C\($1,0,\"$2\",\"$3\",\"$4\"\)
 
-timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/shijing_hepmc/fm_0_20/pass3_job0_nopileup/timing.run${runnumber}
+timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/epos/pass3_job0_nopileup/timing.run${runnumber}
 if [ ! -d $timedirname ]
 then
   mkdir -p $timedirname

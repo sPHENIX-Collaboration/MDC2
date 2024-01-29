@@ -37,7 +37,7 @@ if (! -d $logdir)
 {
   mkpath($logdir);
 }
-my $condorlogdir = sprintf("/tmp/EPOS/pass3_job0_nopileup/run%d",$runnumber);
+my $condorlogdir = sprintf("/tmp/epos/pass3_job0_nopileup/run%d",$runnumber);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);

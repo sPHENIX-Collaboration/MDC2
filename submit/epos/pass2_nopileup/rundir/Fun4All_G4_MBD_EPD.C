@@ -23,8 +23,8 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_MBD_EPD(
     const int nEvents = 1,
-    const string &inputFile = "G4Hits_EPOS-0000000010-00000.root",
-    const string &outputFile = "DST_MBD_EPD_EPOS-0000000010-00000.root",
+    const string &inputFile = "G4Hits_epos-0000000010-00000.root",
+    const string &outputFile = "DST_MBD_EPD_epos-0000000010-00000.root",
     const string &outdir = ".")
 {
   Fun4AllServer *se = Fun4AllServer::instance();

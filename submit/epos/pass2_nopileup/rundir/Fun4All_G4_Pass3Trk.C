@@ -25,7 +25,7 @@ R__LOAD_LIBRARY(libffamodules.so)
 
 int Fun4All_G4_Pass3Trk(
   const int nEvents = 0,
-  const string &inputFile0 = "G4Hits_EPOS-0000000007-00000.root",
+  const string &inputFile0 = "G4Hits_epos-0000000007-00000.root",
   const string &outdir = ".")
 {
   Fun4AllServer *se = Fun4AllServer::instance();

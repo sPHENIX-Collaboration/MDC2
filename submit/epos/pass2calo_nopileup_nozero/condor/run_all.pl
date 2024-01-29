@@ -57,7 +57,7 @@ my %calohash = ();
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'G4Hits' and filename like 'G4Hits_EPOS-%' and runnumber = $inrunnumber order by segment") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'G4Hits' and filename like 'G4Hits_epos-%' and runnumber = $inrunnumber order by segment") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
 my $nsubmit = 0;
@@ -70,10 +70,10 @@ while (my @res = $getfiles->fetchrow_array())
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_CALO_NOZERO_EPOS-%010d-%06d.root",$outrunnumber,$segment);
+	my $outfilename = sprintf("DST_CALO_NOZERO_epos-%010d-%06d.root",$outrunnumber,$segment);
 	if ($segment < 100000)
 	{
-	    $outfilename = sprintf("DST_CALO_NOZERO_EPOS-%010d-%05d.root",$outrunnumber,$segment);
+	    $outfilename = sprintf("DST_CALO_NOZERO_epos-%010d-%05d.root",$outrunnumber,$segment);
 	}
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)

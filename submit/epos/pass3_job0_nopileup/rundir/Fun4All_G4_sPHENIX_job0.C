@@ -26,8 +26,8 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 int Fun4All_G4_sPHENIX_job0(
   const int nEvents = 0,
   const int nSkipEvents = 0,
-  const std::string &inputFile = "DST_TRKR_HIT_EPOS-0000000010-00000.root",
-  const std::string &outputFile = "DST_TRKR_CLUSTER_EPOS-0000000010-00000.root",
+  const std::string &inputFile = "DST_TRKR_HIT_epos-0000000010-00000.root",
+  const std::string &outputFile = "DST_TRKR_CLUSTER_epos-0000000010-00000.root",
   const string &outdir = ".")
 {
 
