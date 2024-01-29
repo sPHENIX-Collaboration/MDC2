@@ -21,7 +21,7 @@ my $fm = "0_20fm";
 my $pileup;
 GetOptions("embed:s" => \$embed, "exist" => \$file_exist_check, "fm:s" =>\$fm, "pileup:s" => \$pileup, "run:i"=>\$runnumber, "type:i"=>\$system, "verbosity" => \$verbosity, "nopileup" => \$nopileup);
 
-if ($system < 1 || $system > 21)
+if ($system < 1 || $system > 23)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
@@ -45,6 +45,8 @@ if ($system < 1 || $system > 21)
     print "   19 : JS pythia8 Jet >40GeV\n";
     print "   20 : hijing pAu (0-10fm) pileup 0-10fm\n";
     print "   21 : JS pythia8 Jet >20GeV\n";
+    print "   22 : AMPT\n";
+    print "   23 : EPOS\n";
     exit(0);
 }
 
@@ -449,6 +451,36 @@ elsif ($system == 21)
     $gpfsdir = "js_pp200_signal";
 #    $systemstring = "DST_HF_BOTTOM_pythia8-";
 #    $gpfsdir = "HF_pp200_signal";
+}
+elsif ($system == 22)
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "ampt";
+    $gpfsdir = "ampt";
+    if (! defined $nopileup)
+    {
+	$systemstring = sprintf("%s_500kHz_bkg_0_10fm",$systemstring_g4hits);
+    }
+    else
+    {
+	$systemstring = sprintf("%s-",$systemstring_g4hits);
+    }
+    $notlike{$systemstring} = ["pythia8" ,"single", "special"];
+}
+elsif ($system == 23)
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "epos";
+    $gpfsdir = "epos";
+    if (! defined $nopileup)
+    {
+	$systemstring = sprintf("%s_500kHz_bkg_0_10fm",$systemstring_g4hits);
+    }
+    else
+    {
+	$systemstring = sprintf("%s-",$systemstring_g4hits);
+    }
+    $notlike{$systemstring} = ["pythia8" ,"single", "special"];
 }
 else
 {

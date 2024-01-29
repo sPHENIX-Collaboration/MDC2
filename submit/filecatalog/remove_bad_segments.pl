@@ -161,6 +161,8 @@ if ($#ARGV < 0)
     print "   19 : JS pythia8 Jet > 30GeV\n";
     print "   20 : hijing pAu (0-10fm) pileup 0-10fm\n";
     print "   21 : JS pythia8 Jet >20GeV\n";
+    print "   22 : AMPT\n";
+    print "   23 : EPOS\n";
     print "-dsttype:\n";
     foreach my $tp (sort keys %daughters)
     {
@@ -180,7 +182,7 @@ if( ! exists $daughters{$dsttype})
     }
     exit(0);
 }
-if ($system < 1 || $system > 21)
+if ($system < 1 || $system > 23)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
@@ -204,6 +206,8 @@ if ($system < 1 || $system > 21)
     print "   19 : JS pythia8 Jet >40GeV\n";
     print "   20 : hijing pAu (0-10fm) pileup 0-10fm\n";
     print "   21 : JS pythia8 Jet >20GeV\n";
+    print "   22 : AMPT\n";
+    print "   23 : EPOS\n";
     exit(0);
 }
 
@@ -268,10 +272,10 @@ if (defined $pileup)
 if (defined $embed)
 {
     my $embedpostfix = "_embed";
-if ($embed eq "pau")
- {
-    $embedpostfix = sprintf("%s_%s",$embedpostfix,$embed);
-}
+    if ($embed eq "pau")
+    {
+	$embedpostfix = sprintf("%s_%s",$embedpostfix,$embed);
+    }
     $productionsubdir{"DST_BBC_G4HIT"} = sprintf("pass2%s",$embedpostfix);
     $productionsubdir{"DST_CALO_CLUSTER"} = sprintf("pass3calo%s",$embedpostfix);
     $productionsubdir{"DST_CALO_NOZERO"} = "pass3calo_nozero_embed";
@@ -613,6 +617,20 @@ elsif ($system == 21)
 
     }
     $specialcondorfileadd{"G4Hits"} = "Jet20";
+}
+elsif ($system == 22)
+{
+    $systemstring = "ampt";
+    $topdir = sprintf("%s/ampt",$topdir);
+    $pileupstring = "_500kHz_bkg_0_10fm";
+    $notlike{$systemstring} = ["pythia8" ,"single", "special"];
+}
+elsif ($system == 23)
+{
+    $systemstring = "epos";
+    $topdir = sprintf("%s/epos",$topdir);
+    $pileupstring = "_500kHz_bkg_0_10fm";
+    $notlike{$systemstring} = ["pythia8" ,"single", "special"];
 }
 else
 {
