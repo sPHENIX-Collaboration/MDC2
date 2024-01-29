@@ -328,13 +328,13 @@ if ($lfn =~ /cosmic/)
 {
     $splitstring = "_cosmic";
 }
-if ($lfn =~ /_EPOS/)
+if ($lfn =~ /_epos/)
 {
-    $splitstring = "_EPOS";
+    $splitstring = "_epos";
 }
-if ($lfn =~ /_AMPT/)
+if ($lfn =~ /_ampt/)
 {
-    $splitstring = "_AMPT";
+    $splitstring = "_ampt";
 }
 my @sp1 = split(/$splitstring/,$lfn);
 if (! defined $test)
