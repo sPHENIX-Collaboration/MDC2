@@ -19,7 +19,7 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 54;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_pass3_jobA_nopileup_epos.sh",$rundir);
+my $executable = sprintf("%s/run_pass3_jobA_nopileup_ampt.sh",$rundir);
 my $nevents = $ARGV[0];
 my $infile = $ARGV[1];
 my $dstoutfile = $ARGV[2];
@@ -37,7 +37,7 @@ if (! -d $logdir)
 {
   mkpath($logdir);
 }
-my $condorlogdir = sprintf("/tmp/epos/pass3_jobA_nopileup/run%d",$runnumber);
+my $condorlogdir = sprintf("/tmp/ampt/pass3_jobA_nopileup/run%d",$runnumber);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);

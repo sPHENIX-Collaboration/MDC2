@@ -1,1 +1,1 @@
-/sphenix/lustre01/sphnxpro/mdc2/epos/nopileup/trackseeds
+/sphenix/lustre01/sphnxpro/mdc2/ampt/nopileup/trackseeds
