@@ -29,7 +29,7 @@ R__LOAD_LIBRARY(libffamodules.so)
 int Fun4All_G4_Pass1(
     const int nEvents = 1,
     const string &inputFile = "/sphenix/sim/sim01/sphnxpro/mdc2/AMPT/AuAu/AMPT_AuAu-0000000001-00000.dat",
-    const string &outputFile = "G4Hits_AMPT-0000000050-00000.root",
+    const string &outputFile = "G4Hits_ampt-0000000050-00000.root",
     const int skip = 0,
     const string &outdir = ".")
 {
