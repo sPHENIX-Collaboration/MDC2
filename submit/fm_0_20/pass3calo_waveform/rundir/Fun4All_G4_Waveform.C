@@ -39,7 +39,7 @@ void Fun4All_G4_Waveform(
     const string &inputFile1 = "G4Hits_sHijing_0_20fm-0000000010-00000.root",
     const string &outputFile = "DST_CALO_WAVEFORM_sHijing_0_20fm-0000000010-00000.root",
     const string &outdir = ".",
-    const string &cdbtag = "MDC2_ana.398")
+    const string &cdbtag = "MDC2")
 
 {
   // this convenience library knows all our i/o objects so you don't
@@ -107,114 +107,6 @@ void Fun4All_G4_Waveform(
   //======================
   // What to run
   //======================
-  // Global options (enabled for all enables subsystems - if implemented)
-  //  Enable::VERBOSITY = 1;
-/*
-  Enable::CEMC = true;
-  Enable::CEMC_CELL = Enable::CEMC && true;
-  Enable::CEMC_TOWER = Enable::CEMC_CELL && true;
-  Enable::CEMC_CLUSTER = Enable::CEMC_TOWER && true;
-
-  Enable::HCALIN = true;
-  Enable::HCALIN_CELL = Enable::HCALIN && true;
-  Enable::HCALIN_TOWER = Enable::HCALIN_CELL && true;
-  Enable::HCALIN_CLUSTER = Enable::HCALIN_TOWER && true;
-
-  Enable::HCALOUT = true;
-  Enable::HCALOUT_CELL = Enable::HCALOUT && true;
-  Enable::HCALOUT_TOWER = Enable::HCALOUT_CELL && true;
-  Enable::HCALOUT_CLUSTER = Enable::HCALOUT_TOWER && true;
-
-  //------------------
-  // Detector Reconstruction
-  //------------------
-
-  if (Enable::CEMC_CELL) CEMC_Cells();
-
-  if (Enable::HCALIN_CELL) HCALInner_Cells();
-
-  if (Enable::HCALOUT_CELL) HCALOuter_Cells();
-
-  //-----------------------------
-  // CEMC towering and clustering
-  //-----------------------------
-
-  if (Enable::CEMC_TOWER) CEMC_Towers();
-  if (Enable::CEMC_CLUSTER) CEMC_Clusters();
-
-  //-----------------------------
-  // HCAL towering and clustering
-  //-----------------------------
-
-  if (Enable::HCALIN_TOWER) HCALInner_Towers();
-  if (Enable::HCALIN_CLUSTER) HCALInner_Clusters();
-
-  if (Enable::HCALOUT_TOWER) HCALOuter_Towers();
-  if (Enable::HCALOUT_CLUSTER) HCALOuter_Clusters();
-
-  // if enabled, do topoClustering early, upstream of any possible jet reconstruction
-  if (Enable::TOPOCLUSTER) TopoClusterReco();
-*/
-  //--------------
-  // Set up Input Managers
-  //--------------
-
-  InputManagers();
-
-  if (Enable::PRODUCTION)
-  {
-    Production_CreateOutputDir();
-  }
-
-  if (Enable::DSTOUT)
-  {
-    string FullOutFile = DstOut::OutputFile;
-    Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
-    out->AddNode("Sync");
-    out->AddNode("EventHeader");
-// Inner Hcal
-    out->AddNode("TOWER_SIM_HCALIN");
-    out->AddNode("TOWER_RAW_HCALIN");
-    out->AddNode("TOWER_CALIB_HCALIN");
-    out->AddNode("TOWERINFO_RAW_HCALIN");
-    out->AddNode("TOWERINFO_SIM_HCALIN");
-    out->AddNode("TOWERINFO_CALIB_HCALIN");
-    out->AddNode("CLUSTER_HCALIN");
-
-// Outer Hcal
-    out->AddNode("TOWER_SIM_HCALOUT");
-    out->AddNode("TOWER_RAW_HCALOUT");
-    out->AddNode("TOWER_CALIB_HCALOUT");
-    out->AddNode("TOWERINFO_RAW_HCALOUT");
-    out->AddNode("TOWERINFO_SIM_HCALOUT");
-    out->AddNode("TOWERINFO_CALIB_HCALOUT");
-    out->AddNode("CLUSTER_HCALOUT");
-
-// CEmc
-    out->AddNode("TOWER_SIM_CEMC");
-    out->AddNode("TOWER_RAW_CEMC");
-    out->AddNode("TOWER_CALIB_CEMC");
-    out->AddNode("TOWERINFO_RAW_CEMC");
-    out->AddNode("TOWERINFO_SIM_CEMC");
-    out->AddNode("TOWERINFO_CALIB_CEMC");
-    out->AddNode("CLUSTER_CEMC");
-    out->AddNode("CLUSTER_POS_COR_CEMC");
-
-// leave the topo cluster here in case we run this during pass3
-    out->AddNode("TOPOCLUSTER_ALLCALO");
-    out->AddNode("TOPOCLUSTER_EMCAL");
-    out->AddNode("TOPOCLUSTER_HCAL");
-    se->registerOutputManager(out);
-  }
-
-/*
-  std::cout << "Adding Geometry file" << std::endl;
-  Fun4AllInputManager *intrue2 = new Fun4AllRunNodeInputManager("DST_GEO");
-  std::string geoLocation = CDBInterface::instance()->getUrl("calo_geo");
-  std::cout << "Adding file " << geoLocation << std::endl;
-  intrue2->AddFile(geoLocation);
-  //se->registerInputManager(intrue2);
-  */
 
   CaloWaveformSim *caloWaveformSim = new CaloWaveformSim();
   caloWaveformSim->set_detector_type(CaloTowerDefs::HCALOUT);
@@ -282,6 +174,59 @@ void Fun4All_G4_Waveform(
   calib->set_detector_type(CaloTowerDefs::CEMC);
   calib->set_outputNodePrefix("TOWERSWAVEFORM_CALIB_");
   se->registerSubsystem(calib);
+
+
+  //--------------
+  // Set up Input Managers
+  //--------------
+
+  InputManagers();
+
+  if (Enable::PRODUCTION)
+  {
+    Production_CreateOutputDir();
+  }
+
+  if (Enable::DSTOUT)
+  {
+    string FullOutFile = DstOut::OutputFile;
+    Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
+    out->AddNode("Sync");
+    out->AddNode("EventHeader");
+// Inner Hcal
+    out->AddNode("TOWER_SIM_HCALIN");
+    out->AddNode("TOWER_RAW_HCALIN");
+    out->AddNode("TOWER_CALIB_HCALIN");
+    out->AddNode("TOWERINFO_RAW_HCALIN");
+    out->AddNode("TOWERINFO_SIM_HCALIN");
+    out->AddNode("TOWERINFO_CALIB_HCALIN");
+    out->AddNode("CLUSTER_HCALIN");
+
+// Outer Hcal
+    out->AddNode("TOWER_SIM_HCALOUT");
+    out->AddNode("TOWER_RAW_HCALOUT");
+    out->AddNode("TOWER_CALIB_HCALOUT");
+    out->AddNode("TOWERINFO_RAW_HCALOUT");
+    out->AddNode("TOWERINFO_SIM_HCALOUT");
+    out->AddNode("TOWERINFO_CALIB_HCALOUT");
+    out->AddNode("CLUSTER_HCALOUT");
+
+// CEmc
+    out->AddNode("TOWER_SIM_CEMC");
+    out->AddNode("TOWER_RAW_CEMC");
+    out->AddNode("TOWER_CALIB_CEMC");
+    out->AddNode("TOWERINFO_RAW_CEMC");
+    out->AddNode("TOWERINFO_SIM_CEMC");
+    out->AddNode("TOWERINFO_CALIB_CEMC");
+    out->AddNode("CLUSTER_CEMC");
+    out->AddNode("CLUSTER_POS_COR_CEMC");
+
+// leave the topo cluster here in case we run this during pass3
+    out->AddNode("TOPOCLUSTER_ALLCALO");
+    out->AddNode("TOPOCLUSTER_EMCAL");
+    out->AddNode("TOPOCLUSTER_HCAL");
+    se->registerOutputManager(out);
+  }
 
   //-----------------
   // Event processing
