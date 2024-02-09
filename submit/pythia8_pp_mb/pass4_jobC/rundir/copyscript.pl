@@ -284,26 +284,12 @@ if ($attempts > 0)
     print "connections succeded after $attempts attempts\n";
 }
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $chkfile = $dbh->prepare("select size,full_file_path from files where full_file_path = ?");
-my $insertfile = $dbh->prepare("insert into files (lfn,full_host_name,full_file_path,time,size,md5) values (?,?,?,'now',?,?)");
-my $insertdataset = $dbh->prepare("insert into datasets (filename,runnumber,segment,size,dataset,dsttype,events) values (?,?,?,?,'mdc2',?,?)");
-my $chkdataset = $dbh->prepare("select size from datasets where filename=? and dataset='mdc2'");
-my $delfile = $dbh->prepare("delete from files where full_file_path = ?");
-my $delcat = $dbh->prepare("delete from datasets where filename = ?");
+my $insertfile = $dbh->prepare("insert into files (lfn,full_host_name,full_file_path,time,size,md5) values (?,?,?,'now',?,?) on conflict (lfn,full_host_name,full_file_path) do update set time = EXCLUDED.time, size = EXCLUDED.size, md5 = EXCLUDED.md5");
+my $insertdataset = $dbh->prepare("insert into datasets (filename,runnumber,segment,size,dataset,dsttype,events) values (?,?,?,?,'mdc2',?,?) on conflict (filename,dataset) do update set runnumber = EXCLUDED.runnumber, segment = EXCLUDED.segment, size = EXCLUDED.size, dsttype = EXCLUDED.dsttype, events = EXCLUDED.events");
 
 # first files table
-$chkfile->execute($outfile);
-if ($chkfile->rows > 0)
-{
-    $delfile->execute($outfile);
-}
 $insertfile->execute($lfn,$outhost,$outfile,$size,$md5sum);
 
-$chkdataset->execute($lfn);
-if ($chkdataset->rows > 0)
-{
-    $delcat->execute($lfn);
-}
 my $runnumber = 0;
 my $segment = -1;
 if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/)
@@ -345,10 +331,7 @@ else
 {
     print "db cmd: insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0])\n";
 }
-$chkdataset->finish();
-$chkfile->finish();
-$delcat->finish();
-$delfile->finish();
+
 $insertfile->finish();
 $insertdataset->finish();
 $dbh->disconnect;
