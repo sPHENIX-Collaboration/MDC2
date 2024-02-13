@@ -37,15 +37,14 @@ void Fun4All_G4_Waveform(
     const int nEvents = 1,
     const string &inputFile0 = "DST_CALO_NOZERO_sHijing_0_20fm-0000000010-00000.root",
     const string &inputFile1 = "G4Hits_sHijing_0_20fm-0000000010-00000.root",
+    const string &inputFile2 = "pedestal.root",
+    
     const string &outputFile = "DST_CALO_WAVEFORM_sHijing_0_20fm-0000000010-00000.root",
     const string &outdir = ".",
     const string &cdbtag = "MDC2")
 
 {
-  // this convenience library knows all our i/o objects so you don't
-  // have to figure out what is in each dst type
-  gSystem->Load("libg4dst.so");
-
+  
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1); // set it to 1 if you want event printouts
 
@@ -77,6 +76,8 @@ void Fun4All_G4_Waveform(
 
   INPUTREADHITS::filename[0] = inputFile0;
   INPUTREADHITS::filename[1] = inputFile1;
+  
+
 
 
   //-----------------
@@ -108,19 +109,26 @@ void Fun4All_G4_Waveform(
   // What to run
   //======================
 
+  
+
   CaloWaveformSim *caloWaveformSim = new CaloWaveformSim();
   caloWaveformSim->set_detector_type(CaloTowerDefs::HCALOUT);
   caloWaveformSim->set_detector("HCALOUT");
   caloWaveformSim->set_nsamples(12);
-   // caloWaveformSim->set_noise_type(CaloWaveformSim::NOISE_NONE);
-   se->registerSubsystem(caloWaveformSim);
+  caloWaveformSim->Verbosity(2);
+  //caloWaveformSim->set_noise_type(CaloWaveformSim::NOISE_NONE);
+  se->registerSubsystem(caloWaveformSim);
+  
 
   caloWaveformSim = new CaloWaveformSim();
   caloWaveformSim->set_detector_type(CaloTowerDefs::HCALIN);
   caloWaveformSim->set_detector("HCALIN");
   caloWaveformSim->set_nsamples(12);
   //  caloWaveformSim->set_noise_type(CaloWaveformSim::NOISE_NONE);
-    se->registerSubsystem(caloWaveformSim);
+  se->registerSubsystem(caloWaveformSim);
+
+
+ 
 
   caloWaveformSim = new CaloWaveformSim();
   caloWaveformSim->set_detector_type(CaloTowerDefs::CEMC);
@@ -129,11 +137,18 @@ void Fun4All_G4_Waveform(
   caloWaveformSim->set_calibName("cemc_pi0_twrSlope_v1_default");
   
   //  caloWaveformSim->set_noise_type(CaloWaveformSim::NOISE_NONE);
+  
   caloWaveformSim->get_light_collection_model().load_data_file(
-      string(getenv("CALIBRATIONROOT")) +
-          string("/CEMC/LightCollection/Prototype3Module.xml"),
-      "data_grid_light_guide_efficiency", "data_grid_fiber_trans");
+  string(getenv("CALIBRATIONROOT")) +
+  string("/CEMC/LightCollection/Prototype3Module.xml"),
+  "data_grid_light_guide_efficiency", "data_grid_fiber_trans");
+  
   se->registerSubsystem(caloWaveformSim);
+          
+  
+ 
+  
+  
 
   CaloTowerBuilder *ca2 = new CaloTowerBuilder();
   ca2->set_detector_type(CaloTowerDefs::HCALOUT);
@@ -159,7 +174,10 @@ void Fun4All_G4_Waveform(
   ca2->set_builder_type(CaloTowerDefs::kWaveformTowerv2);
   se->registerSubsystem(ca2);
 
+  
+
   // tower calib
+  
   CaloTowerCalib *calib = new CaloTowerCalib();
   calib->set_detector_type(CaloTowerDefs::HCALOUT);
   calib->set_outputNodePrefix("TOWERSWAVEFORM_CALIB_");
@@ -174,13 +192,20 @@ void Fun4All_G4_Waveform(
   calib->set_detector_type(CaloTowerDefs::CEMC);
   calib->set_outputNodePrefix("TOWERSWAVEFORM_CALIB_");
   se->registerSubsystem(calib);
+  
 
+  
 
   //--------------
   // Set up Input Managers
   //--------------
 
   InputManagers();
+  
+  Fun4AllInputManager *hitsin = new Fun4AllNoSyncDstInputManager("DST2");
+  hitsin->AddFile(inputFile2);
+  hitsin->repeat();
+  se->registerInputManager(hitsin);
 
   if (Enable::PRODUCTION)
   {
