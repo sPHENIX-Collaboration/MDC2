@@ -22,7 +22,7 @@ void CreateDstOutput(int runnumber, int segment)
 
   char segrun[100];
   snprintf(segrun,100,"-%010d-%05d",runnumber,segment);
-  string FullOutFile = "DST_TRUTH_AMPT" + string(segrun) + ".root";;
+  string FullOutFile = "DST_TRUTH_ampt_0_20fm" + string(segrun) + ".root";;
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("TRUTHOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("PHHepMCGenEventMap");
@@ -32,7 +32,7 @@ void CreateDstOutput(int runnumber, int segment)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "DST_TRKR_HIT_AMPT" + string(segrun) + ".root";;
+  FullOutFile = "DST_TRKR_HIT_ampt_0_20fm" + string(segrun) + ".root";;
   out = new Fun4AllDstOutputManager("TRKROUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("TRKR_HITSET");
