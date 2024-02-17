@@ -620,16 +620,16 @@ elsif ($system == 21)
 }
 elsif ($system == 22)
 {
-    $systemstring = "ampt";
+    $systemstring = "ampt_0_20fm";
     $topdir = sprintf("%s/ampt",$topdir);
-    $pileupstring = "_500kHz_bkg_0_10fm";
+    $pileupstring = "_50kHz_bkg_0_20fm";
     $notlike{$systemstring} = ["pythia8" ,"single", "special"];
 }
 elsif ($system == 23)
 {
-    $systemstring = "epos";
+    $systemstring = "epos_0_153fm";
     $topdir = sprintf("%s/epos",$topdir);
-    $pileupstring = "_500kHz_bkg_0_10fm";
+    $pileupstring = "_50kHz_bkg_0_153fm";
     $notlike{$systemstring} = ["pythia8" ,"single", "special"];
 }
 else

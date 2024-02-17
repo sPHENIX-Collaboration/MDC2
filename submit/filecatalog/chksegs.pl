@@ -455,11 +455,11 @@ elsif ($system == 21)
 elsif ($system == 22)
 {
     $g4hits_exist = 1;
-    $systemstring_g4hits = "ampt";
+    $systemstring_g4hits = "ampt_0_20fm";
     $gpfsdir = "ampt";
     if (! defined $nopileup)
     {
-	$systemstring = sprintf("%s_500kHz_bkg_0_10fm",$systemstring_g4hits);
+	$systemstring = sprintf("%s_50kHz_bkg_0_20fm",$systemstring_g4hits);
     }
     else
     {
@@ -470,11 +470,11 @@ elsif ($system == 22)
 elsif ($system == 23)
 {
     $g4hits_exist = 1;
-    $systemstring_g4hits = "epos";
+    $systemstring_g4hits = "epos_0_153fm";
     $gpfsdir = "epos";
     if (! defined $nopileup)
     {
-	$systemstring = sprintf("%s_500kHz_bkg_0_10fm",$systemstring_g4hits);
+	$systemstring = sprintf("%s_50kHz_bkg_0_153fm",$systemstring_g4hits);
     }
     else
     {
