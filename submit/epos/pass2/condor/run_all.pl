@@ -80,7 +80,7 @@ $getfiles->execute() || die $DBI::errstr;
 while (my @res = $getfiles->fetchrow_array())
 {
     my $lfn = $res[0];
-    print "$lfn\n";
+#    print "$lfn\n";
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
         my $prefix=$1;

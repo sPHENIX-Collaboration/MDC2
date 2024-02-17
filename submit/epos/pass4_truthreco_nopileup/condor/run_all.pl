@@ -35,7 +35,7 @@ if ($hostname !~ /phnxsub/)
 }
 my $maxsubmit = $ARGV[0];
 
-my $outfilelike = sprintf("epos");
+my $outfilelike = sprintf("epos_0_153fm");
 
 my $condorlistfile =  sprintf("condor.list");
 if (-f $condorlistfile)

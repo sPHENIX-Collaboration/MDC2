@@ -20,9 +20,9 @@ R__LOAD_LIBRARY(libfun4all.so)
 //________________________________________________________________________________________________
 int Fun4All_G4_Global(
     const int nEvents = 0,
-    const std::string &inputFile1 = "DST_TRACKS_epos-0000000010-00000.root",
-    const std::string &inputFile2 = "DST_BBC_EPD_epos-0000000010-00000.root",
-    const std::string &outputFile = "DST_GLOBAL_epos-0000000010-00000.root",
+    const std::string &inputFile1 = "DST_TRACKS_epos_0_153fm-0000000010-00000.root",
+    const std::string &inputFile2 = "DST_BBC_EPD_epos_0_153fm-0000000010-00000.root",
+    const std::string &outputFile = "DST_GLOBAL_epos_0_153fm-0000000010-00000.root",
     const std::string &outdir = ".")
 {
   gSystem->Load("libg4dst.so");

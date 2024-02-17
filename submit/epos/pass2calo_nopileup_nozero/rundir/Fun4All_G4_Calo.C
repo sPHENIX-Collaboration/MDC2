@@ -25,8 +25,8 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_Calo(
     const int nEvents = 1,
-    const string &inputFile0 = "G4Hits_epos-0000000010-00000.root",
-    const string &outputFile = "DST_CALO_NOZERO_epos-0000000010-00000.root",
+    const string &inputFile0 = "G4Hits_epos_0_153fm-0000000010-00000.root",
+    const string &outputFile = "DST_CALO_NOZERO_epos_0_153fm-0000000010-00000.root",
     const string &outdir = ".")
 {
   Fun4AllServer *se = Fun4AllServer::instance();

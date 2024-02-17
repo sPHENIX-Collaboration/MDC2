@@ -23,11 +23,11 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 void Fun4All_TruthReco(
   const int nEvents = 0,
-  const std::string &dst_trkr_g4hit = "DST_TRKR_G4HIT_epos-0000000007-00000.root",
-  const std::string &dst_trkr_cluster = "DST_TRKR_CLUSTER_epos-0000000007-00000.root",
-  const std::string &dst_tracks = "DST_TRACKS_epos-0000000007-00000.root",
-  const std::string &dst_truth = "DST_TRUTH_epos-0000000007-00000.root",
-  const std::string &outputFile = "DST_TRUTH_RECO_epos-0000000007-00000.root",
+  const std::string &dst_trkr_g4hit = "DST_TRKR_G4HIT_epos_0_153fm-0000000010-00000.root",
+  const std::string &dst_trkr_cluster = "DST_TRKR_CLUSTER_epos_0_153fm-0000000010-00000.root",
+  const std::string &dst_tracks = "DST_TRACKS_epos_0_153fm-0000000010-00000.root",
+  const std::string &dst_truth = "DST_TRUTH_epos_0_153fm-0000000010-00000.root",
+  const std::string &outputFile = "DST_TRUTH_RECO_epos_0_153fm-0000000010-00000.root",
   const std::string &outdir = "."
 )
 {

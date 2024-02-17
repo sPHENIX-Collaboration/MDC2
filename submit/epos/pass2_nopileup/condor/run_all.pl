@@ -68,7 +68,7 @@ foreach my $type (sort keys %outfiletype)
 #die;
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%epos%' and runnumber = $runnumber and segment < 100000 order by filename") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%epos_0_153fm%' and runnumber = $runnumber and segment < 100000 order by filename") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
@@ -83,7 +83,7 @@ while (my @res = $getfiles->fetchrow_array())
         my $foundall = 1;
 	foreach my $type (sort keys %outfiletype)
 	{
-            my $lfn =  sprintf("%s_epos-%010d-%05d.root",$type,$runnumber,$segment);
+            my $lfn =  sprintf("%s_epos_0_153fm-%010d-%05d.root",$type,$runnumber,$segment);
 #            print "checking for $lfn\n";
 	    $chkfile->execute($lfn);
 	    if ($chkfile->rows > 0)
@@ -105,8 +105,8 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $tstflag="--test";
 	}
-	my $calooutfilename = sprintf("DST_CALO_CLUSTER_epos-%010d-%05d.root",$runnumber,$segment);
-	my $globaloutfilename = sprintf("DST_MBD_EPD_epos-%010d-%05d.root",$runnumber,$segment);
+	my $calooutfilename = sprintf("DST_CALO_CLUSTER_epos_0_153fm-%010d-%05d.root",$runnumber,$segment);
+	my $globaloutfilename = sprintf("DST_MBD_EPD_epos_0_153fm-%010d-%05d.root",$runnumber,$segment);
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %s", $outevents, $lfn, $calooutfilename, $outdir[0], $globaloutfilename, $outdir[1], $outdir[2], $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
