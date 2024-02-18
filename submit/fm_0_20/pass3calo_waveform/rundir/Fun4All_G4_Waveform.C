@@ -204,7 +204,7 @@ void Fun4All_G4_Waveform(
   
   Fun4AllInputManager *hitsin = new Fun4AllNoSyncDstInputManager("DST2");
   hitsin->AddFile(inputFile2);
-  hitsin->repeat();
+  hitsin->Repeat();
   se->registerInputManager(hitsin);
 
   if (Enable::PRODUCTION)
@@ -219,32 +219,41 @@ void Fun4All_G4_Waveform(
     out->AddNode("Sync");
     out->AddNode("EventHeader");
 // Inner Hcal
+    out->AddNode("CLUSTER_HCALIN");
     out->AddNode("TOWER_SIM_HCALIN");
     out->AddNode("TOWER_RAW_HCALIN");
     out->AddNode("TOWER_CALIB_HCALIN");
     out->AddNode("TOWERINFO_RAW_HCALIN");
     out->AddNode("TOWERINFO_SIM_HCALIN");
     out->AddNode("TOWERINFO_CALIB_HCALIN");
-    out->AddNode("CLUSTER_HCALIN");
+    out->AddNode("WAVEFORM_HCALIN");
+    out->AddNode("TOWERS_HCALIN");
+    out->AddNode("TOWERSWAVEFORM_CALIB_HCALIN");
 
 // Outer Hcal
+    out->AddNode("CLUSTER_HCALOUT");
     out->AddNode("TOWER_SIM_HCALOUT");
     out->AddNode("TOWER_RAW_HCALOUT");
     out->AddNode("TOWER_CALIB_HCALOUT");
     out->AddNode("TOWERINFO_RAW_HCALOUT");
     out->AddNode("TOWERINFO_SIM_HCALOUT");
     out->AddNode("TOWERINFO_CALIB_HCALOUT");
-    out->AddNode("CLUSTER_HCALOUT");
+    out->AddNode("WAVEFORM_HCALOUT");
+    out->AddNode("TOWERS_HCALOUT");
+    out->AddNode("TOWERSWAVEFORM_CALIB_HCALOUT");
 
 // CEmc
+    out->AddNode("CLUSTER_CEMC");
+    out->AddNode("CLUSTER_POS_COR_CEMC");
     out->AddNode("TOWER_SIM_CEMC");
     out->AddNode("TOWER_RAW_CEMC");
     out->AddNode("TOWER_CALIB_CEMC");
     out->AddNode("TOWERINFO_RAW_CEMC");
     out->AddNode("TOWERINFO_SIM_CEMC");
     out->AddNode("TOWERINFO_CALIB_CEMC");
-    out->AddNode("CLUSTER_CEMC");
-    out->AddNode("CLUSTER_POS_COR_CEMC");
+    out->AddNode("WAVEFORM_CEMC");
+    out->AddNode("TOWERS_CEMC");
+    out->AddNode("TOWERSWAVEFORM_CALIB_CEMC");
 
 // leave the topo cluster here in case we run this during pass3
     out->AddNode("TOPOCLUSTER_ALLCALO");
