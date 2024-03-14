@@ -3,7 +3,8 @@
 
 #include <GlobalVariables.C>
 
-#include <G4_CEmc_Spacal.C>
+//#include <G4_CEmc_Spacal.C>
+#include </gpfs/mnt/gpfs02/sphenix/user/ahodges/macros_git/macros/common/G4_CEmc_Spacal.C>
 #include <G4_HcalIn_ref.C>
 #include <G4_HcalOut_ref.C>
 #include <G4_Input.C>
@@ -25,8 +26,8 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_Calo(
     const int nEvents = 1,
-    const string &inputFile0 = "DST_CALO_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
-    const string &outputFile = "DST_CALO_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
+    const string &inputFile0 = "DST_CALO_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000010-00000.root",
+    const string &outputFile = "DST_CALO_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000010-00000.root",
     const string &outdir = ".")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
@@ -76,6 +77,8 @@ int Fun4All_G4_Calo(
   FlagHandler *flag = new FlagHandler();
   se->registerSubsystem(flag);
 
+  G4CEMC::useTowerInfoV2 = true;
+  
   // set up production relatedstuff
    Enable::PRODUCTION = true;
 
@@ -87,7 +90,7 @@ int Fun4All_G4_Calo(
   Enable::DSTOUT_COMPRESS = false;
   DstOut::OutputDir = outdir;
   DstOut::OutputFile = outputFile;
-
+  
   //======================
   // What to run
   //======================
@@ -98,7 +101,8 @@ int Fun4All_G4_Calo(
   Enable::CEMC_CELL = Enable::CEMC && true;
   Enable::CEMC_TOWER = Enable::CEMC_CELL && true;
   Enable::CEMC_CLUSTER = Enable::CEMC_TOWER && true;
-
+  
+  
   Enable::HCALIN = true;
   Enable::HCALIN_CELL = Enable::HCALIN && true;
   Enable::HCALIN_TOWER = Enable::HCALIN_CELL && true;
@@ -112,7 +116,7 @@ int Fun4All_G4_Calo(
   //------------------
   // Detector Reconstruction
   //------------------
-
+  
   if (Enable::CEMC_CELL) CEMC_Cells();
 
   if (Enable::HCALIN_CELL) HCALInner_Cells();
