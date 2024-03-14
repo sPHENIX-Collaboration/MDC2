@@ -3,8 +3,7 @@
 
 #include <GlobalVariables.C>
 
-//#include <G4_CEmc_Spacal.C>
-#include </gpfs/mnt/gpfs02/sphenix/user/ahodges/macros_git/macros/common/G4_CEmc_Spacal.C>
+#include <G4_CEmc_Spacal.C>
 #include <G4_HcalIn_ref.C>
 #include <G4_HcalOut_ref.C>
 #include <G4_Input.C>
@@ -27,7 +26,7 @@ R__LOAD_LIBRARY(libfun4all.so)
 int Fun4All_G4_Calo(
     const int nEvents = 1,
     const string &inputFile0 = "DST_CALO_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000010-00000.root",
-    const string &outputFile = "DST_CALO_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000010-00000.root",
+    const string &outputFile = "DST_CALO_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000010_TowerInfoV2.root",
     const string &outdir = ".")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
@@ -78,7 +77,9 @@ int Fun4All_G4_Calo(
   se->registerSubsystem(flag);
 
   G4CEMC::useTowerInfoV2 = true;
-  
+  G4HCALOUT::useTowerInfoV2 = true;
+  G4HCALIN::useTowerInfoV2 = true;
+
   // set up production relatedstuff
    Enable::PRODUCTION = true;
 
@@ -207,7 +208,6 @@ int Fun4All_G4_Calo(
   //-----
   // Exit
   //-----
-
   CDBInterface::instance()->Print(); // print used DB files
   se->End();
   se->PrintTimer();
