@@ -31,7 +31,8 @@ int Fun4All_G4_Cosmic(
   const int nEvents = 1,
   const string &outputFile = "G4Hits_cosmic-0000011-00000.root",
   const string &outdir = ".",
-  const string &field = "on")
+  const string &field = "on",
+  const string &cdbtag = "MDC2_ana.407")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -58,7 +59,7 @@ int Fun4All_G4_Cosmic(
   //===============
   Enable::CDB = true;
   // global tag
-  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG",cdbtag);
   // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
@@ -148,7 +149,7 @@ int Fun4All_G4_Cosmic(
   Enable::EPD = true;
 
   //! forward flux return plug door. Out of acceptance and off by default.
-//  Enable::PLUGDOOR = true;
+  Enable::PLUGDOOR = true;
 //  Enable::PLUGDOOR_BLACKHOLE = true;
 //  Enable::PLUGDOOR_ABSORBER = true;
 
