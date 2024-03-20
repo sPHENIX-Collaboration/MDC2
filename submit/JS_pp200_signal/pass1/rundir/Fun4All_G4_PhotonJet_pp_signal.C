@@ -116,7 +116,7 @@ int Fun4All_G4_PhotonJet_pp_signal(
   // Initialize the selected Input/Event generation
   //-----------------
   // This creates the input generator(s)
-  string pythia8_config_file = "/sphenix/user/jpark4/sPHENIX_software/Simulation/PhotonJet/";//string(getenv("CALIBRATIONROOT")) + "/Generators/JetStructure_TG/";
+  string pythia8_config_file = string(getenv("CALIBRATIONROOT")) + "/Generators/JetStructure_TG/";
   if (photontrigger == "PhotonJet5")
   {
     pythia8_config_file += "phpythia8_JS_GJ_ptHat5_MDC2.cfg";
