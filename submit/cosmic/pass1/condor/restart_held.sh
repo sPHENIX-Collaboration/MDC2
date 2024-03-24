@@ -16,5 +16,4 @@ for i in `cat bla| awk '{print $1}'`; do condor_rm $i; done
 [ -f tmplist ] && rm tmplist
 
 for i in `cat bla | awk '{print $11}' | awk -F- '{print $3}' | awk -F. -v runnumber=${runnumber} '{print "-"runnumber"-"$1".job"}'`; do echo $i >> tmplist ; done
-#for i in `cat tmplist`; do echo condor_submit log/run${run}/${magnet}/condor$i; done
-for i in `cat tmplist`; do condor_submit log/run${run}/${variable}/condor$i; done
+for i in `cat tmplist`; do echo condor_submit log/run${run}/${magnet}/condor$i; done
