@@ -12,9 +12,9 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-ana_calo=ana.391
-ana_mbdepd=ana.391
-ana_pass3trk=ana.391
+ana_calo=ana.407
+ana_mbdepd=ana.407
+ana_pass3trk=ana.407
 
 run_calo=1
 run_trk=0

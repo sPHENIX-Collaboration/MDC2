@@ -37,7 +37,7 @@ if ($sequence < 100)
     $baseprio = 90;
 }
 my $condorlistfile = sprintf("condor.list");
-my $suffix = sprintf("%s-%010d-%05d",$field,$runnumber,$sequence);
+my $suffix = sprintf("-%010d-%05d",$runnumber,$sequence);
 my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$field);
 if (! -d $logdir)
 {
@@ -48,7 +48,7 @@ if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);
 }
-my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
+my $jobfile = sprintf("%s/condor%s.job",$logdir,$suffix);
 if (-f $jobfile)
 {
     if (defined $overwrite)
@@ -66,8 +66,8 @@ if (-f $condorlogfile)
 {
     unlink $condorlogfile;
 }
-my $errfile = sprintf("%s/condor_%s.err",$logdir,$suffix);
-my $outfile = sprintf("%s/condor_%s.out",$logdir,$suffix);
+my $errfile = sprintf("%s/condor%s.err",$logdir,$suffix);
+my $outfile = sprintf("%s/condor%s.out",$logdir,$suffix);
 print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";

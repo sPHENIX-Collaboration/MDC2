@@ -37,8 +37,8 @@ if ($field ne "on" &&
     print "second argument has to be either on or off\n";
     exit(1);
 }
-
-my $filetype = sprintf("cosmic_magnet_%s",$field);
+my $magnet=sprintf("magnet_%s",$field);
+my $filetype = sprintf("cosmic_%s",$magnet);
 my $condorlistfile =  sprintf("condor.list");
 if (-f $condorlistfile)
 {
@@ -52,12 +52,12 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,$field);
+$outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,$magnet);
 mkpath($outdir);
 
 my $localdir=`pwd`;
 chomp $localdir;
-my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$field);
+my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$magnet);
 my $nsubmit = 0;
 my $njob = 0;
 OUTER: for (my $isub = 0; $isub < $maxsubmit; $isub++)
@@ -86,7 +86,7 @@ OUTER: for (my $isub = 0; $isub < $maxsubmit; $isub++)
 	{
 	    $tstflag="--test";
 	}
-	system("perl run_condor.pl $events $outdir $outfile $field $runnumber $njob $tstflag");
+	system("perl run_condor.pl $events $outdir $outfile $magnet $runnumber $njob $tstflag");
 	my $exit_value  = $? >> 8;
 	if ($exit_value != 0)
 	{

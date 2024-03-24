@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 13;
+my $runnumber = 16;
 my $test;
 my $incremental;
 my $shared;
@@ -40,6 +40,7 @@ if ($field ne "on" &&
     print "second argument has to be either on or off\n";
     exit(1);
 }
+$field = sprintf("magnet_%s",$field);
 
 my $condorlistfile =  sprintf("condor.list");
 if (-f $condorlistfile)
@@ -58,11 +59,13 @@ while (my $line = <F>)
 {
     chomp $line;
     $line = sprintf("%s/run%04d/%s",$line,$runnumber,lc $field);
-    mkpath($line);
+    if (! -d $line)
+    {
+	mkpath($line);
+    }
     push(@outdir,$line);
 }
 close(F);
-$field = sprintf("magnet_%s",$field);
 my $filetype = sprintf("cosmic_%s",$field);
 
 my %outfiletype = ();
