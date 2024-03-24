@@ -83,7 +83,8 @@ namespace G4HCALIN
 
     kHCalInTemplateClusterizer
   };
-
+  
+  bool useTowerInfoV2 = false;
   //! template clusterizer, RawClusterBuilderTemplate, as developed by Sasha Bazilevsky
   enu_HCalIn_clusterizer HCalIn_clusterizer = kHCalInTemplateClusterizer;
   //! graph clusterizer, RawClusterBuilderGraph
@@ -110,7 +111,7 @@ double HCalInner(PHG4Reco *g4Reco,
   bool OverlapCheck = Enable::OVERLAPCHECK || Enable::HCALIN_OVERLAPCHECK;
   int verbosity = std::max(Enable::VERBOSITY, Enable::HCALIN_VERBOSITY);
 
-  PHG4DetectorSubsystem *hcal;
+  PHG4DetectorSubsystem *hcal = nullptr;
   //  Mephi Maps
   //  Maps are different for old/new but how to set is identical
   //  here are the ones for the gdml based inner hcal
@@ -180,9 +181,7 @@ double HCalInner(PHG4Reco *g4Reco,
   else
   {
     hcal = new PHG4IHCalSubsystem("HCALIN");
-    // std::string hcaltiles = "/sphenix/u/shuhang98/calibrations/InnerHCalAbsorberTiles_merged.gdml";
-    std::string hcaltiles = std::string(getenv("CALIBRATIONROOT")) + "/HcalGeo/InnerHCalAbsorberTiles_merged.gdml";
-    hcal->set_string_param("GDMPath", hcaltiles);
+    // hcal->set_string_param("GDMPath", "mytestgdml.gdml"); // try other gdml file
   }
   if (G4HCALIN::light_scint_model >= 0)
   {
@@ -302,6 +301,7 @@ void HCALInner_Towers()
 
   RawTowerCalibration *TowerCalibration = new RawTowerCalibration("HcalInRawTowerCalibration");
   TowerCalibration->Detector("HCALIN");
+  TowerCalibration -> set_usetowerinfo_v2(G4HCALIN::useTowerInfoV2);
   //  TowerCalibration->set_raw_tower_node_prefix("RAW_LG");
   //  TowerCalibration->set_calib_tower_node_prefix("CALIB_LG");
   TowerCalibration->set_calib_algorithm(RawTowerCalibration::kSimple_linear_calibration);

@@ -42,6 +42,7 @@ namespace Enable
   bool HCALOUT_EVAL = false;
   bool HCALOUT_QA = false;
   bool HCALOUT_OLD = false;
+  bool HCALOUT_RING = true;
   bool HCALOUT_G4Hit = true;
   int HCALOUT_VERBOSITY = 0;
 }  // namespace Enable
@@ -70,6 +71,8 @@ namespace G4HCALOUT
     kHCalOutTemplateClusterizer
   };
 
+  bool useTowerInfoV2 = false;
+
   //! template clusterizer, RawClusterBuilderTemplate, as developed by Sasha Bazilevsky
   enu_HCalOut_clusterizer HCalOut_clusterizer = kHCalOutTemplateClusterizer;
   //! graph clusterizer, RawClusterBuilderGraph
@@ -92,7 +95,7 @@ double HCalOuter(PHG4Reco *g4Reco,
   bool OverlapCheck = Enable::OVERLAPCHECK || Enable::HCALOUT_OVERLAPCHECK;
   int verbosity = std::max(Enable::VERBOSITY, Enable::HCALOUT_VERBOSITY);
 
-  PHG4DetectorSubsystem *hcal;
+  PHG4DetectorSubsystem *hcal = nullptr;
   //  Mephi Maps
   //  Maps are different for old/new but how to set is identical
   //  here are the ones for the old outer hcal since the new maps do not exist yet
@@ -143,9 +146,13 @@ double HCalOuter(PHG4Reco *g4Reco,
   else
   {
     hcal = new PHG4OHCalSubsystem("HCALOUT");
-    std::string hcaltiles = std::string(getenv("CALIBRATIONROOT")) + "/HcalGeo/OuterHCalAbsorberTiles_merged.gdml";
-    // std::string hcaltiles = "/sphenix/u/shuhang98/calibrations/OuterHCalAbsorberTiles_merged.gdml";
-    hcal->set_string_param("GDMPath", hcaltiles);
+    if (Enable::HCALOUT_RING)
+    {
+      std::string gdmlfile_no_ring =   string(getenv("CALIBRATIONROOT")) + "/HcalGeo/OuterHCalAbsorberTiles_merged.gdml"; 
+      hcal->set_string_param("GDMPath", gdmlfile_no_ring);
+    }
+    // hcal->set_string_param("GDMPath", "mytestgdml.gdml"); // try other gdml file
+    // common setting with tracking, we likely want to move to the cdb with this
     hcal->set_string_param("IronFieldMapPath", G4MAGNET::magfield_OHCAL_steel);
     hcal->set_double_param("IronFieldMapScale", G4MAGNET::magfield_rescale);
   }
@@ -213,23 +220,27 @@ double HCalOuter(PHG4Reco *g4Reco,
       g4Reco->registerSubsystem(cyl);
 
       // rings inside outer HCal envelope
-      cylout = new PHG4CylinderSubsystem("HCAL_SPT_N1", i + 2);
-      cylout->set_double_param("place_z", z_rings[i]);
-      cylout->SuperDetector("HCALIN_SPT");
-      cylout->set_double_param("radius", hcal_envelope_radius + 0.1);  // add a mm to avoid overlaps
-      cylout->set_int_param("lengthviarapidity", 0);
-      cylout->set_double_param("length", support_ring_dz);
-      cylout->set_string_param("material", "G4_Al");
-      cylout->set_double_param("thickness", support_ring_outer_radius - (hcal_envelope_radius + 0.1));
-      cylout->set_double_param("start_phi_rad", 1.867);
-      cylout->set_double_param("delta_phi_rad", 5.692);
-      if (AbsorberActive)
-      {
-        cylout->SetActive();
-      }
-      cylout->SetMotherSubsystem(hcal);
-      cylout->OverlapCheck(OverlapCheck);
-      g4Reco->registerSubsystem(cylout);
+      //only use if we want to use the old version of the ring instead of the gdml implementation
+      if (Enable::HCALOUT_RING)
+	{ 
+	  cylout = new PHG4CylinderSubsystem("HCAL_SPT_N1", i + 2);
+	  cylout->set_double_param("place_z", z_rings[i]);
+	  cylout->SuperDetector("HCALIN_SPT");
+	  cylout->set_double_param("radius", hcal_envelope_radius + 0.1);  // add a mm to avoid overlaps
+	  cylout->set_int_param("lengthviarapidity", 0);
+	  cylout->set_double_param("length", support_ring_dz);
+	  cylout->set_string_param("material", "G4_Al");
+	  cylout->set_double_param("thickness", support_ring_outer_radius - (hcal_envelope_radius + 0.1));
+	  cylout->set_double_param("start_phi_rad", 1.867);
+	  cylout->set_double_param("delta_phi_rad", 5.692);
+	  if (AbsorberActive)
+	    {
+	      cylout->SetActive();
+	    }
+	  cylout->SetMotherSubsystem(hcal);
+	  cylout->OverlapCheck(OverlapCheck);
+	  g4Reco->registerSubsystem(cylout);
+	}
     }
   }
 
@@ -322,6 +333,8 @@ void HCALOuter_Towers()
 
   RawTowerCalibration *TowerCalibration = new RawTowerCalibration("HcalOutRawTowerCalibration");
   TowerCalibration->Detector("HCALOUT");
+  TowerCalibration -> set_usetowerinfo_v2(G4HCALOUT::useTowerInfoV2);
+
   //  TowerCalibration->set_raw_tower_node_prefix("RAW_LG");
   //  TowerCalibration->set_calib_tower_node_prefix("CALIB_LG");
   TowerCalibration->set_calib_algorithm(RawTowerCalibration::kSimple_linear_calibration);
