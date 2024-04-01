@@ -24,7 +24,8 @@ my $ptmin;
 my $ptmax;
 my $particle;
 my $pileup;
-GetOptions("dsttype:s"=>\$dsttype, "embed:s"=>\$embed, "fm:s" =>\$fm, "kill"=>\$kill, "nopileup"=>\$nopileup, "pileup:s" => \$pileup, "runnumber:i" => \$runnumber, "type:i"=>\$system, "verbose" => \$verbose);
+my $magnet;
+GetOptions("dsttype:s"=>\$dsttype, "embed:s"=>\$embed, "fm:s" =>\$fm, "kill"=>\$kill, "magnet:s" => \$magnet, "nopileup"=>\$nopileup, "pileup:s" => \$pileup, "runnumber:i" => \$runnumber, "type:i"=>\$system, "verbose" => \$verbose);
 
 if (! defined $pileup)
 {
@@ -83,7 +84,8 @@ my %daughters = (
     "DST_TRACKS_DISTORT" => [ "" ],
     "DST_CALO_CLUSTER" => [ "DST_TRACKS" ],
 #    "DST_CALO_CLUSTER" => [ "" ],
-    "DST_CALO_NOZERO" => [ "" ],
+    "DST_CALO_NOZERO" => [ "DST_CALO_WAVEFORM" ],
+    "DST_CALO_WAVEFORM" => [ "" ],
     "DSTOLD_BBC_G4HIT" => [ "" ],
     "DSTOLD_CALO_G4HIT" => [ "" ],
     "DSTOLD_TRKR_G4HIT" => [ "DSTOLD_TRKR_HIT" ],
@@ -163,6 +165,7 @@ if ($#ARGV < 0)
     print "   21 : JS pythia8 Jet >20GeV\n";
     print "   22 : AMPT\n";
     print "   23 : EPOS\n";
+    print "   24 : Cosmics\n";
     print "-dsttype:\n";
     foreach my $tp (sort keys %daughters)
     {
@@ -182,7 +185,7 @@ if( ! exists $daughters{$dsttype})
     }
     exit(0);
 }
-if ($system < 1 || $system > 23)
+if ($system < 1 || $system > 24)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
@@ -208,6 +211,7 @@ if ($system < 1 || $system > 23)
     print "   21 : JS pythia8 Jet >20GeV\n";
     print "   22 : AMPT\n";
     print "   23 : EPOS\n";
+    print "   24 : Cosmics\n";
     exit(0);
 }
 
@@ -220,7 +224,7 @@ my %specialcondorfileadd = ();
 my %productionsubdir = (
     "DST_BBC_EPD"=> "pass3_bbcepd",
     "DST_BBC_G4HIT" => "pass2",
-    "DST_CALO_CLUSTER" => "pass3calo_nozero",
+    "DST_CALO_NOZERO" => "pass3calo_nozero",
     "DST_CALO_CLUSTER" => "pass3calo",
     "DST_CALO_G4HIT"=> "pass2",
     "DST_GLOBAL"=> "pass5_global",
@@ -245,6 +249,7 @@ if (defined $nopileup)
     $productionsubdir{"DST_TRKR_HIT"} = "pass2_nopileup";
     $productionsubdir{"DST_CALO_CLUSTER"} = "pass2_nopileup";
     $productionsubdir{"DST_CALO_NOZERO"} = "pass2calo_nopileup_nozero";
+    $productionsubdir{"DST_CALO_WAVEFORM"} = "pass3calo_waveform_nozero";
     $productionsubdir{"DST_BBC_EPD"} = "pass2_nopileup";
     $productionsubdir{"DST_MBD_EPD"} = "pass2_nopileup";
     $productionsubdir{"DST_GLOBAL"} = "pass4_global_nopileup";
@@ -632,6 +637,23 @@ elsif ($system == 23)
     $pileupstring = "_50kHz_bkg_0_153fm";
     $notlike{$systemstring} = ["pythia8" ,"single", "special"];
 }
+elsif ($system == 24)
+{
+    if (! defined $magnet)
+    {
+	print "need to add --magnet <on> or <off>\n";
+	exit 1;
+    }
+    if ($magnet ne "on" && $magnet ne "off")
+    {
+	print "--magnet only <on> or <off>, not $magnet\n";
+	exit 1;
+    }
+    $systemstring = sprintf("cosmic_magnet_%s",$magnet);
+    $topdir = sprintf("%s/cosmic",$topdir);
+    $pileupstring = "";
+    $notlike{$systemstring} = ["pythia8" ,"single", "special"];
+}
 else
 {
     die "bad type $system\n";
@@ -736,6 +758,10 @@ foreach my $rem (keys %removethese)
 	    $condornameprefix = sprintf("condor");
 	}
     }
+if (defined $magnet)
+ {
+    $condor_subdir = sprintf("%s/magnet_%s",$condor_subdir,$magnet);
+}
     if (defined $verbose)
     {
 	print "condor_subdir: $condor_subdir\n";
