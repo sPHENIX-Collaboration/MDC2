@@ -19,9 +19,10 @@ my $particle;
 my $file_exist_check;
 my $fm = "0_20fm";
 my $pileup;
-GetOptions("embed:s" => \$embed, "exist" => \$file_exist_check, "fm:s" =>\$fm, "pileup:s" => \$pileup, "run:i"=>\$runnumber, "type:i"=>\$system, "verbosity" => \$verbosity, "nopileup" => \$nopileup);
+my $magnet;
+GetOptions("embed:s" => \$embed, "exist" => \$file_exist_check, "fm:s" =>\$fm, "magnet:s" => \$magnet, "pileup:s" => \$pileup, "run:i"=>\$runnumber, "type:i"=>\$system, "verbosity" => \$verbosity, "nopileup" => \$nopileup);
 
-if ($system < 1 || $system > 23)
+if ($system < 1 || $system > 24)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
@@ -47,6 +48,7 @@ if ($system < 1 || $system > 23)
     print "   21 : JS pythia8 Jet >20GeV\n";
     print "   22 : AMPT\n";
     print "   23 : EPOS\n";
+    print "   24 : Cosmic\n";
     exit(0);
 }
 
@@ -479,6 +481,32 @@ elsif ($system == 23)
     else
     {
 	$systemstring = sprintf("%s-",$systemstring_g4hits);
+    }
+    $notlike{$systemstring} = ["pythia8" ,"single", "special"];
+}
+elsif ($system == 24)
+{
+    if (! defined $magnet)
+    {
+	print "need to add --magnet <on> or <off>\n";
+	exit 1;
+    }
+    if ($magnet ne "on" && $magnet ne "off")
+    {
+	print "--magnet only <on> or <off>, not $magnet\n";
+	exit 1;
+    }
+
+    $g4hits_exist = 1;
+    $systemstring_g4hits = sprintf("cosmic_magnet_%s",$magnet);
+    $gpfsdir = "cosmic";
+    if (! defined $nopileup)
+    {
+	$systemstring = sprintf("%s",$systemstring_g4hits);
+    }
+    else
+    {
+	$systemstring = sprintf("%s",$systemstring_g4hits);
     }
     $notlike{$systemstring} = ["pythia8" ,"single", "special"];
 }
