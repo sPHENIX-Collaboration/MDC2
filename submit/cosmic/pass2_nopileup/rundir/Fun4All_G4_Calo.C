@@ -25,8 +25,8 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_Calo(
     const int nEvents = 1,
-    const string &inputFile0 = "G4Hits_pythia8_Charm-0000000006-00000.root",
-    const string &outputFile = "DST_CALO_CLUSTER_pythia8_Charm-0000000006-00000.root",
+    const string &inputFile0 = "G4Hits_cosmic_magnet_off-0000016-000000.root",
+    const string &outputFile = "DST_CALO_CLUSTER_cosmic_magnet_off-0000016-000000.root",
     const string &outdir = ".")
 {
   Fun4AllServer *se = Fun4AllServer::instance();

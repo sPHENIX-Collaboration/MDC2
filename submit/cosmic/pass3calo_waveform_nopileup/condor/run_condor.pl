@@ -35,10 +35,6 @@ if ($sequence < 100)
 }
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%010d-%06d",$runnumber,$sequence);
-if ($sequence < 100000)
-{
-    $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
-}
 my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$field);
 if (! -d $logdir)
 {

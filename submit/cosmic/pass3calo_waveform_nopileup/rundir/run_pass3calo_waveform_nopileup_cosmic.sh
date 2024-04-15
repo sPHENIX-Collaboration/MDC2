@@ -50,7 +50,7 @@ echo arg7 \(runnumber\): $7
 echo arg8 \(sequence\): $8
 
 runnumber=$(printf "%010d" $7)
-sequence=$(printf "%05d" $8)
+sequence=$(printf "%06d" $8)
 
 echo running root.exe -q -b Fun4All_G4_Waveform.C\($1,\"$2\",\"$3\",\"$4\",\"$5\,\"$6\"\)
 root.exe -q -b  Fun4All_G4_Waveform.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\"\)

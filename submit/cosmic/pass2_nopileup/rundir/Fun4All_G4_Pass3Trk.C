@@ -25,9 +25,9 @@ R__LOAD_LIBRARY(libffamodules.so)
 
 int Fun4All_G4_Pass3Trk(
   const int nEvents = 0,
-  const string &inputFile0 = "G4Hits_pythia8_Charm-0000000007-00000.root",
+  const string &inputFile0 = "G4Hits_cosmic_magnet_off-0000016-000000.root",
   const string &outdir = ".",
-  const string &field = "magnet_on")
+  const string &field = "magnet_off")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);

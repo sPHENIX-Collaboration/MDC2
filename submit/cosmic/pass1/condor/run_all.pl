@@ -62,14 +62,14 @@ my $nsubmit = 0;
 my $njob = 0;
 OUTER: for (my $isub = 0; $isub < $maxsubmit; $isub++)
 {
-    my $jobfile = sprintf("%s/condor-%010d-%05d.job",$logdir,$runnumber,$njob);
+    my $jobfile = sprintf("%s/condor-%010d-%06d.job",$logdir,$runnumber,$njob);
     while (-f $jobfile)
     {
 	$njob++;
-	$jobfile = sprintf("%s/condor-%010d-%05d.job",$logdir,$runnumber,$njob);
+	$jobfile = sprintf("%s/condor-%010d-%06d.job",$logdir,$runnumber,$njob);
     }
     print "using jobfile $jobfile\n";
-    my $outfile = sprintf("G4Hits_%s-%010d-%05d.root",$filetype, $runnumber,$njob);
+    my $outfile = sprintf("G4Hits_%s-%010d-%06d.root",$filetype, $runnumber,$njob);
     my $fulloutfile = sprintf("%s/%s",$outdir,$outfile);
     print "out: $fulloutfile\n";
     if (defined $killexist)

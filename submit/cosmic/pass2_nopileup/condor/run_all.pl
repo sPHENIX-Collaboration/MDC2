@@ -95,7 +95,7 @@ while (my @res = $getfiles->fetchrow_array())
         my $foundall = 1;
 	foreach my $type (sort keys %outfiletype)
 	{
-            my $lfn =  sprintf("%s_%s-%010d-%05d.root",$type,$filetype,$runnumber,$segment);
+            my $lfn =  sprintf("%s_%s-%010d-%06d.root",$type,$filetype,$runnumber,$segment);
 #            print "checking for $lfn\n";
 	    $chkfile->execute($lfn);
 	    if ($chkfile->rows > 0)
@@ -121,8 +121,8 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $tstflag = sprintf("%s --overwrite",$tstflag)
 	}
-	my $calooutfilename = sprintf("DST_CALO_CLUSTER_%s-%010d-%05d.root",$filetype,$runnumber,$segment);
-	my $globaloutfilename = sprintf("DST_MBD_EPD_%s-%010d-%05d.root",$filetype,$runnumber,$segment);
+	my $calooutfilename = sprintf("DST_CALO_CLUSTER_%s-%010d-%06d.root",$filetype,$runnumber,$segment);
+	my $globaloutfilename = sprintf("DST_MBD_EPD_%s-%010d-%06d.root",$filetype,$runnumber,$segment);
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %s %d %d %s", $outevents, $field, $lfn, $calooutfilename, $outdir[0], $globaloutfilename, $outdir[1], $outdir[2], $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);

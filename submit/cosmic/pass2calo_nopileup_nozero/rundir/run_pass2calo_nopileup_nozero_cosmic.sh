@@ -46,7 +46,7 @@ echo arg5 \(runnumber\): $5
 echo arg6 \(sequence\): $6
 
 runnumber=$(printf "%010d" $5)
-sequence=$(printf "%05d" $6)
+sequence=$(printf "%06d" $6)
 
 echo running root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
 root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)

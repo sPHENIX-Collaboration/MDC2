@@ -81,7 +81,7 @@ my $ncal = $getfiles->rows;
 
 while (my @res = $getfiles->fetchrow_array())
 {
-    $g4hithash{sprintf("%05d",$res[1])} = $res[0];
+    $g4hithash{sprintf("%06d",$res[1])} = $res[0];
 }
 $getfiles->finish();
 
@@ -89,7 +89,7 @@ $getcalofiles->execute() || die $DBI::errstr;
 my $ncalo = $getcalofiles->rows;
 while (my @res = $getcalofiles->fetchrow_array())
 {
-    $calohash{sprintf("%05d",$res[1])} = $res[0];
+    $calohash{sprintf("%06d",$res[1])} = $res[0];
 }
 $getcalofiles->finish();
 
@@ -105,10 +105,6 @@ foreach my $segment (sort keys %g4hithash)
 	my $runnumber = int($2);
 	my $segment = int($3);
 	my $outfilename = sprintf("DST_CALO_WAVEFORM_%s-%010d-%06d.root",$filetype,$outrunnumber,$segment);
-	if ($segment < 100000)
-	{
-	    $outfilename = sprintf("DST_CALO_WAVEFORM_%s-%010d-%05d.root",$filetype,$outrunnumber,$segment);
-	}
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
@@ -119,7 +115,7 @@ foreach my $segment (sort keys %g4hithash)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s %s", $outevents, $lfn, $calohash{sprintf("%05d",$segment)}, $outfilename, $outdir, $outrunnumber, $segment, $field, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s %s", $outevents, $lfn, $calohash{sprintf("%06d",$segment)}, $outfilename, $outdir, $outrunnumber, $segment, $field, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

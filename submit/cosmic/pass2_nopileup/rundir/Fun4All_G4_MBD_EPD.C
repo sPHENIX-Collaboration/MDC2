@@ -23,8 +23,8 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_MBD_EPD(
     const int nEvents = 1,
-    const string &inputFile = "G4Hits_pythia8_Charm-0000000007-00000.root",
-    const string &outputFile = "DST_BBC_EPD_pythia8_Charm-0000000007-00000.root",
+    const string &inputFile = "G4Hits_cosmic_magnet_off-0000016-000000.root",
+    const string &outputFile = "DST_BBC_EPD_cosmic_magnet_off-0000016-000000.root",
     const string &outdir = ".")
 {
   Fun4AllServer *se = Fun4AllServer::instance();

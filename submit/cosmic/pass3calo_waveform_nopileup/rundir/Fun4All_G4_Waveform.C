@@ -35,11 +35,11 @@ R__LOAD_LIBRARY(libffamodules.so)
 
 void Fun4All_G4_Waveform(
     const int nEvents = 1,
-    const string &inputFile0 = "G4Hits_cosmic_magnet_on-0000000016-00000.root",
-    const string &inputFile1 = "DST_CALO_NOZERO_cosmic_magnet_on-0000000016-00000.root",
+    const string &inputFile0 = "G4Hits_cosmic_magnet_off-0000016-000000.root",
+    const string &inputFile1 = "DST_CALO_NOZERO_cosmic_magnet_off-0000000016-000000.root",
     const string &inputFile2 = "pedestalhg.root",
     
-    const string &outputFile = "DST_CALO_WAVEFORM_cosmic_magnet_on-0000000016-00000.root",
+    const string &outputFile = "DST_CALO_WAVEFORM_cosmic_magnet_off-0000000016-000000.root",
     const string &outdir = ".",
     const string &cdbtag = "MDC2")
 

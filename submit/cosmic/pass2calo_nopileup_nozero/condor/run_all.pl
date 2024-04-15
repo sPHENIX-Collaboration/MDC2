@@ -83,10 +83,6 @@ while (my @res = $getfiles->fetchrow_array())
 	my $runnumber = int($2);
 	my $segment = int($3);
 	my $outfilename = sprintf("DST_CALO_NOZERO_%s-%010d-%06d.root",$filetype,$outrunnumber,$segment);
-	if ($segment < 100000)
-	{
-	    $outfilename = sprintf("DST_CALO_NOZERO_%s-%010d-%05d.root",$filetype,$outrunnumber,$segment);
-	}
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
