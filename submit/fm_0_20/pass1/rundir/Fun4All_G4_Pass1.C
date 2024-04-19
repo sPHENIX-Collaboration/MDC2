@@ -14,6 +14,8 @@
 #include <ffamodules/SyncReco.h>
 #include <ffamodules/CDBInterface.h>
 
+#include <fun4allutils/TimerStats.h>
+
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
@@ -29,9 +31,10 @@ R__LOAD_LIBRARY(libffamodules.so)
 int Fun4All_G4_Pass1(
     const int nEvents = 1,
     const string &inputFile = "/sphenix/sim/sim01/sphnxpro/MDC1/sHijing_HepMC/data/sHijing_0_20fm-0000000001-00000.dat",
-    const string &outputFile = "G4Hits_sHijing_0_20fm-0000000050-00000.root",
+    const string &outputFile = "G4Hits_sHijing_0_20fm-0000000014-000000.root",
     const int skip = 0,
     const string &outdir = ".")
+    const string &cdbtag = "MDC2_ana.412")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(0);
@@ -56,7 +59,7 @@ int Fun4All_G4_Pass1(
   //===============
   Enable::CDB = true;
   // global tag
-  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG",cdbtag);
   // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
@@ -83,7 +86,7 @@ int Fun4All_G4_Pass1(
   INPUTHEPMC::FLOW = true;
 //  INPUTHEPMC::FLOW_VERBOSITY = 3;
   INPUTHEPMC::FERMIMOTION = true;
-
+  INPUTHEPMC::HIJINGFLIP = true;
   // Event pile up simulation with collision rate in Hz MB collisions.
   //Input::PILEUPRATE = 100e3;
   // Enable this is emulating the nominal pp/pA/AA collision vertex distribution
@@ -167,7 +170,7 @@ int Fun4All_G4_Pass1(
 
   Enable::EPD = true;
 
-  //! forward flux return plug door. Out of acceptance and off by default.
+  //! forward flux return plug door.
   Enable::PLUGDOOR = true;
   //Enable::PLUGDOOR_BLACKHOLE = true;
 
@@ -181,6 +184,10 @@ int Fun4All_G4_Pass1(
   G4Init();
 
   G4Setup();
+
+  TimerStats *ts = new TimerStats();
+  ts->OutFileName("jobtime.root");
+  se->registerSubsystem(ts);
 
   //--------------
   // Set up Input Managers
