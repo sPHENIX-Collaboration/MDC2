@@ -59,6 +59,6 @@ timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/shijing_hepmc/fm_0_20/pass1/ti
 
 rootfilename=${timedirname}/${filename}-${runnumber}-${sequence}.root
 
-cp -v jobtime.root $rootfilename
+[ -f jobtime.root ] && cp -v jobtime.root $rootfilename
 
 echo "script done"

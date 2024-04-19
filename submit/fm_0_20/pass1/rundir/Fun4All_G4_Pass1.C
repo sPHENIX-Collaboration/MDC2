@@ -33,7 +33,7 @@ int Fun4All_G4_Pass1(
     const string &inputFile = "/sphenix/sim/sim01/sphnxpro/MDC1/sHijing_HepMC/data/sHijing_0_20fm-0000000001-00000.dat",
     const string &outputFile = "G4Hits_sHijing_0_20fm-0000000014-000000.root",
     const int skip = 0,
-    const string &outdir = ".")
+    const string &outdir = ".",
     const string &cdbtag = "MDC2_ana.412")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
@@ -87,6 +87,7 @@ int Fun4All_G4_Pass1(
 //  INPUTHEPMC::FLOW_VERBOSITY = 3;
   INPUTHEPMC::FERMIMOTION = true;
   INPUTHEPMC::HIJINGFLIP = true;
+
   // Event pile up simulation with collision rate in Hz MB collisions.
   //Input::PILEUPRATE = 100e3;
   // Enable this is emulating the nominal pp/pA/AA collision vertex distribution
