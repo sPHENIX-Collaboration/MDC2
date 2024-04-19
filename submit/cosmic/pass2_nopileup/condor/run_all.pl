@@ -71,8 +71,8 @@ my $filetype = sprintf("cosmic_%s",$field);
 my %outfiletype = ();
 $outfiletype{"DST_CALO_CLUSTER"} = $outdir[0];
 $outfiletype{"DST_MBD_EPD"} = $outdir[1];
-$outfiletype{"DST_TRKR_HIT"} = $outdir[2];
-$outfiletype{"DST_TRUTH"} = $outdir[2];
+#$outfiletype{"DST_TRKR_HIT"} = $outdir[2];
+#$outfiletype{"DST_TRUTH"} = $outdir[2];
 foreach my $type (sort keys %outfiletype)
 {
     print "type $type, dir: $outfiletype{$type}\n";
