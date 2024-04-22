@@ -4,15 +4,17 @@
 #include <GlobalVariables.C>
 
 #include <G4Setup_sPHENIX.C>
-#include <G4_Mbd.C>
 #include <G4_Input.C>
+#include <G4_Mbd.C>
 #include <G4_Production.C>
 #include <G4_TrkrSimulation.C>
 
+#include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/HeadReco.h>
 #include <ffamodules/SyncReco.h>
-#include <ffamodules/CDBInterface.h>
+
+#include <fun4allutils/TimerStats.h>
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
@@ -28,13 +30,14 @@ R__LOAD_LIBRARY(libffamodules.so)
 
 int Fun4All_G4_Pass1_pp(
     const int nEvents = 1,
-    const string &outputFile = "G4Hits_pythia8_pp_mb-0000000050-00000.root",
-    const string &outdir = ".")
+    const string &outputFile = "G4Hits_pythia8_pp_mb-0000000015-000000.root",
+    const string &outdir = ".",
+    const string &cdbtag = "MDC2_ana.412")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
 
-  //Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
+  // Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
   PHRandomSeed::Verbosity(1);
 
   // just if we set some flags somewhere in this macro
@@ -57,18 +60,18 @@ int Fun4All_G4_Pass1_pp(
   //===============
   Enable::CDB = true;
   // global tag
-  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
 
-// this extracts the runnumber and segment from the output filename
-// and sets this so the server can pick it up
+  // this extracts the runnumber and segment from the output filename
+  // and sets this so the server can pick it up
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
-  int runnumber=runseg.first;
-  int segment=runseg.second;
+  int runnumber = runseg.first;
+  int segment = runseg.second;
   if (runnumber != 0)
   {
-    rc->set_IntFlag("RUNNUMBER",runnumber);
+    rc->set_IntFlag("RUNNUMBER", runnumber);
     Fun4AllSyncManager *syncman = se->getSyncManager();
     syncman->SegmentNumber(segment);
   }
@@ -77,16 +80,15 @@ int Fun4All_G4_Pass1_pp(
   // Input options
   //===============
 
-// set pp mode for extended readout
-//  TRACKING::pp_mode = true;
+  // set pp mode for extended readout
+  //  TRACKING::pp_mode = true;
   // Enable this is emulating the nominal pp/pA/AA collision vertex distribution
-  Input::BEAM_CONFIGURATION = Input::pp_COLLISION; // This is for pp
+  Input::BEAM_CONFIGURATION = Input::pp_COLLISION;  // This is for pp
 
   // verbosity setting (applies to all input managers)
-  Input::VERBOSITY = 1; // so we get prinouts of the event number
+  Input::VERBOSITY = 1;  // so we get prinouts of the event number
   Input::PYTHIA8 = true;
   PYTHIA8::config_file = string(getenv("CALIBRATIONROOT")) + "/Generators/HeavyFlavor_TG/phpythia8_minBias_MDC2.cfg";
-  
 
   //-----------------
   // Initialize the selected Input/Event generation
@@ -116,7 +118,7 @@ int Fun4All_G4_Pass1_pp(
   se->registerSubsystem(flag);
 
   // set up production relatedstuff
-    Enable::PRODUCTION = true;
+  Enable::PRODUCTION = true;
 
   //======================
   // Write the DST
@@ -160,13 +162,13 @@ int Fun4All_G4_Pass1_pp(
 
   //! forward flux return plug door. Out of acceptance and off by default.
   Enable::PLUGDOOR = true;
-  //Enable::PLUGDOOR_BLACKHOLE = true;
+  // Enable::PLUGDOOR_BLACKHOLE = true;
 
   // new settings using Enable namespace in GlobalVariables.C
   Enable::BLACKHOLE = true;
-  Enable::BLACKHOLE_FORWARD_SAVEHITS = false; // disable forward/backward hits
-  //Enable::BLACKHOLE_SAVEHITS = false; // turn off saving of bh hits
-  //BlackHoleGeometry::visible = true;
+  Enable::BLACKHOLE_FORWARD_SAVEHITS = false;  // disable forward/backward hits
+  // Enable::BLACKHOLE_SAVEHITS = false; // turn off saving of bh hits
+  // BlackHoleGeometry::visible = true;
 
   // Initialize the selected subsystems
   G4Init();
@@ -178,6 +180,10 @@ int Fun4All_G4_Pass1_pp(
   {
     G4Setup();
   }
+
+  TimerStats *ts = new TimerStats();
+  ts->OutFileName("jobtime.root");
+  se->registerSubsystem(ts);
 
   //--------------
   // Set up Input Managers
@@ -220,7 +226,7 @@ int Fun4All_G4_Pass1_pp(
   // Exit
   //-----
 
-  CDBInterface::instance()->Print(); // print used DB files
+  CDBInterface::instance()->Print();  // print used DB files
   se->End();
   se->PrintTimer();
   std::cout << "All done" << std::endl;

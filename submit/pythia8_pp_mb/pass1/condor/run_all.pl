@@ -9,7 +9,7 @@ my $test;
 my $incremental;
 my $killexist;
 my $shared;
-my $runnumber = 111;
+my $runnumber = 15;
 my $events = 1000;
 GetOptions("test"=>\$test, "increment"=>\$incremental, "killexist" => \$killexist, "shared" => \$shared);
 if ($#ARGV < 0)
@@ -57,14 +57,14 @@ my $nsubmit = 0;
 my $njob = 0;
 OUTER: for (my $isub = 0; $isub < $maxsubmit; $isub++)
 {
-    my $jobfile = sprintf("%s/condor-%010d-%05d.job",$logdir,$runnumber,$njob);
+    my $jobfile = sprintf("%s/condor-%010d-%06d.job",$logdir,$runnumber,$njob);
     while (-f $jobfile)
     {
 	$njob++;
-	$jobfile = sprintf("%s/condor-%010d-%05d.job",$logdir,$runnumber,$njob);
+	$jobfile = sprintf("%s/condor-%010d-%06d.job",$logdir,$runnumber,$njob);
     }
     print "using jobfile $jobfile\n";
-    my $outfile = sprintf("G4Hits_pythia8_pp_mb-%010d-%05d.root", $runnumber,$njob);
+    my $outfile = sprintf("G4Hits_pythia8_pp_mb-%010d-%06d.root", $runnumber,$njob);
     my $fulloutfile = sprintf("%s/%s",$outdir,$outfile);
     print "out: $fulloutfile\n";
     if (defined $killexist)
