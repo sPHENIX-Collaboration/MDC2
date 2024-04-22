@@ -45,15 +45,17 @@ echo arg4 \(skip\): $4
 echo arg5 \(output dir\): $5
 echo arg6 \(runnumber\): $6
 echo arg7 \(sequence\): $7
-cho cdbtag: $cdbtag
+echo cdbtag: $cdbtag
 
 runnumber=$(printf "%010d" $6)
 sequence=$(printf "%06d" $7)
 
+filename=timing
+
 echo running root.exe -q -b Fun4All_G4_Pass1.C\($1,\"$2\",\"$3\",$4,\"$5\",\"$cdbtag\"\)
  root.exe -q -b  Fun4All_G4_Pass1.C\($1,\"$2\",\"$3\",$4,\"$5\",\"$cdbtag\"\)
 
-timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/shijing_hepmc/fm_0_20/pass1/timing.run${5}
+timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/shijing_hepmc/fm_0_20/pass1/timing.run${6}
 
 [ ! -d $timedirname ] && mkdir -p $timedirname
 
