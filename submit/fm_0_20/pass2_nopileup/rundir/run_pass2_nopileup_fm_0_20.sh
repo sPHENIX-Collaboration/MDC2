@@ -20,8 +20,6 @@ run_calo=1
 run_trk=1
 run_mbdepd=1
 
-cdbtag=MDC2_$anabuild
-
 # just to get a working environment, the specific ana builds for each reconstruction are set later
 source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n
 
@@ -64,7 +62,6 @@ echo arg7 \(trk output dir\): $7
 echo arg8 \(runnumber\): $8
 echo arg9 \(sequence\): $9
 
-echo cdbtag: $cdbtag
 
 timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/shijing_hepmc/fm_0_20/pass2_nopileup/timing.run${8}
 
@@ -74,8 +71,12 @@ timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/shijing_hepmc/fm_0_20/pass2_no
 if [ ${run_calo} -gt 0 ]
 then
     source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_calo
+    cdbtag=MDC2_${ana_calo}
+
+
     echo 'here comes your environment for Fun4All_G4_Calo.C'
     printenv
+    echo cdbtag: $cdbtag
 
     filename=timing_calo
 
@@ -96,8 +97,10 @@ fi
 if [ ${run_mbdepd} -gt 0 ]
 then
     source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_mbdepd
+    cdbtag=MDC2_${ana_mbdepd}
     echo 'here comes your environment for Fun4All_G4_MBD_EPD.C'
     printenv
+    echo cdbtag: $cdbtag
 
     filename=timing_mbdepd
 
@@ -118,8 +121,10 @@ fi
 if [ ${run_trk} -gt 0 ]
 then
     source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_pass3trk
+    cdbtag=MDC2_${ana_pass3trk}
     echo 'here comes your environment for Fun4All_G4_Pass3Trk.C'
     printenv
+    echo cdbtag: $cdbtag
 
     filename=timing_pass3trk
 
