@@ -26,9 +26,10 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 int Fun4All_G4_sPHENIX_job0(
   const int nEvents = 0,
   const int nSkipEvents = 0,
-  const std::string &inputFile = "DST_TRKR_HIT_sHijing_0_20fm-0000000007-00000.root",
-  const std::string &outputFile = "DST_TRKR_CLUSTER_sHijing_0_20fm-0000000007-00000.root",
-  const string &outdir = ".")
+  const std::string &inputFile = "DST_TRKR_HIT_sHijing_0_20fm-0000000014-000000.root",
+  const std::string &outputFile = "DST_TRKR_CLUSTER_sHijing_0_20fm-0000000014-000000.root",
+  const string &outdir = ".",
+  const string &cdbtag = "MDC2_ana.412")
 {
 
   // print inputs
@@ -43,7 +44,7 @@ int Fun4All_G4_sPHENIX_job0(
   // conditions DB flags
   //===============
   Enable::CDB = true;
-  rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
   // set up production relatedstuff
   Enable::PRODUCTION = true;
