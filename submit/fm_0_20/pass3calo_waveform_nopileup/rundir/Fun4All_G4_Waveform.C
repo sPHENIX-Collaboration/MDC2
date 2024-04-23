@@ -11,6 +11,13 @@
 #include <G4_Input.C>
 #include <G4_Production.C>
 
+#include <caloreco/CaloGeomMapping.h>
+#include <caloreco/CaloTowerBuilder.h>
+#include <caloreco/CaloTowerCalib.h>
+#include <caloreco/CaloWaveformProcessing.h>
+
+#include <calowaveformsim/CaloWaveformSim.h>
+
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
@@ -18,12 +25,7 @@
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
 
-#include <caloreco/CaloGeomMapping.h>
-#include <caloreco/CaloTowerBuilder.h>
-#include <caloreco/CaloTowerCalib.h>
-#include <caloreco/CaloWaveformProcessing.h>
-
-#include <calowaveformsim/CaloWaveformSim.h>
+#include <fun4allutils/TimerStats.h>
 
 #include <phool/recoConsts.h>
 
@@ -32,16 +34,17 @@ R__LOAD_LIBRARY(libg4centrality.so)
 R__LOAD_LIBRARY(libCaloWaveformSim.so)
 R__LOAD_LIBRARY(libcalo_reco.so)
 R__LOAD_LIBRARY(libffamodules.so)
+R__LOAD_LIBRARY(libfun4allutils.so)
 
 void Fun4All_G4_Waveform(
     const int nEvents = 1,
-    const string &inputFile0 = "G4Hits_sHijing_0_20fm-0000000010-00000.root",
-    const string &inputFile1 = "DST_CALO_NOZERO_sHijing_0_20fm-0000000010-00000.root",
+    const string &inputFile0 = "G4Hits_sHijing_0_20fm-0000000014-000000.root",
+    const string &inputFile1 = "DST_CALO_NOZERO_sHijing_0_20fm-0000000014-000000.root",
     const string &inputFile2 = "pedestal.root",
     
-    const string &outputFile = "DST_CALO_WAVEFORM_sHijing_0_20fm-0000000010-00000.root",
+    const string &outputFile = "DST_CALO_WAVEFORM_sHijing_0_20fm-0000000014-000000.root",
     const string &outdir = ".",
-    const string &cdbtag = "MDC2")
+    const string &cdbtag = "MDC2_ana.412")
 
 {
   
@@ -185,6 +188,13 @@ void Fun4All_G4_Waveform(
   calib->set_detector_type(CaloTowerDefs::CEMC);
   calib->set_outputNodePrefix("TOWERSWAVEFORM_CALIB_");
   se->registerSubsystem(calib);
+
+  //--------------
+  // Timing module is last to register
+  //--------------
+  TimerStats *ts = new TimerStats();
+  ts->OutFileName("jobtime.root");
+  se->registerSubsystem(ts);
 
   //--------------
   // Set up Input Managers
