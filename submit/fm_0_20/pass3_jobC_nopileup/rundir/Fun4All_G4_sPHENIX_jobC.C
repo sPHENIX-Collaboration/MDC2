@@ -70,9 +70,10 @@ int Fun4All_G4_sPHENIX_jobC(
   G4TPC::ENABLE_TIME_ORDERED_DISTORTIONS = false;
 
   /* distortion corrections */
-  G4TPC::ENABLE_CORRECTIONS = false;
-  G4TPC::correction_filename = string(getenv("CALIBRATIONROOT")) + "/distortion_maps/distortion_corrections_empty.root";
-  
+  G4TPC::ENABLE_STATIC_CORRECTIONS = false;
+  G4TPC::ENABLE_AVERAGE_CORRECTIONS = false;
+  G4TPC::static_correction_filename = string(getenv("CALIBRATIONROOT")) + "/distortion_maps/distortion_corrections_empty.root";
+  G4TPC::average_correction_filename = string(getenv("CALIBRATIONROOT")) + "/distortion_maps/distortion_corrections_empty.root";
   // tracking configuration
   G4TRACKING::use_full_truth_track_seeding = false;
 

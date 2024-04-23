@@ -67,8 +67,10 @@ int Fun4All_G4_sPHENIX_jobA(
   G4TPC::ENABLE_TIME_ORDERED_DISTORTIONS = false;
 
   /* distortion corrections */
-  G4TPC::ENABLE_CORRECTIONS = false;
-  G4TPC::correction_filename = string(getenv("CALIBRATIONROOT")) + "/distortion_maps/distortion_corrections_empty.root";
+  G4TPC::ENABLE_STATIC_CORRECTIONS = false;
+  G4TPC::ENABLE_AVERAGE_CORRECTIONS = false;
+  G4TPC::static_correction_filename = string(getenv("CALIBRATIONROOT")) + "/distortion_maps/distortion_corrections_empty.root";
+  G4TPC::average_correction_filename = string(getenv("CALIBRATIONROOT")) + "/distortion_maps/distortion_corrections_empty.root";
   
   // tracking
   /* turn on special fit with silicium and TPOT alone */
