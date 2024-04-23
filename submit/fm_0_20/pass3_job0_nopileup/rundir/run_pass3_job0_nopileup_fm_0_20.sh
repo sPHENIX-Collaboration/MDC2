@@ -61,14 +61,12 @@ filename=timing
 echo running root.exe -q -b Fun4All_G4_sPHENIX_job0.C\($1,0,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
 root.exe -q -b  Fun4All_G4_sPHENIX_job0.C\($1,0,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
 
-timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/shijing_hepmc/fm_0_20/pass3_job0_nopileup/timing.run${$5}
-if [ ! -d $timedirname ]
-then
-  mkdir -p $timedirname
-fi
+timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/shijing_hepmc/fm_0_20/pass3_job0_nopileup/timing.run${5}
+
+[ ! -d $timedirname ] &&  mkdir -p $timedirname
 
 rootfilename=${timedirname}/${filename}-${runnumber}-${sequence}.root
 
-cp -v jobtime.root $rootfilename
+[ -f jobtime.root ] && cp -v jobtime.root $rootfilename
 
 echo "script done"
