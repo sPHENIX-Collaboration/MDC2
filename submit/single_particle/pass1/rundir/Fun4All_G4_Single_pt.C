@@ -9,6 +9,8 @@
 #include <G4_Production.C>
 #include <G4_TrkrSimulation.C>
 
+#include <fun4allutils/TimerStats.h>
+
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/HeadReco.h>
 #include <ffamodules/SyncReco.h>
@@ -25,6 +27,7 @@
 
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
+R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_Single_pt(
   const int nEvents = 1,
@@ -32,7 +35,8 @@ int Fun4All_G4_Single_pt(
   const int pmin = 10000,
   const int pmax = 10000,
   const string &outputFile = "G4Hits_single_pi-_pt_10000_10000MeV-0000000007-00000.root",
-  const string &outdir = ".")
+  const string &outdir = ".",
+  const string &cdbtag = "MDC2_ana.416")
 {
   int skip = 0;
   Fun4AllServer *se = Fun4AllServer::instance();
@@ -60,7 +64,7 @@ int Fun4All_G4_Single_pt(
   //===============
   Enable::CDB = true;
   // global tag
-  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG",cdbtag);
   // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
@@ -190,6 +194,13 @@ int Fun4All_G4_Single_pt(
   G4Init();
 
   G4Setup();
+
+  //--------------
+  // Timing module is last to register
+  //--------------
+  TimerStats *ts = new TimerStats();
+  ts->OutFileName("jobtime.root");
+  se->registerSubsystem(ts);
 
   //--------------
   // Set up Input Managers

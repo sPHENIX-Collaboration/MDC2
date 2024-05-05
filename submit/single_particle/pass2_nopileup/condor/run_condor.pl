@@ -34,7 +34,7 @@ if ($sequence < 100)
     $baseprio = 90;
 }
 my $condorlistfile = sprintf("condor.list");
-my $suffix = sprintf("%s-%010d-%05d",$filetype,$runnumber,$sequence);
+my $suffix = sprintf("%s-%010d-%06d",$filetype,$runnumber,$sequence);
 my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$partprop);
 if (! -d $logdir)
 {

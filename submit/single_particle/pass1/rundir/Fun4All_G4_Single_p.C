@@ -14,6 +14,8 @@
 #include <ffamodules/SyncReco.h>
 #include <ffamodules/CDBInterface.h>
 
+#include <fun4allutils/TimerStats.h>
+
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
@@ -25,6 +27,7 @@
 
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
+R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_Single_p(
   const int nEvents = 1,
@@ -33,7 +36,7 @@ int Fun4All_G4_Single_p(
   const int pmax = 10000,
   const string &outputFile = "G4Hits_single_pi-_p_10000_10000MeV-0000000013-00000.root",
   const string &outdir = ".",
-  const string &cdbtag = "MDC2_ana.398")
+  const string &cdbtag = "MDC2_ana.416")
 {
   int skip = 0;
   Fun4AllServer *se = Fun4AllServer::instance();
@@ -176,9 +179,9 @@ int Fun4All_G4_Single_p(
 
   Enable::EPD = true;
 
-  //! forward flux return plug door. Out of acceptance and off by default.
-//  Enable::PLUGDOOR = true;
-  Enable::PLUGDOOR_BLACKHOLE = true;
+  //! forward flux return plug door.
+  Enable::PLUGDOOR = true;
+  // Enable::PLUGDOOR_BLACKHOLE = true;
 
   // new settings using Enable namespace in GlobalVariables.C
   Enable::BLACKHOLE = true;
@@ -191,6 +194,13 @@ int Fun4All_G4_Single_p(
   G4Init();
 
   G4Setup();
+
+  //--------------
+  // Timing module is last to register
+  //--------------
+  TimerStats *ts = new TimerStats();
+  ts->OutFileName("jobtime.root");
+  se->registerSubsystem(ts);
 
   //--------------
   // Set up Input Managers
