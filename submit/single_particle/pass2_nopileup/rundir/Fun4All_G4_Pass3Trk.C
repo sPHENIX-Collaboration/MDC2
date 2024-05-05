@@ -30,6 +30,7 @@ int Fun4All_G4_Pass3Trk(
   const int nEvents = 0,
   const string &inputFile0 = "G4Hits_single_gamma_p_300_5000MeV-0000000017-000000.root",
   const string &outdir = ".",
+  const std::string &filetype = "single_gamma_p_300_5000MeV",
   const string &cdbtag = "MDC2_ana.398")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
@@ -151,7 +152,7 @@ int Fun4All_G4_Pass3Trk(
 
   if (Enable::PRODUCTION)
   {
-    CreateDstOutput(runnumber, segment);
+    CreateDstOutput(runnumber, segment, filetype);
 //    Production_CreateOutputDir();
   }
 
