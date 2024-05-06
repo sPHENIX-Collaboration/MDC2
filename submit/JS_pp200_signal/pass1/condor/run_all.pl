@@ -8,7 +8,7 @@ use Getopt::Long;
 my $test;
 my $incremental;
 my $killexist;
-my $runnumber = 10;
+my $runnumber = 15;
 my $events = 1000;
 GetOptions("test"=>\$test, "increment"=>\$incremental, "killexist" => \$killexist);
 if ($#ARGV < 1)
@@ -65,14 +65,14 @@ my $nsubmit = 0;
 my $njob = 0;
 OUTER: for (my $isub = 0; $isub < $maxsubmit; $isub++)
 {
-    my $jobfile = sprintf("%s/condor_%s-%010d-%05d.job",$logdir,$jettrigger,$runnumber,$njob);
+    my $jobfile = sprintf("%s/condor_%s-%010d-%06d.job",$logdir,$jettrigger,$runnumber,$njob);
     while (-f $jobfile)
     {
 	$njob++;
-	$jobfile = sprintf("%s/condor_%s-%010d-%05d.job",$logdir,$jettrigger,$runnumber,$njob);
+	$jobfile = sprintf("%s/condor_%s-%010d-%06d.job",$logdir,$jettrigger,$runnumber,$njob);
     }
     print "using jobfile $jobfile\n";
-    my $outfile = sprintf("G4Hits_%s-%010d-%05d.root",$filetype, $runnumber,$njob);
+    my $outfile = sprintf("G4Hits_%s-%010d-%06d.root",$filetype, $runnumber,$njob);
     my $fulloutfile = sprintf("%s/%s",$outdir,$outfile);
     print "out: $fulloutfile\n";
     if (defined $killexist)

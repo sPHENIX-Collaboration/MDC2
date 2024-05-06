@@ -9,17 +9,22 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 11;
+my $runnumber = 15;
 my $test;
 my $incremental;
 my $shared;
-GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
+my $MHz = 3;
+my $verbose;
+GetOptions("test"=>\$test, "increment"=>\$incremental, "MHz:i" => \$MHz, "shared" => \$shared, "verbose"=>\$verbose);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"PhotonJet\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
+    print "--MHz : MHz collision rate\n";
+    print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
+    print "--verbose : turn on debugging printouts\n";
     exit(1);
 }
 
@@ -54,13 +59,12 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
+$jettrigger = sprintf("%s_%sMHz",$jettrigger,$MHz);
 $outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,lc $jettrigger);
 if (! -d $outdir)
 {
   mkpath($outdir);
 }
-
-$jettrigger = sprintf("%s_3MHz",$jettrigger);
 
 my %outfiletype = ();
 $outfiletype{"DST_TRKR_HIT"} = 1;
@@ -71,7 +75,7 @@ my %truthhash = ();
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like '%pythia8_$jettrigger%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like '%pythia8_$jettrigger%' and runnumber = $runnumber order by segment") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH_G4HIT' and filename like '%pythia8_$jettrigger%'and runnumber = $runnumber");
 my $nsubmit = 0;
@@ -79,18 +83,18 @@ $getfiles->execute() || die $DBI::errstr;
 my $ncal = $getfiles->rows;
 while (my @res = $getfiles->fetchrow_array())
 {
-    $trkhash{sprintf("%05d",$res[1])} = $res[0];
+    $trkhash{sprintf("%06d",$res[1])} = $res[0];
 }
 $getfiles->finish();
 $gettruthfiles->execute() || die $DBI::errstr;
 my $ntruth = $gettruthfiles->rows;
 while (my @res = $gettruthfiles->fetchrow_array())
 {
-    $truthhash{sprintf("%05d",$res[1])} = $res[0];
+    $truthhash{sprintf("%06d",$res[1])} = $res[0];
 }
 $gettruthfiles->finish();
 #print "input files: $ncal, truth: $ntruth\n";
-foreach my $segment (sort keys %trkhash)
+foreach my $segment (sort { $a <=> $b } keys %trkhash)
 {
     if (! exists $truthhash{$segment})
     {
@@ -106,7 +110,7 @@ foreach my $segment (sort keys %trkhash)
         my $foundall = 1;
 	foreach my $type (sort keys %outfiletype)
 	{
-            my $lfn =  sprintf("%s_pythia8_%s-%010d-%05d.root",$type,$jettrigger,$runnumber,$segment);
+            my $lfn =  sprintf("%s_pythia8_%s-%010d-%06d.root",$type,$jettrigger,$runnumber,$segment);
 	    $chkfile->execute($lfn);
 	    if ($chkfile->rows > 0)
 	    {
@@ -127,7 +131,7 @@ foreach my $segment (sort keys %trkhash)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $truthhash{sprintf("%05d",$segment)}, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $truthhash{sprintf("%06d",$segment)}, $outdir, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

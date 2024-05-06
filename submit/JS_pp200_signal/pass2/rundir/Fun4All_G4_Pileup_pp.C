@@ -10,6 +10,9 @@
 #include <g4main/PHG4VertexSelection.h>
 
 #include <ffamodules/FlagHandler.h>
+#include <ffamodules/CDBInterface.h>
+
+#include <fun4allutils/TimerStats.h>
 
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
@@ -23,15 +26,16 @@
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libg4testbench.so)
+R__LOAD_LIBRARY(libfun4allutils.so)
 
 //________________________________________________________________________________________________
-int Fun4All_G4_Pileup_pp(
+  int Fun4All_G4_Pileup_pp(
     const int nEvents = 0,
-    const string &inputFile = "G4Hits_pythia8_mb-0000000007-00000.root",
+    const string &inputFile = "G4Hits_pythia8_mb-0000000015-000000.root",
     const string &backgroundList = "pileupbkgppmb.list",
     const string &outdir = ".",
-    const string &jettrigger = "NONE")
-
+    const string &jettrigger = "NONE",
+    const string &cdbtag = "MDC2_ana.412")
 {
   gSystem->Load("libg4dst.so");
   // server
@@ -39,6 +43,12 @@ int Fun4All_G4_Pileup_pp(
   se->Verbosity(1);
 
   auto rc = recoConsts::instance();
+
+  Enable::CDB = true;
+  // tag
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
+  // 64 bit timestamp
+  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
   FlagHandler *flag = new FlagHandler();
   se->registerSubsystem(flag);
@@ -61,15 +71,23 @@ int Fun4All_G4_Pileup_pp(
   auto in = new Fun4AllDstInputManager("DST_signal");
   in->registerSubsystem(new PHG4VertexSelection);
 
+  //--------------
+  // Timing module is last to register
+  //--------------
+  TimerStats *ts = new TimerStats();
+  ts->OutFileName("jobtime.root");
+  se->registerSubsystem(ts);
+
   // open file
   in->fileopen(inputFile);
   se->registerInputManager(in);
 
   // background input manager
   auto inpile = new Fun4AllDstPileupInputManager("DST_background");
-  inpile->setCollisionRate(3e6); // 3MHz according to BUP
-  double low_time_window = -105.5 / (8.0 / 1000.0);
-  double high_time_window = -low_time_window + 7000;
+  inpile->setCollisionRate(2e6); // 2MHz for testing (3MHz according to BUP)
+//  double low_time_window = -105.5 / (8.0 / 1000.0); // -20us
+  double low_time_window = -20000; // -20us
+  double high_time_window = -low_time_window + 20000; // 20us
   inpile->setPileupTimeWindow(low_time_window, high_time_window);
   inpile->setDetectorActiveCrossings("BBC",1);
   inpile->setDetectorActiveCrossings("HCALIN",1);
@@ -94,6 +112,7 @@ int Fun4All_G4_Pileup_pp(
   se->run(nEvents);
 
   // terminate
+  CDBInterface::instance()->Print();
   se->End();
   if (Enable::PRODUCTION)
   {

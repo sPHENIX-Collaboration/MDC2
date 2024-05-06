@@ -55,14 +55,12 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
+$jettrigger = sprintf("%s_3MHz",$jettrigger);
 $outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,lc $jettrigger);
 if (! -d $outdir)
 {
   mkpath($outdir);
 }
-
-$jettrigger = sprintf("%s_3MHz",$jettrigger);
-
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here

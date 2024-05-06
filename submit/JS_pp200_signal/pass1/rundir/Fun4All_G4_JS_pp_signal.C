@@ -17,6 +17,8 @@
 #include <ffamodules/HeadReco.h>
 #include <ffamodules/SyncReco.h>
 
+#include <fun4allutils/TimerStats.h>
+
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
@@ -30,6 +32,7 @@
 
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
+R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_JS_pp_signal(
     const int nEvents = 1,
@@ -96,7 +99,8 @@ int Fun4All_G4_JS_pp_signal(
     break;
   case 8:
   case 11:
-    Input::BEAM_CONFIGURATION = Input::pp_COLLISION;  // for 2023 sims we want the AA geometry for no pileup sims
+  case 15:
+    Input::BEAM_CONFIGURATION = Input::pp_COLLISION;  // pp collisions
     cout << "using Input::pp_COLLISION" << endl;
     break;
   case 9:
@@ -249,21 +253,8 @@ int Fun4All_G4_JS_pp_signal(
   Enable::EPD = true;
 
   //! forward flux return plug door. Out of acceptance and off by default.
-  //  Enable::PLUGDOOR = true;
-  Enable::PLUGDOOR_BLACKHOLE = true;
-  //  Enable::PLUGDOOR_ABSORBER = true;
-
-  //  Enable::BEAMLINE = true;
-  G4BEAMLINE::skin_thickness = 0.5;
-  //  Enable::BEAMLINE_ABSORBER = true;  // makes the beam line magnets sensitive volumes
-  //  Enable::BEAMLINE_BLACKHOLE = true; // turns the beamline magnets into black holes
-  //  Enable::ZDC = true;
-  //  Enable::ZDC_ABSORBER = true;
-  //  Enable::ZDC_SUPPORT = true;
-  //  Enable::ZDC_TOWER = Enable::ZDC && true;
-  Enable::ZDC_EVAL = Enable::ZDC_TOWER && true;
-  //  Enable::GLOBAL_RECO = true;
-  // Enable::GLOBAL_FASTSIM = true;
+  Enable::PLUGDOOR = true;
+  //Enable::PLUGDOOR_BLACKHOLE = true;
 
   // new settings using Enable namespace in GlobalVariables.C
   Enable::BLACKHOLE = true;
@@ -281,6 +272,13 @@ int Fun4All_G4_JS_pp_signal(
   {
     G4Setup();
   }
+
+  //--------------
+  // Timing module is last to register
+  //--------------
+  TimerStats *ts = new TimerStats();
+  ts->OutFileName("jobtime.root");
+  se->registerSubsystem(ts);
 
   //--------------
   // Set up Input Managers

@@ -9,16 +9,18 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 11;
+my $runnumber = 15;
 my $test;
 my $incremental;
 my $shared;
-GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
+my $MHz = 3;
+GetOptions("test"=>\$test, "increment"=>\$incremental, "MHz:i" => \$MHz, "shared" => \$shared);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"PhotonJet\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
+    print "--MHz : MHz collision rate\n";
     print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
@@ -55,6 +57,8 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
+my $jettriggerWithUnderScore = sprintf("%s-",$jettrigger);
+$jettrigger = sprintf("%s_%sMHz",$jettrigger,$MHz);
 $outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,lc $jettrigger);
 if (! -d $outdir)
 {
@@ -66,9 +70,6 @@ $outfiletype{"DST_BBC_G4HIT"} = 1;
 $outfiletype{"DST_CALO_G4HIT"} = 1;
 $outfiletype{"DST_TRKR_G4HIT"} = 1;
 $outfiletype{"DST_TRUTH_G4HIT"} = "DST_TRUTH";
-
-my $jettriggerWithUnderScore = sprintf("%s-",$jettrigger);
-$jettrigger = sprintf("%s_3MHz",$jettrigger);
 
 my $localdir=`pwd`;
 chomp $localdir;
@@ -102,7 +103,7 @@ while (my @res = $getfiles->fetchrow_array())
 	my $foundall = 1;
 	foreach my $type (sort keys %outfiletype)
 	{
-	    my $outfilename = sprintf("%s/%s_pythia8_%s-%010d-%05d.root",$outdir,$type,$jettrigger,$runnumber,$segment);
+	    my $outfilename = sprintf("%s/%s_pythia8_%s-%010d-%06d.root",$outdir,$type,$jettrigger,$runnumber,$segment);
 #	    print "checking for $outfilename\n";
 	    if (! -f  $outfilename)
 	    {
@@ -149,7 +150,7 @@ while (my @res = $getfiles->fetchrow_array())
 		$currsegment = 0;
 	    }
 	    my $prefix_mb = sprintf("G4Hits_pythia8_pp_mb");
-	    my $bckfile = sprintf("%s-%010d-%05d.root",$prefix_mb,$runnumber,$currsegment);
+	    my $bckfile = sprintf("%s-%010d-%06d.root",$prefix_mb,$runnumber,$currsegment);
 	    $chkfile->execute($bckfile);
 	    if ($chkfile->rows == 0)
 	    {
@@ -162,7 +163,7 @@ while (my @res = $getfiles->fetchrow_array())
 		push(@bkgfiles,$bckfile);
 	    }
 	}
-	my $bkglistfile = sprintf("%s/condor_%s-%010d-%05d.bkglist",$logdir,$jettrigger,$runnumber,$segment);
+	my $bkglistfile = sprintf("%s/condor_%s-%010d-%06d.bkglist",$logdir,$jettrigger,$runnumber,$segment);
 	open(F1,">$bkglistfile");
 	foreach my $bf (@bkgfiles)
 	{
