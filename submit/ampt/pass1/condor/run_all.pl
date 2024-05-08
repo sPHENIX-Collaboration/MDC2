@@ -35,8 +35,8 @@ my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::er
 my $maxsubmit = $ARGV[0];
 my $ampt_runnumber = 1;
 my $ampt_dir = sprintf("/sphenix/sim/sim01/sphnxpro/mdc2/AMPT/AuAu");
-my $runnumber = 10;
-my $events = 400;
+my $runnumber = 14;
+my $events = 200; # for running with plugdoor
 #$events = 100; # for ftfp_bert_hp
 my $evtsperfile = 10000;
 my $nmax = $evtsperfile;
@@ -71,7 +71,7 @@ OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
     my $sequence = $segment*$evtsperfile/$events;
     for (my $n=0; $n<$nmax; $n+=$events)
     {
-	my $outfile = sprintf("G4Hits_ampt_0_20fm-%010d-%05d.root",$runnumber,$sequence);
+	my $outfile = sprintf("G4Hits_ampt_0_20fm-%010d-%06d.root",$runnumber,$sequence);
 	$chkfile->execute($outfile);
 	if ($chkfile->rows == 0)
 	{

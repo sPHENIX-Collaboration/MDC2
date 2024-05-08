@@ -14,6 +14,8 @@
 #include <ffamodules/HeadReco.h>
 #include <ffamodules/SyncReco.h>
 
+#include <fun4allutils/TimerStats.h>
+
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
@@ -25,13 +27,15 @@
 
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
+R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_Pass1(
     const int nEvents = 1,
     const string &inputFile = "/sphenix/sim/sim01/sphnxpro/mdc2/AMPT/AuAu/AMPT_AuAu-0000000001-00000.dat",
-    const string &outputFile = "G4Hits_ampt-0000000050-00000.root",
+    const string &outputFile = "G4Hits_ampt-0000000014-000000.root",
     const int skip = 0,
-    const string &outdir = ".")
+    const string &outdir = ".",
+    const string &cdbtag = "MDC2_ana.415")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(0);
@@ -56,7 +60,7 @@ int Fun4All_G4_Pass1(
   //===============
   Enable::CDB = true;
   // global tag
-  rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
 
@@ -164,9 +168,9 @@ int Fun4All_G4_Pass1(
 
   Enable::EPD = true;
 
-  //! forward flux return plug door. Out of acceptance and off by default.
-  // Enable::PLUGDOOR = true;
-  Enable::PLUGDOOR_BLACKHOLE = true;
+  //! forward flux return plug door.
+  Enable::PLUGDOOR = true;
+  // Enable::PLUGDOOR_BLACKHOLE = true;
 
   // new settings using Enable namespace in GlobalVariables.C
   Enable::BLACKHOLE = true;
@@ -178,6 +182,13 @@ int Fun4All_G4_Pass1(
   G4Init();
 
   G4Setup();
+
+  //--------------
+  // Timing module is last to register
+  //--------------
+  TimerStats *ts = new TimerStats();
+  ts->OutFileName("jobtime.root");
+  se->registerSubsystem(ts);
 
   //--------------
   // Set up Input Managers
