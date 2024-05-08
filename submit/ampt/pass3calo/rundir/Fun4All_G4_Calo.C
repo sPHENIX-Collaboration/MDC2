@@ -28,13 +28,11 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_Calo(
     const int nEvents = 1,
-    const string &inputFile0 = "DST_CALO_G4HIT_ampt_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
-    const string &outputFile = "DST_CALO_CLUSTER_ampt_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
+    const string &inputFile0 = "DST_CALO_G4HIT_ampt_0_20fm_50kHz_bkg_0_20fm-0000000014-000000.root",
+    const string &outputFile = "DST_CALO_CLUSTER_ampt_0_20fm_50kHz_bkg_0_20fm-0000000014-000000.root",
     const string &outdir = ".",
     const string &cdbtag = "MDC2_ana.416")
 {
-  gSystem->Load("libg4dst.so");
-
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
 
