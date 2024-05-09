@@ -26,9 +26,9 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_MBD_EPD(
     const int nEvents = 1,
-     const string &inputFile1 = "DST_BBC_G4HIT_ampt_0_20fm_50kHz_bkg_0_20fm-0000000010-00000.root",
-     const string &inputFile2 = "DST_TRUTH_G4HIT_ampt_0_20fm_50kHz_bkg_0_20fm-0000000010-00000.root",
-     const string &outputFile = "DST_MBD_EPD_ampt_0_20fm_50kHz_bkg_0_20fm-0000000010-00000.root",
+     const string &inputFile1 = "DST_BBC_G4HIT_ampt_0_20fm_50kHz_bkg_0_20fm-0000000014-000000.root",
+     const string &inputFile2 = "DST_TRUTH_G4HIT_ampt_0_20fm_50kHz_bkg_0_20fm-0000000014-000000.root",
+     const string &outputFile = "DST_MBD_EPD_ampt_0_20fm_50kHz_bkg_0_20fm-0000000014-000000.root",
     const string &outdir = ".",
     const string &cdbtag = "MDC2_ana.416")
 {
