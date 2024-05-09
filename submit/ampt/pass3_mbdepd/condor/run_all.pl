@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $inrunnumber=10;
+my $inrunnumber=14;
 #my $outrunnumber=40;
 my $outrunnumber=$inrunnumber;
 my $test;
@@ -70,14 +70,7 @@ my $nmbd = $getfiles->rows;
 
 while (my @res = $getfiles->fetchrow_array())
 {
-    if ($res[1] < 100000)
-    {
-	$mbdhash{sprintf("%05d",$res[1])} = $res[0];
-    }
-    else
-    {
-	$mbdhash{sprintf("%06d",$res[1])} = $res[0];
-    }
+    $mbdhash{sprintf("%06d",$res[1])} = $res[0];
 }
 $getfiles->finish();
 
@@ -85,14 +78,7 @@ $gettruthfiles->execute() || die $DBI::errstr;
 my $ntruth = $gettruthfiles->rows;
 while (my @res = $gettruthfiles->fetchrow_array())
 {
-    if ($res[1] < 100000)
-    {
-	$truthhash{sprintf("%05d",$res[1])} = $res[0];
-    }
-    else
-    {
-	$truthhash{sprintf("%06d",$res[1])} = $res[0];
-    }
+    $truthhash{sprintf("%06d",$res[1])} = $res[0];
 }
 $gettruthfiles->finish();
 
@@ -109,10 +95,6 @@ foreach my $segment (sort { $a <=> $b } keys %mbdhash)
 	my $runnumber = int($2);
 	my $segment = int($3);
 	my $outfilename = sprintf("DST_MBD_EPD_ampt_0_20fm_50kHz_bkg_0_20fm-%010d-%06d.root",$outrunnumber,$segment);
-	if ($segment < 100000)
-	{
-	    $outfilename = sprintf("DST_MBD_EPD_ampt_0_20fm_50kHz_bkg_0_20fm-%010d-%05d.root",$outrunnumber,$segment);
-	}
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
@@ -123,7 +105,7 @@ foreach my $segment (sort { $a <=> $b } keys %mbdhash)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $truthhash{sprintf("%05d",$segment)}, $outfilename, $outdir, $outrunnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $truthhash{sprintf("%06d",$segment)}, $outfilename, $outdir, $outrunnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
