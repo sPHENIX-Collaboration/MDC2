@@ -34,7 +34,7 @@ int Fun4All_G4_Cosmic(
   const int nEvents = 1,
   const string &outputFile = "G4Hits_cosmic-0000016-000000.root",
   const string &outdir = ".",
-  const string &field = "on",
+  const string &field = "magnet_on",
   const string &cdbtag = "MDC2_ana.417")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
@@ -167,7 +167,7 @@ int Fun4All_G4_Cosmic(
   // Magnet Settings
   //---------------
 
-  if (field == "off")
+  if (field == "magnet_off")
   {
     G4MAGNET::magfield = "0";
   }
