@@ -15,6 +15,8 @@
 #include <ffamodules/SyncReco.h>
 #include <ffamodules/CDBInterface.h>
 
+#include <fun4allutils/TimerStats.h>
+
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
@@ -26,13 +28,14 @@
 
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
+R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_Cosmic(
   const int nEvents = 1,
   const string &outputFile = "G4Hits_cosmic-0000016-000000.root",
   const string &outdir = ".",
   const string &field = "on",
-  const string &cdbtag = "MDC2_ana.407")
+  const string &cdbtag = "MDC2_ana.417")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -176,6 +179,13 @@ int Fun4All_G4_Cosmic(
   // GEANT4 Detector description
   //---------------------
     G4Setup();
+
+  //--------------
+  // Timing module is last to register
+  //--------------
+  TimerStats *ts = new TimerStats();
+  ts->OutFileName("jobtime.root");
+  se->registerSubsystem(ts);
 
   //--------------
   // Set up Input Managers
