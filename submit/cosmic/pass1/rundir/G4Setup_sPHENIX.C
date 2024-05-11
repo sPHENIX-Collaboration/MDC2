@@ -12,9 +12,10 @@
 #include <G4_HcalOut_ref.C>
 #include <G4_BeamLine.C>
 #include <G4_Magnet.C>
-#include <G4_TrkrSimulation.C>
+#include <G4_PSTOF.C>
 #include <G4_Pipe.C>
 #include <G4_PlugDoor.C>
+#include <G4_TrkrSimulation.C>
 #include <G4_User.C>
 #include <G4_World.C>
 #include <G4_ZDC.C>
@@ -98,7 +99,7 @@ int G4Setup()
   {  // conversion to double fails -> we have a string
 
     if (G4MAGNET::magfield.find("sphenix3dbigmapxyz") != string::npos ||
-        G4MAGNET::magfield == "CDB")
+        G4MAGNET::magfield.find(".root") == string::npos)
     {
       g4Reco->set_field_map(G4MAGNET::magfield, PHFieldConfig::Field3DCartesian);
     }
@@ -110,6 +111,7 @@ int G4Setup()
   else
   {
     g4Reco->set_field(fieldstrength);  // use const soleniodal field
+    G4MAGNET::magfield_tracking = G4MAGNET::magfield; // set tracking fieldmap to value
   }
   g4Reco->set_field_rescale(G4MAGNET::magfield_rescale);
 
@@ -177,7 +179,7 @@ void ShowerCompress(int verbosity = 0)
   compress->AddHitContainer("G4HIT_BH_1");
   compress->AddHitContainer("G4HIT_BH_FORWARD_PLUS");
   compress->AddHitContainer("G4HIT_BH_FORWARD_NEG");
-  compress->AddHitContainer("G4HIT_MBD");
+  compress->AddHitContainer("G4HIT_BBC");
   compress->AddCellContainer("G4CELL_CEMC");
   compress->AddCellContainer("G4CELL_HCALIN");
   compress->AddCellContainer("G4CELL_HCALOUT");
@@ -214,7 +216,7 @@ void DstCompress(Fun4AllDstOutputManager *out)
     out->StripNode("G4HIT_BH_1");
     out->StripNode("G4HIT_BH_FORWARD_PLUS");
     out->StripNode("G4HIT_BH_FORWARD_NEG");
-    out->StripNode("G4HIT_MBD");
+    out->StripNode("G4HIT_BBC");
     out->StripNode("G4CELL_CEMC");
     out->StripNode("G4CELL_HCALIN");
     out->StripNode("G4CELL_HCALOUT");
