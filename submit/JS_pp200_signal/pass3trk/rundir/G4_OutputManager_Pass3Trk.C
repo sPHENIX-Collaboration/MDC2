@@ -21,7 +21,7 @@ void CreateDstOutput(int runnumber, int segment, const string &jettrigger)
   auto se = Fun4AllServer::instance();
 
   char segrun[100];
-  snprintf(segrun,100,"%s-%010d-%05d",jettrigger.c_str(),runnumber,segment);
+  snprintf(segrun,100,"%s-%010d-%06d",jettrigger.c_str(),runnumber,segment);
   string FullOutFile = "DST_TRUTH_pythia8_" + string(segrun) + ".root";;
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("TRUTHOUT", FullOutFile);
   AddCommonNodes(out);
