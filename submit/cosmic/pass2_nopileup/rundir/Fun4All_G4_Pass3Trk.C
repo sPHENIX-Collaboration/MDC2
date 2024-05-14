@@ -11,6 +11,8 @@
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
 
+#include <fun4allutils/TimerStats.h>
+
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllRunNodeInputManager.h>
@@ -22,12 +24,14 @@
 
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
+R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_Pass3Trk(
   const int nEvents = 0,
   const string &inputFile0 = "G4Hits_cosmic_magnet_off-0000016-000000.root",
   const string &outdir = ".",
-  const string &field = "magnet_off")
+  const string &field = "magnet_off",
+  const string &cdbtag = "MDC2_ana.418")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -51,7 +55,7 @@ int Fun4All_G4_Pass3Trk(
   //===============
   Enable::CDB = true;
   // tag
-  rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
   CDBInterface::instance()->Verbosity(1);
@@ -138,6 +142,13 @@ int Fun4All_G4_Pass3Trk(
   if (Enable::INTT_CELL) Intt_Cells();
   if (Enable::TPC_CELL) TPC_Cells();
   if (Enable::MICROMEGAS_CELL) Micromegas_Cells();
+
+  //--------------
+  // Timing module is last to register
+  //--------------
+  TimerStats *ts = new TimerStats();
+  ts->OutFileName("jobtime.root");
+  se->registerSubsystem(ts);
 
   //--------------
   // Set up Input Managers

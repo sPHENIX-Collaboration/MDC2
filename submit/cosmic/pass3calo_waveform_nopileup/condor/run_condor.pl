@@ -62,7 +62,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $infile0 $infile1 $infile2 $dstoutfile $dstoutdir $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $infile0 $infile1 $infile2 $dstoutfile $dstoutdir $field $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -88,5 +88,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile0, $infile1, $infile2, $dstoutfile, $dstoutdir, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $infile0, $infile1, $infile2, $dstoutfile, $dstoutdir, $field, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);

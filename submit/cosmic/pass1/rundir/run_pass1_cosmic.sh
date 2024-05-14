@@ -54,7 +54,7 @@ filename=timing
 echo running root.exe -q -b Fun4All_G4_Cosmic.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
 root.exe -q -b Fun4All_G4_Cosmic.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
 
-timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/cosmic/pass1/timing.run${5}/magnet_${4}
+timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/cosmic/pass1/timing.run${5}/${4}
 
 [ ! -d $timedirname ] && mkdir -p $timedirname
 

@@ -8,6 +8,8 @@
 #include <G4_Input.C>
 #include <G4_Production.C>
 
+#include <fun4allutils/TimerStats.h>
+
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
 
@@ -20,12 +22,14 @@
 
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
+R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_MBD_EPD(
     const int nEvents = 1,
     const string &inputFile = "G4Hits_cosmic_magnet_off-0000016-000000.root",
     const string &outputFile = "DST_BBC_EPD_cosmic_magnet_off-0000016-000000.root",
-    const string &outdir = ".")
+    const string &outdir = ".",
+    const string &cdbtag = "MDC2_ana.418")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -45,7 +49,7 @@ int Fun4All_G4_MBD_EPD(
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
   Enable::CDB = true;
-  rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
   CDBInterface::instance()->Verbosity(1);
 
@@ -100,6 +104,13 @@ int Fun4All_G4_MBD_EPD(
   Mbd_Reco();
 
   EPD_Tiles();
+
+  //--------------
+  // Timing module is last to register
+  //--------------
+  TimerStats *ts = new TimerStats();
+  ts->OutFileName("jobtime.root");
+  se->registerSubsystem(ts);
 
   //--------------
   // Set up Input Managers
