@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $inrunnumber=10;
+my $inrunnumber=14;
 my $outrunnumber=$inrunnumber;
 my $test;
 my $incremental;
@@ -67,29 +67,14 @@ my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
 while (my @res = $getfiles->fetchrow_array())
 {
-    if ($res[1] < 100000)
-    {
-	$trkhash{sprintf("%05d",$res[1])} = $res[0];
-    }
-    else
-    {
-	$trkhash{sprintf("%06d",$res[1])} = $res[0];
-    }
-
+  $trkhash{sprintf("%06d",$res[1])} = $res[0];
 }
 $getfiles->finish();
 $getmbdepdfiles->execute() || die $DBI::errstr;
 my $nmbdepd = $getmbdepdfiles->rows;
 while (my @res = $getmbdepdfiles->fetchrow_array())
 {
-    if ($res[1] < 100000)
-    {
-	$mbdepdhash{sprintf("%05d",$res[1])} = $res[0];
-    }
-    else
-    {
-	$mbdepdhash{sprintf("%06d",$res[1])} = $res[0];
-    }
+  $mbdepdhash{sprintf("%06d",$res[1])} = $res[0];
 }
 $getmbdepdfiles->finish();
 foreach my $segment (sort keys %trkhash)
@@ -105,10 +90,6 @@ foreach my $segment (sort keys %trkhash)
 	my $runnumber = int($2);
 	my $segment = int($3);
 	my $outfilename = sprintf("DST_GLOBAL_epos_0_153fm-%010d-%06d.root",$outrunnumber,$segment);
-	if ($segment < 100000)
-	{
-	    $outfilename = sprintf("DST_GLOBAL_epos_0_153fm-%010d-%05d.root",$outrunnumber,$segment);
-	}
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
@@ -119,7 +100,7 @@ foreach my $segment (sort keys %trkhash)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $mbdepdhash{sprintf("%05d",$segment)}, $outfilename, $outdir, $outrunnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $mbdepdhash{sprintf("%06d",$segment)}, $outfilename, $outdir, $outrunnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

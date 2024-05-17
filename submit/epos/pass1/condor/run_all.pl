@@ -35,8 +35,8 @@ my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::er
 my $maxsubmit = $ARGV[0];
 my $epos_runnumber = 1;
 my $epos_dir = sprintf("/sphenix/sim/sim01/sphnxpro/mdc2/EPOS/AuAu");
-my $runnumber = 10;
-my $events = 400;
+my $runnumber = 14;
+my $events = 200;
 #$events = 100; # for ftfp_bert_hp
 my $evtsperfile = 400;
 my $nmax = $evtsperfile;
@@ -61,7 +61,7 @@ my $nsubmit = 0;
 my $lastsegment=getlastsegment();
 OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
 {
-    my $eposdatfile = sprintf("%s/EPOS_AuAu-%010d-%05d.dat",$epos_dir,$epos_runnumber, $segment);
+    my $eposdatfile = sprintf("%s/EPOS_AuAu-%010d-%06d.dat",$epos_dir,$epos_runnumber, $segment);
     if (! -f $eposdatfile)
     {
 	print "could not locate $eposdatfile\n";
@@ -71,7 +71,7 @@ OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
     my $sequence = $segment*$evtsperfile/$events;
     for (my $n=0; $n<$nmax; $n+=$events)
     {
-	my $outfile = sprintf("G4Hits_epos_0_153fm-%010d-%05d.root",$runnumber,$sequence);
+	my $outfile = sprintf("G4Hits_epos_0_153fm-%010d-%06d.root",$runnumber,$sequence);
 	$chkfile->execute($outfile);
 	if ($chkfile->rows == 0)
 	{

@@ -11,6 +11,9 @@
 
 #include <ffamodules/FlagHandler.h>
 
+#include <ffamodules/CDBInterface.h>
+#include <fun4allutils/TimerStats.h>
+
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
@@ -23,14 +26,15 @@
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libg4testbench.so)
+R__LOAD_LIBRARY(libfun4allutils.so)
 
 //________________________________________________________________________________________________
 int Fun4All_G4_Pileup(
     const int nEvents = 0,
     const string &inputFile = "G4Hits_epos_0_153fm-0000000040-00000.root",
     const string &backgroundList = "pileupbkg.list",
-    const string &outdir = ".")
-
+    const string &outdir = ".",
+    const string &cdbtag = "MDC2_ana.416")
 {
   gSystem->Load("libg4dst.so");
   // server
@@ -38,6 +42,15 @@ int Fun4All_G4_Pileup(
   se->Verbosity(1);
 
   auto rc = recoConsts::instance();
+
+  //===============
+  // conditions DB flags
+  //===============
+  Enable::CDB = true;
+  // global tag
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
+  // 64 bit timestamp
+  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
 
   FlagHandler *flag = new FlagHandler();
   se->registerSubsystem(flag);
@@ -54,6 +67,13 @@ int Fun4All_G4_Pileup(
     PRODUCTION::SaveOutputDir = DstOut::OutputDir;
 //    Production_CreateOutputDir();
   }
+
+  //--------------
+  // Timing module is last to register
+  //--------------
+  TimerStats *ts = new TimerStats();
+  ts->OutFileName("jobtime.root");
+  se->registerSubsystem(ts);
 
   // signal input manager
   auto in = new Fun4AllDstInputManager("DST_signal");

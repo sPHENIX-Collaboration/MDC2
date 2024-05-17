@@ -21,14 +21,7 @@ void CreateDstOutput(int runnumber, int segment)
   auto se = Fun4AllServer::instance();
 
   char segrun[100];
-  if (segment < 100000)
-  {
-    snprintf(segrun,100,"%010d-%05d",runnumber,segment);
-  }
-  else
-  {
-    snprintf(segrun,100,"%010d-%06d",runnumber,segment);
-  }
+  snprintf(segrun,100,"%010d-%06d",runnumber,segment);
 
   string FullOutFile = "DST_BBC_G4HIT_epos_0_153fm_50kHz_bkg_0_153fm-" + string(segrun) + ".root";;
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("BBCOUT", FullOutFile);

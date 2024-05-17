@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 10;
+my $runnumber = 14;
 my $test;
 my $incremental;
 my $verbosity;
@@ -90,10 +90,6 @@ while (my @res = $getfiles->fetchrow_array())
 	foreach my $type (sort keys %outfiletype)
 	{
             my $lfn =  sprintf("%s_epos_0_153fm_50kHz_bkg_0_153fm-%010d-%06d.root",$type,$runnumber,$segment);
-	    if ($segment < 100000)
-	    {
-		$lfn =  sprintf("%s_epos_0_153fm_50kHz_bkg_0_153fm-%010d-%05d.root",$type,$runnumber,$segment);
-	    }
 	    $chkfile->execute($lfn);
 	    if ($chkfile->rows > 0)
 	    {
@@ -131,10 +127,6 @@ while (my @res = $getfiles->fetchrow_array())
 		$bkgseg = $bkgseg - $lastsegment -1; # make sure it starts at segment zero, not 1
 	    }
 	    my $bckfile = sprintf("%s-%010d-%06d.root",$prefix,$runnumber,$bkgseg);
-	    if ($bkgseg < 100000)
-	    {
-		$bckfile = sprintf("%s-%010d-%05d.root",$prefix,$runnumber,$bkgseg);
-	    }
 	    print "checking $bckfile\n";
 	    $chkfile->execute($bckfile);
 	    if ($chkfile->rows == 0)
@@ -154,10 +146,6 @@ while (my @res = $getfiles->fetchrow_array())
 	    next;
 	}
 	my $bkglistfile = sprintf("%s/condor-%010d-%06d.bkglist",$logdir,$runnumber,$segment);
-	if ($segment < 100000)
-	{
-	    $bkglistfile = sprintf("%s/condor-%010d-%05d.bkglist",$logdir,$runnumber,$segment);
-	}
 	open(F1,">$bkglistfile");
 	foreach my $bf (@bkgfiles)
 	{

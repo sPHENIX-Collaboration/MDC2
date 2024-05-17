@@ -12,9 +12,9 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-ana_calo=ana.399
-ana_mbdepd=ana.399
-ana_pass3trk=ana.399
+ana_calo=ana.418
+ana_mbdepd=ana.418
+ana_pass3trk=ana.418
 
 run_calo=1
 run_trk=1
@@ -63,16 +63,31 @@ echo arg8 \(runnumber\): $8
 echo arg9 \(sequence\): $9
 
 
+timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/epos/pass2_nopileup/timing.run${8}
+
 #---------------------------------------------------------------
 # Calorimeter Reconstruction
 
 if [ ${run_calo} -gt 0 ]
 then
     source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_calo
+    cdbtag=MDC2_${ana_calo}
+
     echo 'here comes your environment for Fun4All_G4_Calo.C'
     printenv
-    echo running calo root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
-    root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\"\)
+    echo cdbtag: $cdbtag
+
+    filename=timing_calo
+
+    echo running calo root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
+    root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
+
+    [ ! -d $timedirname ] && mkdir -p $timedirname
+
+    rootfilename=${timedirname}/${filename}-${runnumber}-${sequence}.root
+
+    [ -f jobtime.root ] && cp -v jobtime.root $rootfilename
+
 fi
 
 #---------------------------------------------------------------
@@ -81,11 +96,21 @@ fi
 if [ ${run_mbdepd} -gt 0 ]
 then
     source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_mbdepd
+    cdbtag=MDC2_${ana_mbdepd}
     echo 'here comes your environment for Fun4All_G4_MBD_EPD.C'
     printenv
+    echo cdbtag: $cdbtag
 
-    echo root.exe -q -b Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$5\",\"$6\"\)
-    root.exe -q -b  Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$5\",\"$6\"\)
+    filename=timing_mbdepd
+
+    echo root.exe -q -b Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$5\",\"$6\",\"$cdbtag\"\)
+    root.exe -q -b  Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$5\",\"$6\",\"$cdbtag\"\)
+    [ ! -d $timedirname ] && mkdir -p $timedirname
+
+    rootfilename=${timedirname}/${filename}-${runnumber}-${sequence}.root
+
+    [ -f jobtime.root ] && cp -v jobtime.root $rootfilename
+
 fi
 
 #---------------------------------------------------------------
@@ -94,11 +119,21 @@ fi
 if [ ${run_trk} -gt 0 ]
 then
     source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_pass3trk
+    cdbtag=MDC2_${ana_pass3trk}
     echo 'here comes your environment for Fun4All_G4_Pass3Trk.C'
     printenv
+    echo cdbtag: $cdbtag
 
-    echo running root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\"\)
-    root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\"\)
+    filename=timing_pass3trk
+
+    echo running root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$cdbtag\"\)
+    root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$cdbtag\"\)
+
+    [ ! -d $timedirname ] && mkdir -p $timedirname
+
+    rootfilename=${timedirname}/${filename}-${runnumber}-${sequence}.root
+
+    [ -f jobtime.root ] && cp -v jobtime.root $rootfilename
 fi
 
 echo "script done"
