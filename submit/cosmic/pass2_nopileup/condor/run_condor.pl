@@ -61,7 +61,7 @@ if (-f $jobfile)
 	exit(1);
     }
 }
-my $condorlogfile = sprintf("%s/condor_%s.log",$condorlogdir,$suffix);
+my $condorlogfile = sprintf("%s/condor%s.log",$condorlogdir,$suffix);
 if (-f $condorlogfile)
 {
     unlink $condorlogfile;
