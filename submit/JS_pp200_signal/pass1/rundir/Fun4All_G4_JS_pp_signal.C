@@ -124,6 +124,18 @@ int Fun4All_G4_JS_pp_signal(
   {
     pythia8_config_file += "phpythia8_JS_GJ_MDC2.cfg";
   }
+  else if (jettrigger == "PhotonJet5")
+  {
+    pythia8_config_file += "phpythia8_JS_GJ_ptHat5_MDC2.cfg";
+  }
+  else if (jettrigger == "PhotonJet10")
+  {
+    pythia8_config_file += "phpythia8_JS_GJ_ptHat10_MDC2.cfg";
+  }
+  else if (jettrigger == "PhotonJet20")
+  {
+    pythia8_config_file += "phpythia8_JS_GJ_ptHat20_MDC2.cfg";
+  }
   else if (jettrigger == "Jet10")
   {
     pythia8_config_file += "phpythia8_15GeV_JS_MDC2.cfg";
@@ -152,7 +164,7 @@ int Fun4All_G4_JS_pp_signal(
 
   if (Input::PYTHIA8)
   {
-    PHPy8JetTrigger *p8_js_signal_trigger = new PHPy8JetTrigger();
+    PHPy8GenTrigger *p8_js_signal_trigger = new PHPy8JetTrigger();
     p8_js_signal_trigger->SetEtaHighLow(1.5, -1.5);  // Set eta acceptance for particles into the jet between +/- 1.5
     p8_js_signal_trigger->SetJetR(0.4);              // Set the radius for the trigger jet
     if (jettrigger == "Jet10")
@@ -173,6 +185,32 @@ int Fun4All_G4_JS_pp_signal(
       p8_js_signal_trigger = nullptr;
       cout << "no cut for PhotonJet" << endl;
     }
+    else if (jettrigger.find("PhotonJet") != string::npos)
+    {
+      delete p8_js_signal_trigger;
+      p8_photon_jet_trigger = new PHPy8ParticleTrigger();
+      p8_photon_jet_trigger->SetEtaHighLow(1.5, -1.5); // sample a rapidity range higher than the sPHENIX tracking pseudorapidity
+      p8_photon_jet_trigger->SetStableParticleOnly(false); // process unstable particles that include quarks
+      std::vector<int> partentsId{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,-22,-21,-20,-19,-18,-17,-16,-15,-14,-13,-12,-11,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1};
+      p8_photon_jet_trigger->AddParents(partentsId);
+      if (jettrigger == "PhotonJet5")
+      {
+	p8_photon_jet_trigger->SetPtLow(5.);
+      }
+      else if (jettrigger == "PhotonJet10")
+      {
+	p8_photon_jet_trigger->SetPtLow(10.);
+      }
+      else if (jettrigger == "PhotonJet20")
+      {
+	p8_photon_jet_trigger->SetPtLow(20.);
+      }
+      else
+      {
+	cout << "invalid jettrigger: " << jettrigger << endl;
+	gSystem->Exit(1);
+      }
+    }
     else
     {
       cout << "invalid jettrigger: " << jettrigger << endl;
@@ -181,7 +219,14 @@ int Fun4All_G4_JS_pp_signal(
     if (p8_js_signal_trigger)
     {
       INPUTGENERATOR::Pythia8->register_trigger(p8_js_signal_trigger);
+      if (jettrigger.find("PhotonJet") != string::npos)
+      {
+      INPUTGENERATOR::Pythia8->set_trigger_OR();
+      }
+      else
+      {
       INPUTGENERATOR::Pythia8->set_trigger_AND();
+      }
     }
     Input::ApplysPHENIXBeamParameter(INPUTGENERATOR::Pythia8);
   }
