@@ -149,6 +149,10 @@ int Fun4All_G4_JS_pp_signal(
   {
     pythia8_config_file += "phpythia8_30GeV_JS_MDC2.cfg";
   }
+  else if (jettrigger == "Detroit")
+  {
+    pythia8_config_file =  string(getenv("CALIBRATIONROOT")) + "/Generators/phpythia8_detroitUE.cfg";
+  }
   else
   {
     std::cout << "Invalid jet trigger " << jettrigger << std::endl;
@@ -192,7 +196,7 @@ int Fun4All_G4_JS_pp_signal(
       INPUTGENERATOR::Pythia8->register_trigger(p8_photon_jet_trigger);
       INPUTGENERATOR::Pythia8->set_trigger_OR();
     }
-    else
+    else if (jettrigger.find("Jet") != string::npos)
     {
       PHPy8JetTrigger *p8_js_signal_trigger = new PHPy8JetTrigger();
       p8_js_signal_trigger->SetEtaHighLow(1.5, -1.5);  // Set eta acceptance for particles into the jet between +/- 1.5
@@ -220,6 +224,15 @@ int Fun4All_G4_JS_pp_signal(
       }
       INPUTGENERATOR::Pythia8->register_trigger(p8_js_signal_trigger);
       INPUTGENERATOR::Pythia8->set_trigger_AND();
+    }
+    else if (jettrigger == "Detroit")
+    {
+      cout << "using detroit - no cuts" << std::endl;
+    }
+    else
+    {
+      cout << "Invalid jettrigger for cuts " << jettrigger << endl;
+      gSystem->Exit(1);
     }
     Input::ApplysPHENIXBeamParameter(INPUTGENERATOR::Pythia8);
   }

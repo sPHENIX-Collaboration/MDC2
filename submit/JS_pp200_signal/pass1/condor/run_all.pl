@@ -39,9 +39,10 @@ if ($jettrigger  ne "Jet10" &&
     $jettrigger  ne "PhotonJet" &&
     $jettrigger  ne "PhotonJet5" &&
     $jettrigger  ne "PhotonJet10" &&
-    $jettrigger  ne "PhotonJet20")
+    $jettrigger  ne "PhotonJet20" &&
+    $jettrigger  ne "Detroit")
 {
-    print "second argument has to be Jet10, Jet30, Jet40, PhotonJet, PhotonJet5, PhotonJet10 or PhotonJet20\n";
+    print "second argument has to be Jet10, Jet30, Jet40, PhotonJet, PhotonJet5, PhotonJet10, PhotonJet20 or Detroit\n";
     exit(1);
 }
 $filetype=sprintf("%s_%s",$filetype,$jettrigger);
