@@ -172,21 +172,22 @@ int Fun4All_G4_JS_pp_signal(
     if (jettrigger.find("PhotonJet") != string::npos)
     {
       PHPy8ParticleTrigger *p8_photon_jet_trigger = new PHPy8ParticleTrigger();
-      p8_photon_jet_trigger->SetEtaHighLow(1.5, -1.5); // sample a rapidity range higher than the sPHENIX tracking pseudorapidity
       p8_photon_jet_trigger->SetStableParticleOnly(false); // process unstable particles that include quarks
+      p8_photon_jet_trigger->AddParticles(22);
+      p8_photon_jet_trigger->SetEtaHighLow(1.5, -1.5); // sample a rapidity range higher than the sPHENIX tracking pseudorapidity
       std::vector<int> partentsId{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,-22,-21,-20,-19,-18,-17,-16,-15,-14,-13,-12,-11,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1};
       p8_photon_jet_trigger->AddParents(partentsId);
       if (jettrigger == "PhotonJet5")
       {
-	p8_photon_jet_trigger->SetPtLow(5.);
+	p8_photon_jet_trigger->SetPtLow(5);
       }
       else if (jettrigger == "PhotonJet10")
       {
-	p8_photon_jet_trigger->SetPtLow(10.);
+	p8_photon_jet_trigger->SetPtLow(10);
       }
       else if (jettrigger == "PhotonJet20")
       {
-	p8_photon_jet_trigger->SetPtLow(20.);
+	p8_photon_jet_trigger->SetPtLow(20);
       }
       else
       {
