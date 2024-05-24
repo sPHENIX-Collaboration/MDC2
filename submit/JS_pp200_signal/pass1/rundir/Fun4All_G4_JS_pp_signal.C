@@ -11,6 +11,7 @@
 #include <G4_TrkrSimulation.C>
 
 #include <phpythia8/PHPy8JetTrigger.h>
+#include <phpythia8/PHPy8ParticleTrigger.h>
 
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
@@ -164,31 +165,9 @@ int Fun4All_G4_JS_pp_signal(
 
   if (Input::PYTHIA8)
   {
-    PHPy8GenTrigger *p8_js_signal_trigger = new PHPy8JetTrigger();
-    p8_js_signal_trigger->SetEtaHighLow(1.5, -1.5);  // Set eta acceptance for particles into the jet between +/- 1.5
-    p8_js_signal_trigger->SetJetR(0.4);              // Set the radius for the trigger jet
-    if (jettrigger == "Jet10")
+    if (jettrigger.find("PhotonJet") != string::npos)
     {
-      p8_js_signal_trigger->SetMinJetPt(10);  // require a 10 GeV minimum pT jet in the event
-    }
-    else if (jettrigger == "Jet20")
-    {
-      p8_js_signal_trigger->SetMinJetPt(20);  // require a 20 GeV minimum pT jet in the event
-    }
-    else if (jettrigger == "Jet30")
-    {
-      p8_js_signal_trigger->SetMinJetPt(30);  // require a 30 GeV minimum pT jet in the event
-    }
-    else if (jettrigger == "PhotonJet")
-    {
-      delete p8_js_signal_trigger;
-      p8_js_signal_trigger = nullptr;
-      cout << "no cut for PhotonJet" << endl;
-    }
-    else if (jettrigger.find("PhotonJet") != string::npos)
-    {
-      delete p8_js_signal_trigger;
-      p8_photon_jet_trigger = new PHPy8ParticleTrigger();
+      PHPy8ParticleTrigger *p8_photon_jet_trigger = new PHPy8ParticleTrigger();
       p8_photon_jet_trigger->SetEtaHighLow(1.5, -1.5); // sample a rapidity range higher than the sPHENIX tracking pseudorapidity
       p8_photon_jet_trigger->SetStableParticleOnly(false); // process unstable particles that include quarks
       std::vector<int> partentsId{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,-22,-21,-20,-19,-18,-17,-16,-15,-14,-13,-12,-11,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1};
@@ -210,23 +189,37 @@ int Fun4All_G4_JS_pp_signal(
 	cout << "invalid jettrigger: " << jettrigger << endl;
 	gSystem->Exit(1);
       }
+      INPUTGENERATOR::Pythia8->register_trigger(p8_photon_jet_trigger);
+      INPUTGENERATOR::Pythia8->set_trigger_OR();
     }
     else
     {
-      cout << "invalid jettrigger: " << jettrigger << endl;
-      gSystem->Exit(1);
-    }
-    if (p8_js_signal_trigger)
-    {
-      INPUTGENERATOR::Pythia8->register_trigger(p8_js_signal_trigger);
-      if (jettrigger.find("PhotonJet") != string::npos)
+      PHPy8JetTrigger *p8_js_signal_trigger = new PHPy8JetTrigger();
+      p8_js_signal_trigger->SetEtaHighLow(1.5, -1.5);  // Set eta acceptance for particles into the jet between +/- 1.5
+      p8_js_signal_trigger->SetJetR(0.4);              // Set the radius for the trigger jet
+      if (jettrigger == "Jet10")
       {
-      INPUTGENERATOR::Pythia8->set_trigger_OR();
+	p8_js_signal_trigger->SetMinJetPt(10);  // require a 10 GeV minimum pT jet in the event
+      }
+      else if (jettrigger == "Jet20")
+      {
+	p8_js_signal_trigger->SetMinJetPt(20);  // require a 20 GeV minimum pT jet in the event
+      }
+      else if (jettrigger == "Jet30")
+      {
+	p8_js_signal_trigger->SetMinJetPt(30);  // require a 30 GeV minimum pT jet in the event
+      }
+      else if (jettrigger == "Jet40")
+      {
+	p8_js_signal_trigger->SetMinJetPt(40);  // require a 30 GeV minimum pT jet in the event
       }
       else
       {
-      INPUTGENERATOR::Pythia8->set_trigger_AND();
+	cout << "invalid jettrigger: " << jettrigger << endl;
+	gSystem->Exit(1);
       }
+      INPUTGENERATOR::Pythia8->register_trigger(p8_js_signal_trigger);
+      INPUTGENERATOR::Pythia8->set_trigger_AND();
     }
     Input::ApplysPHENIXBeamParameter(INPUTGENERATOR::Pythia8);
   }
