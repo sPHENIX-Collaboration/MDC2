@@ -64,6 +64,9 @@ int Fun4All_G4_JS_pp_signal(
   // int seedValue = 491258969;
   // rc->set_IntFlag("RANDOMSEED", seedValue);
 
+  TRACKING::pp_mode = true;
+  TRACKING::pp_extended_readout_time = 90000;
+
   //===============
   // conditions DB flags
   //===============
