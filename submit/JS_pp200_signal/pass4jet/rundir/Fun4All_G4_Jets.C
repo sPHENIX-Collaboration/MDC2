@@ -12,6 +12,7 @@
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
 
+#include <fun4allutils/TimerStats.h>
 
 #include <fun4all/Fun4AllInputManager.h>
 #include <fun4all/Fun4AllDstInputManager.h>
@@ -23,13 +24,14 @@
 
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
+R__LOAD_LIBRARY(libfun4allutils.so)
 
 void Fun4All_G4_Jets(
-  const int nEvents = 0,
-  const string &inputFile = "DST_TRUTH_pythia8_Jet30_3MHz-0000000008-00000.root",
-  const string &outputFile = "DST_TRUTH_JETS_pythia8_Jet30_3MHz-0000000008-00000.root",
-  const string &outdir = "."
-  )
+    const int nEvents = 0,
+    const string &inputFile = "DST_TRUTH_pythia8_Jet30_3MHz-0000000008-00000.root",
+    const string &outputFile = "DST_TRUTH_JETS_pythia8_Jet30_3MHz-0000000008-00000.root",
+    const string &outdir = ".",
+    const string &cdbtag = "MDC2_ana.418")
 {
 // this convenience library knows all our i/o objects so you don't
 // have to figure out what is in each dst type 
@@ -43,7 +45,7 @@ void Fun4All_G4_Jets(
   // conditions DB flags
   //===============
   Enable::CDB = true;
-  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG",cdbtag);
   rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
   Fun4AllInputManager *in = new Fun4AllDstInputManager("DSTTRUTH");
@@ -69,6 +71,14 @@ void Fun4All_G4_Jets(
   truthjetreco->set_input_node("TRUTH");
   truthjetreco->Verbosity(0);
   se->registerSubsystem(truthjetreco);
+
+  //--------------
+  // Timing module is last to register
+  //--------------
+  TimerStats *ts = new TimerStats();
+  ts->OutFileName("jobtime.root");
+  se->registerSubsystem(ts);
+
   // set up production relatedstuff
   Enable::PRODUCTION = true;
 

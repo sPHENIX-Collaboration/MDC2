@@ -9,16 +9,18 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=11;
+my $runnumber=15;
 my $test;
 my $incremental;
 my $shared;
-GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
+my $MHz = 3;
+GetOptions("test"=>\$test, "increment"=>\$incremental, "MHz:i" => \$MHz, "shared" => \$shared);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet10\", <\"Jet30\", \"PhotonJet\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"Jet40\", \"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\", \"Detroit\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
+    print "--MHz : MHz collision rate\n";
     print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
@@ -36,9 +38,14 @@ my $maxsubmit = $ARGV[0];
 my $jettrigger = $ARGV[1];
 if ($jettrigger  ne "Jet10" &&
     $jettrigger  ne "Jet30" &&
-    $jettrigger  ne "PhotonJet")
+    $jettrigger  ne "Jet40" &&
+    $jettrigger  ne "PhotonJet" &&
+    $jettrigger  ne "PhotonJet5" &&
+    $jettrigger  ne "PhotonJet10" &&
+    $jettrigger  ne "PhotonJet20" &&
+    $jettrigger  ne "Detroit")
 {
-    print "second argument has to be Jet10, Jet30 or PhotonJet\n";
+    print "second argument has to be Jet10, Jet30, Jet40, PhotonJet, PhotonJet5, PhotonJet10, PhotonJet20 or Detroit\n";
     exit(1);
 }
 
@@ -55,7 +62,7 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$jettrigger = sprintf("%s_3MHz",$jettrigger);
+$jettrigger = sprintf("%s_%sMHz",$jettrigger,$MHz);
 $outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,lc $jettrigger);
 if (! -d $outdir)
 {
@@ -75,7 +82,7 @@ while (my @res = $getfiles->fetchrow_array())
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_TRACKSEEDS_pythia8_%s-%010d-%05d.root",$jettrigger,$runnumber,$segment);
+	my $outfilename = sprintf("DST_TRACKSEEDS_pythia8_%s-%010d-%06d.root",$jettrigger,$runnumber,$segment);
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{

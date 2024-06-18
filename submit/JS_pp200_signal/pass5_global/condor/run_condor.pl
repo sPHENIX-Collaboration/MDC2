@@ -34,9 +34,9 @@ if ($sequence < 100)
 {
     $baseprio = 90;
 }
-my $jettriggerMHz = sprintf("%s_3MHz",$jettrigger);
+my $jettriggerMHz = sprintf("%s",$jettrigger);
 my $condorlistfile = sprintf("condor.list");
-my $suffix = sprintf("%s-%010d-%05d",$jettriggerMHz,$runnumber,$sequence);
+my $suffix = sprintf("%s-%010d-%06d",$jettriggerMHz,$runnumber,$sequence);
 my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$jettriggerMHz);
 if (! -d $logdir)
 {

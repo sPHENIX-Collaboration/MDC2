@@ -23,7 +23,8 @@ int Fun4All_G4_Global(
     const std::string &inputFile1 = "DST_TRACKS_pythia8_Jet30_3MHz-0000000011-00001.root",
     const std::string &inputFile2 = "DST_MBD_EPD_pythia8_Jet30_3MHz-0000000011-00001.root",
     const std::string &outputFile = "DST_GLOBAL_pythia8_Jet30_3MHz-0000000011-00001.root",
-    const std::string &outdir = ".")
+    const std::string &outdir = ".",
+  const string &cdbtag = "MDC2_ana.418")
 {
   gSystem->Load("libg4dst.so");
   recoConsts *rc = recoConsts::instance();
@@ -33,7 +34,7 @@ int Fun4All_G4_Global(
   //===============
   Enable::CDB = true;
   // tag
-  rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
 

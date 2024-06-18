@@ -9,16 +9,18 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=11;
+my $runnumber=15;
 my $test;
 my $incremental;
 my $shared;
-GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
+my $MHz = 3;
+GetOptions("test"=>\$test, "increment"=>\$incremental, "MHz:i" => \$MHz, "shared" => \$shared);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet10\", <\"Jet30\", \"PhotonJet\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"Jet40\", \"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\", \"Detroit\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
+    print "--MHz : MHz collision rate\n";
     print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
@@ -34,11 +36,17 @@ if ($hostname !~ /phnxsub/)
 
 my $maxsubmit = $ARGV[0];
 my $jettrigger = $ARGV[1];
+
 if ($jettrigger  ne "Jet10" &&
     $jettrigger  ne "Jet30" &&
-    $jettrigger  ne "PhotonJet")
+    $jettrigger  ne "Jet40" &&
+    $jettrigger  ne "PhotonJet" &&
+    $jettrigger  ne "PhotonJet5" &&
+    $jettrigger  ne "PhotonJet10" &&
+    $jettrigger  ne "PhotonJet20" &&
+    $jettrigger  ne "Detroit")
 {
-    print "second argument has to be Jet04 or PhotonJet\n";
+    print "second argument has to be Jet10, Jet30, Jet40, PhotonJet, PhotonJet5, PhotonJet10, PhotonJet20 or Detroit\n";
     exit(1);
 }
 
@@ -56,13 +64,13 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
+$jettrigger = sprintf("%s_%sMHz",$jettrigger,$MHz);
 $outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,lc $jettrigger);
 if (! -d $outdir)
 {
   mkpath($outdir);
 }
 
-$jettrigger = sprintf("%s_3MHz",$jettrigger);
 my $outfilestring = sprintf("pythia8_%s",$jettrigger);
 
 my %trkhash = ();
@@ -80,7 +88,7 @@ my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
 while (my @res = $getfiles->fetchrow_array())
 {
-    $trkhash{sprintf("%05d",$res[1])} = $res[0];
+    $trkhash{sprintf("%06d",$res[1])} = $res[0];
 }
 
 $getfiles->finish();
@@ -88,7 +96,7 @@ $getclusterfiles->execute() || die $DBI::errstr;
 my $ncluster = $getclusterfiles->rows;
 while (my @res = $getclusterfiles->fetchrow_array())
 {
-    $clusterhash{sprintf("%05d",$res[1])} = $res[0];
+    $clusterhash{sprintf("%06d",$res[1])} = $res[0];
 }
 $getclusterfiles->finish();
 
@@ -104,7 +112,7 @@ foreach my $segment (sort keys %trkhash)
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_TRACKS_%s-%010d-%05d.root",$outfilestring,$runnumber,$segment);
+	my $outfilename = sprintf("DST_TRACKS_%s-%010d-%06d.root",$outfilestring,$runnumber,$segment);
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
@@ -116,7 +124,7 @@ foreach my $segment (sort keys %trkhash)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $clusterhash{sprintf("%05d",$segment)}, $outfilename, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $clusterhash{sprintf("%06d",$segment)}, $outfilename, $outdir, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

@@ -14,10 +14,10 @@ my $test;
 my $incremental;
 my $shared;
 my $MHz = 3;
-GetOptions("test"=>\$test, "increment"=>\$incremental,  "MHz:i" => \$MHz, "shared" => \$shared);
+GetOptions("test"=>\$test, "increment"=>\$incremental, "MHz:i" => \$MHz, "shared" => \$shared);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\" or \"PhotonJet\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"Jet40\", \"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\", \"Detroit\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--MHz : MHz collision rate\n";
@@ -36,11 +36,17 @@ if ($hostname !~ /phnxsub/)
 
 my $maxsubmit = $ARGV[0];
 my $jettrigger = $ARGV[1];
+
 if ($jettrigger  ne "Jet10" &&
     $jettrigger  ne "Jet30" &&
-    $jettrigger  ne "PhotonJet")
+    $jettrigger  ne "Jet40" &&
+    $jettrigger  ne "PhotonJet" &&
+    $jettrigger  ne "PhotonJet5" &&
+    $jettrigger  ne "PhotonJet10" &&
+    $jettrigger  ne "PhotonJet20" &&
+    $jettrigger  ne "Detroit")
 {
-    print "second argument has to be Jet10, Jet30 or PhotonJet\n";
+    print "second argument has to be Jet10, Jet30, Jet40, PhotonJet, PhotonJet5, PhotonJet10, PhotonJet20 or Detroit\n";
     exit(1);
 }
 

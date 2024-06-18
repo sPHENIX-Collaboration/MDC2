@@ -18,7 +18,7 @@ my $verbose;
 GetOptions("test"=>\$test, "increment"=>\$incremental, "MHz:i" => \$MHz, "shared" => \$shared, "verbose"=>\$verbose);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"PhotonJet\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"Jet40\", \"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\", \"Detroit\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--MHz : MHz collision rate\n";
@@ -32,19 +32,23 @@ my $hostname = `hostname`;
 chomp $hostname;
 if ($hostname !~ /phnxsub/)
 {
-    print "submit only from phnxsub01 or phnxsub02\n";
+    print "submit only from phnxsub node\n";
     exit(1);
 }
 my $maxsubmit = $ARGV[0];
 my $jettrigger = $ARGV[1];
 if ($jettrigger  ne "Jet10" &&
     $jettrigger  ne "Jet30" &&
-    $jettrigger  ne "PhotonJet")
+    $jettrigger  ne "Jet40" &&
+    $jettrigger  ne "PhotonJet" &&
+    $jettrigger  ne "PhotonJet5" &&
+    $jettrigger  ne "PhotonJet10" &&
+    $jettrigger  ne "PhotonJet20" &&
+    $jettrigger  ne "Detroit")
 {
-    print "second argument has to be Jet10, Jet30 or PhotonJet\n";
+    print "second argument has to be Jet10, Jet30, Jet40, PhotonJet, PhotonJet5, PhotonJet10, PhotonJet20 or Detroit\n";
     exit(1);
 }
-
 
 my $condorlistfile =  sprintf("condor.list");
 if (-f $condorlistfile)

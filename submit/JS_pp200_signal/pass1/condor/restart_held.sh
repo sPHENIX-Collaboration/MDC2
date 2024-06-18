@@ -12,6 +12,7 @@ runnumber=$(printf "%010d" $run)
 #exit 0
 condor_q | grep ' H ' | grep run_pass1_js.sh | grep ${variable}  > bla
 for i in `cat bla| awk '{print $1}'`; do condor_rm $i; done
+#exit 0
 
 [ -f tmplist ] && rm tmplist
 
