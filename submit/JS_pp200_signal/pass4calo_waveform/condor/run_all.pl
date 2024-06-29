@@ -9,18 +9,20 @@ use DBI;
 
 
 my $outevents = 0;
-my $inrunnumber=14;
+my $inrunnumber=15;
 #my $outrunnumber=40;
 my $outrunnumber=$inrunnumber;
 my $test;
 my $incremental;
 my $shared;
-GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
-if ($#ARGV < 0)
+my $MHz = 3;
+GetOptions("test"=>\$test, "increment"=>\$incremental, "MHz:i" => \$MHz, "shared" => \$shared);
+if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"Jet40\", \"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\", \"Detroit\" production>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
+    print "--MHz : MHz collision rate\n";
     print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
@@ -30,11 +32,24 @@ my $hostname = `hostname`;
 chomp $hostname;
 if ($hostname !~ /phnxsub/)
 {
-    print "submit only from phnxsub01 or phnxsub02\n";
+    print "submit only from phnxsub01/02/03/04\n";
     exit(1);
 }
 
 my $maxsubmit = $ARGV[0];
+my $jettrigger = $ARGV[1];
+if ($jettrigger  ne "Jet10" &&
+    $jettrigger  ne "Jet30" &&
+    $jettrigger  ne "Jet40" &&
+    $jettrigger  ne "PhotonJet" &&
+    $jettrigger  ne "PhotonJet5" &&
+    $jettrigger  ne "PhotonJet10" &&
+    $jettrigger  ne "PhotonJet20" &&
+    $jettrigger  ne "Detroit")
+{
+    print "second argument has to be Jet10, Jet30, Jet40, PhotonJet, PhotonJet5, PhotonJet10, PhotonJet20 or Detroit\n";
+    exit(1);
+}
 
 my $condorlistfile =  sprintf("condor.list");
 if (-f $condorlistfile)
@@ -50,18 +65,22 @@ if (! -f "outdir.txt")
 
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/run%04d",$outdir,$inrunnumber);
-mkpath($outdir);
+$jettrigger = sprintf("%s_%sMHz",$jettrigger,$MHz);
+$outdir = sprintf("%s/run%04d/%s",$outdir,$outrunnumber,lc $jettrigger);
+if (! -d $outdir)
+{
+  mkpath($outdir);
+}
 
 my %g4hithash = ();
 my %calohash = ();
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'G4Hits' and filename like 'G4Hits_sHijing_0_20fm-%' and runnumber = $inrunnumber order by segment") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_G4HIT' and filename like 'DST_CALO_G4HIT_pythia8_$jettrigger-%' and runnumber = $inrunnumber order by segment") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
-my $getcalofiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_NOZERO' and filename like 'DST_CALO_NOZERO_sHijing_0_20fm-%' and runnumber = $inrunnumber");
+my $getcalofiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_NOZERO' and filename like 'DST_CALO_NOZERO_pythia8_$jettrigger-%' and runnumber = $inrunnumber");
 
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
@@ -92,7 +111,7 @@ foreach my $segment (sort keys %g4hithash)
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_CALO_WAVEFORM_sHijing_0_20fm-%010d-%06d.root",$outrunnumber,$segment);
+	my $outfilename = sprintf("DST_CALO_WAVEFORM_pythia8_%s-%010d-%06d.root",$jettrigger,$outrunnumber,$segment);
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
@@ -103,7 +122,7 @@ foreach my $segment (sort keys %g4hithash)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $calohash{sprintf("%06d",$segment)}, $outfilename, $outdir, $outrunnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $calohash{sprintf("%06d",$segment)}, $outfilename, $outdir, $outrunnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

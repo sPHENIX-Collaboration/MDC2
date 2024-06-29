@@ -41,8 +41,8 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 void Fun4All_G4_Waveform(
     const int nEvents = 1,
     const string &inputFile0 = "DST_CALO_G4HIT_pythia8_PhotonJet20_2MHz-0000000015-000000.root",
-    const string &inputFile1 = "DST_CALO_CLUSTER_pythia8_PhotonJet20_2MHz-0000000015-000000.root",
-    const string &inputFile2 = "pedestal.root",
+    const string &inputFile1 = "DST_CALO_NOZERO_pythia8_PhotonJet20_2MHz-0000000015-000000.root",
+    const string &inputFile2 = "pedestal-00046796.root",
     
     const string &outputFile = "DST_CALO_WAVEFORM_pythia8_PhotonJet20_2MHz-0000000015-000000.root",
     const string &outdir = ".",
