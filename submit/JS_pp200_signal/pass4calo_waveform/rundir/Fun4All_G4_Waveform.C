@@ -41,8 +41,7 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 void Fun4All_G4_Waveform(
     const int nEvents = 1,
     const string &inputFile0 = "DST_CALO_G4HIT_pythia8_PhotonJet20_2MHz-0000000015-000000.root",
-    const string &inputFile1 = "DST_CALO_CLUSTER_pythia8_PhotonJet20_2MHz-0000000015-000000.root",
-    const string &inputFile2 = "pedestal.root",
+    const string &inputFile1 = "pedestal.root",
     
     const string &outputFile = "DST_CALO_WAVEFORM_pythia8_PhotonJet20_2MHz-0000000015-000000.root",
     const string &outdir = ".",
@@ -80,8 +79,7 @@ void Fun4All_G4_Waveform(
   Input::READHITS = true;
 
   INPUTREADHITS::filename[0] = inputFile0;
-  INPUTREADHITS::filename[1] = inputFile1;
-  
+    
 
 
 
@@ -113,8 +111,12 @@ void Fun4All_G4_Waveform(
   //======================
   // What to run
   //======================
-
-  
+  //the only reason that we are including the calo_cluster node is we want to use the CEMC geom node from it, 
+  //but we have calib node name confliting(it has a towerinfov1 calib node with the same name we want to usebut we want to make it v2) if we do that...
+  //so I will call the cemc tower reco here just to have the geom node.
+  //by doing this it also remove the dependncy for running the calo_cluster before this pass so we can process it independently from G4Hits ;) and all of our output node name is exactly same with real data
+  CEMC_Cells();
+  CEMC_Towers();
 
   CaloWaveformSim *caloWaveformSim = new CaloWaveformSim();
   caloWaveformSim->set_detector_type(CaloTowerDefs::HCALOUT);
@@ -214,13 +216,13 @@ void Fun4All_G4_Waveform(
   se->registerSubsystem(calibEMC);
 
   std::cout << "Calibrating OHcal" << std::endl;
-  CaloTowerCalib *calibOHCal = new CaloTowerCalib("HCALOUT");
+  CaloTowerCalib *calibOHCal = new CaloTowerCalib("HCALOUTCALIB");
   calibOHCal->set_detector_type(CaloTowerDefs::HCALOUT);
   calibOHCal->set_outputNodePrefix("TOWERINFO_CALIB_");
   se->registerSubsystem(calibOHCal);
 
   std::cout << "Calibrating IHcal" << std::endl;
-  CaloTowerCalib *calibIHCal = new CaloTowerCalib("HCALIN");
+  CaloTowerCalib *calibIHCal = new CaloTowerCalib("HCALINCALIB");
   calibIHCal->set_detector_type(CaloTowerDefs::HCALIN);
   calibIHCal->set_outputNodePrefix("TOWERINFO_CALIB_");
   se->registerSubsystem(calibIHCal);
@@ -251,7 +253,7 @@ void Fun4All_G4_Waveform(
   InputManagers();
   
   Fun4AllInputManager *hitsin = new Fun4AllNoSyncDstInputManager("DST2");
-  hitsin->AddFile(inputFile2);
+  hitsin->AddFile(inputFile1);
   hitsin->Repeat();
   se->registerInputManager(hitsin);
 
@@ -267,45 +269,27 @@ void Fun4All_G4_Waveform(
     out->AddNode("Sync");
     out->AddNode("EventHeader");
 // Inner Hcal
-    out->AddNode("CLUSTER_HCALIN");
     //this is what production macto gives us
     out->AddNode("CLUSTERINFO_HCALIN");
-    out->AddNode("TOWER_SIM_HCALIN");
-    out->AddNode("TOWER_RAW_HCALIN");
-    out->AddNode("TOWER_CALIB_HCALIN");
-    out->AddNode("TOWERINFO_RAW_HCALIN");
-    out->AddNode("TOWERINFO_SIM_HCALIN");
     out->AddNode("TOWERINFO_CALIB_HCALIN");
     out->AddNode("WAVEFORM_HCALIN");
     out->AddNode("TOWERS_HCALIN");
-    out->AddNode("TOWERSWAVEFORM_CALIB_HCALIN");
+    
 
 // Outer Hcal
-    out->AddNode("CLUSTER_HCALOUT");
     out->AddNode("CLUSTERINFO_HCALOUT");
-    out->AddNode("TOWER_SIM_HCALOUT");
-    out->AddNode("TOWER_RAW_HCALOUT");
-    out->AddNode("TOWER_CALIB_HCALOUT");
-    out->AddNode("TOWERINFO_RAW_HCALOUT");
-    out->AddNode("TOWERINFO_SIM_HCALOUT");
     out->AddNode("TOWERINFO_CALIB_HCALOUT");
     out->AddNode("WAVEFORM_HCALOUT");
     out->AddNode("TOWERS_HCALOUT");
-    out->AddNode("TOWERSWAVEFORM_CALIB_HCALOUT");
+    
 
 // CEmc
-    out->AddNode("CLUSTER_CEMC");
     out->AddNode("CLUSTERINFO_CEMC");
     out->AddNode("CLUSTER_POS_COR_CEMC");
-    out->AddNode("TOWER_SIM_CEMC");
-    out->AddNode("TOWER_RAW_CEMC");
-    out->AddNode("TOWER_CALIB_CEMC");
-    out->AddNode("TOWERINFO_RAW_CEMC");
-    out->AddNode("TOWERINFO_SIM_CEMC");
     out->AddNode("TOWERINFO_CALIB_CEMC");
     out->AddNode("WAVEFORM_CEMC");
     out->AddNode("TOWERS_CEMC");
-    out->AddNode("TOWERSWAVEFORM_CALIB_CEMC");
+    
 
 // leave the topo cluster here in case we run this during pass3
     out->AddNode("TOPOCLUSTER_ALLCALO");
