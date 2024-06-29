@@ -3,6 +3,7 @@
 #ifndef MACRO_FUN4ALLG4WAVEFORM_C
 #define MACRO_FUN4ALLG4WAVEFORM_C
 
+
 #include <GlobalVariables.C>
 
 #include <G4_CEmc_Spacal.C>
@@ -15,6 +16,7 @@
 #include <caloreco/CaloTowerBuilder.h>
 #include <caloreco/CaloTowerCalib.h>
 #include <caloreco/CaloWaveformProcessing.h>
+#include <caloreco/CaloTowerStatus.h>
 
 #include <calowaveformsim/CaloWaveformSim.h>
 
@@ -118,6 +120,9 @@ void Fun4All_G4_Waveform(
   caloWaveformSim->set_detector_type(CaloTowerDefs::HCALOUT);
   caloWaveformSim->set_detector("HCALOUT");
   caloWaveformSim->set_nsamples(12);
+  caloWaveformSim->set_pedestalsamples(12);
+  caloWaveformSim->set_timewidth(0.2);
+  caloWaveformSim->set_peakpos(6);
   //caloWaveformSim->Verbosity(2);
   //caloWaveformSim->set_noise_type(CaloWaveformSim::NOISE_NONE);
   se->registerSubsystem(caloWaveformSim);
@@ -127,16 +132,20 @@ void Fun4All_G4_Waveform(
   caloWaveformSim->set_detector_type(CaloTowerDefs::HCALIN);
   caloWaveformSim->set_detector("HCALIN");
   caloWaveformSim->set_nsamples(12);
+  caloWaveformSim->set_pedestalsamples(12);
+  caloWaveformSim->set_timewidth(0.2);
+  caloWaveformSim->set_peakpos(6);
   //  caloWaveformSim->set_noise_type(CaloWaveformSim::NOISE_NONE);
   se->registerSubsystem(caloWaveformSim);
 
-
- 
 
   caloWaveformSim = new CaloWaveformSim();
   caloWaveformSim->set_detector_type(CaloTowerDefs::CEMC);
   caloWaveformSim->set_detector("CEMC");
   caloWaveformSim->set_nsamples(12);
+  caloWaveformSim->set_pedestalsamples(12);
+  caloWaveformSim->set_timewidth(0.2);
+  caloWaveformSim->set_peakpos(6);
   caloWaveformSim->set_calibName("cemc_pi0_twrSlope_v1_default");
   
   //  caloWaveformSim->set_noise_type(CaloWaveformSim::NOISE_NONE);
@@ -154,6 +163,8 @@ void Fun4All_G4_Waveform(
   ca2->set_dataflag(false);
   ca2->set_processing_type(CaloWaveformProcessing::TEMPLATE);
   ca2->set_builder_type(CaloTowerDefs::kWaveformTowerv2);
+  //match our current ZS threshold ~7ADC for hcal
+  ca2->set_softwarezerosuppression(true, 7);
   se->registerSubsystem(ca2);
 
   ca2 = new CaloTowerBuilder();
@@ -162,6 +173,7 @@ void Fun4All_G4_Waveform(
   ca2->set_dataflag(false);
   ca2->set_processing_type(CaloWaveformProcessing::TEMPLATE);
   ca2->set_builder_type(CaloTowerDefs::kWaveformTowerv2);
+  ca2->set_softwarezerosuppression(true, 7);
   se->registerSubsystem(ca2);
 
   ca2 = new CaloTowerBuilder();
@@ -170,24 +182,60 @@ void Fun4All_G4_Waveform(
   ca2->set_dataflag(false);
   ca2->set_processing_type(CaloWaveformProcessing::TEMPLATE);
   ca2->set_builder_type(CaloTowerDefs::kWaveformTowerv2);
+  //match our current ZS threshold ~14ADC for emcal
+  ca2->set_softwarezerosuppression(true, 14);
   se->registerSubsystem(ca2);
 
-  // tower calib
+  /////////////////////////////////////////////////////
+  // Set status of towers, Calibrate towers,  Cluster
+  /////////////////////////////////////////////////////
+  std::cout << "status setters" << std::endl;
+  CaloTowerStatus *statusEMC = new CaloTowerStatus("CEMCSTATUS");
+  statusEMC->set_detector_type(CaloTowerDefs::CEMC);
+  statusEMC->set_time_cut(1);
+  se->registerSubsystem(statusEMC);
 
-  CaloTowerCalib *calib = new CaloTowerCalib();
-  calib->set_detector_type(CaloTowerDefs::HCALOUT);
-  calib->set_outputNodePrefix("TOWERSWAVEFORM_CALIB_");
-  se->registerSubsystem(calib);
+  CaloTowerStatus *statusHCalIn = new CaloTowerStatus("HCALINSTATUS");
+  statusHCalIn->set_detector_type(CaloTowerDefs::HCALIN);
+  statusHCalIn->set_time_cut(2);
+  se->registerSubsystem(statusHCalIn);
 
-  calib = new CaloTowerCalib();
-  calib->set_detector_type(CaloTowerDefs::HCALIN);
-  calib->set_outputNodePrefix("TOWERSWAVEFORM_CALIB_");
-  se->registerSubsystem(calib);
+  CaloTowerStatus *statusHCALOUT = new CaloTowerStatus("HCALOUTSTATUS");
+  statusHCALOUT->set_detector_type(CaloTowerDefs::HCALOUT);
+  statusHCALOUT->set_time_cut(2);
+  se->registerSubsystem(statusHCALOUT);
 
-  calib = new CaloTowerCalib();
-  calib->set_detector_type(CaloTowerDefs::CEMC);
-  calib->set_outputNodePrefix("TOWERSWAVEFORM_CALIB_");
-  se->registerSubsystem(calib);
+  ////////////////////
+  // Calibrate towers
+  std::cout << "Calibrating EMCal" << std::endl;
+  CaloTowerCalib *calibEMC = new CaloTowerCalib("CEMCCALIB");
+  calibEMC->set_detector_type(CaloTowerDefs::CEMC);
+  calibEMC->set_outputNodePrefix("TOWERINFO_CALIB_");
+  se->registerSubsystem(calibEMC);
+
+  std::cout << "Calibrating OHcal" << std::endl;
+  CaloTowerCalib *calibOHCal = new CaloTowerCalib("HCALOUT");
+  calibOHCal->set_detector_type(CaloTowerDefs::HCALOUT);
+  calibOHCal->set_outputNodePrefix("TOWERINFO_CALIB_");
+  se->registerSubsystem(calibOHCal);
+
+  std::cout << "Calibrating IHcal" << std::endl;
+  CaloTowerCalib *calibIHCal = new CaloTowerCalib("HCALIN");
+  calibIHCal->set_detector_type(CaloTowerDefs::HCALIN);
+  calibIHCal->set_outputNodePrefix("TOWERINFO_CALIB_");
+  se->registerSubsystem(calibIHCal);
+  //////////////////
+  // Clusters
+  std::cout << "Building clusters" << std::endl;
+  RawClusterBuilderTemplate *ClusterBuilder = new RawClusterBuilderTemplate("EmcRawClusterBuilderTemplate");
+  ClusterBuilder->Detector("CEMC");
+  ClusterBuilder->set_threshold_energy(0.030);  // for when using basic calibration
+  std::string emc_prof = getenv("CALIBRATIONROOT");
+  emc_prof += "/EmcProfile/CEMCprof_Thresh30MeV.root";
+  ClusterBuilder->LoadProfile(emc_prof);
+  ClusterBuilder->set_UseTowerInfo(1);  // to use towerinfo objects rather than old RawTower
+  se->registerSubsystem(ClusterBuilder);
+
 
   //--------------
   // Timing module is last to register
@@ -220,6 +268,8 @@ void Fun4All_G4_Waveform(
     out->AddNode("EventHeader");
 // Inner Hcal
     out->AddNode("CLUSTER_HCALIN");
+    //this is what production macto gives us
+    out->AddNode("CLUSTERINFO_HCALIN");
     out->AddNode("TOWER_SIM_HCALIN");
     out->AddNode("TOWER_RAW_HCALIN");
     out->AddNode("TOWER_CALIB_HCALIN");
@@ -232,6 +282,7 @@ void Fun4All_G4_Waveform(
 
 // Outer Hcal
     out->AddNode("CLUSTER_HCALOUT");
+    out->AddNode("CLUSTERINFO_HCALOUT");
     out->AddNode("TOWER_SIM_HCALOUT");
     out->AddNode("TOWER_RAW_HCALOUT");
     out->AddNode("TOWER_CALIB_HCALOUT");
@@ -244,6 +295,7 @@ void Fun4All_G4_Waveform(
 
 // CEmc
     out->AddNode("CLUSTER_CEMC");
+    out->AddNode("CLUSTERINFO_CEMC");
     out->AddNode("CLUSTER_POS_COR_CEMC");
     out->AddNode("TOWER_SIM_CEMC");
     out->AddNode("TOWER_RAW_CEMC");
