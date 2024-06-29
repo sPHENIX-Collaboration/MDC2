@@ -278,7 +278,6 @@ void Fun4All_G4_Waveform(
     out->AddNode("TOWERINFO_CALIB_HCALIN");
     out->AddNode("WAVEFORM_HCALIN");
     out->AddNode("TOWERS_HCALIN");
-    out->AddNode("TOWERINFO_CALIB_HCALIN");
     out->AddNode("TOWERSWAVEFORM_CALIB_HCALIN");
 
 // Outer Hcal
@@ -292,7 +291,6 @@ void Fun4All_G4_Waveform(
     out->AddNode("TOWERINFO_CALIB_HCALOUT");
     out->AddNode("WAVEFORM_HCALOUT");
     out->AddNode("TOWERS_HCALOUT");
-    out->AddNode("TOWERINFO_CALIB_HCALOUT");
     out->AddNode("TOWERSWAVEFORM_CALIB_HCALOUT");
 
 // CEmc
@@ -307,7 +305,6 @@ void Fun4All_G4_Waveform(
     out->AddNode("TOWERINFO_CALIB_CEMC");
     out->AddNode("WAVEFORM_CEMC");
     out->AddNode("TOWERS_CEMC");
-    out->AddNode("TOWERINFO_CALIB_CEMC");
     out->AddNode("TOWERSWAVEFORM_CALIB_CEMC");
 
 // leave the topo cluster here in case we run this during pass3
