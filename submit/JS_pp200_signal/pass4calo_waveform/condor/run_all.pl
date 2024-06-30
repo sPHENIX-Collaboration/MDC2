@@ -16,6 +16,7 @@ my $test;
 my $incremental;
 my $shared;
 my $MHz = 3;
+my $pedestalfile = sprintf("pedestal-00046796.root");
 GetOptions("test"=>\$test, "increment"=>\$incremental, "MHz:i" => \$MHz, "shared" => \$shared);
 if ($#ARGV < 1)
 {
@@ -79,34 +80,13 @@ my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_G4HIT' and filename like 'DST_CALO_G4HIT_pythia8_$jettrigger-%' and runnumber = $inrunnumber order by segment") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
-
-my $getcalofiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_NOZERO' and filename like 'DST_CALO_NOZERO_pythia8_$jettrigger-%' and runnumber = $inrunnumber");
-
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
 my $ncal = $getfiles->rows;
 
 while (my @res = $getfiles->fetchrow_array())
 {
-    $g4hithash{sprintf("%06d",$res[1])} = $res[0];
-}
-$getfiles->finish();
-
-$getcalofiles->execute() || die $DBI::errstr;
-my $ncalo = $getcalofiles->rows;
-while (my @res = $getcalofiles->fetchrow_array())
-{
-    $calohash{sprintf("%06d",$res[1])} = $res[0];
-}
-$getcalofiles->finish();
-
-foreach my $segment (sort keys %g4hithash)
-{
-    if (! exists $calohash{$segment})
-    {
-	next;
-    }
-    my $lfn = $g4hithash{$segment};
+    my $lfn = $res[0];
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
 	my $runnumber = int($2);
@@ -122,7 +102,7 @@ foreach my $segment (sort keys %g4hithash)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $calohash{sprintf("%06d",$segment)}, $outfilename, $outdir, $outrunnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $pedestalfile, $outfilename, $outdir, $outrunnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
@@ -145,6 +125,7 @@ foreach my $segment (sort keys %g4hithash)
 	}
     }
 }
+$getfiles->finish();
 $chkfile->finish();
 $dbh->disconnect;
 
