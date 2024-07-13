@@ -1,34 +1,32 @@
 #include <GlobalVariables.C>
 
 #include <G4_Production.C>
-#include <Trkr_RecoInit.C>
 #include <Trkr_Clustering.C>
+#include <Trkr_RecoInit.C>
 
-#include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
+#include <ffamodules/FlagHandler.h>
 
-#include <fun4all/SubsysReco.h>
-#include <fun4all/Fun4AllServer.h>
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
+#include <fun4all/Fun4AllServer.h>
+#include <fun4all/SubsysReco.h>
 
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
-
 
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 
 //________________________________________________________________________________________________
 int Fun4All_G4_sPHENIX_job0(
-  const int nEvents = 0,
-  const int nSkipEvents = 0,
-  const std::string &inputFile = "DST_TRKR_HIT_pythia8_pp_mp-0000000006-00000.root",
-  const std::string &outputFile = "DST_TRKR_CLUSTER_pythia8_pp_mp-0000000006-00000.root",
-  const string &outdir = ".",
-  const string &cdbtag = "MDC2_ana.425")
+    const int nEvents = 0,
+    const int nSkipEvents = 0,
+    const std::string &inputFile = "DST_TRKR_HIT_pythia8_pp_mp-0000000015-00000.root",
+    const std::string &outputFile = "DST_TRKR_CLUSTER_pythia8_pp_mp-0000000015-00000.root",
+    const string &outdir = ".",
+    const string &cdbtag = "MDC2_ana.427")
 {
-
   // print inputs
   std::cout << "Fun4All_G4_sPHENIX_job0 - nEvents: " << nEvents << std::endl;
   std::cout << "Fun4All_G4_sPHENIX_job0 - nSkipEvents: " << nSkipEvents << std::endl;
@@ -49,6 +47,9 @@ int Fun4All_G4_sPHENIX_job0(
   DstOut::OutputDir = outdir;
   DstOut::OutputFile = outputFile;
 
+  // set pp tracking mode
+  TRACKING::pp_mode = true;
+
   // central tracking
   Enable::MVTX = true;
   Enable::INTT = true;
@@ -67,7 +68,7 @@ int Fun4All_G4_sPHENIX_job0(
 
   // do not initialize magnetic field in ACTS
   G4TRACKING::init_acts_magfield = false;
-  
+
   // server
   auto se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -99,18 +100,20 @@ int Fun4All_G4_sPHENIX_job0(
 
   // output manager
   /* all the nodes from DST and RUN are saved to the output */
-    string FullOutFile = DstOut::OutputFile;
+  string FullOutFile = DstOut::OutputFile;
   auto out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
   out->AddNode("Sync");
   out->AddNode("EventHeader");
-  out->AddNode("TRKR_CLUSTER"); 
+  out->AddNode("TRKR_CLUSTER");
   out->AddNode("TRKR_CLUSTERHITASSOC");
   out->AddNode("TRKR_CLUSTERCROSSINGASSOC");
   se->registerOutputManager(out);
 
   // skip events if any specified
-  if( nSkipEvents > 0 )
-  { se->skip( nSkipEvents ); }
+  if (nSkipEvents > 0)
+  {
+    se->skip(nSkipEvents);
+  }
 
   // process events
   se->run(nEvents);
