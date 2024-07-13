@@ -25,7 +25,8 @@ int Fun4All_G4_sPHENIX_job0(
   const int nSkipEvents = 0,
   const std::string &inputFile = "DST_TRKR_HIT_pythia8_pp_mp-0000000006-00000.root",
   const std::string &outputFile = "DST_TRKR_CLUSTER_pythia8_pp_mp-0000000006-00000.root",
-  const string &outdir = ".")
+  const string &outdir = ".",
+  const string &cdbtag = "MDC2_ana.425")
 {
 
   // print inputs
@@ -40,7 +41,7 @@ int Fun4All_G4_sPHENIX_job0(
   // conditions DB flags
   //===============
   Enable::CDB = true;
-  rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
   // set up production relatedstuff
   Enable::PRODUCTION = true;
@@ -57,7 +58,8 @@ int Fun4All_G4_sPHENIX_job0(
   // TPC
   G4TPC::ENABLE_STATIC_DISTORTIONS = false;
   G4TPC::ENABLE_TIME_ORDERED_DISTORTIONS = false;
-  G4TPC::ENABLE_CORRECTIONS = false;
+  G4TPC::ENABLE_STATIC_CORRECTIONS = false;
+  G4TPC::ENABLE_AVERAGE_CORRECTIONS = false;
   G4TPC::DO_HIT_ASSOCIATION = false;
 
   // tracking configuration
