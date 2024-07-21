@@ -1,1 +1,0 @@
-run_pass2calo_nopileup_nozero_pythia8_pp_mb.sh
