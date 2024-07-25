@@ -25,11 +25,11 @@
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libfun4allutils.so)
-
+DST_CALO_G4HIT_pythia8_Charm_3MHz-0000000011-00000.root
 int Fun4All_G4_Calo(
     const int nEvents = 1,
-    const string &inputFile0 = "DST_CALO_G4HIT_pythia8_Jet30_3MHz-0000000007-00000.root",
-    const string &outputFile = "DST_CALO_CLUSTER_pythia8_Jet30_3MHz-0000000007-00000.root",
+    const string &inputFile0 = "DST_CALO_G4HIT_pythia8_Jet10_3MHz-0000000011-00000.root",
+    const string &outputFile = "DST_CALO_CLUSTER_pythia8_Jet10_3MHz-0000000011-00000.root",
     const string &outdir = ".",
     const string &cdbtag = "MDC2_ana.412")
 {
