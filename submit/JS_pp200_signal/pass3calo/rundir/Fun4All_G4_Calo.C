@@ -25,7 +25,7 @@
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libfun4allutils.so)
-DST_CALO_G4HIT_pythia8_Charm_3MHz-0000000011-00000.root
+
 int Fun4All_G4_Calo(
     const int nEvents = 1,
     const string &inputFile0 = "DST_CALO_G4HIT_pythia8_Jet10_3MHz-0000000011-00000.root",
