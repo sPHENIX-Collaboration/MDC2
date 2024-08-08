@@ -42,7 +42,7 @@ int Fun4All_G4_JS_pp_signal(
     const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
     const int skip = 0,
     const string &outdir = ".",
-    const string &cdbtag = "MDC2_ana.398")
+    const string &cdbtag = "MDC2")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
