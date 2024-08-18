@@ -4,13 +4,15 @@ then
   echo "No arguments supplied"
   exit 1
 fi
-echo $1
-variable=$1
 run=15
 runnumber=$(printf "%010d" $run)
+echo restarting $1
+variable=$1
+grepvar=pythia8_${variable}
 
 #exit 0
-condor_q | grep ' H ' | grep run_pass1_js.sh | grep ${variable}  > bla
+condor_q | grep ' H ' | grep run_pass1_js.sh | grep ${grepvar} > bla
+[ -s bla ] ||  exit 1
 for i in `cat bla| awk '{print $1}'`; do condor_rm $i; done
 #exit 0
 

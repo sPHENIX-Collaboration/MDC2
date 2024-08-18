@@ -50,6 +50,7 @@ int Fun4All_G4_JS_pp_signal(
   // Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
   PHRandomSeed::Verbosity(1);
 
+  CDBInterface::instance()->Verbosity(1);
   // just if we set some flags somewhere in this macro
   recoConsts *rc = recoConsts::instance();
   // By default every random number generator uses
@@ -104,6 +105,7 @@ int Fun4All_G4_JS_pp_signal(
   case 8:
   case 11:
   case 15:
+  case 150:
     Input::BEAM_CONFIGURATION = Input::pp_COLLISION;  // pp collisions
     cout << "using Input::pp_COLLISION" << endl;
     break;
@@ -142,7 +144,7 @@ int Fun4All_G4_JS_pp_signal(
   }
   else if (jettrigger == "Jet10")
   {
-    pythia8_config_file += "phpythia8_15GeV_JS_MDC2.cfg";
+    pythia8_config_file += "phpythia8_10GeV_inclusive_MDC2.cfg";
   }
   else if (jettrigger == "Jet20")
   {
