@@ -187,6 +187,9 @@ int Fun4All_G4_Pass1(
 
   G4Setup();
 
+  //--------------
+  // Timing module is last to register
+  //--------------
   TimerStats *ts = new TimerStats();
   ts->OutFileName("jobtime.root");
   se->registerSubsystem(ts);

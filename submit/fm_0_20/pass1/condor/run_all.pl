@@ -33,9 +33,14 @@ $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
 my $maxsubmit = $ARGV[0];
+if ($maxsubmit > 500)
+{
+    print "beware of gpfs overload, you sure you want to run $maxsubmit jobs?\n";
+    exit(0);
+}
 my $hijing_runnumber = 1;
 my $hijing_dir = sprintf("/sphenix/sim/sim01/sphnxpro/MDC1/sHijing_HepMC/data");
-my $runnumber = 14;
+my $runnumber = 19;
 my $events = 200; # for running with plugdoor
 #$events = 200;
 #$events = 100; # for ftfp_bert_hp
