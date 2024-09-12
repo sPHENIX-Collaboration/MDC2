@@ -5,19 +5,34 @@ use warnings;
 use File::Path;
 use Getopt::Long;
 
-my $test;
+my $build;
 my $incremental;
 my $killexist;
-my $runnumber = 150;
+my $runnumber;
 my $events = 1000;
-GetOptions("test"=>\$test, "increment"=>\$incremental, "killexist" => \$killexist);
+my $test;
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "killexist" => \$killexist, "run:i" =>\$runnumber, "test"=>\$test);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet20\", \"Jet30\", \"Jet40\", \"PhotonJet\" production>\n";
     print "parameters:\n";
+    print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
     print "--killexist : delete output file if it already exists (but no jobfile)\n";
+    print "--run: <runnumber>\n";
     print "--test : dryrun - create jobfiles\n";
+    exit(1);
+}
+
+if (! defined $runnumber)
+{
+    print "need runnumber with --run <runnumber>\n";
+    exit(1);
+}
+
+if (! defined $build)
+{
+    print "need build with --build <ana build>\n";
     exit(1);
 }
 
@@ -93,7 +108,9 @@ OUTER: for (my $isub = 0; $isub < $maxsubmit; $isub++)
 	{
 	    $tstflag="--test";
 	}
-	system("perl run_condor.pl $events $jettrigger $outdir $outfile $runnumber $njob $tstflag");
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s",$events, $jettrigger, $outdir, $outfile, $build, $runnumber, $njob, $tstflag);
+	print "cmd: $subcmd\n";
+	system($subcmd);
 	my $exit_value  = $? >> 8;
 	if ($exit_value != 0)
 	{

@@ -99,12 +99,14 @@ int Fun4All_G4_JS_pp_signal(
   {
   case 7:
   case 10:
+  case 19:
     Input::BEAM_CONFIGURATION = Input::AA_COLLISION;  // for 2023 sims we want the AA geometry for no pileup sims
     cout << "using Input::AA_COLLISION" << endl;
     break;
   case 8:
   case 11:
   case 15:
+  case 20:
   case 150:
     Input::BEAM_CONFIGURATION = Input::pp_COLLISION;  // pp collisions
     cout << "using Input::pp_COLLISION" << endl;
@@ -144,7 +146,7 @@ int Fun4All_G4_JS_pp_signal(
   }
   else if (jettrigger == "Jet10")
   {
-    pythia8_config_file += "phpythia8_10GeV_inclusive_MDC2.cfg";
+    pythia8_config_file += "phpythia8_15GeV_JS_MDC2.cfg";
   }
   else if (jettrigger == "Jet20")
   {
