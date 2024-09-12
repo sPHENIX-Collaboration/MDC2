@@ -11,7 +11,7 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-anabuild=ana.398
+anabuild=${8}
 
 source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
 
@@ -46,9 +46,10 @@ fi
 # $5: truth g4hits embed file
 # $6: output directory
 # $7: jettrigger
-# $8: run number
-# $9: sequence
-# $10: fm range
+# $8: build
+# $9: run number
+# $10: sequence
+# $11: fm range
 
 echo 'here comes your environment'
 printenv
@@ -59,15 +60,16 @@ echo arg4 \(track g4hits embed file\): $4
 echo arg5 \(truth g4hits embed file\): $5
 echo arg6 \(output dir\): $6
 echo arg7 \(jettrigger\): $7
-echo arg8 \(runnumber\): $8
-echo arg9 \(sequence\): $9
-echo arg10 \(fm range\): ${10}
+echo arg8 \(build\): $8
+echo arg9 \(runnumber\): $9
+echo arg10 \(sequence\): ${10}
+echo arg11 \(fm range\): ${11}
 echo cdbtag : $cdbtag
 
-runnumber=$(printf "%010d" $8)
-sequence=$(printf "%05d" $9)
+runnumber=$(printf "%010d" $9)
+sequence=$(printf "%06d" ${10})
 
-echo running root.exe -q -b Fun4All_G4_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"${10}\",\"$cdbtag\"\)
-root.exe -q -b  Fun4All_G4_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"${10}\",\"$cdbtag\"\)
+echo running root.exe -q -b Fun4All_G4_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"${11}\",\"$cdbtag\"\)
+root.exe -q -b  Fun4All_G4_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"${11}\",\"$cdbtag\"\)
 
 echo "script done"

@@ -21,7 +21,7 @@ void CreateDstOutput(int runnumber, int segment, const string &jettrigger, const
   auto se = Fun4AllServer::instance();
   string embedinto = "_sHijing_" + fmrange + "_50kHz_bkg_0_20fm";
   char segrun[100];
-  snprintf(segrun,100,"%s-%010d-%05d",embedinto.c_str(),runnumber,segment);
+  snprintf(segrun,100,"%s-%010d-%06d",embedinto.c_str(),runnumber,segment);
   string FullOutFile = "DST_BBC_G4HIT_pythia8_" + jettrigger + string(segrun) + ".root";;
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("BBCOUT", FullOutFile);
   AddCommonNodes(out);

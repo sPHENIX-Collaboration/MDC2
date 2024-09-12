@@ -8,26 +8,52 @@ use Getopt::Long;
 use DBI;
 
 
-my $outevents = 0;
-my $runnumber = 10;
-my $test;
+my $build;
 my $incremental;
 my $fm = "0_20fm";
-GetOptions("test"=>\$test, "fm:s" =>\$fm, "increment"=>\$incremental);
+my $outevents = 0;
+my $runnumber;
+my $test;
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "fm:s" =>\$fm, "run:i" =>\$runnumber, "test"=>\$test);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"Jet40\", \"PhotonJet\" production>\n";
     print "parameters:\n";
+    print "--build: <ana build>\n";
     print "--fm : fermi range for embedding\n";
+    print "--run: <runnumber>\n";
     print "--increment : submit jobs while processing running\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
+my $isbad = 0;
+
 my $hostname = `hostname`;
 chomp $hostname;
 if ($hostname !~ /phnxsub/)
 {
-    print "submit only from phnxsub01 or phnxsub02\n";
+    print "submit only from phnxsub hosts\n";
+    $isbad = 1;
+}
+if (! defined $runnumber)
+{
+    print "need runnumber with --run <runnumber>\n";
+    $isbad = 1;
+}
+
+if (! defined $build)
+{
+    print "need build with --build <ana build>\n";
+    $isbad = 1;
+}
+if (! -f "outdir.txt")
+{
+    print "could not find outdir.txt\n";
+    $isbad = 1;
+}
+
+if ($isbad > 0)
+{
     exit(1);
 }
 my $maxsubmit = $ARGV[0];
@@ -37,7 +63,7 @@ if ($jettrigger  ne "Jet10" &&
     $jettrigger  ne "Jet40" &&
     $jettrigger  ne "PhotonJet")
 {
-    print "second argument has to be Jet10, Jet30 or PhotonJet\n";
+    print "second argument has to be Jet10, Jet30, Jet40 or PhotonJet\n";
     exit(1);
 }
 
@@ -50,11 +76,6 @@ if (-f $condorlistfile)
     unlink $condorlistfile;
 }
 
-if (! -f "outdir.txt")
-{
-    print "could not find outdir.txt\n";
-    exit(1);
-}
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 $outdir = sprintf("%s/%s/run%04d/%s",$outdir,$fm,$runnumber,lc $jettrigger);
@@ -80,7 +101,7 @@ $getfiles->execute() || die $DBI::errstr;
 my $ncal = $getfiles->rows;
 while (my @res = $getfiles->fetchrow_array())
 {
-    $trkhash{sprintf("%05d",$res[1])} = $res[0];
+    $trkhash{sprintf("%06d",$res[1])} = $res[0];
 }
 $getfiles->finish();
 
@@ -90,7 +111,7 @@ $gettruthfiles->execute() || die $DBI::errstr;
 my $ntruth = $gettruthfiles->rows;
 while (my @res = $gettruthfiles->fetchrow_array())
 {
-    $truthhash{sprintf("%05d",$res[1])} = $res[0];
+    $truthhash{sprintf("%06d",$res[1])} = $res[0];
 }
 $gettruthfiles->finish();
 
@@ -100,7 +121,7 @@ $getbbcfiles->execute() || die $DBI::errstr;
 my $nbbc = $getbbcfiles->rows;
 while (my @res = $getbbcfiles->fetchrow_array())
 {
-    $bbchash{sprintf("%05d",$res[1])} = $res[0];
+    $bbchash{sprintf("%06d",$res[1])} = $res[0];
 }
 $getbbcfiles->finish();
 
@@ -110,7 +131,7 @@ $getcalofiles->execute() || die $DBI::errstr;
 my $ncalo = $getcalofiles->rows;
 while (my @res = $getcalofiles->fetchrow_array())
 {
-    $calohash{sprintf("%05d",$res[1])} = $res[0];
+    $calohash{sprintf("%06d",$res[1])} = $res[0];
 }
 $getcalofiles->finish();
 
@@ -139,7 +160,7 @@ foreach my $segment (sort { $a <=> $b } keys %trkhash)
         my $foundall = 1;
 	foreach my $type (sort keys %outfiletype)
 	{
-            my $lfn =  sprintf("%s_%s-%010d-%05d.root",$type,$outfilelike,$runnumber,$segment);
+            my $lfn =  sprintf("%s_%s-%010d-%06d.root",$type,$outfilelike,$runnumber,$segment);
 	    $chkfile->execute($lfn);
 	    if ($chkfile->rows > 0)
 	    {
@@ -160,7 +181,7 @@ foreach my $segment (sort { $a <=> $b } keys %trkhash)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %s %s", $outevents, $jettrigger, $lfn, $bbchash{sprintf("%05d",$segment)}, $calohash{sprintf("%05d",$segment)}, $truthhash{sprintf("%05d",$segment)}, $outdir, $runnumber, $segment, $fm, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %s %d %d %s %s", $outevents, $jettrigger, $lfn, $bbchash{sprintf("%06d",$segment)}, $calohash{sprintf("%06d",$segment)}, $truthhash{sprintf("%06d",$segment)}, $outdir, $build, $runnumber, $segment, $fm, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

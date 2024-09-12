@@ -253,6 +253,9 @@ int Fun4All_G4_Embed(
 
   Enable::EPD = true;
 
+  //! forward flux return plug door.
+  Enable::PLUGDOOR = true;
+
   // new settings using Enable namespace in GlobalVariables.C
   Enable::BLACKHOLE = true;
   Enable::BLACKHOLE_FORWARD_SAVEHITS = false;  // disable forward/backward hits

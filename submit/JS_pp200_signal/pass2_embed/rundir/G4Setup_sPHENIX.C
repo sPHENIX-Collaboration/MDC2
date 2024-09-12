@@ -12,11 +12,10 @@
 #include <G4_HcalOut_ref.C>
 #include <G4_BeamLine.C>
 #include <G4_Magnet.C>
-
-#include <G4_TrkrSimulation.C>
 #include <G4_PSTOF.C>
 #include <G4_Pipe.C>
 #include <G4_PlugDoor.C>
+#include <G4_TrkrSimulation.C>
 #include <G4_User.C>
 #include <G4_World.C>
 #include <G4_ZDC.C>
@@ -90,8 +89,8 @@ int G4Setup()
   {
     g4Reco->set_force_decay(G4P6DECAYER::decayType);
   }
-  //EvtGen
-  g4Reco->CustomizeEvtGenDecay(EVTGENDECAYER::DecayFile);
+  //EvtGen 
+  g4Reco->CustomizeEvtGenDecay(EVTGENDECAYER::DecayFile); 
 
   double fieldstrength;
   istringstream stringline(G4MAGNET::magfield);
@@ -100,7 +99,7 @@ int G4Setup()
   {  // conversion to double fails -> we have a string
 
     if (G4MAGNET::magfield.find("sphenix3dbigmapxyz") != string::npos ||
-        G4MAGNET::magfield == "CDB")
+        G4MAGNET::magfield.find(".root") == string::npos)
     {
       g4Reco->set_field_map(G4MAGNET::magfield, PHFieldConfig::Field3DCartesian);
     }
@@ -112,6 +111,7 @@ int G4Setup()
   else
   {
     g4Reco->set_field(fieldstrength);  // use const soleniodal field
+    G4MAGNET::magfield_tracking = G4MAGNET::magfield; // set tracking fieldmap to value
   }
   g4Reco->set_field_rescale(G4MAGNET::magfield_rescale);
 
