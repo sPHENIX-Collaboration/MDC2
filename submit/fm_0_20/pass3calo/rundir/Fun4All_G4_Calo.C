@@ -27,7 +27,9 @@ int Fun4All_G4_Calo(
     const int nEvents = 1,
     const string &inputFile0 = "DST_CALO_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000010-00000.root",
     const string &outputFile = "DST_CALO_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000010-00000.root",
-    const string &outdir = ".")
+    const string &outdir = ".",
+    const string &cdbtag = "MDC2_ana.398"
+)
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -47,7 +49,7 @@ int Fun4All_G4_Calo(
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
   Enable::CDB = true;
-  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG",cdbtag);
   rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
   //===============

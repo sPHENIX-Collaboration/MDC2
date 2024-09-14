@@ -24,18 +24,15 @@ my $nevents = $ARGV[0];
 my $infile0 = $ARGV[1];
 my $dstoutfile = $ARGV[2];
 my $dstoutdir = $ARGV[3];
-my $runnumber = $ARGV[4];
-my $sequence = $ARGV[5];
+my $build = $ARGV[4];
+my $runnumber = $ARGV[5];
+my $sequence = $ARGV[6];
 if ($sequence < 100)
 {
     $baseprio = 90;
 }
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%010d-%06d",$runnumber,$sequence);
-if ($sequence < 100000)
-{
-    $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
-}
 my $logdir = sprintf("%s/log/run%d",$localdir,$runnumber);
 if (! -d $logdir)
 {
@@ -63,7 +60,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $infile0 $dstoutfile $dstoutdir $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $infile0 $dstoutfile $dstoutdir $build $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -90,5 +87,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile0,  $dstoutfile, $dstoutdir, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $infile0,  $dstoutfile, $dstoutdir, $build, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);
