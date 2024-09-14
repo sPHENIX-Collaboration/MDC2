@@ -8,15 +8,31 @@ use DBI;
 
 sub getlastsegment;
 
-my $test;
+my $build;
 my $incremental;
-GetOptions("test"=>\$test, "increment"=>\$incremental);
+my $runnumber;
+my $test;
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "run:i" =>\$runnumber, "test"=>\$test);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
+    print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
+    print "--run: <runnumber>\n";
     print "--test : dryrun - create jobfiles\n";
+    exit(1);
+}
+
+if (! defined $runnumber)
+{
+    print "need runnumber with --run <runnumber>\n";
+    exit(1);
+}
+
+if (! defined $build)
+{
+    print "need build with --build <ana build>\n";
     exit(1);
 }
 
@@ -24,13 +40,9 @@ my $hostname = `hostname`;
 chomp $hostname;
 if ($hostname !~ /phnxsub/)
 {
-    print "submit only from phnxsub01 or phnxsub02\n";
+    print "submit only from phnxsub hosts\n";
     exit(1);
 }
-
-my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
-$dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
 my $maxsubmit = $ARGV[0];
 if ($maxsubmit > 500)
@@ -38,9 +50,13 @@ if ($maxsubmit > 500)
     print "beware of gpfs overload, you sure you want to run $maxsubmit jobs?\n";
     exit(0);
 }
+
+my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
+$dbh->{LongReadLen}=2000; # full file paths need to fit in here
+my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
+
 my $hijing_runnumber = 1;
 my $hijing_dir = sprintf("/sphenix/sim/sim01/sphnxpro/MDC1/sHijing_HepMC/data");
-my $runnumber = 19;
 my $events = 200; # for running with plugdoor
 #$events = 200;
 #$events = 100; # for ftfp_bert_hp
@@ -86,7 +102,9 @@ OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
 	    {
 		$tstflag="--test";
 	    }
-	    system("perl run_condor.pl $events $hijingdatfile $outdir $outfile $n $runnumber $sequence $tstflag");
+            my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %s %d %d %s", $events, $hijingdatfile, $outdir, $outfile, $n, $build, $runnumber, $sequence, $tstflag);
+	    print "cmd: $subcmd\n";
+	    system($subcmd);
 	    my $exit_value  = $? >> 8;
 	    if ($exit_value != 0)
 	    {

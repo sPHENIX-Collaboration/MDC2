@@ -12,7 +12,7 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-anabuild=ana.435
+anabuild=${6}
 
 source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
 
@@ -33,8 +33,9 @@ fi
 # $3: output file
 # $4: no events to skip
 # $5: output dir
-# $6: runnumber
-# $7: sequence
+# $6: build
+# $7: runnumber
+# $8: sequence
 
 echo 'here comes your environment'
 printenv
@@ -43,19 +44,20 @@ echo arg2 \(hepmc file\): $2
 echo arg3 \(output file\): $3
 echo arg4 \(skip\): $4
 echo arg5 \(output dir\): $5
-echo arg6 \(runnumber\): $6
-echo arg7 \(sequence\): $7
+echo arg6 \(build\): $6
+echo arg7 \(runnumber\): $7
+echo arg8 \(sequence\): $8
 echo cdbtag: $cdbtag
 
-runnumber=$(printf "%010d" $6)
-sequence=$(printf "%06d" $7)
+runnumber=$(printf "%010d" $7)
+sequence=$(printf "%06d" $8)
 
 filename=timing
 
 echo running root.exe -q -b Fun4All_G4_Pass1.C\($1,\"$2\",\"$3\",$4,\"$5\",\"$cdbtag\"\)
  root.exe -q -b  Fun4All_G4_Pass1.C\($1,\"$2\",\"$3\",$4,\"$5\",\"$cdbtag\"\)
 
-timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/shijing_hepmc/fm_0_20/pass1/timing.run${6}
+timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/shijing_hepmc/fm_0_20/pass1/timing.run${7}
 
 [ ! -d $timedirname ] && mkdir -p $timedirname
 
