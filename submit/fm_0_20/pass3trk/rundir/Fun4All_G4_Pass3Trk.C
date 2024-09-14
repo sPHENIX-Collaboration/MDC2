@@ -26,7 +26,9 @@ int Fun4All_G4_Pass3Trk(
     const int nEvents = 1,
     const string &inputFile0 = "DST_TRKR_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
     const string &inputFile1 = "DST_TRUTH_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
-    const string &outdir = ".")
+    const string &outdir = ".",
+    const string &cdbtag = "MDC2_ana.398"
+  )
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -47,7 +49,7 @@ int Fun4All_G4_Pass3Trk(
   //  rc->set_IntFlag("RANDOMSEED", 12345);
   Enable::CDB = true;
   // tag
-  rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 

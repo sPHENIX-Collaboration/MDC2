@@ -8,29 +8,55 @@ use Getopt::Long;
 use DBI;
 
 
-my $outevents = 0;
-my $runnumber = 101;
-my $test;
+my $build;
 my $incremental;
+my $outevents = 0;
+my $runnumber;
 my $shared;
-GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
+my $test;
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
+    print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
+    print "--run: <runnumber>\n";
     print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
+my $isbad = 0;
 
 my $hostname = `hostname`;
 chomp $hostname;
 if ($hostname !~ /phnxsub/)
 {
-    print "submit only from phnxsub01 or phnxsub02\n";
+    print "submit only from phnxsub hosts\n";
+    $isbad = 1;
+}
+if (! defined $runnumber)
+{
+    print "need runnumber with --run <runnumber>\n";
+    $isbad = 1;
+}
+
+if (! defined $build)
+{
+    print "need build with --build <ana build>\n";
+    $isbad = 1;
+}
+if (! -f "outdir.txt")
+{
+    print "could not find outdir.txt\n";
+    $isbad = 1;
+}
+
+if ($isbad > 0)
+{
     exit(1);
 }
+
 my $maxsubmit = $ARGV[0];
 
 my $condorlistfile =  sprintf("condor.list");
@@ -39,11 +65,6 @@ if (-f $condorlistfile)
     unlink $condorlistfile;
 }
 
-if (! -f "outdir.txt")
-{
-    print "could not find outdir.txt\n";
-    exit(1);
-}
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 $outdir = sprintf("%s/run%04d",$outdir,$runnumber);
@@ -66,29 +87,14 @@ $getfiles->execute() || die $DBI::errstr;
 my $ncal = $getfiles->rows;
 while (my @res = $getfiles->fetchrow_array())
 {
-    if ($res[1] < 100000)
-    {
-	$trkhash{sprintf("%05d",$res[1])} = $res[0];
-    }
-    else
-    {
-	$trkhash{sprintf("%06d",$res[1])} = $res[0];
-    }
-
+    $trkhash{sprintf("%06d",$res[1])} = $res[0];
 }
 $getfiles->finish();
 $gettruthfiles->execute() || die $DBI::errstr;
 my $ntruth = $gettruthfiles->rows;
 while (my @res = $gettruthfiles->fetchrow_array())
 {
-    if ($res[1] < 100000)
-    {
-	$truthhash{sprintf("%05d",$res[1])} = $res[0];
-    }
-    else
-    {
-	$truthhash{sprintf("%06d",$res[1])} = $res[0];
-    }
+    $truthhash{sprintf("%06d",$res[1])} = $res[0];
 }
 $gettruthfiles->finish();
 #print "input files: $ncal, truth: $ntruth\n";
@@ -109,11 +115,6 @@ foreach my $segment (sort keys %trkhash)
 	foreach my $type (sort keys %outfiletype)
 	{
             my $lfn =  sprintf("%s_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%06d.root",$type,$runnumber,$segment);
-	    if ($segment < 100000)
-	    {
-		$lfn =  sprintf("%s_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%05d.root",$type,$runnumber,$segment);
-
-	    }
 	    $chkfile->execute($lfn);
 	    if ($chkfile->rows > 0)
 	    {
@@ -135,11 +136,7 @@ foreach my $segment (sort keys %trkhash)
 	    $tstflag="--test";
 	}
 	my $truthfile = $truthhash{sprintf("%06d",$segment)};
-	if ($segment < 100000)
-	{
-	    $truthfile = $truthhash{sprintf("%05d",$segment)};
-	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %d %s", $outevents, $lfn, $truthfile, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $truthfile, $outdir, $build, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
