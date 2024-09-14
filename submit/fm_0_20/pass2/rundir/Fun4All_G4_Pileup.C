@@ -10,6 +10,7 @@
 #include <g4main/PHG4VertexSelection.h>
 
 #include <ffamodules/FlagHandler.h>
+#include <ffamodules/CDBInterface.h>
 
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
@@ -27,9 +28,10 @@ R__LOAD_LIBRARY(libg4testbench.so)
 //________________________________________________________________________________________________
 int Fun4All_G4_Pileup(
     const int nEvents = 0,
-    const string &inputFile = "G4Hits_sHijing_0_20fm-0000000040-00000.root",
+    const string &inputFile = "G4Hits_sHijing_0_20fm-0000000019-00000.root",
     const string &backgroundList = "pileupbkg.list",
-    const string &outdir = ".")
+    const string &outdir = ".",
+    const string &cdbtag = "MDC2_ana.412")
 
 {
   gSystem->Load("libg4dst.so");
@@ -38,6 +40,15 @@ int Fun4All_G4_Pileup(
   se->Verbosity(1);
 
   auto rc = recoConsts::instance();
+
+  //===============
+  // conditions DB flags
+  //===============
+  Enable::CDB = true;
+  // global tag
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
+  // 64 bit timestamp
+  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
 
   FlagHandler *flag = new FlagHandler();
   se->registerSubsystem(flag);
@@ -88,6 +99,7 @@ int Fun4All_G4_Pileup(
   // process events
   se->run(nEvents);
 
+  CDBInterface::instance()->Print();  // print used DB files
   // terminate
   se->End();
   if (Enable::PRODUCTION)

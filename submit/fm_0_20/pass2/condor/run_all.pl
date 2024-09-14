@@ -8,27 +8,55 @@ use Getopt::Long;
 use DBI;
 
 
-my $outevents = 0;
-my $runnumber = 101;
-my $test;
+my $build;
 my $incremental;
+my $outevents = 0;
+my $runnumber;
+my $test;
 my $verbosity;
-GetOptions("test"=>\$test, "increment"=>\$incremental, "verbose"=>\$verbosity);
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "run:i" =>\$runnumber, "test"=>\$test, "verbose"=>\$verbosity);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
+    print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
+    print "--run: <runnumber>\n";
     print "--test : dryrun - create jobfiles\n";
     print "--verbose : turn on blabbering\n";
     exit(1);
 }
 
+my $isbad = 0;
+
 my $hostname = `hostname`;
 chomp $hostname;
 if ($hostname !~ /phnxsub/)
 {
-    print "submit only from phnxsub01 or phnxsub02\n";
+    print "submit only from phnxsub hosts\n";
+    $isbad = 1;
+}
+
+if (! defined $runnumber)
+{
+    print "need runnumber with --run <runnumber>\n";
+    $isbad = 1;
+}
+
+if (! defined $build)
+{
+    print "need build with --build <ana build>\n";
+    $isbad = 1;
+}
+
+if (! -f "outdir.txt")
+{
+    print "could not find outdir.txt\n";
+    $isbad = 1;
+}
+
+if ($isbad > 0)
+{
     exit(1);
 }
 
@@ -40,15 +68,13 @@ if (-f $condorlistfile)
     unlink $condorlistfile;
 }
 
-if (! -f "outdir.txt")
-{
-    print "could not find outdir.txt\n";
-    exit(1);
-}
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 $outdir = sprintf("%s/run%04d",$outdir,$runnumber);
-mkpath($outdir);
+if (! -d $outdir)
+{
+  mkpath($outdir);
+}
 
 my %outfiletype = ();
 $outfiletype{"DST_BBC_G4HIT"} = 1;
@@ -89,10 +115,6 @@ while (my @res = $getfiles->fetchrow_array())
 	foreach my $type (sort keys %outfiletype)
 	{
             my $lfn =  sprintf("%s_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%06d.root",$type,$runnumber,$segment);
-	    if ($segment < 100000)
-	    {
-		$lfn =  sprintf("%s_sHijing_0_20fm_50kHz_bkg_0_20fm-%010d-%05d.root",$type,$runnumber,$segment);
-	    }
 	    $chkfile->execute($lfn);
 	    if ($chkfile->rows > 0)
 	    {
@@ -130,10 +152,6 @@ while (my @res = $getfiles->fetchrow_array())
 		$bkgseg = $bkgseg - $lastsegment -1; # make sure it starts at segment zero, not 1
 	    }
 	    my $bckfile = sprintf("%s-%010d-%06d.root",$prefix,$runnumber,$bkgseg);
-	    if ($bkgseg < 100000)
-	    {
-		$bckfile = sprintf("%s-%010d-%05d.root",$prefix,$runnumber,$bkgseg);
-	    }
 	    $chkfile->execute($bckfile);
 	    if ($chkfile->rows == 0)
 	    {
@@ -151,10 +169,6 @@ while (my @res = $getfiles->fetchrow_array())
 	    next;
 	}
 	my $bkglistfile = sprintf("%s/condor-%010d-%06d.bkglist",$logdir,$runnumber,$segment);
-	if ($segment < 100000)
-	{
-	    $bkglistfile = sprintf("%s/condor-%010d-%05d.bkglist",$logdir,$runnumber,$segment);
-	}
 	open(F1,">$bkglistfile");
 	foreach my $bf (@bkgfiles)
 	{
@@ -166,7 +180,7 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %d %s", $outevents, $lfn, $bkglistfile, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $bkglistfile, $outdir, $build, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
