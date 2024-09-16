@@ -9,7 +9,7 @@ my $test;
 GetOptions("test"=>\$test);
 if ($#ARGV < 5)
 {
-    print "usage: run_condor.pl <events> <g4hit infile> <cluster-nozero infile> <outfile> <outdir> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <g4hit infile> <outfile> <outdir> <build> <runnumber> <sequence>\n";
     print "options:\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
@@ -19,53 +19,49 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 53;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_pass3calo_waveform_nopileup_0_20fm.sh",$rundir);
+my $executable = sprintf("%s/run_pass2calo_waveform_nopileup_0_20fm.sh",$rundir);
 my $nevents = $ARGV[0];
 my $infile0 = $ARGV[1];
-my $infile1 = $ARGV[2];
-my $infile2 = "pedestal.root";
+my $pedestalfile = $ARGV[2];
 my $dstoutfile = $ARGV[3];
 my $dstoutdir = $ARGV[4];
-my $runnumber = $ARGV[5];
-my $sequence = $ARGV[6];
+my $build = $ARGV[5];
+my $runnumber = $ARGV[6];
+my $sequence = $ARGV[7];
 if ($sequence < 100)
 {
     $baseprio = 90;
 }
 my $condorlistfile = sprintf("condor.list");
-my $suffix = sprintf("%010d-%06d",$runnumber,$sequence);
-if ($sequence < 100000)
-{
-    $suffix = sprintf("%010d-%06d",$runnumber,$sequence);
-}
+my $suffix = sprintf("-%010d-%06d",$runnumber,$sequence);
 my $logdir = sprintf("%s/log/run%d",$localdir,$runnumber);
 if (! -d $logdir)
 {
   mkpath($logdir);
 }
-my $condorlogdir = sprintf("/tmp/fm_0_20/pass3calo_waveform_nopileup/run%d",$runnumber);
+my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass2calo_waveform_nopileup/run%d",$runnumber);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);
 }
-my $jobfile = sprintf("%s/condor-%s.job",$logdir,$suffix);
+my $jobfile = sprintf("%s/condor%s.job",$logdir,$suffix);
 if (-f $jobfile)
 {
     print "jobfile $jobfile exists, possible overlapping names\n";
     exit(1);
 }
-my $condorlogfile = sprintf("%s/condor-%s.log",$condorlogdir,$suffix);
+my $condorlogfile = sprintf("%s/condor%s.log",$condorlogdir,$suffix);
 if (-f $condorlogfile)
 {
     unlink $condorlogfile;
 }
-my $errfile = sprintf("%s/condor-%s.err",$logdir,$suffix);
-my $outfile = sprintf("%s/condor-%s.out",$logdir,$suffix);
+my $errfile = sprintf("%s/condor%s.err",$logdir,$suffix);
+my $outfile = sprintf("%s/condor%s.out",$logdir,$suffix);
 print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $infile0 $infile1 $infile2 $dstoutfile $dstoutdir $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $infile0 $pedestalfile $dstoutfile $dstoutdir $build $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -91,5 +87,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile0, $infile1, $infile2, $dstoutfile, $dstoutdir, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $infile0, $pedestalfile, $dstoutfile, $dstoutdir, $build, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);

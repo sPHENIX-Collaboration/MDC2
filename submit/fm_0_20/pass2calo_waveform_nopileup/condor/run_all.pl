@@ -8,29 +8,54 @@ use Getopt::Long;
 use DBI;
 
 
-my $outevents = 0;
-my $inrunnumber=14;
-#my $outrunnumber=40;
-my $outrunnumber=$inrunnumber;
-my $test;
+my $build;
 my $incremental;
+my $outevents = 0;
+my $runnumber;
+my $test;
 my $shared;
-GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
+my $pedestalfile = sprintf("pedestal-00046796.root");
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
 if ($#ARGV < 0)
 {
-    print "usage: run_all.pl <number of jobs>\n";
+    print "usage: run_all.pl <number of jobs> production>\n";
     print "parameters:\n";
+    print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
+    print "--run: <runnumber>\n";
     print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
 
+my $isbad = 0;
+
 my $hostname = `hostname`;
 chomp $hostname;
 if ($hostname !~ /phnxsub/)
 {
-    print "submit only from phnxsub01 or phnxsub02\n";
+    print "submit only from phnxsub hosts\n";
+    $isbad = 1;
+}
+if (! defined $runnumber)
+{
+    print "need runnumber with --run <runnumber>\n";
+    $isbad = 1;
+}
+
+if (! defined $build)
+{
+    print "need build with --build <ana build>\n";
+    $isbad = 1;
+}
+if (! -f "outdir.txt")
+{
+    print "could not find outdir.txt\n";
+    $isbad = 1;
+}
+
+if ($isbad > 0)
+{
     exit(1);
 }
 
@@ -42,57 +67,33 @@ if (-f $condorlistfile)
     unlink $condorlistfile;
 }
 
-if (! -f "outdir.txt")
-{
-    print "could not find outdir.txt\n";
-    exit(1);
-}
-
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/run%04d",$outdir,$inrunnumber);
-mkpath($outdir);
+$outdir = sprintf("%s/run%04d",$outdir,$runnumber);
+if (! -d $outdir)
+{
+  mkpath($outdir);
+}
 
 my %g4hithash = ();
 my %calohash = ();
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'G4Hits' and filename like 'G4Hits_sHijing_0_20fm-%' and runnumber = $inrunnumber order by segment") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'G4Hits' and filename like 'G4Hits_sHijing_0_20fm-%' and runnumber = $runnumber order by segment") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
-
-my $getcalofiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_NOZERO' and filename like 'DST_CALO_NOZERO_sHijing_0_20fm-%' and runnumber = $inrunnumber");
-
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
 my $ncal = $getfiles->rows;
 
 while (my @res = $getfiles->fetchrow_array())
 {
-    $g4hithash{sprintf("%06d",$res[1])} = $res[0];
-}
-$getfiles->finish();
-
-$getcalofiles->execute() || die $DBI::errstr;
-my $ncalo = $getcalofiles->rows;
-while (my @res = $getcalofiles->fetchrow_array())
-{
-    $calohash{sprintf("%06d",$res[1])} = $res[0];
-}
-$getcalofiles->finish();
-
-foreach my $segment (sort keys %g4hithash)
-{
-    if (! exists $calohash{$segment})
-    {
-	next;
-    }
-    my $lfn = $g4hithash{$segment};
+    my $lfn = $res[0];
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_CALO_WAVEFORM_sHijing_0_20fm-%010d-%06d.root",$outrunnumber,$segment);
+	my $outfilename = sprintf("DST_CALO_WAVEFORM_sHijing_0_20fm-%010d-%06d.root",$runnumber,$segment);
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
@@ -103,7 +104,7 @@ foreach my $segment (sort keys %g4hithash)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $calohash{sprintf("%06d",$segment)}, $outfilename, $outdir, $outrunnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %d %d %s", $outevents, $lfn, $pedestalfile, $outfilename, $outdir, $build, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
@@ -126,6 +127,7 @@ foreach my $segment (sort keys %g4hithash)
 	}
     }
 }
+$getfiles->finish();
 $chkfile->finish();
 $dbh->disconnect;
 
