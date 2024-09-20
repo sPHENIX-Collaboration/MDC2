@@ -27,8 +27,8 @@ void Fun4All_G4_Jets(
   const int nEvents = 10,
   const string &inputFile = "DST_TRUTH_pythia8_pp_mb-0000000006-00000.root",
   const string &outputFile = "DST_TRUTH_JETS_pythia8_pp_mb-0000000006-00000.root",
-  const string &outdir = "."
-  )
+  const string &outdir = ".",
+  const string &cdbtag = "MDC2_ana.427")
 {
 // this convenience library knows all our i/o objects so you don't
 // have to figure out what is in each dst type 
@@ -42,7 +42,7 @@ void Fun4All_G4_Jets(
   // conditions DB flags
   //===============
   Enable::CDB = true;
-  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG",cdbtag);
   rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
   Fun4AllInputManager *in = new Fun4AllDstInputManager("DSTTRUTH");

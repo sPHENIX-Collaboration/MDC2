@@ -20,10 +20,11 @@ R__LOAD_LIBRARY(libfun4all.so)
 //________________________________________________________________________________________________
 int Fun4All_G4_Global(
     const int nEvents = 0,
-    const std::string &inputFile1 = "DST_TRACKS_pythia8_pp_mb-0000000008-00000.root",
-    const std::string &inputFile2 = "DST_BBC_EPD_pythia8_pp_mb-0000000008-00000.root",
-    const std::string &outputFile = "DST_GLOBAL_pythia8_pp_mb-0000000008-00000.root",
-    const std::string &outdir = ".")
+    const std::string &inputFile1 = "DST_TRACKS_pythia8_pp_mb-0000000015-000000.root",
+    const std::string &inputFile2 = "DST_BBC_EPD_pythia8_pp_mb-0000000015-000000.root",
+    const std::string &outputFile = "DST_GLOBAL_pythia8_pp_mb-0000000015-000000.root",
+    const std::string &outdir = ".",
+  const string &cdbtag = "MDC2_ana.427")
 {
   gSystem->Load("libg4dst.so");
   recoConsts *rc = recoConsts::instance();
@@ -33,7 +34,7 @@ int Fun4All_G4_Global(
   //===============
   Enable::CDB = true;
   // tag
-  rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
 

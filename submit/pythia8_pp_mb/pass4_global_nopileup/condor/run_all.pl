@@ -9,17 +9,19 @@ use DBI;
 
 
 my $outevents = 0;
-my $inrunnumber=11;
+my $inrunnumber=15;
 my $outrunnumber=$inrunnumber;
 my $test;
 my $incremental;
 my $shared;
-GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
+my $overwrite;
+GetOptions("test"=>\$test, "increment"=>\$incremental, "overwrite"=>\$overwrite, "shared" => \$shared);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
+    print "--overwrite : overwrite existing jobfiles and restart\n";
     print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
@@ -69,29 +71,14 @@ my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
 while (my @res = $getfiles->fetchrow_array())
 {
-    if ($res[1] < 100000)
-    {
-	$trkhash{sprintf("%05d",$res[1])} = $res[0];
-    }
-    else
-    {
-	$trkhash{sprintf("%06d",$res[1])} = $res[0];
-    }
-
+    $trkhash{sprintf("%06d",$res[1])} = $res[0];
 }
 $getfiles->finish();
 $getmbdepdfiles->execute() || die $DBI::errstr;
 my $nmbdepd = $getmbdepdfiles->rows;
 while (my @res = $getmbdepdfiles->fetchrow_array())
 {
-    if ($res[1] < 100000)
-    {
-	$mbdepdhash{sprintf("%05d",$res[1])} = $res[0];
-    }
-    else
-    {
-	$mbdepdhash{sprintf("%06d",$res[1])} = $res[0];
-    }
+    $mbdepdhash{sprintf("%06d",$res[1])} = $res[0];
 }
 $getmbdepdfiles->finish();
 foreach my $segment (sort keys %trkhash)
@@ -107,10 +94,6 @@ foreach my $segment (sort keys %trkhash)
 	my $runnumber = int($2);
 	my $segment = int($3);
 	my $outfilename = sprintf("DST_GLOBAL_%s%010d-%06d.root",$outfilelike,$outrunnumber,$segment);
-	if ($segment < 100000)
-	{
-	    $outfilename = sprintf("DST_GLOBAL_%s%010d-%05d.root",$outfilelike,$outrunnumber,$segment);
-	}
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
@@ -121,7 +104,11 @@ foreach my $segment (sort keys %trkhash)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $mbdepdhash{sprintf("%05d",$segment)}, $outfilename, $outdir, $outrunnumber, $segment, $tstflag);
+        elsif (defined $overwrite)
+	{
+	    $tstflag="--overwrite";
+	}
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $mbdepdhash{sprintf("%06d",$segment)}, $outfilename, $outdir, $outrunnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

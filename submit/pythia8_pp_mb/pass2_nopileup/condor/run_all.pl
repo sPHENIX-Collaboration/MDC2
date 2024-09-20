@@ -9,15 +9,17 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 11;
+my $runnumber = 15;
 my $test;
 my $incremental;
-GetOptions("test"=>\$test, "increment"=>\$incremental);
+my $overwrite;
+GetOptions("test"=>\$test, "increment"=>\$incremental, "overwrite"=>\$overwrite);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
+    print "--overwrite : overwrite existing jobfiles and restart\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
@@ -77,10 +79,14 @@ while (my @res = $getfiles->fetchrow_array())
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
+#if ($segment<=304590)
+#{
+#    next;
+#}
         my $foundall = 1;
 	foreach my $type (sort keys %outfiletype)
 	{
-            my $lfn =  sprintf("%s_pythia8_pp_mb-%010d-%05d.root",$type,$runnumber,$segment);
+            my $lfn =  sprintf("%s_pythia8_pp_mb-%010d-%06d.root",$type,$runnumber,$segment);
 #            print "checking for $lfn\n";
 	    $chkfile->execute($lfn);
 	    if ($chkfile->rows > 0)
@@ -102,8 +108,12 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $tstflag="--test";
 	}
-	my $calooutfilename = sprintf("DST_CALO_CLUSTER_pythia8_pp_mb-%010d-%05d.root",$runnumber,$segment);
-	my $globaloutfilename = sprintf("DST_MBD_EPD_pythia8_pp_mb-%010d-%05d.root",$runnumber,$segment);
+        elsif (defined $overwrite)
+	{
+	    $tstflag="--overwrite";
+	}
+	my $calooutfilename = sprintf("DST_CALO_CLUSTER_pythia8_pp_mb-%010d-%06d.root",$runnumber,$segment);
+	my $globaloutfilename = sprintf("DST_MBD_EPD_pythia8_pp_mb-%010d-%06d.root",$runnumber,$segment);
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %s", $outevents, $lfn, $calooutfilename, $outdir[0], $globaloutfilename, $outdir[1], $outdir[2], $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);

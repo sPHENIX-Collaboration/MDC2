@@ -6,12 +6,14 @@ use Getopt::Long;
 use File::Path;
 
 my $test;
-GetOptions("test"=>\$test);
+my $overwrite;
+GetOptions("test"=>\$test, "overwrite"=>\$overwrite);
 if ($#ARGV < 8)
 {
     print "usage: run_condor.pl <events> <infile> <calo outfile>  <calo outdir> <global outfile> <global outdir> <trk outdir> <runnumber> <sequence>\n";
     print "options:\n";
-    print "-test: testmode - no condor submission\n";
+    print "--overwrite : overwrite existing jobfiles\n";
+    print "--test: testmode - no condor submission\n";
     exit(-2);
 }
 
@@ -35,13 +37,13 @@ if ($sequence < 100)
 }
 my $condorlistfile = sprintf("condor.list");
 
-my $suffix = sprintf("-%010d-%05d",$runnumber,$sequence);
+my $suffix = sprintf("-%010d-%06d",$runnumber,$sequence);
 my $logdir = sprintf("%s/log/run%d",$localdir,$runnumber);
 mkpath($logdir);
 my $condorlogdir = sprintf("/tmp/pythia8_pp_mb/pass2_nopileup/run%d",$runnumber);
 mkpath($condorlogdir);
 my $jobfile = sprintf("%s/condor%s.job",$logdir,$suffix);
-if (-f $jobfile)
+if (-f $jobfile && ! defined $overwrite)
 {
     print "jobfile $jobfile exists, possible overlapping names\n";
     exit(1);
@@ -82,5 +84,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile, $calooutfile $calodstoutdir $globaloutfile $globaldstoutdir $trkdstoutdir, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $infile, $calooutfile, $calodstoutdir, $globaloutfile, $globaldstoutdir, $trkdstoutdir, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);

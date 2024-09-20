@@ -25,7 +25,8 @@ int Fun4All_G4_MBD_EPD(
     const int nEvents = 1,
     const string &inputFile = "G4Hits_pythia8_pp_mb-0000000011-00000.root",
     const string &outputFile = "DST_MBD_EPD_pythia8_pp_mb-0000000011-00000.root",
-    const string &outdir = ".")
+    const string &outdir = ".",
+    const string &cdbtag = "MDC2_ana.412")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -45,7 +46,7 @@ int Fun4All_G4_MBD_EPD(
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
   Enable::CDB = true;
-  rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
   CDBInterface::instance()->Verbosity(1);
 

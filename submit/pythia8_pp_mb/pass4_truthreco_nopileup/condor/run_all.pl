@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 11;
+my $runnumber = 15;
 my $test;
 my $incremental;
 my $overwrite;
@@ -69,7 +69,7 @@ $getfiles->execute() || die $DBI::errstr;
 my $ng4hit = $getfiles->rows;
 while (my @res = $getfiles->fetchrow_array())
 {
-    $g4hithash{sprintf("%05d",$res[1])} = $res[0];
+    $g4hithash{sprintf("%06d",$res[1])} = $res[0];
 }
 $getfiles->finish();
 
@@ -78,7 +78,7 @@ $getclusterfiles->execute() || die $DBI::errstr;
 my $ncluster = $getclusterfiles->rows;
 while (my @res = $getclusterfiles->fetchrow_array())
 {
-    $clusterhash{sprintf("%05d",$res[1])} = $res[0];
+    $clusterhash{sprintf("%06d",$res[1])} = $res[0];
 }
 $getclusterfiles->finish();
 
@@ -87,7 +87,7 @@ $gettrackfiles->execute() || die $DBI::errstr;
 my $ntrack = $gettrackfiles->rows;
 while (my @res = $gettrackfiles->fetchrow_array())
 {
-    $trackhash{sprintf("%05d",$res[1])} = $res[0];
+    $trackhash{sprintf("%06d",$res[1])} = $res[0];
 }
 $gettrackfiles->finish();
 
@@ -96,7 +96,7 @@ $gettruthfiles->execute() || die $DBI::errstr;
 my $ntruth = $gettruthfiles->rows;
 while (my @res = $gettruthfiles->fetchrow_array())
 {
-    $truthhash{sprintf("%05d",$res[1])} = $res[0];
+    $truthhash{sprintf("%06d",$res[1])} = $res[0];
 }
 $gettruthfiles->finish();
 
@@ -125,7 +125,7 @@ foreach my $segment (sort keys %trackhash)
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-        my $outfilename =  sprintf("DST_TRUTH_RECO_%s%010d-%05d.root",$outfilelike,$runnumber,$segment);
+        my $outfilename =  sprintf("DST_TRUTH_RECO_%s%010d-%06d.root",$outfilelike,$runnumber,$segment);
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
@@ -140,7 +140,7 @@ foreach my $segment (sort keys %trackhash)
 	{
 	    $tstflag="--overwrite";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %s", $outevents, $g4hithash{sprintf("%05d",$segment)}, $clusterhash{sprintf("%05d",$segment)}, $trackhash{sprintf("%05d",$segment)}, $truthhash{sprintf("%05d",$segment)}, $outfilename, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %s", $outevents, $g4hithash{sprintf("%06d",$segment)}, $clusterhash{sprintf("%06d",$segment)}, $trackhash{sprintf("%06d",$segment)}, $truthhash{sprintf("%06d",$segment)}, $outfilename, $outdir, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

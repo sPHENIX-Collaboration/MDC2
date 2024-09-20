@@ -24,11 +24,11 @@ R__LOAD_LIBRARY(libfun4all.so)
 int Fun4All_G4_sPHENIX_jobC(
   const int nEvents = 0,
   const int nSkipEvents = 0,
-  const std::string &inputFile1 = "DST_TRACKSEEDS_pythia8_pp_mb-0000000006-00000.root",
-  const std::string &inputFile2 = "DST_CALO_CLUSTER_pythia8_pp_mb-0000000006-00000.root",
-  const std::string &outputFile = "DST_TRACKS_pythia8_pp_mb-0000000006-00000.root",
-  const std::string &outdir = "."
-  )
+  const std::string &inputFile1 = "DST_TRACKSEEDS_pythia8_pp_mb-0000000015-00000.root",
+  const std::string &inputFile2 = "DST_CALO_CLUSTER_pythia8_pp_mb-0000000015-00000.root",
+  const std::string &outputFile = "DST_TRACKS_pythia8_pp_mb-0000000015-00000.root",
+  const std::string &outdir = ".",
+  const string &cdbtag = "MDC2_ana.427")
 {
 
   // print inputs
@@ -45,7 +45,7 @@ int Fun4All_G4_sPHENIX_jobC(
   //===============
   Enable::CDB = true;
   // tag
-  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG",cdbtag);
   // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
@@ -54,6 +54,9 @@ int Fun4All_G4_sPHENIX_jobC(
   Enable::DSTOUT = true;
   DstOut::OutputDir = outdir;
   DstOut::OutputFile = outputFile;
+
+  // set pp tracking mode
+  TRACKING::pp_mode = true;
 
   // central tracking
   Enable::MVTX = true;
@@ -67,8 +70,10 @@ int Fun4All_G4_sPHENIX_jobC(
   G4TPC::ENABLE_TIME_ORDERED_DISTORTIONS = false;
 
   /* distortion corrections */
-  G4TPC::ENABLE_CORRECTIONS = false;
-  G4TPC::correction_filename = string(getenv("CALIBRATIONROOT")) + "/distortion_maps/distortion_corrections_empty.root";
+  G4TPC::ENABLE_STATIC_CORRECTIONS = false;
+  G4TPC::ENABLE_AVERAGE_CORRECTIONS = false;
+  G4TPC::static_correction_filename = string(getenv("CALIBRATIONROOT")) + "/distortion_maps/distortion_corrections_empty.root";
+  G4TPC::average_correction_filename = string(getenv("CALIBRATIONROOT")) + "/distortion_maps/distortion_corrections_empty.root";
   
   // tracking configuration
   G4TRACKING::use_full_truth_track_seeding = false;

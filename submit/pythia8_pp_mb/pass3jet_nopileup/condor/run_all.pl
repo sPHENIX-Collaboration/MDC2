@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=11;
+my $runnumber=15;
 my $test;
 my $incremental;
 my $shared;
@@ -65,7 +65,7 @@ while (my @res = $getfiles->fetchrow_array())
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_TRUTH_JET_%s%010d-%05d.root",$outfilestring,$runnumber,$segment);
+	my $outfilename = sprintf("DST_TRUTH_JET_%s%010d-%06d.root",$outfilestring,$runnumber,$segment);
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{

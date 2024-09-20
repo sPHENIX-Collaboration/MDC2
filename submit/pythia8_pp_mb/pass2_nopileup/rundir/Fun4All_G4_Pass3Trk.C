@@ -26,7 +26,8 @@ R__LOAD_LIBRARY(libffamodules.so)
 int Fun4All_G4_Pass3Trk(
   const int nEvents = 0,
   const string &inputFile0 = "G4Hits_pythia8_pp_mb-0000000007-00000.root",
-  const string &outdir = ".")
+  const string &outdir = ".",
+  const string &cdbtag = "MDC2_ana.412")
 {
 
 // set pp tracking mode
@@ -54,7 +55,7 @@ int Fun4All_G4_Pass3Trk(
   //===============
   Enable::CDB = true;
   // tag
-  rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 

@@ -25,9 +25,10 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_Calo(
     const int nEvents = 1,
-    const string &inputFile0 = "G4Hits_pythia8_pp_mb-0000000006-00000.root",
-    const string &outputFile = "DST_CALO_CLUSTER_pythia8_pp_mb-0000000006-00000.root",
-    const string &outdir = ".")
+    const string &inputFile0 = "G4Hits_pythia8_pp_mb-0000000015-00000.root",
+    const string &outputFile = "DST_CALO_CLUSTER_pythia8_pp_mb-0000000015-00000.root",
+    const string &outdir = ".",
+    const string &cdbtag = "MDC2_ana.412")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -47,7 +48,7 @@ int Fun4All_G4_Calo(
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
   Enable::CDB = true;
-  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG",cdbtag);
   rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
   //===============
@@ -109,6 +110,8 @@ int Fun4All_G4_Calo(
   Enable::HCALOUT_TOWER = Enable::HCALOUT_CELL && true;
   Enable::HCALOUT_CLUSTER = Enable::HCALOUT_TOWER && true;
 
+  Enable::TOPOCLUSTER = true;
+  
   //------------------
   // Detector Reconstruction
   //------------------

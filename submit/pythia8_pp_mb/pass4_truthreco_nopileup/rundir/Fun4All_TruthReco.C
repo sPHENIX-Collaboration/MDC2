@@ -23,13 +23,13 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 void Fun4All_TruthReco(
   const int nEvents = 0,
-  const std::string &dst_trkr_g4hit = "DST_TRKR_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
-  const std::string &dst_trkr_cluster = "DST_TRKR_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
-  const std::string &dst_tracks = "DST_TRACKS_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
-  const std::string &dst_truth = "DST_TRUTH_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
-  const std::string &outputFile = "DST_TRUTH_RECO_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
-  const std::string &outdir = "."
-)
+  const std::string &dst_trkr_g4hit = "DST_TRKR_G4HIT_pythia8_pp_mb-0000000015-000000.root",
+  const std::string &dst_trkr_cluster = "DST_TRKR_CLUSTER_pythia8_pp_mb-0000000015-000000.root",
+  const std::string &dst_tracks = "DST_TRACKS_pythia8_pp_mb-0000000015-000000.root",
+  const std::string &dst_truth = "DST_TRUTH_pythia8_pp_mb-0000000015-000000.root",
+  const std::string &outputFile = "DST_TRUTH_RECO_pythia8_pp_mb-0000000015-000000.root",
+  const std::string &outdir = ".",
+  const string &cdbtag = "MDC2_ana.427")
 {
   gSystem->Load("libg4dst.so");
   Fun4AllServer *se = Fun4AllServer::instance();
@@ -45,7 +45,7 @@ void Fun4All_TruthReco(
   //===============
   Enable::CDB = true;
   // tag
-  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG",cdbtag);
   // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 

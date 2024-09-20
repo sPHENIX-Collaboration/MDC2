@@ -1,5 +1,25 @@
 #! /usr/bin/bash
-run=11
-condor_q | grep ' H ' | grep run_job0_pythia8_pp_mb.sh > bla
+#if [ $# -eq 0 ]
+#then
+#  echo "No arguments supplied"
+#  exit 1
+#fi
+#echo $1
+#variable=$1
+#exit 0
+run=15
+runnumber=$(printf "%010d" $run)
+condor_q | grep ' H ' | grep run_pass3_job0_nopileup_pp_mb.sh > bla
+#exit 0
+[ -s bla ] || exit 1
 for i in `cat bla| awk '{print $1}'`; do condor_rm $i; done
-for i in `cat bla | awk '{print $12}' | awk -F- -v run=${run} '{print $3}' | awk -F.  -v run=${run} '{print "log/run"run"/condor-00000000"run"-"$1".job"}'`; do condor_submit $i; done
+
+[ -f tmplist ] && rm tmplist
+for i in `cat bla | awk '{print $11}' | awk -F- '{print $3}' | awk -F. -v runnumber=${runnumber} '{print "-"runnumber"-"$1".job"}'`; do echo $i >> tmplist ; done
+
+[ -f sedlist ] && rm sedlist
+for i in `cat tmplist`; do echo log/run${run}/condor$i >> sedlist; done
+
+for i in `cat sedlist`; do  sed -i 's/2048MB/4096MB/' $i; done
+for i in `cat sedlist`; do  sed -i 's/4096MB/6144MB/' $i; done
+for i in `cat sedlist`; do condor_submit $i; done

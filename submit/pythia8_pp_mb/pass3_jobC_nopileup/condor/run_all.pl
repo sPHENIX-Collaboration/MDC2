@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=11;
+my $runnumber=15;
 my $test;
 my $incremental;
 my $shared;
@@ -67,14 +67,14 @@ my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
 while (my @res = $getfiles->fetchrow_array())
 {
-    $trkhash{sprintf("%05d",$res[1])} = $res[0];
+    $trkhash{sprintf("%06d",$res[1])} = $res[0];
 }
 $getfiles->finish();
 $getclusterfiles->execute() || die $DBI::errstr;
 my $ncluster = $getclusterfiles->rows;
 while (my @res = $getclusterfiles->fetchrow_array())
 {
-    $clusterhash{sprintf("%05d",$res[1])} = $res[0];
+    $clusterhash{sprintf("%06d",$res[1])} = $res[0];
 }
 $getclusterfiles->finish();
 foreach my $segment (sort keys %trkhash)
@@ -89,7 +89,7 @@ foreach my $segment (sort keys %trkhash)
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_TRACKS_%s%010d-%05d.root",$outfilelike,$runnumber,$segment);
+	my $outfilename = sprintf("DST_TRACKS_%s%010d-%06d.root",$outfilelike,$runnumber,$segment);
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
@@ -100,7 +100,7 @@ foreach my $segment (sort keys %trkhash)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $clusterhash{sprintf("%05d",$segment)}, $outfilename, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $clusterhash{sprintf("%06d",$segment)}, $outfilename, $outdir, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
