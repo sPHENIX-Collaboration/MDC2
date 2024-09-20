@@ -27,7 +27,7 @@ R__LOAD_LIBRARY(libg4testbench.so)
 //________________________________________________________________________________________________
 int Fun4All_G4_Pileup_pp(
     const int nEvents = 0,
-    const string &inputFile = "G4Hits_pythia8_mb-0000000007-00000.root",
+    const string &inputFile = "G4Hits_pythia8_pp_mb-0000000015-000000.root",
     const string &backgroundList = "pileupbkgppmb.list",
     const string &outdir = ".")
 
