@@ -9,6 +9,7 @@
 #include <g4main/Fun4AllDstPileupInputManager.h>
 #include <g4main/PHG4VertexSelection.h>
 
+#include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
 
 #include <fun4all/Fun4AllDstInputManager.h>
@@ -29,8 +30,9 @@ int Fun4All_G4_Pileup_pp(
     const int nEvents = 0,
     const string &inputFile = "G4Hits_pythia8_pp_mb-0000000015-000000.root",
     const string &backgroundList = "pileupbkgppmb.list",
-    const string &outdir = ".")
-
+    const string &outdir = ".",
+    const int pileup = 3000000,
+    const string &cdbtag = "MDC2_ana.435")
 {
   gSystem->Load("libg4dst.so");
   // server
@@ -39,8 +41,14 @@ int Fun4All_G4_Pileup_pp(
 
   auto rc = recoConsts::instance();
 
-  FlagHandler *flag = new FlagHandler();
-  se->registerSubsystem(flag);
+  //===============
+  // conditions DB flags
+  //===============
+  Enable::CDB = true;
+  // global tag
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
+  // 64 bit timestamp
+  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
 
   // set up production relatedstuff
   Enable::PRODUCTION = true;
@@ -56,6 +64,9 @@ int Fun4All_G4_Pileup_pp(
 //    Production_CreateOutputDir();
   }
 
+  FlagHandler *flag = new FlagHandler();
+  se->registerSubsystem(flag);
+
   // signal input manager
   auto in = new Fun4AllDstInputManager("DST_signal");
   in->registerSubsystem(new PHG4VertexSelection);
@@ -66,9 +77,9 @@ int Fun4All_G4_Pileup_pp(
 
   // background input manager
   auto inpile = new Fun4AllDstPileupInputManager("DST_background");
-  inpile->setCollisionRate(3e6); // 3MHz according to BUP
+  inpile->setCollisionRate(pileup); // 3MHz according to BUP
   double low_time_window = -105.5 / (8.0 / 1000.0);
-  double high_time_window = -low_time_window + 7000;
+  double high_time_window = -low_time_window + 50000;
   inpile->setPileupTimeWindow(low_time_window, high_time_window);
   inpile->setDetectorActiveCrossings("BBC",1);
   inpile->setDetectorActiveCrossings("HCALIN",1);
@@ -86,13 +97,14 @@ int Fun4All_G4_Pileup_pp(
   //  se->registerOutputManager(out);
   if (Enable::PRODUCTION)
   {
-    CreateDstOutput(runnumber, segment);
+    CreateDstOutput(pileup,runnumber, segment);
   }
 
   // process events
   se->run(nEvents);
 
   // terminate
+  CDBInterface::instance()->Print();  // print used DB files
   se->End();
   if (Enable::PRODUCTION)
   {

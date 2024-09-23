@@ -16,13 +16,14 @@ namespace OUTPUTMANAGER
 
 void AddCommonNodes(Fun4AllOutputManager *out);
 
-void CreateDstOutput(int runnumber, int segment)
+void CreateDstOutput(int pileup, int runnumber, int segment)
 {
   auto se = Fun4AllServer::instance();
 
   char segrun[100];
-  snprintf(segrun,100,"%010d-%05d",runnumber,segment);
-  string FullOutFile = "DST_BBC_G4HIT_pythia8_pp_mb_3MHz-" + string(segrun) + ".root";;
+  int khz = pileup/1000;
+  snprintf(segrun,100,"%dkHz-%010d-%06d",khz,runnumber,segment);
+  string FullOutFile = "DST_BBC_G4HIT_pythia8_pp_mb_" + string(segrun) + ".root";;
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("BBCOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("G4HIT_BBC");
@@ -30,7 +31,7 @@ void CreateDstOutput(int runnumber, int segment)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "DST_TRKR_G4HIT_pythia8_pp_mb_3MHz-" + string(segrun) + ".root";;
+  FullOutFile = "DST_TRKR_G4HIT_pythia8_pp_mb_" + string(segrun) + ".root";;
   out = new Fun4AllDstOutputManager("TRKROUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("G4HIT_MVTX");
@@ -40,7 +41,7 @@ void CreateDstOutput(int runnumber, int segment)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "DST_CALO_G4HIT_pythia8_pp_mb_3MHz-" + string(segrun) + ".root";;
+  FullOutFile = "DST_CALO_G4HIT_pythia8_pp_mb_" + string(segrun) + ".root";;
   out = new Fun4AllDstOutputManager("CALOOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("G4HIT_CEMC");
@@ -49,7 +50,7 @@ void CreateDstOutput(int runnumber, int segment)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "DST_TRUTH_G4HIT_pythia8_pp_mb_3MHz-" + string(segrun) + ".root";;
+  FullOutFile = "DST_TRUTH_G4HIT_pythia8_pp_mb_" + string(segrun) + ".root";;
   out = new Fun4AllDstOutputManager("TRUTHOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("G4TruthInfo");

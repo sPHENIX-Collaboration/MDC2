@@ -7,9 +7,9 @@ use File::Path;
 
 my $test;
 GetOptions("test"=>\$test);
-if ($#ARGV < 3)
+if ($#ARGV < 7)
 {
-    print "usage: run_condor.pl <inevents> <outevents> <infile> <outdir> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <inevents> <outevents> <infile> <outdir> <build> <pileup> <runnumber> <sequence>\n";
     print "options:\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
@@ -24,14 +24,32 @@ my $nevents = $ARGV[0];
 my $infile = $ARGV[1];
 my $backgroundlist = $ARGV[2];
 my $dstoutdir = $ARGV[3];
-my $runnumber = $ARGV[4];
-my $sequence = $ARGV[5];
+my $build = $ARGV[4];
+my $pileup = $ARGV[5];
+my $runnumber = $ARGV[6];
+my $sequence = $ARGV[7];
 if ($sequence < 100)
 {
     $baseprio = 90;
 }
+my $pileuprate = $pileup;
+if ($pileuprate =~ /kHz/)
+{
+    my @sp1 = split(/kHz/,$pileuprate);
+    $pileuprate = $sp1[0]*1000;
+}
+elsif ($pileuprate =~ /MHz/)
+{
+    my @sp1 = split(/MHz/,$pileuprate);
+    $pileuprate = $sp1[0]*1000000;
+}
+else
+{
+    print "bad pileup: $pileuprate\n";
+    exit(-1);
+}
 my $condorlistfile = sprintf("condor.list");
-my $suffix = sprintf("3MHz-%010d-%05d",$runnumber,$sequence);
+my $suffix = sprintf("%s-%010d-%06d",$pileup,$runnumber,$sequence);
 my $logdir = sprintf("%s/log/run%d",$localdir,$runnumber);
 if (! -d $logdir)
 {
@@ -59,7 +77,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $infile $backgroundlist $dstoutdir $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $infile $backgroundlist $dstoutdir $build $pileuprate $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -86,5 +104,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile, $backgroundlist, $dstoutdir, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $infile, $backgroundlist, $dstoutdir, $build, $pileuprate, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);
