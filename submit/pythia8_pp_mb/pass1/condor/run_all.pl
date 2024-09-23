@@ -5,30 +5,55 @@ use warnings;
 use File::Path;
 use Getopt::Long;
 
+my $build;
 my $test;
 my $incremental;
 my $killexist;
 my $shared;
-my $runnumber = 15;
+my $runnumber;
 my $events = 1000;
-GetOptions("test"=>\$test, "increment"=>\$incremental, "killexist" => \$killexist, "shared" => \$shared);
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "killexist" => \$killexist, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
+    print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
     print "--killexist : submit jobs even if job files exist\n";
+    print "--run: <runnumber>\n";
     print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
 
+my $isbad = 0;
 
 my $hostname = `hostname`;
 chomp $hostname;
 if ($hostname !~ /phnxsub/)
 {
-    print "submit only from phnxsub01 or phnxsub02\n";
+    print "submit only from phnxsub hosts\n";
+    $isbad = 1;
+}
+if (! defined $runnumber)
+{
+    print "need runnumber with --run <runnumber>\n";
+    $isbad = 1;
+}
+
+if (! defined $build)
+{
+    print "need build with --build <ana build>\n";
+    $isbad = 1;
+}
+if (! -f "outdir.txt")
+{
+    print "could not find outdir.txt\n";
+    $isbad = 1;
+}
+
+if ($isbad > 0)
+{
     exit(1);
 }
 
@@ -40,15 +65,13 @@ if (-f $condorlistfile)
     unlink $condorlistfile;
 }
 
-if (! -f "outdir.txt")
-{
-    print "could not find outdir.txt\n";
-    exit(1);
-}
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 $outdir = sprintf("%s/run%04d",$outdir,$runnumber);
-mkpath($outdir);
+if (! -d $outdir)
+{
+  mkpath($outdir);
+}
 
 my $localdir=`pwd`;
 chomp $localdir;
@@ -81,7 +104,9 @@ OUTER: for (my $isub = 0; $isub < $maxsubmit; $isub++)
 	{
 	    $tstflag="--test";
 	}
-	system("perl run_condor.pl $events $outdir $outfile $runnumber $njob $tstflag");
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %d %s",$events, $outdir, $outfile, $build, $runnumber, $njob, $tstflag);
+	print "cmd: $subcmd\n";
+	system($subcmd);
 	my $exit_value  = $? >> 8;
 	if ($exit_value != 0)
 	{

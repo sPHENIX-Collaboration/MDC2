@@ -7,9 +7,9 @@ use File::Path;
 
 my $test;
 GetOptions("test"=>\$test);
-if ($#ARGV < 4)
+if ($#ARGV < 5)
 {
-    print "usage: run_condor.pl <events> <outdir> <outfile> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <outdir> <outfile> <build> <runnumber> <sequence>\n";
     print "options:\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
@@ -26,8 +26,9 @@ my $executable = sprintf("%s/run_pythia8_pp_mb.sh",$rundir);
 my $nevents = $ARGV[0];
 my $dstoutdir = $ARGV[1];
 my $dstoutfile = $ARGV[2];
-my $runnumber = $ARGV[3];
-my $sequence = $ARGV[4];
+my $build = $ARGV[3];
+my $runnumber = $ARGV[4];
+my $sequence = $ARGV[5];
 if ($sequence < 100)
 {
     $baseprio = 90;
@@ -61,7 +62,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $dstoutfile $dstoutdir $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $dstoutfile $dstoutdir $build $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -86,5 +87,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $dstoutfile, $dstoutdir, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $dstoutfile, $dstoutdir, $build, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);
