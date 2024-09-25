@@ -338,7 +338,9 @@ void HCALInner_Clusters()
     ClusterBuilder->Detector("HCALIN");
     ClusterBuilder->SetCylindricalGeometry();                     // has to be called after Detector()
     ClusterBuilder->Verbosity(verbosity);
-    if (!Enable::HCALIN_G4Hit) ClusterBuilder->set_UseTowerInfo(1);  // just use towerinfo
+    ClusterBuilder->setInputTowerNodeName("TOWERINFO_CALIB_NZ_HCALIN");
+    ClusterBuilder->setOutputClusterNodeName("CLUSTER_HCALIN");
+    ClusterBuilder->set_UseTowerInfo(1);
     se->registerSubsystem(ClusterBuilder);
   }
   else if (G4HCALIN::HCalIn_clusterizer == G4HCALIN::kHCalInGraphClusterizer)

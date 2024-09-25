@@ -370,7 +370,9 @@ void HCALOuter_Clusters()
     ClusterBuilder->Detector("HCALOUT");
     ClusterBuilder->SetCylindricalGeometry();                      // has to be called after Detector()
     ClusterBuilder->Verbosity(verbosity);
-    if (!Enable::HCALOUT_G4Hit) ClusterBuilder->set_UseTowerInfo(1);  // just use towerinfo
+    ClusterBuilder->setInputTowerNodeName("TOWERINFO_CALIB_NZ_HCALOUT");
+    ClusterBuilder->setOutputClusterNodeName("CLUSTER_HCALOUT");
+    ClusterBuilder->set_UseTowerInfo(1);
     se->registerSubsystem(ClusterBuilder);
   }
   else if (G4HCALOUT::HCalOut_clusterizer == G4HCALOUT::kHCalOutGraphClusterizer)

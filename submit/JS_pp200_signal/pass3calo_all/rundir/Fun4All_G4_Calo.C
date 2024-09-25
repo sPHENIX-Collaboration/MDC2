@@ -189,12 +189,12 @@ int Fun4All_G4_Calo(
     caloWaveformSim->set_calibName("cemc_pi0_twrSlope_v1_default");
 
     //  caloWaveformSim->set_noise_type(CaloWaveformSim::NOISE_NONE);
-
+    /*
     caloWaveformSim->get_light_collection_model().load_data_file(
         string(getenv("CALIBRATIONROOT")) +
             string("/CEMC/LightCollection/Prototype3Module.xml"),
         "data_grid_light_guide_efficiency", "data_grid_fiber_trans");
-
+    */
     se->registerSubsystem(caloWaveformSim);
 
     CaloTowerBuilder *ca2 = new CaloTowerBuilder();
