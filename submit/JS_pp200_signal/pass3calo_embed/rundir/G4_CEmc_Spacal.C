@@ -165,7 +165,7 @@ CEmc_2DProjectiveSpacal(PHG4Reco *g4Reco, double radius, const int crossings)
   cemc->SetCalibrationFileDir(string(getenv("CALIBRATIONROOT")) + string("/CEMC/Geometry_2023ProjTilted/"));
   cemc->set_double_param("radius", radius);            // overwrite minimal radius
   cemc->set_double_param("thickness", cemcthickness);  // overwrite thickness
-  if(G4CEMC::Cemc_spacal_configuration == PHG4CylinderGeom_Spacalv1::k2DProjectiveSpacal) cemc->set_int_param("saveg4hit", Enable::CEMC_G4Hit);
+  if (G4CEMC::Cemc_spacal_configuration == PHG4CylinderGeom_Spacalv1::k2DProjectiveSpacal) cemc->set_int_param("saveg4hit", Enable::CEMC_G4Hit);
 
   cemc->SetActive();
   cemc->SuperDetector("CEMC");
@@ -250,16 +250,16 @@ void CEMC_Towers()
   RawTowerDigitizer *TowerDigitizer = new RawTowerDigitizer("EmcRawTowerDigitizer");
   TowerDigitizer->Detector("CEMC");
   TowerDigitizer->set_sim_tower_node_prefix("SIM_NZ");
-  TowerDigitizer->set_raw_tower_node_prefix("RAW_NZ");  
+  TowerDigitizer->set_raw_tower_node_prefix("RAW_NZ");
   TowerDigitizer->Verbosity(verbosity);
   TowerDigitizer->set_digi_algorithm(G4CEMC::TowerDigi);
   TowerDigitizer->set_variable_pedestal(true);  // read ped central and width from calibrations file comment next 2 lines if true
                                                 //   TowerDigitizer->set_pedstal_central_ADC(0);
                                                 //   TowerDigitizer->set_pedstal_width_ADC(8);  // eRD1 test beam setting
-  TowerDigitizer->set_photonelec_ADC(1);                // not simulating ADC discretization error
+  TowerDigitizer->set_photonelec_ADC(1);        // not simulating ADC discretization error
   TowerDigitizer->set_photonelec_yield_visible_GeV(photoelectron_per_GeV / sampling_fraction);
-  //TowerDigitizer->set_variable_zero_suppression(true);  // read zs values from calibrations file comment next line if true
-  TowerDigitizer->set_zero_suppression_ADC(-9999);  // eRD1 test beam setting
+  // TowerDigitizer->set_variable_zero_suppression(true);  // read zs values from calibrations file comment next line if true
+  TowerDigitizer->set_zero_suppression_ADC(-9999);                                                              // eRD1 test beam setting
   if (!Enable::CEMC_G4Hit) TowerDigitizer->set_towerinfo(RawTowerDigitizer::ProcessTowerType::kTowerInfoOnly);  // just use towerinfo
   if (Enable::CDB)
   {
@@ -296,9 +296,9 @@ void CEMC_Towers()
       TowerCalibration->GetCalibrationParameters().ReadFromFile("CEMC", "xml", 0, 0,
                                                                 string(getenv("CALIBRATIONROOT")) + string("/CEMC/TowerCalibCombinedParams_2020/"));  // calibration database
     }
-    TowerCalibration->set_variable_GeV_ADC(true);                                                                                                     // read GeV per ADC from calibrations file comment next line if true
+    TowerCalibration->set_variable_GeV_ADC(true);  // read GeV per ADC from calibrations file comment next line if true
     //    TowerCalibration->set_calib_const_GeV_ADC(1. / photoelectron_per_GeV / 0.9715);                                                             // overall energy scale based on 4-GeV photon simulations
-    //TowerCalibration->set_variable_pedestal(true);  // read pedestals from calibrations file comment next line if true
+    // TowerCalibration->set_variable_pedestal(true);  // read pedestals from calibrations file comment next line if true
     TowerCalibration->set_pedstal_ADC(0);
   }
   se->registerSubsystem(TowerCalibration);
@@ -344,23 +344,23 @@ void CEMC_Clusters()
   if (!Enable::CEMC_G4Hit) clusterCorrection->set_UseTowerInfo(1);  // just use towerinfo
   //    clusterCorrection->set_UseTowerInfo(1); // to use towerinfo objects rather than old RawTower
 
-//  if (Enable::CDB)
-//  {
-//    clusterCorrection->Get_eclus_CalibrationParameters().ReadFromCDB("CEMCRECALIB");
-//    clusterCorrection->Get_ecore_CalibrationParameters().ReadFromCDB("CEMC_ECORE_RECALIB");
-//  }
-//  else
-//  {
-//    clusterCorrection->Get_eclus_CalibrationParameters().ReadFromFile("CEMC_RECALIB", "xml", 0, 0,
-//                                                                      // raw location
-//                                                                      string(getenv("CALIBRATIONROOT")) + string("/CEMC/PositionRecalibration_EMCal_9deg_tilt/"));
-//    clusterCorrection->Get_ecore_CalibrationParameters().ReadFromFile("CEMC_ECORE_RECALIB", "xml", 0, 0,
-//                                                                      // raw location
-//                                                                      string(getenv("CALIBRATIONROOT")) + string("/CEMC/PositionRecalibration_EMCal_9deg_tilt/"));
-//  }
+  //  if (Enable::CDB)
+  //  {
+  //    clusterCorrection->Get_eclus_CalibrationParameters().ReadFromCDB("CEMCRECALIB");
+  //    clusterCorrection->Get_ecore_CalibrationParameters().ReadFromCDB("CEMC_ECORE_RECALIB");
+  //  }
+  //  else
+  //  {
+  //    clusterCorrection->Get_eclus_CalibrationParameters().ReadFromFile("CEMC_RECALIB", "xml", 0, 0,
+  //                                                                      // raw location
+  //                                                                      string(getenv("CALIBRATIONROOT")) + string("/CEMC/PositionRecalibration_EMCal_9deg_tilt/"));
+  //    clusterCorrection->Get_ecore_CalibrationParameters().ReadFromFile("CEMC_ECORE_RECALIB", "xml", 0, 0,
+  //                                                                      // raw location
+  //                                                                      string(getenv("CALIBRATIONROOT")) + string("/CEMC/PositionRecalibration_EMCal_9deg_tilt/"));
+  //  }
 
   clusterCorrection->Verbosity(verbosity);
-  //se->registerSubsystem(clusterCorrection);
+  // se->registerSubsystem(clusterCorrection);
 
   return;
 }

@@ -148,7 +148,7 @@ double HCalOuter(PHG4Reco *g4Reco,
     hcal = new PHG4OHCalSubsystem("HCALOUT");
     if (Enable::HCALOUT_RING)
     {
-      std::string gdmlfile_no_ring =   string(getenv("CALIBRATIONROOT")) + "/HcalGeo/OuterHCalAbsorberTiles_merged.gdml"; 
+      std::string gdmlfile_no_ring = string(getenv("CALIBRATIONROOT")) + "/HcalGeo/OuterHCalAbsorberTiles_merged.gdml";
       hcal->set_string_param("GDMPath", gdmlfile_no_ring);
     }
     // hcal->set_string_param("GDMPath", "mytestgdml.gdml"); // try other gdml file
@@ -220,27 +220,27 @@ double HCalOuter(PHG4Reco *g4Reco,
       g4Reco->registerSubsystem(cyl);
 
       // rings inside outer HCal envelope
-      //only use if we want to use the old version of the ring instead of the gdml implementation
+      // only use if we want to use the old version of the ring instead of the gdml implementation
       if (Enable::HCALOUT_RING)
-	{ 
-	  cylout = new PHG4CylinderSubsystem("HCAL_SPT_N1", i + 2);
-	  cylout->set_double_param("place_z", z_rings[i]);
-	  cylout->SuperDetector("HCALIN_SPT");
-	  cylout->set_double_param("radius", hcal_envelope_radius + 0.1);  // add a mm to avoid overlaps
-	  cylout->set_int_param("lengthviarapidity", 0);
-	  cylout->set_double_param("length", support_ring_dz);
-	  cylout->set_string_param("material", "G4_Al");
-	  cylout->set_double_param("thickness", support_ring_outer_radius - (hcal_envelope_radius + 0.1));
-	  cylout->set_double_param("start_phi_rad", 1.867);
-	  cylout->set_double_param("delta_phi_rad", 5.692);
-	  if (AbsorberActive)
-	    {
-	      cylout->SetActive();
-	    }
-	  cylout->SetMotherSubsystem(hcal);
-	  cylout->OverlapCheck(OverlapCheck);
-	  g4Reco->registerSubsystem(cylout);
-	}
+      {
+        cylout = new PHG4CylinderSubsystem("HCAL_SPT_N1", i + 2);
+        cylout->set_double_param("place_z", z_rings[i]);
+        cylout->SuperDetector("HCALIN_SPT");
+        cylout->set_double_param("radius", hcal_envelope_radius + 0.1);  // add a mm to avoid overlaps
+        cylout->set_int_param("lengthviarapidity", 0);
+        cylout->set_double_param("length", support_ring_dz);
+        cylout->set_string_param("material", "G4_Al");
+        cylout->set_double_param("thickness", support_ring_outer_radius - (hcal_envelope_radius + 0.1));
+        cylout->set_double_param("start_phi_rad", 1.867);
+        cylout->set_double_param("delta_phi_rad", 5.692);
+        if (AbsorberActive)
+        {
+          cylout->SetActive();
+        }
+        cylout->SetMotherSubsystem(hcal);
+        cylout->OverlapCheck(OverlapCheck);
+        g4Reco->registerSubsystem(cylout);
+      }
     }
   }
 
@@ -325,7 +325,7 @@ void HCALOuter_Towers()
   TowerDigitizer->set_pedstal_width_ADC(1);  // From Jin's guess. No EMCal High Gain data yet! TODO: update
   TowerDigitizer->set_photonelec_ADC(16. / 5.);
   TowerDigitizer->set_photonelec_yield_visible_GeV(16. / 5 / (0.2e-3));
-  TowerDigitizer->set_zero_suppression_ADC(-9999);                  // no-zero suppression
+  TowerDigitizer->set_zero_suppression_ADC(-9999);  // no-zero suppression
   TowerDigitizer->Verbosity(verbosity);
   if (!Enable::HCALOUT_G4Hit) TowerDigitizer->set_towerinfo(RawTowerDigitizer::ProcessTowerType::kTowerInfoOnly);  // just use towerinfo
   se->registerSubsystem(TowerDigitizer);
@@ -336,7 +336,7 @@ void HCALOuter_Towers()
   TowerCalibration->Detector("HCALOUT");
   TowerCalibration->set_raw_tower_node_prefix("RAW_NZ");
   TowerCalibration->set_calib_tower_node_prefix("CALIB_NZ");
-  TowerCalibration -> set_usetowerinfo_v2(G4HCALOUT::useTowerInfoV2);
+  TowerCalibration->set_usetowerinfo_v2(G4HCALOUT::useTowerInfoV2);
 
   //  TowerCalibration->set_raw_tower_node_prefix("RAW_LG");
   //  TowerCalibration->set_calib_tower_node_prefix("CALIB_LG");
@@ -368,7 +368,7 @@ void HCALOuter_Clusters()
   {
     RawClusterBuilderTemplate *ClusterBuilder = new RawClusterBuilderTemplate("HcalOutRawClusterBuilderTemplate");
     ClusterBuilder->Detector("HCALOUT");
-    ClusterBuilder->SetCylindricalGeometry();                      // has to be called after Detector()
+    ClusterBuilder->SetCylindricalGeometry();  // has to be called after Detector()
     ClusterBuilder->Verbosity(verbosity);
     ClusterBuilder->setInputTowerNodeName("TOWERINFO_CALIB_NZ_HCALOUT");
     ClusterBuilder->setOutputClusterNodeName("CLUSTER_HCALOUT");
@@ -380,7 +380,7 @@ void HCALOuter_Clusters()
     RawClusterBuilderGraph *ClusterBuilder = new RawClusterBuilderGraph("HcalOutRawClusterBuilderGraph");
     ClusterBuilder->Detector("HCALOUT");
     ClusterBuilder->Verbosity(verbosity);
-    //if (!Enable::HCALOUT_G4Hit) ClusterBuilder->set_UseTowerInfo(1);  // just use towerinfo
+    // if (!Enable::HCALOUT_G4Hit) ClusterBuilder->set_UseTowerInfo(1);  // just use towerinfo
     se->registerSubsystem(ClusterBuilder);
   }
   else

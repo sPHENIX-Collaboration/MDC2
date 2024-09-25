@@ -33,7 +33,6 @@ R__LOAD_LIBRARY(libg4eval.so)
 R__LOAD_LIBRARY(libg4ihcal.so)
 R__LOAD_LIBRARY(libsimqa_modules.so)
 
-
 namespace Enable
 {
   bool HCALIN = false;
@@ -84,7 +83,7 @@ namespace G4HCALIN
 
     kHCalInTemplateClusterizer
   };
-  
+
   bool useTowerInfoV2 = true;
   //! template clusterizer, RawClusterBuilderTemplate, as developed by Sasha Bazilevsky
   enu_HCalIn_clusterizer HCalIn_clusterizer = kHCalInTemplateClusterizer;
@@ -291,13 +290,13 @@ void HCALInner_Towers()
   TowerDigitizer->set_pedstal_width_ADC(1);  // From Jin's guess. No EMCal High Gain data yet! TODO: update
   TowerDigitizer->set_photonelec_ADC(32. / 5.);
   TowerDigitizer->set_photonelec_yield_visible_GeV(32. / 5 / (0.4e-3));
-  TowerDigitizer->set_zero_suppression_ADC(-9999);                 // no-zero suppression
+  TowerDigitizer->set_zero_suppression_ADC(-9999);  // no-zero suppression
   TowerDigitizer->Verbosity(verbosity);
   if (!Enable::HCALIN_G4Hit) TowerDigitizer->set_towerinfo(RawTowerDigitizer::ProcessTowerType::kTowerInfoOnly);  // just use towerinfo
   se->registerSubsystem(TowerDigitizer);
 
   // Default sampling fraction for SS310
-  double visible_sample_fraction_HCALIN = 0.0631283;                                //, /gpfs/mnt/gpfs04/sphenix/user/jinhuang/prod_analysis/hadron_shower_res_nightly/./G4Hits_sPHENIX_pi-_eta0_16GeV-0000.root_qa.rootQA_Draw_HCALIN_G4Hit.pdf
+  double visible_sample_fraction_HCALIN = 0.0631283;  //, /gpfs/mnt/gpfs04/sphenix/user/jinhuang/prod_analysis/hadron_shower_res_nightly/./G4Hits_sPHENIX_pi-_eta0_16GeV-0000.root_qa.rootQA_Draw_HCALIN_G4Hit.pdf
 
   if (G4HCALIN::inner_hcal_material_Al) visible_sample_fraction_HCALIN = 0.162166;  // for "G4_Al", Abhisek Sen <sen.abhisek@gmail.com>
 
@@ -305,7 +304,7 @@ void HCALInner_Towers()
   TowerCalibration->Detector("HCALIN");
   TowerCalibration->set_raw_tower_node_prefix("RAW_NZ");
   TowerCalibration->set_calib_tower_node_prefix("CALIB_NZ");
-  TowerCalibration -> set_usetowerinfo_v2(G4HCALIN::useTowerInfoV2);
+  TowerCalibration->set_usetowerinfo_v2(G4HCALIN::useTowerInfoV2);
   //  TowerCalibration->set_raw_tower_node_prefix("RAW_LG");
   //  TowerCalibration->set_calib_tower_node_prefix("CALIB_LG");
   TowerCalibration->set_calib_algorithm(RawTowerCalibration::kSimple_linear_calibration);
@@ -336,7 +335,7 @@ void HCALInner_Clusters()
   {
     RawClusterBuilderTemplate *ClusterBuilder = new RawClusterBuilderTemplate("HcalInRawClusterBuilderTemplate");
     ClusterBuilder->Detector("HCALIN");
-    ClusterBuilder->SetCylindricalGeometry();                     // has to be called after Detector()
+    ClusterBuilder->SetCylindricalGeometry();  // has to be called after Detector()
     ClusterBuilder->Verbosity(verbosity);
     ClusterBuilder->setInputTowerNodeName("TOWERINFO_CALIB_NZ_HCALIN");
     ClusterBuilder->setOutputClusterNodeName("CLUSTER_HCALIN");
@@ -348,7 +347,7 @@ void HCALInner_Clusters()
     RawClusterBuilderGraph *ClusterBuilder = new RawClusterBuilderGraph("HcalInRawClusterBuilderGraph");
     ClusterBuilder->Detector("HCALIN");
     ClusterBuilder->Verbosity(verbosity);
-    //if (!Enable::HCALIN_G4Hit) ClusterBuilder->set_UseTowerInfo(1);  // just use towerinfo
+    // if (!Enable::HCALIN_G4Hit) ClusterBuilder->set_UseTowerInfo(1);  // just use towerinfo
     se->registerSubsystem(ClusterBuilder);
   }
   else
