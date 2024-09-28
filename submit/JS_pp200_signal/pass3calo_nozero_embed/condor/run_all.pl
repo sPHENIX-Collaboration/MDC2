@@ -8,31 +8,56 @@ use Getopt::Long;
 use DBI;
 
 
-my $outevents = 0;
-my $inrunnumber=10;
-#my $outrunnumber=40;
-my $outrunnumber=$inrunnumber;
-my $test;
-my $incremental;
-my $shared;
+my $build;
 my $fm = "0_20fm";
-GetOptions("test"=>\$test, "fm:s" =>\$fm, "increment"=>\$incremental, "shared" => \$shared);
-if ($#ARGV < 0)
+my $incremental;
+my $outevents = 0;
+my $overwrite;
+my $runnumber;
+my $shared;
+my $test;
+GetOptions("build:s" => \$build, "fm:s" =>\$fm, "increment"=>\$incremental, "overwrite"=> \$overwrite, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
+if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"Jet40\", \"PhotonJet\" production>\n";
     print "parameters:\n";
+    print "--build: <ana build>\n";
     print "--fm : fermi range for embedding\n";
     print "--increment : submit jobs while processing running\n";
-    print "--shared : submit jobs to shared pool\n";
+    print "--overwrite : overwrite exiting jobfiles\n";
+    print "--run: <runnumber>\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
+
+my $isbad = 0;
 
 my $hostname = `hostname`;
 chomp $hostname;
 if ($hostname !~ /phnxsub/)
 {
-    print "submit only from phnxsub01 or phnxsub02\n";
+    print "submit only from phnxsub hosts\n";
+    $isbad = 1;
+}
+if (! defined $runnumber)
+{
+    print "need runnumber with --run <runnumber>\n";
+    $isbad = 1;
+}
+
+if (! defined $build)
+{
+    print "need build with --build <ana build>\n";
+    $isbad = 1;
+}
+if (! -f "outdir.txt")
+{
+    print "could not find outdir.txt\n";
+    $isbad = 1;
+}
+
+if ($isbad > 0)
+{
     exit(1);
 }
 
@@ -55,15 +80,9 @@ if (-f $condorlistfile)
     unlink $condorlistfile;
 }
 
-if (! -f "outdir.txt")
-{
-    print "could not find outdir.txt\n";
-    exit(1);
-}
-
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/%s/run%04d/%s",$outdir,$fm,$outrunnumber,lc $jettrigger);
+$outdir = sprintf("%s/%s/run%04d/%s",$outdir,$fm,$runnumber,lc $jettrigger);
 if (! -d $outdir)
 {
   mkpath($outdir);
@@ -73,7 +92,7 @@ my %calohash = ();
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_G4HIT' and filename like '%$outfilelike%' and runnumber = $inrunnumber order by segment") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_G4HIT' and filename like '%$outfilelike%' and runnumber = $runnumber order by segment") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
 my $nsubmit = 0;
@@ -86,11 +105,7 @@ while (my @res = $getfiles->fetchrow_array())
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_CALO_NOZERO_%s-%010d-%06d.root",$outfilelike,$outrunnumber,$segment);
-	if ($segment < 100000)
-	{
-	    $outfilename = sprintf("DST_CALO_NOZERO_%s-%010d-%05d.root",$outfilelike,$outrunnumber,$segment);
-	}
+	my $outfilename = sprintf("DST_CALO_NOZERO_%s-%010d-%06d.root",$outfilelike,$runnumber,$segment);
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
@@ -101,7 +116,7 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s %s", $outevents, $jettrigger, $lfn, $outfilename, $outdir, $outrunnumber, $segment,  $fm, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %d %d %s %s", $outevents, $jettrigger, $lfn, $outfilename, $outdir, $build, $runnumber, $segment,  $fm, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

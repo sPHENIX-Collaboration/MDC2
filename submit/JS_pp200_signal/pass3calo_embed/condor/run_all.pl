@@ -90,7 +90,6 @@ if (! -d $outdir)
 }
 
 my %calohash = ();
-my %vtxhash = ();
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here

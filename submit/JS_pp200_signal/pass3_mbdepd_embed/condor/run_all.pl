@@ -8,29 +8,53 @@ use Getopt::Long;
 use DBI;
 
 
-my $outevents = 0;
-my $runnumber=10;
-my $test;
+my $build;
 my $incremental;
-my $shared;
 my $fm = "0_20fm";
-GetOptions("test"=>\$test,  "fm:s" =>\$fm, "increment"=>\$incremental, "shared" => \$shared);
+my $outevents = 0;
+my $runnumber;
+my $shared;
+my $test;
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "fm:s" =>\$fm, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\",  \"Jet40\", \"PhotonJet\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"Jet40\", \"PhotonJet\" production>\n";
     print "parameters:\n";
+    print "--build: <ana build>\n";
     print "--fm : fermi range for embedding\n";
+    print "--run: <runnumber>\n";
     print "--increment : submit jobs while processing running\n";
-    print "--shared : run on shared pool\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
+my $isbad = 0;
 
 my $hostname = `hostname`;
 chomp $hostname;
 if ($hostname !~ /phnxsub/)
 {
-    print "submit only from phnxsub01 or phnxsub02\n";
+    print "submit only from phnxsub hosts\n";
+    $isbad = 1;
+}
+if (! defined $runnumber)
+{
+    print "need runnumber with --run <runnumber>\n";
+    $isbad = 1;
+}
+
+if (! defined $build)
+{
+    print "need build with --build <ana build>\n";
+    $isbad = 1;
+}
+if (! -f "outdir.txt")
+{
+    print "could not find outdir.txt\n";
+    $isbad = 1;
+}
+
+if ($isbad > 0)
+{
     exit(1);
 }
 
@@ -53,11 +77,6 @@ if (-f $condorlistfile)
 
 my $outfilelike = sprintf("pythia8_%s_sHijing_%s_50kHz_bkg_0_20fm",$jettrigger,$fm);
 
-if (! -f "outdir.txt")
-{
-    print "could not find outdir.txt\n";
-    exit(1);
-}
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 $outdir = sprintf("%s/%s/run%04d/%s",$outdir,$fm,$runnumber,lc $jettrigger);
@@ -71,15 +90,15 @@ my %truthhash = ();
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_BBC_G4HIT' and filename like '%$outfilelike%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_BBC_G4HIT' and filename like '%$outfilelike-%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
-my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH_G4HIT' and filename like '%$outfilelike%' and runnumber = $runnumber");
+my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH_G4HIT' and filename like '%$outfilelike-%' and runnumber = $runnumber");
 
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
 while (my @res = $getfiles->fetchrow_array())
 {
-    $mbdhash{sprintf("%05d",$res[1])} = $res[0];
+    $mbdhash{sprintf("%06d",$res[1])} = $res[0];
 }
 $getfiles->finish();
 
@@ -87,7 +106,7 @@ $gettruthfiles->execute() || die $DBI::errstr;
 my $ntruth = $gettruthfiles->rows;
 while (my @res = $gettruthfiles->fetchrow_array())
 {
-    $truthhash{sprintf("%05d",$res[1])} = $res[0];
+    $truthhash{sprintf("%06d",$res[1])} = $res[0];
 }
 $gettruthfiles->finish();
 
@@ -103,7 +122,7 @@ foreach my $segment (sort keys %mbdhash)
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_MBD_EPD_%s-%010d-%05d.root",$outfilelike,$runnumber,$segment);
+	my $outfilename = sprintf("DST_MBD_EPD_%s-%010d-%06d.root",$outfilelike,$runnumber,$segment);
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
@@ -114,7 +133,7 @@ foreach my $segment (sort keys %mbdhash)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %d %d %s %s", $outevents, $jettrigger, $lfn, $truthhash{sprintf("%05d",$segment)}, $outfilename, $outdir, $runnumber, $segment,  $fm, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %s %s", $outevents, $jettrigger, $lfn, $truthhash{sprintf("%06d",$segment)}, $outfilename, $outdir, $build, $runnumber, $segment,  $fm, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

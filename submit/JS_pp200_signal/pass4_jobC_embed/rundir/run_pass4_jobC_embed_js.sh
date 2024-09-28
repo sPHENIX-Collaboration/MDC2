@@ -11,7 +11,7 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-anabuild=ana.398
+anabuild=${7}
 
 source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
 
@@ -44,8 +44,9 @@ fi
 # $4: output file
 # $5: output dir
 # $6: jet trigger
-# $7: run number
-# $8: sequence
+# $7: build
+# $8: run number
+# $9: sequence
 
 echo 'here comes your environment'
 printenv
@@ -55,12 +56,13 @@ echo arg3 \(cluster file\): $3
 echo arg4 \(output file\): $4
 echo arg5 \(output dir\): $5
 echo arg6 \(jet trigger\): $6
-echo arg7 \(runnumber\): $7
-echo arg8 \(sequence\): $8
+echo arg7 \(build\): $7
+echo arg8 \(runnumber\): $8
+echo arg9 \(sequence\): $9
 echo cdbtag: $cdbtag
 
-runnumber=$(printf "%010d" $7)
-sequence=$(printf "%05d" $8)
+runnumber=$(printf "%010d" $8)
+sequence=$(printf "%06d" $9)
 
 echo running root.exe -q -b Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\"\)
 root.exe -q -b  Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\"\)

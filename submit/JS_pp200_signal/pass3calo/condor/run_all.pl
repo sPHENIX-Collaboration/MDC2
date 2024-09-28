@@ -30,7 +30,7 @@ my $hostname = `hostname`;
 chomp $hostname;
 if ($hostname !~ /phnxsub/)
 {
-    print "submit only from phnxsub01 or phnxsub02\n";
+    print "submit only from phnxsub01/02/03/04\n";
     exit(1);
 }
 
@@ -71,7 +71,7 @@ if (! -d $outdir)
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_G4HIT' and filename like '%pythia8_$jettrigger%' and runnumber = $runnumber order by segment") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_G4HIT' and filename like '%pythia8_$jettrigger-%' and runnumber = $runnumber order by segment") || die $DBI::errstr;
 #print "select filename,segment from datasets where dsttype = 'DST_CALO_G4HIT' and filename like '%pythia8_$jettrigger%' and runnumber = $runnumber order by filename\n";
 
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;

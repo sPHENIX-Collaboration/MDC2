@@ -6,7 +6,7 @@ if [ $# -eq 0 ]
 fi
 echo $1
 variable=$1
-run=10
+run=19
 runnumber=$(printf "%010d" $run)
 fm=0_20fm
 withhijing=${fm}_50kHz_bkg_0_20fm
@@ -22,5 +22,5 @@ for i in `cat bla | awk '{print $12}' | awk -F- '{print $3}' | awk -F.  -v runnu
 
 [ -f sedlist ] && rm sedlist
 for i in `cat tmplist`; do echo log/${fm}/run${run}/${variable}/condor_${variable}-$i >> sedlist; done
-for i in `cat sedlist`; do  sed -i 's/12288MB/24576MB/' $i; echo $i; done
+#for i in `cat sedlist`; do  sed -i 's/12288MB/24576MB/' $i; echo $i; done
 for i in `cat sedlist`; do condor_submit $i; done

@@ -8,9 +8,9 @@ use File::Path;
 my $test;
 my $overwrite;
 GetOptions("test"=>\$test, "overwrite"=> \$overwrite);
-if ($#ARGV < 7)
+if ($#ARGV < 8)
 {
-    print "usage: run_condor.pl <events> <jettrigger> <trk infile> <truth infile> <outdir> <runnumber> <sequence> <fm range>\n";
+    print "usage: run_condor.pl <events> <jettrigger> <trk infile> <truth infile> <outdir> <build> <runnumber> <sequence> <fm range>\n";
     print "options:\n";
     print "--overwrite : overwrite exiting jobfiles\n";
     print "-test: testmode - no condor submission\n";
@@ -27,15 +27,16 @@ my $jettrigger = $ARGV[1];
 my $infile0 = $ARGV[2];
 my $infile1 = $ARGV[3];
 my $dstoutdir = $ARGV[4];
-my $runnumber = $ARGV[5];
-my $sequence = $ARGV[6];
-my $fm = $ARGV[7];
+my $build = $ARGV[5];
+my $runnumber = $ARGV[6];
+my $sequence = $ARGV[7];
+my $fm = $ARGV[8];
 if ($sequence < 100)
 {
     $baseprio = 90;
 }
 my $condorlistfile = sprintf("condor.list");
-my $suffix = sprintf("%s-%010d-%05d",$jettrigger,$runnumber,$sequence);
+my $suffix = sprintf("%s-%010d-%06d",$jettrigger,$runnumber,$sequence);
 my $logdir = sprintf("%s/log/%s/run%d/%s",$localdir,$fm,$runnumber,$jettrigger);
 if (! -d $logdir)
 {
@@ -70,7 +71,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $infile0 $infile1 $dstoutdir $jettrigger $runnumber $sequence $fm\"\n";
+print F "Arguments       = \"$nevents $infile0 $infile1 $dstoutdir $jettrigger $build $runnumber $sequence $fm\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -96,5 +97,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile0, $infile1, $dstoutdir, $jettrigger, $runnumber, $sequence, $fm, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $infile0, $infile1, $dstoutdir, $jettrigger, $build, $runnumber, $sequence, $fm, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);

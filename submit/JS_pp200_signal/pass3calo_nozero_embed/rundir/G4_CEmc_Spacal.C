@@ -22,7 +22,7 @@
 #include <caloreco/RawClusterBuilderTemplate.h>
 #include <caloreco/RawClusterPositionCorrection.h>
 #include <caloreco/RawTowerCalibration.h>
-#include <qa_modules/QAG4SimulationCalorimeter.h>
+#include <simqa_modules/QAG4SimulationCalorimeter.h>
 
 #include <fun4all/Fun4AllServer.h>
 
@@ -33,7 +33,7 @@ R__LOAD_LIBRARY(libcalo_reco.so)
 R__LOAD_LIBRARY(libg4calo.so)
 R__LOAD_LIBRARY(libg4detectors.so)
 R__LOAD_LIBRARY(libg4eval.so)
-R__LOAD_LIBRARY(libqa_modules.so)
+R__LOAD_LIBRARY(libsimqa_modules.so)
 
 namespace Enable
 {
@@ -77,6 +77,7 @@ namespace G4CEMC
   enu_Cemc_clusterizer Cemc_clusterizer = kCemcTemplateClusterizer;
   //! graph clusterizer, RawClusterBuilderGraph
   // enu_Cemc_clusterizer Cemc_clusterizer = kCemcGraphClusterizer;
+  bool useTowerInfoV2 = true;
 
 }  // namespace G4CEMC
 
@@ -253,8 +254,9 @@ void CEMC_Towers()
                                                 //   TowerDigitizer->set_pedstal_width_ADC(8);  // eRD1 test beam setting
   TowerDigitizer->set_photonelec_ADC(1);                // not simulating ADC discretization error
   TowerDigitizer->set_photonelec_yield_visible_GeV(photoelectron_per_GeV / sampling_fraction);
-  //TowerDigitizer->set_variable_zero_suppression(true);  // read zs values from calibrations file comment next line if true
-  TowerDigitizer->set_zero_suppression_ADC(-9999);  // eRD1 test beam setting
+  TowerDigitizer->set_variable_zero_suppression(true);  // read zs values from calibrations file comment next line if true
+  TowerDigitizer->set_zero_suppression_ADC(-9999);
+                                                        //   TowerDigitizer->set_zero_suppression_ADC(16);  // eRD1 test beam setting
   if (!Enable::CEMC_G4Hit) TowerDigitizer->set_towerinfo(RawTowerDigitizer::ProcessTowerType::kTowerInfoOnly);  // just use towerinfo
   if (Enable::CDB)
   {
@@ -269,6 +271,7 @@ void CEMC_Towers()
 
   RawTowerCalibration *TowerCalibration = new RawTowerCalibration("EmcRawTowerCalibration");
   TowerCalibration->Detector("CEMC");
+  TowerCalibration->set_usetowerinfo_v2(G4CEMC::useTowerInfoV2);
   TowerCalibration->Verbosity(verbosity);
   if (!Enable::CEMC_G4Hit) TowerCalibration->set_towerinfo(RawTowerCalibration::ProcessTowerType::kTowerInfoOnly);  // just use towerinfo
   if (G4CEMC::TowerDigi == RawTowerDigitizer::kNo_digitization)
@@ -290,7 +293,7 @@ void CEMC_Towers()
     }
     TowerCalibration->set_variable_GeV_ADC(true);                                                                                                     // read GeV per ADC from calibrations file comment next line if true
     //    TowerCalibration->set_calib_const_GeV_ADC(1. / photoelectron_per_GeV / 0.9715);                                                             // overall energy scale based on 4-GeV photon simulations
-    //TowerCalibration->set_variable_pedestal(true);  // read pedestals from calibrations file comment next line if true
+    //    TowerCalibration->set_variable_pedestal(true);  // read pedestals from calibrations file comment next line if true
     TowerCalibration->set_pedstal_ADC(0);
   }
   se->registerSubsystem(TowerCalibration);

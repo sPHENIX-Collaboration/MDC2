@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber=15;
+my $runnumber=11;
 my $test;
 my $incremental;
 my $shared;
@@ -74,6 +74,7 @@ if (! -d $outdir)
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH' and filename like '%pythia8_$jettrigger%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
+print "select filename,segment from datasets where dsttype = 'DST_TRUTH' and filename like '%pythia8_$jettrigger%' and runnumber = $runnumber order by filename\n";
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;

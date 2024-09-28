@@ -24,10 +24,10 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 void Fun4All_G4_Jets(
     const int nEvents = 0,
-    const string &inputFile = "DST_TRUTH_pythia8_Jet10_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
-    const string &outputFile = "DST_TRUTH_JETS_pythia8_Jet10_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006--00000.root",
+    const string &inputFile = "DST_TRUTH_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000010-00000.root",
+    const string &outputFile = "DST_TRUTH_JETS_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000010-00000.root",
     const string &outdir = ".",
-    const string &cdbtag = "MDC2_ana.398")
+    const string &cdbtag = "MDC2_ana.418")
 {
   // this convenience library knows all our i/o objects so you don't
   // have to figure out what is in each dst type

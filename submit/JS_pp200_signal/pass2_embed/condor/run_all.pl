@@ -56,6 +56,7 @@ if ($isbad > 0)
 {
     exit(1);
 }
+
 my $maxsubmit = $ARGV[0];
 my $jettrigger = $ARGV[1];
 if ($jettrigger  ne "Jet10" &&

@@ -7,11 +7,12 @@ fi
 run=15
 runnumber=$(printf "%010d" $run)
 MHz=2
-echo $1
+echo restarting $1
 variable=$1
+grepvar=pythia8_${variable}_${MHz}MHz
+script=run_pass3_mbdepd_js.sh
 
-
-condor_q | grep ' H ' | grep run_pass3_mbdepd_js.sh | grep ${variable} > bla
+condor_q | grep ' H ' | grep ${script} | grep ${grepvar} > bla
 
 [ -s bla ] ||  exit 1
 
