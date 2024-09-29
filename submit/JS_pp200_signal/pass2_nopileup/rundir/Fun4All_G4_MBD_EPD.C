@@ -23,8 +23,8 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_MBD_EPD(
     const int nEvents = 1,
-    const string &inputFile = "G4Hits_pythia8_Jet30-0000000010-00000.root",
-    const string &outputFile = "DST_BBC_EPD_pythia8_Jet30-0000000010-00000.root",
+    const string &inputFile = "G4Hits_pythia8_Jet30-0000000019-00000.root",
+    const string &outputFile = "DST_BBC_EPD_pythia8_Jet30-0000000019-00000.root",
     const string &outdir = ".",
     const string &cdbtag = "MDC2_ana.398")
 {

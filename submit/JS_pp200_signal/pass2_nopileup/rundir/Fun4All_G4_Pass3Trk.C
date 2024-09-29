@@ -25,7 +25,7 @@ R__LOAD_LIBRARY(libffamodules.so)
 
 int Fun4All_G4_Pass3Trk(
     const int nEvents = 0,
-    const string &inputFile0 = "G4Hits_pythia8_Jet30-0000000010-00000.root",
+    const string &inputFile0 = "G4Hits_pythia8_Jet30-0000000019-00000.root",
     const string &outdir = ".",
     const string &jettrigger = "Jet30",
     const string &cdbtag = "MDC2_ana.398")

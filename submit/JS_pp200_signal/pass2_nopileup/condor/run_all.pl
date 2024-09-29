@@ -8,31 +8,59 @@ use Getopt::Long;
 use DBI;
 
 
-my $outevents = 0;
-my $runnumber = 10;
-my $test;
+my $build;
 my $incremental;
-my $shared;
+my $outevents = 0;
 my $overwrite;
-GetOptions("test"=>\$test, "increment"=>\$incremental, "overwrite" => \$overwrite, "shared" => \$shared);
+my $runnumber;
+my $shared;
+my $test;
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "overwrite" => \$overwrite, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet20\", \"Jet30\", \"Jet40\",\"PhotonJet\" production>\n";
     print "parameters:\n";
+    print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
     print "--overwrite : overwrite existing job files\n";
+    print "--run: <runnumber>\n";
     print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
 
+my $isbad = 0;
+
 my $hostname = `hostname`;
 chomp $hostname;
 if ($hostname !~ /phnxsub/)
 {
-    print "submit only from phnxsub01 or phnxsub02\n";
+    print "submit only from phnxsub hosts\n";
+    $isbad = 1;
+}
+if (! defined $runnumber)
+{
+    print "need runnumber with --run <runnumber>\n";
+    $isbad = 1;
+}
+
+if (! defined $build)
+{
+    print "need build with --build <ana build>\n";
+    $isbad = 1;
+}
+if (! -f "outdir.txt")
+{
+    print "could not find outdir.txt\n";
+    $isbad = 1;
+}
+
+if ($isbad > 0)
+{
     exit(1);
 }
+
+
 my $maxsubmit = $ARGV[0];
 my $jettrigger = $ARGV[1];
 if ($jettrigger  ne "Jet10" &&
@@ -51,11 +79,6 @@ if (-f $condorlistfile)
     unlink $condorlistfile;
 }
 
-if (! -f "outdir.txt")
-{
-    print "could not find outdir.txt\n";
-    exit(1);
-}
 my @outdir = ();
 open(F,"outdir.txt");
 while (my $line = <F>)
@@ -99,7 +122,7 @@ while (my @res = $getfiles->fetchrow_array())
         my $foundall = 1;
 	foreach my $type (sort keys %outfiletype)
 	{
-            my $lfn =  sprintf("%s_pythia8_%s-%010d-%05d.root",$type,$jettrigger,$runnumber,$segment);
+            my $lfn =  sprintf("%s_pythia8_%s-%010d-%06d.root",$type,$jettrigger,$runnumber,$segment);
 #            print "checking for $lfn\n";
 	    $chkfile->execute($lfn);
 	    if ($chkfile->rows > 0)
@@ -126,9 +149,9 @@ while (my @res = $getfiles->fetchrow_array())
 	    $tstflag= sprintf("%s --overwrite", $tstflag)
 	}
 
-	my $calooutfilename = sprintf("DST_CALO_CLUSTER_pythia8_%s-%010d-%05d.root",$jettrigger,$runnumber,$segment);
-	my $globaloutfilename = sprintf("DST_MBD_EPD_pythia8_%s-%010d-%05d.root",$jettrigger,$runnumber,$segment);
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $calooutfilename, $outdir[0], $globaloutfilename, $outdir[1], $outdir[2], $runnumber, $segment, $tstflag);
+	my $calooutfilename = sprintf("DST_CALO_CLUSTER_pythia8_%s-%010d-%06d.root",$jettrigger,$runnumber,$segment);
+	my $globaloutfilename = sprintf("DST_MBD_EPD_pythia8_%s-%010d-%06d.root",$jettrigger,$runnumber,$segment);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $calooutfilename, $outdir[0], $globaloutfilename, $outdir[1], $outdir[2], $build, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

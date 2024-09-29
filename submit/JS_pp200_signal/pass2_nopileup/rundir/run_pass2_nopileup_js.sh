@@ -12,9 +12,10 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-ana_calo=ana.398
-ana_mbdepd=ana.398
-ana_pass3trk=ana.398
+ana_calo=${9}
+ana_mbdepd=${9}
+ana_pass3trk=${9}
+pedestalfile=pedestal-00046796.root
 
 run_calo=1
 run_trk=1
@@ -46,8 +47,9 @@ fi
 # $6: global output dir
 # $7: track output dir
 # $8: jettrigger
-# $9: runnumber
-# $10: sequence
+# $9: build
+# $10: runnumber
+# $11: sequence
 
 echo 'here comes your environment'
 printenv
@@ -59,11 +61,14 @@ echo arg5 \(global output file\): $5
 echo arg6 \(global output dir\): $6
 echo arg7 \(trk output dir\): $7
 echo arg8 \(jettrigger\): $8
-echo arg9 \(runnumber\): $9
-echo arg10 \(sequence\): ${10}
+echo arg9 \(build\): $9
+echo arg10 \(runnumber\): ${10}
+echo arg11 \(sequence\): ${11}
+echo cdbtag : ${cdbtag}
+echo pedestalfile: ${pedestalfile}
 
-runnumber=$(printf "%010d" $9)
-sequence=$(printf "%05d" ${10})
+runnumber=$(printf "%010d" ${10})
+sequence=$(printf "%06d" ${11})
 
 #---------------------------------------------------------------
 # Calorimeter Reconstruction
@@ -74,8 +79,8 @@ then
     cdbtag=MDC2_$ana_calo
     printenv
 
-    echo running root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
-    root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
+    echo running root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"${pedestalfile}\",\"$3\",\"$4\",\"$cdbtag\"\)
+    root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"${pedestalfile}\",\"$3\",\"$4\",\"$cdbtag\"\)
 fi
 
 #---------------------------------------------------------------
