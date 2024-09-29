@@ -38,9 +38,9 @@ R__LOAD_LIBRARY(libcalo_reco.so)
 
 int Fun4All_G4_Calo(
     const int nEvents = 1,
-    const string &inputFile0 = "G4Hits_pythia8_Jet30-0000000019-00000.root",
+    const string &inputFile0 = "G4Hits_pythia8_Jet30-0000000019-000000.root",
     const string &inputFile1 = "pedestal-00046796.root",
-    const string &outputFile = "DST_CALO_CLUSTER_pythia8_Jet30-0000000019-00000.root",
+    const string &outputFile = "DST_CALO_CLUSTER_pythia8_Jet30-0000000019-000000.root",
     const string &outdir = ".",
     const string &cdbtag = "MDC2_ana.438")
 {
