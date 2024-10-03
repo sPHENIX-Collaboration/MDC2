@@ -20,8 +20,9 @@ my $use_dcache;
 my $use_xrdcp;
 my $use_mcs3;
 my $use_dd;
+my $verbose;
 
-GetOptions("dcache" => \$use_dcache, "dd" => \$use_dd, "filelist" => \$filelist, "mcs3" => \$use_mcs3, "test"=>\$test, "xrdcp"=>\$use_xrdcp);
+GetOptions("dcache" => \$use_dcache, "dd" => \$use_dd, "filelist" => \$filelist, "mcs3" => \$use_mcs3, "test"=>\$test, "verbose" => \$verbose, "xrdcp"=>\$use_xrdcp);
 
 if ($#ARGV < 0)
 {
@@ -70,7 +71,10 @@ if ($attempts > 100)
 $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || goto CONNECTAGAIN;
 if ($attempts > 0)
 {
-    print "connections succeded after $attempts attempts\n";
+    if (defined $verbose)
+    {
+	print "connections succeded after $attempts attempts\n";
+    }
 }
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $filelocation = $dbh->prepare("select full_file_path,md5,size,full_host_name from files where lfn = ?");
@@ -88,7 +92,10 @@ foreach my $file (keys %inputfiles)
     my @res = $filelocation->fetchrow_array();
     $filemd5{$res[0]} = $res[1];
     $filesizes{$res[0]} = $res[2];
-    print "will copy $file from $res[3]\n";
+    if (defined $verbose)
+    {
+	print "will copy $file from $res[3]\n";
+    }
 }
 $filelocation->finish();
 $updatemd5->finish();
@@ -107,7 +114,10 @@ foreach my $file (keys %filemd5)
 #    print "full: $res[0]\n";
     if (! defined $filemd5{$file})
     {
-	print "md5 needs recalc\n";
+	if (defined $verbose)
+	{
+	    print "md5 needs recalc\n";
+	}
     }
 #    else
 #    {
@@ -155,13 +165,18 @@ foreach my $file (keys %filemd5)
 	    $copycmd = sprintf("dccp %s .",$file);
 	}
     }
-    print "executing $copycmd\n";
+    if (defined $verbose)
+    {
+	print "executing $copycmd\n";
+    }
     system($copycmd);
     my $exit_value  = $? >> 8;
     my $thisdate = `date`;
     chomp $thisdate;
-    print "$thisdate: copy return code: $exit_value\n";
-
+    if (defined $verbose)
+    {
+	print "$thisdate: copy return code: $exit_value\n";
+    }
     my $lfn = basename($file);
     if (-f $lfn)
     {
@@ -173,7 +188,10 @@ foreach my $file (keys %filemd5)
 	}
 	else
 	{
-	    print "size for $lfn matches $fsize\n";
+	    if (defined $verbose)
+	    {
+		print "size for $lfn matches $fsize\n";
+	    }
 	}
 	my $recalcmd5 = &getmd5($lfn);
 	if (defined $filemd5{$file})
@@ -185,7 +203,10 @@ foreach my $file (keys %filemd5)
 	    }
 	    else
 	    {
-		print "md5 for $file matches: $recalcmd5\n";
+		if (defined $verbose)
+		{
+		    print "md5 for $file matches: $recalcmd5\n";
+		}
 	    }
 	}
 	else
@@ -219,7 +240,7 @@ sub islustremounted
 {
     if (-f "/etc/auto.direct")
     {
-	my $mountcmd = sprintf("cat /etc/auto.direct | grep lustre | grep sphenix");
+	my $mountcmd = sprintf("cat /etc/auto.direct | grep lustre | grep sphenix > /dev/null");
 	system($mountcmd);
 	my $exit_value  = $? >> 8;
 	if ($exit_value == 0)
