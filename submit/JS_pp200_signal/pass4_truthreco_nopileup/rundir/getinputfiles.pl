@@ -67,7 +67,7 @@ if ($attempts > 100)
     print "giving up connecting to DB after $attempts attempts\n";
     exit(1);
 }
-$dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || goto CONNECTAGAIN;
+$dbh = DBI->connect("dbi:ODBC:FileCatalog_read") || goto CONNECTAGAIN;
 if ($attempts > 0)
 {
     print "connections succeded after $attempts attempts\n";
@@ -79,7 +79,7 @@ my %filemd5 = ();
 my %filesizes = ();
 foreach my $file (keys %inputfiles)
 {
-    $filelocation->execute($file);
+    $filelocation->execute($file) || die $DBI::errstr;
     if ($filelocation->rows == 0)
     {
 	print "could not retrieve $file from filecatalog\n";
