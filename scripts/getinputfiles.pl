@@ -68,7 +68,7 @@ if ($attempts > 100)
     print "giving up connecting to DB after $attempts attempts\n";
     exit(1);
 }
-$dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || goto CONNECTAGAIN;
+$dbh = DBI->connect("dbi:ODBC:FileCatalog_read") || goto CONNECTAGAIN;
 if ($attempts > 0)
 {
     if (defined $verbose)
