@@ -116,6 +116,10 @@ int Fun4All_G4_JS_pp_signal(
     Input::BEAM_CONFIGURATION = Input::pA_COLLISION;  // for 2023 sims we want the AA geometry for no pileup sims
     cout << "using Input::pA_COLLISION" << endl;
     break;
+  case 21: // zero beam xing angle, mvtx rotated
+    Input::BEAM_CONFIGURATION = Input::pp_ZEROANGLE;
+    Enable::MVTX_APPLYMISALIGNMENT = true;
+    break;
   default:
     cout << "runnnumber " << runnumber << " not implemented" << endl;
     gSystem->Exit(1);
