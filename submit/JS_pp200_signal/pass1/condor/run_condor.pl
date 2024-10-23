@@ -6,12 +6,14 @@ use Getopt::Long;
 use File::Path;
 
 my $test;
-GetOptions("test"=>\$test);
+my $memory = sprintf("5120MB");
+GetOptions("memory:s" => \$memory, "test"=>\$test);
 if ($#ARGV < 6)
 {
     print "num args: $#ARGV\n";
     print "usage: run_condor.pl <events> <jettrigger> <outdir> <outfile> <build>  <runnumber> <sequence>\n";
     print "options:\n";
+    print "-memory: memory requirement\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
 }
@@ -24,6 +26,7 @@ chomp $localdir;
 my $baseprio = 51;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_pass1_js.sh",$rundir);
+my $batchname = sprintf("JSpass1");
 my $nevents = $ARGV[0];
 my $jettrigger = $ARGV[1];
 my $dstoutdir = $ARGV[2];
@@ -74,8 +77,9 @@ print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
 print F "accounting_group = group_sphenix.mdc2\n";
 print F "accounting_group_user = sphnxpro\n";
 print F "Requirements = (CPU_Type == \"mdc2\")\n";
-print F "request_memory = 4096MB\n";
+print F "request_memory = $memory\n";
 print F "Priority = $baseprio\n";
+print F "batch_name = \"$batchname\"\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);
@@ -89,5 +93,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $jettrigger, $dstoutfile, $dstoutdir, $build, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $jettrigger, $dstoutfile, $dstoutdir, $build, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio, $memory $batchname\n";
 close(F);

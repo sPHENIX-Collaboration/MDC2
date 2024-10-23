@@ -120,6 +120,10 @@ int Fun4All_G4_JS_pp_signal(
     Input::BEAM_CONFIGURATION = Input::pp_ZEROANGLE;
     Enable::MVTX_APPLYMISALIGNMENT = true;
     break;
+  case 22: // zero beam xing angle, mvtx rotated
+    Input::BEAM_CONFIGURATION = Input::pp_COLLISION;
+    Enable::MVTX_APPLYMISALIGNMENT = true;
+    break;
   default:
     cout << "runnnumber " << runnumber << " not implemented" << endl;
     gSystem->Exit(1);
@@ -162,7 +166,7 @@ int Fun4All_G4_JS_pp_signal(
   }
   else if (jettrigger == "Detroit")
   {
-    pythia8_config_file =  string(getenv("CALIBRATIONROOT")) + "/Generators/phpythia8_detroitUE.cfg";
+    pythia8_config_file =  string(getenv("CALIBRATIONROOT")) + "/Generators/phpythia8_detroit_minBias.cfg";
   }
   else
   {
