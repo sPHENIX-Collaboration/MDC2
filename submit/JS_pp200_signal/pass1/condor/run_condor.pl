@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Getopt::Long;
 use File::Path;
+use File::Basename;
 
 my $test;
 my $memory = sprintf("5120MB");
@@ -26,7 +27,6 @@ chomp $localdir;
 my $baseprio = 51;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_pass1_js.sh",$rundir);
-my $batchname = sprintf("JSpass1");
 my $nevents = $ARGV[0];
 my $jettrigger = $ARGV[1];
 my $dstoutdir = $ARGV[2];
@@ -38,6 +38,7 @@ if ($sequence < 100)
 {
     $baseprio = 90;
 }
+my $batchname = sprintf("%s %s",basename($executable),$jettrigger);
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%010d-%06d",$runnumber,$sequence);
 my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$jettrigger);
