@@ -119,15 +119,15 @@ int Fun4All_G4_PhotonJet_pp_signal(
   string pythia8_config_file = string(getenv("CALIBRATIONROOT")) + "/Generators/JetStructure_TG/";
   if (photontrigger == "PhotonJet5")
   {
-    pythia8_config_file += "phpythia8_JS_GJ_ptHat5_MDC2.cfg";
+    pythia8_config_file += "phpythia8_15GeV_JS_MDC2.cfg";
   }
   else if (photontrigger == "PhotonJet10")
   {
-    pythia8_config_file += "phpythia8_JS_GJ_ptHat10_MDC2.cfg";
+    pythia8_config_file += "phpythia8_15GeV_JS_MDC2.cfg";
   }
   else if (photontrigger == "PhotonJet20")
   {
-    pythia8_config_file += "phpythia8_JS_GJ_ptHat20_MDC2.cfg";
+    pythia8_config_file += "phpythia8_30GeV_JS_MDC2.cfg";
   }
   else
   {
