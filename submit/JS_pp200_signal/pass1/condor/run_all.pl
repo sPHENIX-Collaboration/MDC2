@@ -11,6 +11,7 @@ my $killexist;
 my $runnumber;
 my $events = 1000;
 my $test;
+my $photonjet = 0;
 GetOptions("build:s" => \$build, "increment"=>\$incremental, "killexist" => \$killexist, "run:i" =>\$runnumber, "test"=>\$test);
 if ($#ARGV < 1)
 {
@@ -60,6 +61,15 @@ if ($jettrigger  ne "Jet10" &&
     print "second argument has to be Jet10, Jet30, Jet40, PhotonJet, PhotonJet5, PhotonJet10, PhotonJet20 or Detroit\n";
     exit(1);
 }
+# set the photonjet variable for photon jet configs
+if ($jettrigger  eq "PhotonJet5" ||
+    $jettrigger  eq "PhotonJet10" ||
+    $jettrigger  eq "PhotonJet20")
+{
+    $photonjet = 1;
+}
+
+
 $filetype=sprintf("%s_%s",$filetype,$jettrigger);
 my $condorlistfile =  sprintf("condor.list");
 if (-f $condorlistfile)
@@ -108,7 +118,7 @@ OUTER: for (my $isub = 0; $isub < $maxsubmit; $isub++)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s",$events, $jettrigger, $outdir, $outfile, $build, $runnumber, $njob, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %d %s",$events, $jettrigger, $outdir, $outfile, $build, $photonjet, $runnumber, $njob, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

@@ -34,6 +34,7 @@ fi
 # $5: build
 # $6: runnumber
 # $7: sequence
+# $8: photonjet
 
 echo 'here comes your environment'
 
@@ -44,17 +45,24 @@ echo arg2 \(jet trigger\): $2
 echo arg3 \(output file\): $3
 echo arg4 \(output dir\): $4
 echo arg5 \(build\): $5
-echo arg6 \(runnumber\): $6
-echo arg7 \(sequence\): $7
+echo arg6 \(photonjet\): $6
+echo arg7 \(runnumber\): $7
+echo arg8 \(sequence\): $8
 echo cdbtag: $cdbtag
 
-runnumber=$(printf "%010d" $6)
-sequence=$(printf "%06d" $7)
+runnumber=$(printf "%010d" $7)
+sequence=$(printf "%06d" $8)
 
 filename=timing
 
+if [ $6 -eq 0 ]
+then
 echo running root.exe -q -b Fun4All_G4_JS_pp_signal.C\($1,\"$2\",\"$3\",\"\",0,\"$4\",\"$cdbtag\"\)
 root.exe -q -b Fun4All_G4_JS_pp_signal.C\($1,\"$2\",\"$3\",\"\",0,\"$4\",\"$cdbtag\"\)
+else
+echo running root.exe -q -b Fun4All_G4_PhotonJet_pp_signal.C\($1,\"$2\",\"$3\",\"\",0,\"$4\",\"$cdbtag\"\)
+root.exe -q -b Fun4All_G4_PhotonJet_pp_signal.C\($1,\"$2\",\"$3\",\"\",0,\"$4\",\"$cdbtag\"\)
+fi
 
 timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/js_pp200_signal/pass1/timing.run${6}
 
