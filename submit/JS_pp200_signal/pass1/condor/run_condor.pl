@@ -8,6 +8,7 @@ use File::Basename;
 
 my $test;
 my $memory = sprintf("5120MB");
+
 GetOptions("memory:s" => \$memory, "test"=>\$test);
 if ($#ARGV < 6)
 {
@@ -32,8 +33,9 @@ my $jettrigger = $ARGV[1];
 my $dstoutdir = $ARGV[2];
 my $dstoutfile = $ARGV[3];
 my $build = $ARGV[4];
-my $runnumber = $ARGV[5];
-my $sequence = $ARGV[6];
+my $photonjet = $ARGV[5];
+my $runnumber = $ARGV[6];
+my $sequence = $ARGV[7];
 if ($sequence < 100)
 {
     $baseprio = 90;
@@ -68,7 +70,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $jettrigger $dstoutfile $dstoutdir $build $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $jettrigger $dstoutfile $dstoutdir $build $photonjet $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -94,5 +96,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $jettrigger, $dstoutfile, $dstoutdir, $build, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio, $memory $batchname\n";
+print F "$executable, $nevents, $jettrigger, $dstoutfile, $dstoutdir, $build, $photonjet, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio, $memory $batchname\n";
 close(F);

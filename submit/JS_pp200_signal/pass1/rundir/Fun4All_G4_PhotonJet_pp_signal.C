@@ -18,6 +18,8 @@
 #include <ffamodules/HeadReco.h>
 #include <ffamodules/SyncReco.h>
 
+#include <fun4allutils/TimerStats.h>
+
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
@@ -31,6 +33,7 @@
 
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
+R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_PhotonJet_pp_signal(
     const int nEvents = 100,
@@ -267,6 +270,13 @@ int Fun4All_G4_PhotonJet_pp_signal(
   {
     G4Setup();
   }
+
+  //--------------
+  // Timing module is last to register
+  //--------------
+  TimerStats *ts = new TimerStats();
+  ts->OutFileName("jobtime.root");
+  se->registerSubsystem(ts);
 
   //--------------
   // Set up Input Managers
