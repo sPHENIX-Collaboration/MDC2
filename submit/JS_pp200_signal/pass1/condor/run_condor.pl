@@ -4,14 +4,18 @@ use strict;
 use warnings;
 use Getopt::Long;
 use File::Path;
+use File::Basename;
 
 my $test;
-GetOptions("test"=>\$test);
+my $memory = sprintf("5120MB");
+
+GetOptions("memory:s" => \$memory, "test"=>\$test);
 if ($#ARGV < 6)
 {
     print "num args: $#ARGV\n";
     print "usage: run_condor.pl <events> <jettrigger> <outdir> <outfile> <build>  <runnumber> <sequence>\n";
     print "options:\n";
+    print "-memory: memory requirement\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
 }
@@ -29,12 +33,14 @@ my $jettrigger = $ARGV[1];
 my $dstoutdir = $ARGV[2];
 my $dstoutfile = $ARGV[3];
 my $build = $ARGV[4];
-my $runnumber = $ARGV[5];
-my $sequence = $ARGV[6];
+my $photonjet = $ARGV[5];
+my $runnumber = $ARGV[6];
+my $sequence = $ARGV[7];
 if ($sequence < 100)
 {
     $baseprio = 90;
 }
+my $batchname = sprintf("%s %s",basename($executable),$jettrigger);
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%010d-%06d",$runnumber,$sequence);
 my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$jettrigger);
@@ -64,7 +70,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $jettrigger $dstoutfile $dstoutdir $build $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $jettrigger $dstoutfile $dstoutdir $build $photonjet $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -74,8 +80,9 @@ print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
 print F "accounting_group = group_sphenix.mdc2\n";
 print F "accounting_group_user = sphnxpro\n";
 print F "Requirements = (CPU_Type == \"mdc2\")\n";
-print F "request_memory = 4096MB\n";
+print F "request_memory = $memory\n";
 print F "Priority = $baseprio\n";
+print F "batch_name = \"$batchname\"\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);
@@ -89,5 +96,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $jettrigger, $dstoutfile, $dstoutdir, $build, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $jettrigger, $dstoutfile, $dstoutdir, $build, $photonjet, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio, $memory $batchname\n";
 close(F);

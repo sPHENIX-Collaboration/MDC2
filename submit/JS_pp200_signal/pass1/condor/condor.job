@@ -1,6 +1,6 @@
 Universe 	= vanilla
 Executable 	= $(executable)
-Arguments       = $(nevents) $(jettrigger) $(dstoutfile) $(dstoutdir) $(build) $(runnumber) $(sequence)
+Arguments       = $(nevents) $(jettrigger) $(dstoutfile) $(dstoutdir) $(build)  $(photonjet) $(runnumber) $(sequence)
 Output  	= $(outfile)
 Error 		= $(errfile)
 Log  		= $(condorlogfile)
@@ -9,7 +9,8 @@ PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)
 accounting_group = group_sphenix.mdc2
 accounting_group_user = sphnxpro
 Requirements = (CPU_Type == "mdc2")
-request_memory = 8192MB
+request_memory = $(memory)
 Priority = $(baseprio)
 job_lease_duration = 3600
-Queue executable, nevents, jettrigger, dstoutfile, dstoutdir, build, runnumber, sequence, outfile, errfile, condorlogfile, rundir, baseprio from condor.list
+batch_name = $(batchname)
+Queue executable, nevents, jettrigger, dstoutfile, dstoutdir, build, photonjet, runnumber, sequence, outfile, errfile, condorlogfile, rundir, baseprio, memory, batchname from condor.list

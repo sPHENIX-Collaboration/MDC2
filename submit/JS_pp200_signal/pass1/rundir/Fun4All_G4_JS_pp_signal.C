@@ -47,10 +47,11 @@ int Fun4All_G4_JS_pp_signal(
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
 
+  CDBInterface::instance()->Verbosity(1);
+
   // Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
   PHRandomSeed::Verbosity(1);
 
-  CDBInterface::instance()->Verbosity(1);
   // just if we set some flags somewhere in this macro
   recoConsts *rc = recoConsts::instance();
   // By default every random number generator uses
@@ -116,6 +117,14 @@ int Fun4All_G4_JS_pp_signal(
     Input::BEAM_CONFIGURATION = Input::pA_COLLISION;  // for 2023 sims we want the AA geometry for no pileup sims
     cout << "using Input::pA_COLLISION" << endl;
     break;
+  case 21: // zero beam xing angle, mvtx rotated
+    Input::BEAM_CONFIGURATION = Input::pp_ZEROANGLE;
+    Enable::MVTX_APPLYMISALIGNMENT = true;
+    break;
+  case 22: // zero beam xing angle, mvtx rotated
+    Input::BEAM_CONFIGURATION = Input::pp_COLLISION;
+    Enable::MVTX_APPLYMISALIGNMENT = true;
+    break;
   default:
     cout << "runnnumber " << runnumber << " not implemented" << endl;
     gSystem->Exit(1);
@@ -158,7 +167,7 @@ int Fun4All_G4_JS_pp_signal(
   }
   else if (jettrigger == "Detroit")
   {
-    pythia8_config_file =  string(getenv("CALIBRATIONROOT")) + "/Generators/phpythia8_detroitUE.cfg";
+    pythia8_config_file =  string(getenv("CALIBRATIONROOT")) + "/Generators/phpythia8_detroit_minBias.cfg";
   }
   else
   {

@@ -18,6 +18,8 @@
 #include <ffamodules/HeadReco.h>
 #include <ffamodules/SyncReco.h>
 
+#include <fun4allutils/TimerStats.h>
+
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
@@ -31,6 +33,7 @@
 
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
+R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_PhotonJet_pp_signal(
     const int nEvents = 100,
@@ -43,6 +46,8 @@ int Fun4All_G4_PhotonJet_pp_signal(
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
+
+  CDBInterface::instance()->Verbosity(1);
 
   // Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
   PHRandomSeed::Verbosity(1);
@@ -60,6 +65,9 @@ int Fun4All_G4_PhotonJet_pp_signal(
   //  rc->set_IntFlag("RANDOMSEED", 12345);
   // int seedValue = 491258969;
   // rc->set_IntFlag("RANDOMSEED", seedValue);
+
+  TRACKING::pp_mode = true;
+  TRACKING::pp_extended_readout_time = 90000;
 
   //===============
   // conditions DB flags
@@ -105,6 +113,14 @@ int Fun4All_G4_PhotonJet_pp_signal(
     Input::BEAM_CONFIGURATION = Input::pA_COLLISION;  // for 2023 sims we want the AA geometry for no pileup sims
     cout << "using Input::pA_COLLISION" << endl;
     break;
+  case 21: // zero beam xing angle, mvtx rotated
+    Input::BEAM_CONFIGURATION = Input::pp_ZEROANGLE;
+    Enable::MVTX_APPLYMISALIGNMENT = true;
+    break;
+  case 22: // zero beam xing angle, mvtx rotated
+    Input::BEAM_CONFIGURATION = Input::pp_COLLISION;
+    Enable::MVTX_APPLYMISALIGNMENT = true;
+    break;
   default:
     cout << "runnnumber " << runnumber << " not implemented" << endl;
     gSystem->Exit(1);
@@ -119,15 +135,15 @@ int Fun4All_G4_PhotonJet_pp_signal(
   string pythia8_config_file = string(getenv("CALIBRATIONROOT")) + "/Generators/JetStructure_TG/";
   if (photontrigger == "PhotonJet5")
   {
-    pythia8_config_file += "phpythia8_JS_GJ_ptHat5_MDC2.cfg";
+    pythia8_config_file += "phpythia8_15GeV_JS_MDC2.cfg";
   }
   else if (photontrigger == "PhotonJet10")
   {
-    pythia8_config_file += "phpythia8_JS_GJ_ptHat10_MDC2.cfg";
+    pythia8_config_file += "phpythia8_15GeV_JS_MDC2.cfg";
   }
   else if (photontrigger == "PhotonJet20")
   {
-    pythia8_config_file += "phpythia8_JS_GJ_ptHat20_MDC2.cfg";
+    pythia8_config_file += "phpythia8_30GeV_JS_MDC2.cfg";
   }
   else
   {
@@ -235,21 +251,8 @@ int Fun4All_G4_PhotonJet_pp_signal(
   Enable::EPD = true;
 
   //! forward flux return plug door. Out of acceptance and off by default.
-  //  Enable::PLUGDOOR = true;
-  Enable::PLUGDOOR_BLACKHOLE = true;
-  //  Enable::PLUGDOOR_ABSORBER = true;
-
-  //  Enable::BEAMLINE = true;
-  G4BEAMLINE::skin_thickness = 0.5;
-  //  Enable::BEAMLINE_ABSORBER = true;  // makes the beam line magnets sensitive volumes
-  //  Enable::BEAMLINE_BLACKHOLE = true; // turns the beamline magnets into black holes
-  //  Enable::ZDC = true;
-  //  Enable::ZDC_ABSORBER = true;
-  //  Enable::ZDC_SUPPORT = true;
-  //  Enable::ZDC_TOWER = Enable::ZDC && true;
-  Enable::ZDC_EVAL = Enable::ZDC_TOWER && true;
-  //  Enable::GLOBAL_RECO = true;
-  // Enable::GLOBAL_FASTSIM = true;
+  Enable::PLUGDOOR = true;
+  // Enable::PLUGDOOR_BLACKHOLE = true;
 
   // new settings using Enable namespace in GlobalVariables.C
   Enable::BLACKHOLE = true;
@@ -267,6 +270,13 @@ int Fun4All_G4_PhotonJet_pp_signal(
   {
     G4Setup();
   }
+
+  //--------------
+  // Timing module is last to register
+  //--------------
+  TimerStats *ts = new TimerStats();
+  ts->OutFileName("jobtime.root");
+  se->registerSubsystem(ts);
 
   //--------------
   // Set up Input Managers
