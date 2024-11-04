@@ -21,7 +21,7 @@ void CreateDstOutput(int pileup, int runnumber, int segment, const string &jettr
   auto se = Fun4AllServer::instance();
 
   char segrun[100];
-  snprintf(segrun,100,"%s-%dkHz-%010d-%06d",jettrigger.c_str(),khz,runnumber,segment);
+  snprintf(segrun,100,"%s-%dkHz-%010d-%06d",jettrigger.c_str(),pileup,runnumber,segment);
   string FullOutFile = "DST_BBC_G4HIT_pythia8_" + string(segrun) + ".root";;
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("BBCOUT", FullOutFile);
   AddCommonNodes(out);
