@@ -27,39 +27,7 @@ else
     exit -1
 fi
 
-# arguments 
-# $1: number of events
-# $2: output file
-# $3: output dir
-# $4: build
-# $5: runnumber
-# $6: sequence
+singularity exec -B /home -B /sphenix/u -B /sphenix/lustre01 -B /gpfs02 /cvmfs/sphenix.sdcc.bnl.gov/singularity/rhic_sl7_ext.sif ./run_pythia8_container_pp_mb.sh $*
 
-echo 'here comes your environment'
-printenv
-echo arg1 \(events\) : $1
-echo arg2 \(output file\): $2
-echo arg3 \(output dir\): $3
-echo arg4 \(build\): $4
-echo arg5 \(runnumber\): $5
-echo arg6 \(sequence\): $6
-echo cdbtag: $cdbtag
 
-runnumber=$(printf "%010d" $5)
-sequence=$(printf "%06d" $6)
-
-filename=timing
-
-echo running root.exe -q -b Fun4All_G4_Pass1_pp.C\($1,\"$2\",\"$3\",\"$cdbtag\"\)
-
-root.exe -q -b  Fun4All_G4_Pass1_pp.C\($1,\"$2\",\"$3\",\"$cdbtag\"\)
-
-timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/pythia8_pp_mb/pass1/timing.run${5}
-
-[ ! -d $timedirname ] && mkdir -p $timedirname
-
-rootfilename=${timedirname}/${filename}-${runnumber}-${sequence}.root
-
-[ -f jobtime.root ] && cp -v jobtime.root $rootfilename
-
-echo "script done"
+echo "wrapper script done"
