@@ -413,6 +413,7 @@ sub getentries
 
 sub islustremounted
 {
+    return 1; # lustre is mounted
     if (-f "/etc/auto.direct")
     {
 	my $mountcmd = sprintf("cat /etc/auto.direct | grep lustre | grep sphenix");
