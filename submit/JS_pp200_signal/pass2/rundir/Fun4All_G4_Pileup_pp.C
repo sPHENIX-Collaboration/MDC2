@@ -105,7 +105,7 @@ R__LOAD_LIBRARY(libfun4allutils.so)
   //  se->registerOutputManager(out);
   if (Enable::PRODUCTION)
   {
-    CreateDstOutput(pileup, runnumber, segment, jettrigger);
+    CreateDstOutput(runnumber, segment, jettrigger);
   }
 
   // process events

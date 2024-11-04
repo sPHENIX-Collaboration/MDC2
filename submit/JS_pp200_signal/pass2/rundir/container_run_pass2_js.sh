@@ -8,7 +8,6 @@ hostname
 this_script=$BASH_SOURCE
 this_script=`readlink -f $this_script`
 this_dir=`dirname $this_script`
-echo rsyncing from $this_dir
 echo running: $this_script $*
 
 anabuild=${6}
@@ -37,8 +36,10 @@ fi
 # $3: background listfile
 # $4: output directory
 # $5: jettrigger
-# $6: run number
-# $7: sequence
+# $6: build
+# $7: pileup (in kHz)
+# $8: run number
+# $9: sequence
 
 echo 'here comes your environment'
 printenv
@@ -61,7 +62,7 @@ filename=timing
 echo running root.exe -q -b Fun4All_G4_Pileup_pp.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",$7,\"$cdbtag\"\)
 root.exe -q -b  Fun4All_G4_Pileup_pp.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",$7,\"$cdbtag\"\)
 
-timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/js_pp200_signal/pass2/timing.run${6}/${5}/${7}kHz
+timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/js_pp200_signal/pass2/timing.run${8}/${5}
 
 [ ! -d $timedirname ] &&  mkdir -p $timedirname
 
