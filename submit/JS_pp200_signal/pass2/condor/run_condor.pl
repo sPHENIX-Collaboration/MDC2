@@ -4,13 +4,17 @@ use strict;
 use warnings;
 use Getopt::Long;
 use File::Path;
+use File::Basename;
 
 my $test;
-GetOptions("test"=>\$test);
+my $memory = sprintf("2048MB");
+
+GetOptions("memory:s" => \$memory, "test"=>\$test);
 if ($#ARGV < 8)
 {
     print "usage: run_condor.pl <inevents> <jettrigger> <infile> <bkglist> <outdir> <build> <pileup> <runnumber> <sequence>\n";
     print "options:\n";
+    print "-memory: memory requirement\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
 }
@@ -49,8 +53,9 @@ else
     print "bad pileup: $pileuprate\n";
     exit(-1);
 }
+my $batchname = sprintf("%s %s",basename($executable),$jettrigger);
 my $condorlistfile = sprintf("condor.list");
-my $suffix = sprintf("%s_%s-%010d-%06d",$jettrigger,$pileup,$runnumber,$sequence);
+my $suffix = sprintf("%s-%010d-%06d",$jettrigger,$runnumber,$sequence);
 my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$jettrigger);
 if (! -d $logdir)
 {
@@ -91,19 +96,20 @@ print F "Requirements = (CPU_Type == \"mdc2\")\n";
 #print F "Requirements = (CPU_Type == \"mdc2_minio\")\n";
 print F "request_memory = 2048MB\n";
 print F "Priority = $baseprio\n";
+print F "batch_name = \"$batchname\"\n";
 #print F "concurrency_limits = PHENIX_1000\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);
-#if (defined $test)
-#{
-#    print "would submit $jobfile\n";
-#}
+if (defined $test)
+{
+    print "would submit $jobfile\n";
+}
 #else
 #{
 #    system("condor_submit $jobfile");
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile, $backgroundlist, $dstoutdir, $jettrigger, $build, $pileuprate, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $infile, $backgroundlist, $dstoutdir, $jettrigger, $build, $pileuprate, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio, $memory $batchname\n";
 close(F);

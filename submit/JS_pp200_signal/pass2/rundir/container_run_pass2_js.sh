@@ -17,6 +17,19 @@ source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup
 
 cdbtag=MDC2_$anabuild
 
+if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
+then
+  cd $_CONDOR_SCRATCH_DIR # redundant but in case someone screw this up and we fill the home disk
+  getinputfiles.pl $2
+  if [ $? -ne 0 ]
+  then
+    echo error from getinputfiles.pl $2, exiting
+    exit -1
+  fi
+else
+    echo condor scratch NOT set
+    exit -1
+fi
 
 # arguments 
 # $1: number of output events

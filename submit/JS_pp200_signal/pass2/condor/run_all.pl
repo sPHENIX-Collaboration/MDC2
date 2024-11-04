@@ -10,12 +10,13 @@ use DBI;
 
 my $build;
 my $incremental;
+my $memory;
 my $outevents = 0;
 my $runnumber;
 my $shared;
 my $test;
 my $pileup;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"Jet40\", \"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\", \"Detroit\" production>\n";
@@ -105,7 +106,7 @@ $outfiletype{"DST_TRUTH_G4HIT"} = "DST_TRUTH";
 
 my $localdir=`pwd`;
 chomp $localdir;
-my $logdir = sprintf("%s/log/%s",$localdir,$jettrigger);
+my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$jettrigger);
 if (! -d $logdir)
 {
   mkpath($logdir);
@@ -135,7 +136,7 @@ while (my @res = $getfiles->fetchrow_array())
 	my $foundall = 1;
 	foreach my $type (sort keys %outfiletype)
 	{
-	    my $outfilename = sprintf("%s/%s_pythia8_%s_%s-%010d-%06d.root",$outdir,$type,$jettrigger,$pileup,$runnumber,$segment);
+	    my $outfilename = sprintf("%s/%s_pythia8_%s_%s-%010d-%06d.root",$outdir,$type,$jettrigger,$runnumber,$segment);
 #	    print "checking for $outfilename\n";
 	    if (! -f  $outfilename)
 	    {
@@ -199,7 +200,7 @@ while (my @res = $getfiles->fetchrow_array())
 		push(@bkgfiles,$bckfile);
 	    }
 	}
-	my $bkglistfile = sprintf("%s/condor_%s_%s-%010d-%06d.bkglist",$logdir,$jettrigger,$pileup,$runnumber,$segment);
+	my $bkglistfile = sprintf("%s/condor_%s-%010d-%06d.bkglist",$logdir,$jettrigger,$runnumber,$segment);
 	open(F1,">$bkglistfile");
 	foreach my $bf (@bkgfiles)
 	{
@@ -211,7 +212,11 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $bkglistfile, $outdir, $build, $pileup, $runnumber, $segment, $tstflag);
+	if (defined $memory)
+	{
+	    $tstflag = sprintf("%s --%s",$tstflag,$memory)
+	}
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $bkglistfile, $outdir, $build, $pileup, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
