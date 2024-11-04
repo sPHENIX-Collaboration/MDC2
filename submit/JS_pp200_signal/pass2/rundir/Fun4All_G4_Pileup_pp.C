@@ -35,6 +35,7 @@ R__LOAD_LIBRARY(libfun4allutils.so)
     const string &backgroundList = "pileupbkgppmb.list",
     const string &outdir = ".",
     const string &jettrigger = "NONE",
+    const int pileup = 3000000,
     const string &cdbtag = "MDC2_ana.412")
 {
   gSystem->Load("libg4dst.so");
@@ -84,10 +85,9 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
   // background input manager
   auto inpile = new Fun4AllDstPileupInputManager("DST_background");
-  inpile->setCollisionRate(2e6); // 2MHz for testing (3MHz according to BUP)
-//  double low_time_window = -105.5 / (8.0 / 1000.0); // -20us
-  double low_time_window = -20000; // -20us
-  double high_time_window = -low_time_window + 20000; // 20us
+  inpile->setCollisionRate(pileup);
+  double low_time_window = -105.5 / (8.0 / 1000.0); // tpc integration window start
+  double high_time_window = -low_time_window + 50000; // 50us
   inpile->setPileupTimeWindow(low_time_window, high_time_window);
   inpile->setDetectorActiveCrossings("BBC",1);
   inpile->setDetectorActiveCrossings("HCALIN",1);
@@ -105,7 +105,7 @@ R__LOAD_LIBRARY(libfun4allutils.so)
   //  se->registerOutputManager(out);
   if (Enable::PRODUCTION)
   {
-    CreateDstOutput(runnumber, segment, jettrigger);
+    CreateDstOutput(pileup, runnumber, segment, jettrigger);
   }
 
   // process events
