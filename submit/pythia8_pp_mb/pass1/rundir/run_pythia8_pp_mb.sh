@@ -27,7 +27,7 @@ else
     exit -1
 fi
 
-singularity exec -B /home -B /sphenix/u -B /sphenix/lustre01 -B /gpfs02 /cvmfs/sphenix.sdcc.bnl.gov/singularity/rhic_sl7_ext.sif ./run_pythia8_container_pp_mb.sh $*
-
+container_script=container_`basename $this_script`
+singularity exec -B /home -B /direct/sphenix+u -B /gpfs02 -B /sphenix/u -B /sphenix/lustre01 -B /sphenix/user  -B /sphenix/sim /cvmfs/sphenix.sdcc.bnl.gov/singularity/rhic_sl7.sif ./$container_script $*
 
 echo "wrapper script done"
