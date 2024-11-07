@@ -8,33 +8,66 @@ use Getopt::Long;
 use DBI;
 
 
-my $outevents = 0;
-my $runnumber = 15;
-my $test;
+my $build;
 my $incremental;
+my $memory;
+my $outevents = 0;
+my $runnumber;
 my $shared;
-my $MHz = 3;
-my $verbose;
-GetOptions("test"=>\$test, "increment"=>\$incremental, "MHz:i" => \$MHz, "shared" => \$shared, "verbose"=>\$verbose);
+my $test;
+my $pileup;
+my $verbosity = 0;
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"Jet40\", \"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\", \"Detroit\" production>\n";
     print "parameters:\n";
+    print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
-    print "--MHz : MHz collision rate\n";
+    print "--pileup : collision rate (with unit, kHz, MHz)\n";
     print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
-    print "--verbose : turn on debugging printouts\n";
+    print "--verbosity <level>: verbosity level\n";
     exit(1);
 }
+
+my $isbad = 0;
 
 my $hostname = `hostname`;
 chomp $hostname;
 if ($hostname !~ /phnxsub/)
 {
-    print "submit only from phnxsub node\n";
+    print "submit only from phnxsub hosts\n";
+    $isbad = 1;
+}
+if (! defined $pileup)
+{
+    print "need pileup with --pileup <rate with unit> (kHz, MHz)\n";
+    $isbad = 1;
+}
+
+if (! defined $runnumber)
+{
+    print "need runnumber with --run <runnumber>\n";
+    $isbad = 1;
+}
+
+if (! defined $build)
+{
+    print "need build with --build <ana build>\n";
+    $isbad = 1;
+}
+if (! -f "outdir.txt")
+{
+    print "could not find outdir.txt\n";
+    $isbad = 1;
+}
+
+if ($isbad > 0)
+{
     exit(1);
 }
+
 my $maxsubmit = $ARGV[0];
 my $jettrigger = $ARGV[1];
 if ($jettrigger  ne "Jet10" &&
@@ -56,14 +89,9 @@ if (-f $condorlistfile)
     unlink $condorlistfile;
 }
 
-if (! -f "outdir.txt")
-{
-    print "could not find outdir.txt\n";
-    exit(1);
-}
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$jettrigger = sprintf("%s_%sMHz",$jettrigger,$MHz);
+$jettrigger = sprintf("%s_%s",$jettrigger,$pileup);
 $outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,lc $jettrigger);
 if (! -d $outdir)
 {
@@ -79,9 +107,14 @@ my %truthhash = ();
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like '%pythia8_$jettrigger%' and runnumber = $runnumber order by segment") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like 'DST_TRKR_G4HIT_pythia8_$jettrigger-%' and runnumber = $runnumber order by segment") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
-my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH_G4HIT' and filename like '%pythia8_$jettrigger%'and runnumber = $runnumber");
+my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH_G4HIT' and filename like 'DST_TRUTH_G4HIT_pythia8_$jettrigger-%' and runnumber = $runnumber");
+if ($verbosity > 0)
+{
+  print "select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like 'DST_TRKR_G4HIT_pythia8_$jettrigger-%' and runnumber = $runnumber order by segment\n";
+  print "select filename,segment from datasets where dsttype = 'DST_TRUTH_G4HIT' and filename like 'DST_TRUTH_G4HIT_pythia8_$jettrigger-%' and runnumber = $runnumber\n";
+}
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
 my $ncal = $getfiles->rows;
@@ -97,7 +130,10 @@ while (my @res = $gettruthfiles->fetchrow_array())
     $truthhash{sprintf("%06d",$res[1])} = $res[0];
 }
 $gettruthfiles->finish();
-#print "input files: $ncal, truth: $ntruth\n";
+if ($verbosity > 0)
+{
+  print "input files, tracks: $ncal, truth: $ntruth\n";
+}
 foreach my $segment (sort { $a <=> $b } keys %trkhash)
 {
     if (! exists $truthhash{$segment})
@@ -106,7 +142,7 @@ foreach my $segment (sort { $a <=> $b } keys %trkhash)
     }
 
     my $lfn = $trkhash{$segment};
-    if (defined $verbose)
+    if ($verbosity > 1)
     {
 	print "found $lfn\n";
     }
@@ -126,7 +162,7 @@ foreach my $segment (sort { $a <=> $b } keys %trkhash)
 	    else
 	    {
 		$foundall = 0;
-		if (defined $verbose)
+		if ($verbosity > 0)
 		{
 		    print "did not find $lfn\n";
 		}
@@ -142,7 +178,7 @@ foreach my $segment (sort { $a <=> $b } keys %trkhash)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $truthhash{sprintf("%06d",$segment)}, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $truthhash{sprintf("%06d",$segment)}, $outdir, $build, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

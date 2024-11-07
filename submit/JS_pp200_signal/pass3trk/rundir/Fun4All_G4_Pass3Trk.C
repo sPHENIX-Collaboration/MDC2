@@ -109,7 +109,7 @@ int Fun4All_G4_Pass3Trk(
 
 // set pp tracking mode
   TRACKING::pp_mode = true;
-  TRACKING::pp_extended_readout_time = 20000; // 20 us, needed by electron drift and hit reco modules
+  TRACKING::pp_extended_readout_time = 50000; // 50 us, needed by electron drift and hit reco modules
   // central tracking
   Enable::MVTX = true;
   Enable::MVTX_CELL = Enable::MVTX && true;
