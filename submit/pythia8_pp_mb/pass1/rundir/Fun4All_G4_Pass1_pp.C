@@ -64,6 +64,7 @@ int Fun4All_G4_Pass1_pp(
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  CDBInterface::instance()->Verbosity();  // print used DB files
 
   // this extracts the runnumber and segment from the output filename
   // and sets this so the server can pick it up
