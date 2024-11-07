@@ -217,6 +217,7 @@ sub getmd5
 
 sub islustremounted
 {
+    return 1;
     if (-f "/etc/auto.direct")
     {
 	my $mountcmd = sprintf("cat /etc/auto.direct | grep lustre | grep sphenix");
