@@ -30,6 +30,7 @@
 #include <fun4allutils/TimerStats.h>
 
 #include <phool/recoConsts.h>
+#include <phool/PHRandomSeed.h>
 
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libg4centrality.so)
@@ -41,10 +42,9 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 void Fun4All_G4_Waveform(
     const int nEvents = 1,
     const string &inputFile0 = "DST_CALO_G4HIT_pythia8_PhotonJet20_2MHz-0000000015-000000.root",
-    const string &inputFile1 = "pedestal-00046796.root",  
     const string &outputFile = "DST_CALO_WAVEFORM_pythia8_PhotonJet20_2MHz-0000000015-000000.root",
     const string &outdir = ".",
-    const string &cdbtag = "MDC2_ana.418")
+    const string &cdbtag = "MDC2")
 
 {
   
@@ -163,9 +163,9 @@ void Fun4All_G4_Waveform(
   ca2->set_nsamples(12);
   ca2->set_dataflag(false);
   ca2->set_processing_type(CaloWaveformProcessing::TEMPLATE);
-  ca2->set_builder_type(CaloTowerDefs::kWaveformTowerv2);
-  //match our current ZS threshold ~7ADC for hcal
-  ca2->set_softwarezerosuppression(true, 7);
+  ca2->set_builder_type(CaloTowerDefs::kWaveformTowerSimv1);
+  //30 ADC SZS
+  ca2->set_softwarezerosuppression(true, 30);
   se->registerSubsystem(ca2);
 
   ca2 = new CaloTowerBuilder();
@@ -173,8 +173,8 @@ void Fun4All_G4_Waveform(
   ca2->set_nsamples(12);
   ca2->set_dataflag(false);
   ca2->set_processing_type(CaloWaveformProcessing::TEMPLATE);
-  ca2->set_builder_type(CaloTowerDefs::kWaveformTowerv2);
-  ca2->set_softwarezerosuppression(true, 7);
+  ca2->set_builder_type(CaloTowerDefs::kWaveformTowerSimv1);
+  ca2->set_softwarezerosuppression(true, 30);
   se->registerSubsystem(ca2);
 
   ca2 = new CaloTowerBuilder();
@@ -182,9 +182,9 @@ void Fun4All_G4_Waveform(
   ca2->set_nsamples(12);
   ca2->set_dataflag(false);
   ca2->set_processing_type(CaloWaveformProcessing::TEMPLATE);
-  ca2->set_builder_type(CaloTowerDefs::kWaveformTowerv2);
-  //match our current ZS threshold ~14ADC for emcal
-  ca2->set_softwarezerosuppression(true, 14);
+  ca2->set_builder_type(CaloTowerDefs::kWaveformTowerSimv1);
+  //a large uniform ZS threshold for CEMC, 60 ADC now
+  ca2->set_softwarezerosuppression(true, 60);
   se->registerSubsystem(ca2);
 
   /////////////////////////////////////////////////////
@@ -225,6 +225,21 @@ void Fun4All_G4_Waveform(
   calibIHCal->set_detector_type(CaloTowerDefs::HCALIN);
   calibIHCal->set_outputNodePrefix("TOWERINFO_CALIB_");
   se->registerSubsystem(calibIHCal);
+
+  ////////////////
+  //MC Calibration
+  std::string MC_Calib = CDBInterface::instance()->getUrl("CEMC_MC_RECALIB");
+  if(MC_Calib.empty()){
+    std::cout << "No MC calibration found :( )" << std::endl;
+    gSystem->Exit(0);
+  }
+  CaloTowerCalib *calibEMC_MC = new CaloTowerCalib("CEMCCALIB_MC");
+  calibEMC_MC->set_detector_type(CaloTowerDefs::CEMC);
+  calibEMC_MC->set_inputNodePrefix("TOWERINFO_CALIB_");
+  calibEMC_MC->set_outputNodePrefix("TOWERINFO_CALIB_");
+  calibEMC_MC->set_directURL(MC_Calib);
+  calibEMC_MC->set_doZScrosscalib(false);
+
   //////////////////
   // Clusters
   std::cout << "Building clusters" << std::endl;
@@ -250,9 +265,21 @@ void Fun4All_G4_Waveform(
   //--------------
 
   InputManagers();
+  TRandom3 randGen;
+  //get seed
+  unsigned int seed = PHRandomSeed();
+  randGen.SetSeed(seed);
+  // a int from 0 to 3259
+  int sequence = randGen.Integer(3260);
+  // pad the name
+  std::ostringstream opedname;
+  opedname << "pedestal-54256-0" << std::setw(4) << std::setfill('0') << sequence << ".root";
+
+  std::string pedestalname = opedname.str();
   
+
   Fun4AllInputManager *hitsin = new Fun4AllNoSyncDstInputManager("DST2");
-  hitsin->AddFile(inputFile1);
+  hitsin->AddFile(pedestalname);
   hitsin->Repeat();
   se->registerInputManager(hitsin);
 
@@ -320,7 +347,6 @@ void Fun4All_G4_Waveform(
   {
     Production_MoveOutput();
   }
-
   gSystem->Exit(0);
 }
 
