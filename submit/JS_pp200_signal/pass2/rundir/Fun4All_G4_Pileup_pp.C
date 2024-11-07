@@ -70,7 +70,7 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
   // signal input manager
   auto in = new Fun4AllDstInputManager("DST_signal");
-  in->registerSubsystem(new PHG4VertexSelection);
+//  in->registerSubsystem(new PHG4VertexSelection);
 
   //--------------
   // Timing module is last to register

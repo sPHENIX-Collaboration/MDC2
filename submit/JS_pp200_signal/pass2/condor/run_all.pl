@@ -16,7 +16,8 @@ my $runnumber;
 my $shared;
 my $test;
 my $pileup;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
+my $verbosity = 0;
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"Jet40\", \"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\", \"Detroit\" production>\n";
@@ -127,7 +128,10 @@ $getfiles->execute() || die $DBI::errstr;
 while (my @res = $getfiles->fetchrow_array())
 {
     my $lfn = $res[0];
-#    print "found $lfn\n";
+    if ($verbosity > 1)
+    {
+	print "found $lfn\n";
+    }
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
         my $prefix=$1;
@@ -136,7 +140,7 @@ while (my @res = $getfiles->fetchrow_array())
 	my $foundall = 1;
 	foreach my $type (sort keys %outfiletype)
 	{
-	    my $outfilename = sprintf("%s/%s_pythia8_%s_%s-%010d-%06d.root",$outdir,$type,$jettrigger,$runnumber,$segment);
+	    my $outfilename = sprintf("%s/%s_pythia8_%s-%010d-%06d.root",$outdir,$type,$jettrigger,$runnumber,$segment);
 #	    print "checking for $outfilename\n";
 	    if (! -f  $outfilename)
 	    {
@@ -144,8 +148,10 @@ while (my @res = $getfiles->fetchrow_array())
 		$chkfile->execute($outlfn);
 		if ($chkfile->rows > 0)
 		{
-		    print "found $outfilename\n";
-
+		    if ($verbosity > 1)
+		    {
+			print "found $outfilename\n";
+		    }
 		    next;
 		}
 		else
@@ -176,10 +182,10 @@ while (my @res = $getfiles->fetchrow_array())
 	my $bkgsegments = 0;
 # if Detroit is embedded in itself, don't start with the same segment for the background
 # for others it doesn't matter
-	my $currsegment = $segment+1;
+	my $currsegment = $segment;
 # the number of files can be large - there is no overhead, 
 # we only open new files when the old file is exhausted
-	while ($bkgsegments <= 100)
+	while ($bkgsegments <= 99)
 	{
 	    $currsegment++;
 	    if ($currsegment > $lastsegment)
@@ -191,14 +197,23 @@ while (my @res = $getfiles->fetchrow_array())
 	    $chkfile->execute($bckfile);
 	    if ($chkfile->rows == 0)
 	    {
-		print "missing bkg $bckfile\n";
-#		$foundall = 0;
+		if ($verbosity > 0)
+		{
+		    print "missing bkg $bckfile\n";
+		}
+		$foundall = 0;
+		last;
 	    }
 	    else
 	    {
 		$bkgsegments++;
 		push(@bkgfiles,$bckfile);
 	    }
+	}
+	if ($foundall == 0) # background file is missing
+	{
+#	    print "foundall is 1\n";
+	    next;
 	}
 	my $bkglistfile = sprintf("%s/condor_%s-%010d-%06d.bkglist",$logdir,$jettrigger,$runnumber,$segment);
 	open(F1,">$bkglistfile");
