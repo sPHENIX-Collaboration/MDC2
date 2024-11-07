@@ -14,6 +14,7 @@ if ($#ARGV < 7)
 {
     print "usage: run_condor.pl <events> <jettrigger> <trk infile> <truth infile> <outdir> <build> <runnumber> <sequence>\n";
     print "options:\n";
+    print "-memory: memory requirement\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
 }
@@ -76,8 +77,8 @@ print F "accounting_group = group_sphenix.mdc2\n";
 print F "accounting_group_user = sphnxpro\n";
 print F "Requirements = (CPU_Type == \"mdc2\")\n";
 print F "request_memory = $memory\n";
-print F "Priority = $baseprio\n";
 print F "batch_name = \"$batchname\"\n";
+print F "Priority = $baseprio\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);
