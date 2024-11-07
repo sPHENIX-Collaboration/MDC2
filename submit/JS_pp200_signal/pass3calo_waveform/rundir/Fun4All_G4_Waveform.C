@@ -44,7 +44,7 @@ void Fun4All_G4_Waveform(
     const string &inputFile0 = "DST_CALO_G4HIT_pythia8_PhotonJet20_2MHz-0000000015-000000.root",
     const string &outputFile = "DST_CALO_WAVEFORM_pythia8_PhotonJet20_2MHz-0000000015-000000.root",
     const string &outdir = ".",
-    const string &cdbtag = "MDC2_ana.418")
+    const string &cdbtag = "MDC2")
 
 {
   
@@ -163,7 +163,7 @@ void Fun4All_G4_Waveform(
   ca2->set_nsamples(12);
   ca2->set_dataflag(false);
   ca2->set_processing_type(CaloWaveformProcessing::TEMPLATE);
-  ca2->set_builder_type(CaloTowerDefs::kWaveformTowerv2);
+  ca2->set_builder_type(CaloTowerDefs::kWaveformTowerSimv1);
   //30 ADC SZS
   ca2->set_softwarezerosuppression(true, 30);
   se->registerSubsystem(ca2);
@@ -173,7 +173,7 @@ void Fun4All_G4_Waveform(
   ca2->set_nsamples(12);
   ca2->set_dataflag(false);
   ca2->set_processing_type(CaloWaveformProcessing::TEMPLATE);
-  ca2->set_builder_type(CaloTowerDefs::kWaveformTowerv2);
+  ca2->set_builder_type(CaloTowerDefs::kWaveformTowerSimv1);
   ca2->set_softwarezerosuppression(true, 30);
   se->registerSubsystem(ca2);
 
@@ -182,7 +182,7 @@ void Fun4All_G4_Waveform(
   ca2->set_nsamples(12);
   ca2->set_dataflag(false);
   ca2->set_processing_type(CaloWaveformProcessing::TEMPLATE);
-  ca2->set_builder_type(CaloTowerDefs::kWaveformTowerv2);
+  ca2->set_builder_type(CaloTowerDefs::kWaveformTowerSimv1);
   //a large uniform ZS threshold for CEMC, 60 ADC now
   ca2->set_softwarezerosuppression(true, 60);
   se->registerSubsystem(ca2);
@@ -225,6 +225,21 @@ void Fun4All_G4_Waveform(
   calibIHCal->set_detector_type(CaloTowerDefs::HCALIN);
   calibIHCal->set_outputNodePrefix("TOWERINFO_CALIB_");
   se->registerSubsystem(calibIHCal);
+
+  ////////////////
+  //MC Calibration
+  std::string MC_Calib = CDBInterface::instance()->getUrl("CEMC_MC_RECALIB");
+  if(MC_Calib.empty()){
+    std::cout << "No MC calibration found :( )" << std::endl;
+    gSystem->Exit(0);
+  }
+  CaloTowerCalib *calibEMC_MC = new CaloTowerCalib("CEMCCALIB_MC");
+  calibEMC_MC->set_detector_type(CaloTowerDefs::CEMC);
+  calibEMC_MC->set_inputNodePrefix("TOWERINFO_CALIB_");
+  calibEMC_MC->set_outputNodePrefix("TOWERINFO_CALIB_");
+  calibEMC_MC->set_directURL(MC_Calib);
+  calibEMC_MC->set_doZScrosscalib(false);
+
   //////////////////
   // Clusters
   std::cout << "Building clusters" << std::endl;
