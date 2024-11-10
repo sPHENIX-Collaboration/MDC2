@@ -7,6 +7,8 @@
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
 
+#include <fun4allutils/TimerStats.h>
+
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
@@ -17,19 +19,17 @@
 
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
+R__LOAD_LIBRARY(libfun4allutils.so)
 
 //________________________________________________________________________________________________
 int Fun4All_G4_sPHENIX_job0(
     const int nEvents = 0,
     const int nSkipEvents = 0,
-    const std::string &inputFile = "DST_TRKR_HIT_pythia8_Jet30-0000000011-00000.root",
-    const std::string &outputFile = "DST_TRKR_CLUSTER_pythia8_Jet30-0000000011-00000.root",
+    const std::string &inputFile = "DST_TRKR_HIT_pythia8-0000000019-00000.root",
+    const std::string &outputFile = "DST_TRKR_CLUSTER_pythia8-0000000019-00000.root",
     const string &outdir = ".",
-    const string &cdbtag = "MDC2_ana.398")
+    const string &cdbtag = "MDC2_ana.435")
 {
-  // set pp tracking mode
-  //  TRACKING::pp_mode = true;
-
   // print inputs
   std::cout << "Fun4All_G4_sPHENIX_job0 - nEvents: " << nEvents << std::endl;
   std::cout << "Fun4All_G4_sPHENIX_job0 - nSkipEvents: " << nSkipEvents << std::endl;
@@ -44,8 +44,6 @@ int Fun4All_G4_sPHENIX_job0(
   Enable::CDB = true;
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
-  CDBInterface::instance()->Verbosity(1);
-
   // set up production relatedstuff
   Enable::PRODUCTION = true;
   Enable::DSTOUT = true;
@@ -61,7 +59,8 @@ int Fun4All_G4_sPHENIX_job0(
   // TPC
   G4TPC::ENABLE_STATIC_DISTORTIONS = false;
   G4TPC::ENABLE_TIME_ORDERED_DISTORTIONS = false;
-  G4TPC::ENABLE_CORRECTIONS = false;
+  G4TPC::ENABLE_STATIC_CORRECTIONS = false;
+  G4TPC::ENABLE_AVERAGE_CORRECTIONS = false;
   G4TPC::DO_HIT_ASSOCIATION = false;
 
   // tracking configuration
@@ -88,6 +87,13 @@ int Fun4All_G4_sPHENIX_job0(
   Intt_Clustering();
   TPC_Clustering();
   Micromegas_Clustering();
+
+  //--------------
+  // Timing module is last to register
+  //--------------
+  TimerStats *ts = new TimerStats();
+  ts->OutFileName("jobtime.root");
+  se->registerSubsystem(ts);
 
   // input manager
   auto in = new Fun4AllDstInputManager("DSTin");
