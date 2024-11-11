@@ -12,12 +12,11 @@ my $build;
 my $incremental;
 my $memory;
 my $outevents = 0;
-my $pileup;
 my $runnumber;
 my $shared;
 my $test;
 my $verbosity = 0;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", <\"Jet30\", <\"Jet40\", \"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\", \"Detroit\" production>\n";
@@ -25,7 +24,6 @@ if ($#ARGV < 1)
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
     print "--memory : memory requirement with unit (MB)\n";
-    print "--pileup : collision rate (with unit, kHz, MHz)\n";
     print "--run: <runnumber>\n";
     print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
@@ -87,7 +85,6 @@ if (-f $condorlistfile)
 
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$jettrigger = sprintf("%s_%s",$jettrigger,$pileup);
 $outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,lc $jettrigger);
 if (! -d $outdir)
 {
