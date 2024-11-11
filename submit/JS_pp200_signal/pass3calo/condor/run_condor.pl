@@ -9,7 +9,7 @@ use File::Basename;
 my $test;
 my $memory = sprintf("2048MB");
 
-GetOptions("test"=>\$test);
+GetOptions("memory:s"=>\$memory, "test"=>\$test);
 if ($#ARGV < 7)
 {
     print "usage: run_condor.pl <events>  <jettrigger> <g4hit infile> <outfile> <outdir> <build> <runnumber> <sequence>\n";
@@ -78,8 +78,8 @@ print F "accounting_group_user = sphnxpro\n";
 print F "Requirements = (CPU_Type == \"mdc2\")\n";
 #print F "Requirements = (CPU_Type == \"mdc2_minio\")\n";
 print F "request_memory = $memory\n";
-print F "Priority = $baseprio\n";
 print F "batch_name = \"$batchname\"\n";
+print F "Priority = $baseprio\n";
 #print F "concurrency_limits = PHENIX_100\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";

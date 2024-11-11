@@ -8,9 +8,9 @@ use File::Path;
 my $test;
 my $overwrite;
 GetOptions("test"=>\$test, "overwrite"=>\$overwrite);
-if ($#ARGV < 3)
+if ($#ARGV < 10)
 {
-    print "usage: run_condor.pl <events> <jettrigger> <trkr g4hit file> <trkr cluster file> <tracks file> <truth file> <outfile> <outdir> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <jettrigger> <trkr g4hit file> <trkr cluster file> <tracks file> <truth file> <outfile> <outdir> <build> <runnumber> <sequence>\n";
     print "options:\n";
     print "--overwrite : overwrite existing jobfiles\n";
     print "--test: testmode - no condor submission\n";
@@ -30,14 +30,15 @@ my $infile2 = $ARGV[4];
 my $infile3 = $ARGV[5];
 my $outfilename = $ARGV[6];
 my $dstoutdir = $ARGV[7];
-my $runnumber = $ARGV[8];
-my $sequence = $ARGV[9];
+my $build = $ARGV[8];
+my $runnumber = $ARGV[9];
+my $sequence = $ARGV[10];
 if ($sequence < 100)
 {
     $baseprio = 90;
 }
 my $condorlistfile = sprintf("condor.list");
-my $suffix = sprintf("%s-%010d-%05d",$jettrigger,$runnumber,$sequence);
+my $suffix = sprintf("%s-%010d-%06d",$jettrigger,$runnumber,$sequence);
 my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$jettrigger);
 if (! -d $logdir)
 {
@@ -65,7 +66,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $infile0 $infile1 $infile2 $infile3 $outfilename $dstoutdir $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $infile0 $infile1 $infile2 $infile3 $outfilename $dstoutdir $build $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -90,5 +91,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile0,  $infile1, $infile2, $infile3, $outfilename, $dstoutdir, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $infile0,  $infile1, $infile2, $infile3, $outfilename, $dstoutdir, $build, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);
