@@ -15,7 +15,6 @@ echo running: $this_script $*
 ana_calo=${9}
 ana_mbdepd=${9}
 ana_pass3trk=${9}
-pedestalfile=pedestal-00046796.root
 
 run_calo=1
 run_trk=1
@@ -64,7 +63,6 @@ echo arg9 \(build\): $9
 echo arg10 \(runnumber\): ${10}
 echo arg11 \(sequence\): ${11}
 echo cdbtag : ${cdbtag}
-echo pedestalfile: ${pedestalfile}
 
 runnumber=$(printf "%010d" ${10})
 sequence=$(printf "%06d" ${11})
@@ -78,8 +76,8 @@ then
     cdbtag=MDC2_$ana_calo
     printenv
 
-    echo running root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"${pedestalfile}\",\"$3\",\"$4\",\"$cdbtag\"\)
-    root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"${pedestalfile}\",\"$3\",\"$4\",\"$cdbtag\"\)
+    echo running root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
+    root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
 fi
 
 #---------------------------------------------------------------
