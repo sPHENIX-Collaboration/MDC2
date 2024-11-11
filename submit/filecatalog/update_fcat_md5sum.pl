@@ -29,7 +29,7 @@ $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $getfiles;
 if (defined $all)
 {
-    $getfiles = $dbh->prepare("select lfn,full_file_path from files where md5 is null"); 
+    $getfiles = $dbh->prepare("select lfn,full_file_path from files where md5 is null or md5='0'"); 
 }
 else
 {
@@ -39,19 +39,19 @@ else
 	print "could not find directory $dcachedir\n";
 	exit(1);
     }
-    if ($dcachedir !~ /lustre/)
+    if ($dcachedir !~ /lustre/ && $dcachedir !~ /data/)
     {
 	print "only lustre dirs allowed\n";
 	exit(1);
     }
     if (defined $lfn)
     {
-	$getfiles = $dbh->prepare("select lfn,full_file_path from files where lfn like '$lfn%' and md5 is null");
+	$getfiles = $dbh->prepare("select lfn,full_file_path from files where lfn like '$lfn%' and (md5 is null or md5 = '0')");
 
     }
     else
     {
-	$getfiles = $dbh->prepare("select lfn,full_file_path from files where md5 is null and full_file_path like '$dcachedir/%'");
+	$getfiles = $dbh->prepare("select lfn,full_file_path from files where (md5 is null or md5 = '0') and full_file_path like '$dcachedir/%'");
     }
 }
 
@@ -61,7 +61,7 @@ while (my @res = $getfiles->fetchrow_array())
 {
     my $lfn =  $res[0];
     my $fullfile = $res[1];
-    if ($fullfile!~ /lustre/)
+    if ($fullfile !~ /lustre/ && $fullfile !~ /data/)
     {
 	print "$fullfile not in lustre\n";
 	next;

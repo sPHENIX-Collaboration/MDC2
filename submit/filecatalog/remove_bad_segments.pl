@@ -27,10 +27,10 @@ my $pileup;
 my $magnet;
 GetOptions("dsttype:s"=>\$dsttype, "embed:s"=>\$embed, "fm:s" =>\$fm, "kill"=>\$kill, "magnet:s" => \$magnet, "nopileup"=>\$nopileup, "pileup:s" => \$pileup, "runnumber:i" => \$runnumber, "type:i"=>\$system, "verbose" => \$verbose);
 
-if (! defined $pileup)
-{
-   $pileup = "3MHz";
-}
+#if (! defined $pileup)
+#{
+#   $pileup = "3MHz";
+#}
 
 #my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 my $attempts = 0;
@@ -64,7 +64,7 @@ my %daughters = (
 #    "DST_TRKR_HIT" => [ "DST_TRUTH", "DST_TRKR_CLUSTER", "DSTOLD_TRKR_HIT" ],
 #    "DST_TRUTH" => [ "DST_TRKR_HIT", "DST_TRUTH_JET", "DST_TRUTH_RECO", "DSTOLD_TRUTH"],
     "DST_BBC_G4HIT" => [ "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_MBD_EPD" ],
-    "DST_CALO_G4HIT" => [ "DST_BBC_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_CALO_CLUSTER" ],
+    "DST_CALO_G4HIT" => [ "DST_BBC_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH_G4HIT", "DST_CALO_CLUSTER", "DST_CALO_NOZERO" ],
     "DST_TRKR_G4HIT" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRUTH_G4HIT", "DST_TRKR_HIT", "DST_TRUTH_RECO" ],
     "DST_TRUTH_G4HIT" => [ "DST_BBC_G4HIT", "DST_CALO_G4HIT", "DST_TRKR_G4HIT", "DST_TRUTH" ],
     "DST_TRKR_CLUSTER" => [ "DST_TRACKSEEDS", "DST_TRUTH_RECO" ],
@@ -166,6 +166,10 @@ if ($#ARGV < 0)
     print "   22 : AMPT\n";
     print "   23 : EPOS\n";
     print "   24 : Cosmics\n";
+    print "   25 : JS pythia8 Detroit\n";
+    print "   26 : JS pythia8 PhotonJet > 5GeV\n";
+    print "   27 : JS pythia8 PhotonJet > 10GeV\n";
+    print "   28 : JS pythia8 PhotonJet > 20GeV\n";
     print "-dsttype:\n";
     foreach my $tp (sort keys %daughters)
     {
@@ -185,7 +189,7 @@ if( ! exists $daughters{$dsttype})
     }
     exit(0);
 }
-if ($system < 1 || $system > 24)
+if ($system < 1 || $system > 28)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
@@ -249,7 +253,7 @@ if (defined $nopileup)
     $productionsubdir{"DST_TRKR_HIT"} = "pass2_nopileup";
     $productionsubdir{"DST_CALO_CLUSTER"} = "pass2_nopileup";
     $productionsubdir{"DST_CALO_NOZERO"} = "pass2calo_nopileup_nozero";
-    $productionsubdir{"DST_CALO_WAVEFORM"} = "pass3calo_waveform_nozero";
+    $productionsubdir{"DST_CALO_WAVEFORM"} = "pass2calo_waveform_nopileup";
     $productionsubdir{"DST_BBC_EPD"} = "pass2_nopileup";
     $productionsubdir{"DST_MBD_EPD"} = "pass2_nopileup";
     $productionsubdir{"DST_GLOBAL"} = "pass4_global_nopileup";
@@ -265,12 +269,12 @@ if (defined $pileup)
 {
     if ($pileup ne "3MHz")
     {
-	$productionsubdir{"DST_BBC_G4HIT"} = sprintf("pass2_%s",$pileup);
-	$productionsubdir{"DST_CALO_G4HIT"} = sprintf("pass2_%s",$pileup);
-	$productionsubdir{"DST_TRKR_G4HIT"} = sprintf("pass2_%s",$pileup);
-	$productionsubdir{"DST_TRUTH_G4HIT"} = sprintf("pass2_%s",$pileup);
-	$productionsubdir{"DST_TRKR_HIT"} = sprintf("pass3trk_%s",$pileup);
-	$productionsubdir{"DST_TRUTH"} = sprintf("pass3trk_%s",$pileup);
+#	$productionsubdir{"DST_BBC_G4HIT"} = sprintf("pass2_%s",$pileup);
+#	$productionsubdir{"DST_CALO_G4HIT"} = sprintf("pass2_%s",$pileup);
+#	$productionsubdir{"DST_TRKR_G4HIT"} = sprintf("pass2_%s",$pileup);
+#	$productionsubdir{"DST_TRUTH_G4HIT"} = sprintf("pass2_%s",$pileup);
+#	$productionsubdir{"DST_TRKR_HIT"} = sprintf("pass3trk_%s",$pileup);
+#	$productionsubdir{"DST_TRUTH"} = sprintf("pass3trk_%s",$pileup);
     }
 }
 
@@ -445,7 +449,7 @@ elsif ($system == 12)
     $specialsystemstring{"G4Hits"} = "pythia8_Jet10-";
     $systemstring = "pythia8_Jet10_";
     $topdir = sprintf("%s/JS_pp200_signal",$topdir);
-    $condorfileadd = sprintf("Jet10_3MHz");
+    $condorfileadd = sprintf("Jet10_%s",$pileup);
     if (defined $nopileup)
     {
 	$condorfileadd = sprintf("Jet10");
@@ -509,7 +513,8 @@ elsif ($system == 14)
     my $snglstring = sprintf("single_%s_%s_%d_%dMeV",$particle,$mom,$ptmin,$ptmax);
     $specialsystemstring{"G4Hits"} = sprintf("%s-",$snglstring);
     $systemstring = sprintf("%s_",$snglstring);
-    $topdir = sprintf("%s/multiple_particle",$topdir);
+#    $topdir = sprintf("%s/multiple_particle",$topdir);
+    $topdir = sprintf("%s/single_particle",$topdir);
     $condorfileadd = sprintf("%s",$snglstring);
     if (defined $nopileup)
     {
@@ -654,6 +659,110 @@ elsif ($system == 24)
     $pileupstring = "";
     $notlike{$systemstring} = ["pythia8" ,"single", "special"];
 }
+elsif ($system == 25)
+{
+    $specialsystemstring{"G4Hits"} = "pythia8_Detroit-";
+    $systemstring = "pythia8_Detroit_";
+    $topdir = sprintf("%s/JS_pp200_signal",$topdir);
+    $condorfileadd = sprintf("Detroit_%s",$pileup);
+    if (defined $nopileup)
+    {
+	$condorfileadd = sprintf("Detroit");
+        $systemstring = "pythia8_Detroit";
+    }
+    if (defined $embed)
+    {
+	$condorfileadd = sprintf("Detroit");
+        $systemstring = "pythia8_Detroit";
+	if ($embed eq "pau")
+	{
+	    $pileupstring = "_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm";
+	}
+	else
+	{
+	    $pileupstring = sprintf("_sHijing_%s_50kHz_bkg_0_20fm",$fm);
+	}
+    }
+    $specialcondorfileadd{"G4Hits"} = "Detroit";
+}
+elsif ($system == 26)
+{
+    $specialsystemstring{"G4Hits"} = "pythia8_PhotonJet5-";
+    $systemstring = "pythia8_PhotonJet5_";
+    $topdir = sprintf("%s/JS_pp200_signal",$topdir);
+    $condorfileadd = sprintf("PhotonJet5_%s",$pileup);
+    if (defined $nopileup)
+    {
+	$condorfileadd = sprintf("PhotonJet5");
+        $systemstring = "pythia8_PhotonJet5";
+    }
+    if (defined $embed)
+    {
+	$condorfileadd = sprintf("PhotonJet5");
+        $systemstring = "pythia8_PhotonJet5";
+	if ($embed eq "pau")
+	{
+	    $pileupstring = "_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm";
+	}
+	else
+	{
+	    $pileupstring = sprintf("_sHijing_%s_50kHz_bkg_0_20fm",$fm);
+	}
+    }
+    $specialcondorfileadd{"G4Hits"} = "PhotonJet5";
+}
+elsif ($system == 27)
+{
+    $specialsystemstring{"G4Hits"} = "pythia8_PhotonJet10-";
+    $systemstring = "pythia8_PhotonJet10_";
+    $topdir = sprintf("%s/JS_pp200_signal",$topdir);
+    $condorfileadd = sprintf("PhotonJet10_%s",$pileup);
+    if (defined $nopileup)
+    {
+	$condorfileadd = sprintf("PhotonJet10");
+        $systemstring = "pythia8_PhotonJet10";
+    }
+    if (defined $embed)
+    {
+	$condorfileadd = sprintf("PhotonJet10");
+        $systemstring = "pythia8_PhotonJet10";
+	if ($embed eq "pau")
+	{
+	    $pileupstring = "_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm";
+	}
+	else
+	{
+	    $pileupstring = sprintf("_sHijing_%s_50kHz_bkg_0_20fm",$fm);
+	}
+    }
+    $specialcondorfileadd{"G4Hits"} = "PhotonJet10";
+}
+elsif ($system == 28)
+{
+    $specialsystemstring{"G4Hits"} = "pythia8_PhotonJet20-";
+    $systemstring = "pythia8_PhotonJet20_";
+    $topdir = sprintf("%s/JS_pp200_signal",$topdir);
+    $condorfileadd = sprintf("PhotonJet20_%s",$pileup);
+    if (defined $nopileup)
+    {
+	$condorfileadd = sprintf("PhotonJet20");
+        $systemstring = "pythia8_PhotonJet20";
+    }
+    if (defined $embed)
+    {
+	$condorfileadd = sprintf("PhotonJet20");
+        $systemstring = "pythia8_PhotonJet20";
+	if ($embed eq "pau")
+	{
+	    $pileupstring = "_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm";
+	}
+	else
+	{
+	    $pileupstring = sprintf("_sHijing_%s_50kHz_bkg_0_20fm",$fm);
+	}
+    }
+    $specialcondorfileadd{"G4Hits"} = "PhotonJet20";
+}
 else
 {
     die "bad type $system\n";
@@ -743,7 +852,7 @@ foreach my $rem (keys %removethese)
     }
     else
     {
-	print "productionsubdir for $rem\n";
+	#print "productionsubdir for $rem\n";
 	$condor_subdir = sprintf("%s/condor/log",$condor_subdir);
     }
     my $condornameprefix = sprintf("condor");
@@ -781,9 +890,14 @@ if (defined $magnet)
     $removecondorfiles{sprintf("%s/%s-%010d-%05d.out",$condor_subdir,$condornameprefix,$runnumber,$segment)} = 1;
     $removecondorfiles{sprintf("%s/%s-%010d-%05d.err",$condor_subdir,$condornameprefix,$runnumber,$segment)} = 1;
     $removecondorfiles{sprintf("%s/%s-%010d-%05d.log",$condor_subdir,$condornameprefix,$runnumber,$segment)} = 1;
+    $removecondorfiles{sprintf("%s/%s-%010d-%06d.job",$condor_subdir,$condornameprefix,$runnumber,$segment)} = 1;
+    $removecondorfiles{sprintf("%s/%s-%010d-%06d.out",$condor_subdir,$condornameprefix,$runnumber,$segment)} = 1;
+    $removecondorfiles{sprintf("%s/%s-%010d-%06d.err",$condor_subdir,$condornameprefix,$runnumber,$segment)} = 1;
+    $removecondorfiles{sprintf("%s/%s-%010d-%06d.log",$condor_subdir,$condornameprefix,$runnumber,$segment)} = 1;
     if ($condor_subdir =~ /pass2/)
     {
 	$removecondorfiles{sprintf("%s/%s-%010d-%05d.bkglist",$condor_subdir,$condornameprefix,$runnumber,$segment)} = 1;
+	$removecondorfiles{sprintf("%s/%s-%010d-%06d.bkglist",$condor_subdir,$condornameprefix,$runnumber,$segment)} = 1;
     }
     my $lfn = sprintf("%s_%s-%010d-%05d.root",$rem,$loopsystemstring,$runnumber,$segment);
     if (defined $verbose && $rem ne 'G4Hits')

@@ -17,8 +17,11 @@ $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $getfiles = $dbh->prepare("select filename from datasets") || die $DBI::errstr;
 
 my $getfullfile = $dbh->prepare("select lfn,full_file_path from files");
+#my $getfullfile = $dbh->prepare("select lfn,full_file_path from files where time < (now() - interval '2 hour')");
 my $delfile = $dbh->prepare("delete from datasets where filename = ?");
 my %fcatfiles = ();
+$getfiles->execute();
+sleep(120);
 $getfullfile->execute();
 while (my @res = $getfullfile->fetchrow_array())
 {
@@ -26,7 +29,6 @@ while (my @res = $getfullfile->fetchrow_array())
 }
 
 
-$getfiles->execute();
 my $nfiles = $getfiles->rows;
 print "checking $nfiles files\n";
 my $nchk = 0;

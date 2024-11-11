@@ -22,7 +22,7 @@ my $pileup;
 my $magnet;
 GetOptions("embed:s" => \$embed, "exist" => \$file_exist_check, "fm:s" =>\$fm, "magnet:s" => \$magnet, "pileup:s" => \$pileup, "run:i"=>\$runnumber, "type:i"=>\$system, "verbosity" => \$verbosity, "nopileup" => \$nopileup);
 
-if ($system < 1 || $system > 24)
+if ($system < 1 || $system > 28)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
@@ -49,6 +49,10 @@ if ($system < 1 || $system > 24)
     print "   22 : AMPT\n";
     print "   23 : EPOS\n";
     print "   24 : Cosmic\n";
+    print "   25 : JS pythia8 Detroit\n";
+    print "   26 : JS pythia8 PhotonJet > 5GeV\n";
+    print "   27 : JS pythia8 PhotonJet > 10GeV\n";
+    print "   28 : JS pythia8 PhotonJet > 20GeV\n";
     exit(0);
 }
 
@@ -264,7 +268,7 @@ elsif ($system == 12)
 	    }
 	    else
 	    {
-		$systemstring = sprintf("%s_3MHz",$systemstring_g4hits);
+		$systemstring = sprintf("%s_%s",$systemstring_g4hits,$pileup);
 	    }
     }
     else
@@ -330,7 +334,8 @@ elsif ($system == 14)
 	$systemstring = sprintf("%s-",$systemstring_g4hits);
     }
     $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
-    $gpfsdir = "multiple_particle";
+#    $gpfsdir = "multiple_particle";
+    $gpfsdir = "single_particle";
     print "systemstring_g4hits: $systemstring_g4hits\n";
     print "systemstring: $systemstring\n";
 }
@@ -510,6 +515,151 @@ elsif ($system == 24)
     }
     $notlike{$systemstring} = ["pythia8" ,"single", "special"];
 }
+elsif ($system == 25) # detroit
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "pythia8_Detroit";
+    if (! defined $nopileup)
+    {
+	    if (defined $embed)
+	    {
+		if ($embed eq "auau")
+		{
+		    $systemstring = sprintf("%s_sHijing_%s_50kHz_bkg_0_20fm",$systemstring_g4hits,$fm);
+		}
+		elsif ($embed eq "pau")
+		{
+		    $systemstring = sprintf("%s_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm",$systemstring_g4hits);
+		}
+		else
+		{
+		    print "bad embed val: $embed, valid values auau, pau\n";
+		    exit(0);
+		}
+	    }
+	    else
+	    {
+		if (defined $pileup)
+		{
+		    $systemstring = sprintf("%s_%s",$systemstring_g4hits,$pileup);
+		}
+	    }
+    }
+    else
+    {
+	$systemstring = sprintf("%s-",$systemstring_g4hits);
+    }
+    $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
+    $gpfsdir = "js_pp200_signal";
+}
+elsif ($system == 26)
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "pythia8_PhotonJet5";
+    if (! defined $nopileup)
+    {
+	    if (defined $embed)
+	    {
+		if ($embed eq "auau")
+		{
+		    $systemstring = sprintf("%s_sHijing_%s_50kHz_bkg_0_20fm",$systemstring_g4hits,$fm);
+		}
+		elsif ($embed eq "pau")
+		{
+		    $systemstring = sprintf("%s_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm",$systemstring_g4hits);
+		}
+		else
+		{
+		    print "bad embed val: $embed, valid values auau, pau\n";
+		    exit(0);
+		}
+	    }
+	    else
+	    {
+		$systemstring = sprintf("%s_%s",$systemstring_g4hits,$pileup);
+	    }
+    }
+    else
+    {
+	$systemstring = sprintf("%s-",$systemstring_g4hits);
+    }
+    $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
+    $gpfsdir = "js_pp200_signal";
+#    $systemstring = "DST_HF_BOTTOM_pythia8-";
+#    $gpfsdir = "HF_pp200_signal";
+}
+elsif ($system == 27)
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "pythia8_PhotonJet10";
+    if (! defined $nopileup)
+    {
+	    if (defined $embed)
+	    {
+		if ($embed eq "auau")
+		{
+		    $systemstring = sprintf("%s_sHijing_%s_50kHz_bkg_0_20fm",$systemstring_g4hits,$fm);
+		}
+		elsif ($embed eq "pau")
+		{
+		    $systemstring = sprintf("%s_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm",$systemstring_g4hits);
+		}
+		else
+		{
+		    print "bad embed val: $embed, valid values auau, pau\n";
+		    exit(0);
+		}
+	    }
+	    else
+	    {
+		$systemstring = sprintf("%s_%s",$systemstring_g4hits,$pileup);
+	    }
+    }
+    else
+    {
+	$systemstring = sprintf("%s-",$systemstring_g4hits);
+    }
+    $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
+    $gpfsdir = "js_pp200_signal";
+#    $systemstring = "DST_HF_BOTTOM_pythia8-";
+#    $gpfsdir = "HF_pp200_signal";
+}
+elsif ($system == 28)
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "pythia8_PhotonJet20";
+    if (! defined $nopileup)
+    {
+	    if (defined $embed)
+	    {
+		if ($embed eq "auau")
+		{
+		    $systemstring = sprintf("%s_sHijing_%s_50kHz_bkg_0_20fm",$systemstring_g4hits,$fm);
+		}
+		elsif ($embed eq "pau")
+		{
+		    $systemstring = sprintf("%s_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm",$systemstring_g4hits);
+		}
+		else
+		{
+		    print "bad embed val: $embed, valid values auau, pau\n";
+		    exit(0);
+		}
+	    }
+	    else
+	    {
+		$systemstring = sprintf("%s_%s",$systemstring_g4hits,$pileup);
+	    }
+    }
+    else
+    {
+	$systemstring = sprintf("%s-",$systemstring_g4hits);
+    }
+    $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
+    $gpfsdir = "js_pp200_signal";
+#    $systemstring = "DST_HF_BOTTOM_pythia8-";
+#    $gpfsdir = "HF_pp200_signal";
+}
 else
 {
     die "bad type $system\n";
@@ -549,10 +699,10 @@ $conds = sprintf("%s order by dsttype",$conds);
 my $sqlcmd = sprintf("select distinct(dsttype) from datasets where %s", $conds);
 #print "$sqlcmd\n";
 my $getdsttypes = $dbh->prepare($sqlcmd);
-my %topdcachedir = ();
-#$topdcachedir{sprintf("/pnfs/rcf.bnl.gov/sphenix/disk/MDC2/%s",$gpfsdir)} = 1;
-#$topdcachedir{sprintf("/sphenix/lustre01/sphnxpro/dcsphst004/mdc2/%s",lc $gpfsdir)} = 1;
-$topdcachedir{sprintf("/sphenix/lustre01/sphnxpro/mdc2/%s",lc $gpfsdir)} = 1;
+my %toplustredir = ();
+#$toplustredir{sprintf("/pnfs/rcf.bnl.gov/sphenix/disk/MDC2/%s",$gpfsdir)} = 1;
+#$toplustredir{sprintf("/sphenix/lustre01/sphnxpro/dcsphst004/mdc2/%s",lc $gpfsdir)} = 1;
+$toplustredir{sprintf("/sphenix/lustre01/sphnxpro/mdc2/%s",lc $gpfsdir)} = 1;
 
 if ($#ARGV < 0)
 {
@@ -604,7 +754,11 @@ if (exists $notlike{$systemstring})
 $conds = sprintf("select max(segment) from datasets where %s",$conds);
 
 my $getlastseg = $dbh->prepare($conds)|| die $DBI::errstr;
-
+if (defined $verbosity)
+{
+    print "type: $type\n";
+    print "$conds\n";
+}
 $getlastseg->execute($type)|| die $DBI::errstr;;
 my @res = $getlastseg->fetchrow_array();
 if (! defined $res[0])
@@ -623,7 +777,7 @@ while (my @res = $getsegments->fetchrow_array())
 my $nsegs_gpfs = keys %seglist;
 print "number of segments processed:  $nsegs_gpfs\n";
 my $typeWithUnderscore = sprintf("%s",$type);
-foreach my $dcdir (keys  %topdcachedir)
+foreach my $dcdir (keys  %toplustredir)
 {
 #    if ($type eq "DST_TRUTH" || $type eq "G4Hits")
     {
