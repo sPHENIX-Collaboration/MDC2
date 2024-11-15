@@ -12,18 +12,20 @@ my $build;
 my $incremental;
 my $memory;
 my $outevents = 0;
+my $overwrite;
 my $runnumber;
 my $shared;
 my $test;
 my $pileup;
 my $verbosity = 0;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "overwrite"=> \$overwrite, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"Jet40\", \"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\", \"Detroit\" production>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
+    print "--overwrite : overwrite exiting jobfiles\n";
     print "--pileup : collision rate (with unit, kHz, MHz)\n";
     print "--run: <runnumber>\n";
     print "--shared : submit jobs to shared pool\n";
@@ -229,7 +231,11 @@ while (my @res = $getfiles->fetchrow_array())
 	}
 	if (defined $memory)
 	{
-	    $tstflag = sprintf("%s --%s",$tstflag,$memory)
+	    $tstflag = sprintf("%s --memory %s",$tstflag, $memory)
+	}
+        if (defined $overwrite)
+	{
+	    $tstflag= sprintf("%s --overwrite",$tstflag);
 	}
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $bkglistfile, $outdir, $build, $pileup, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
