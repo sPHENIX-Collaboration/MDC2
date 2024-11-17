@@ -6,35 +6,64 @@ use File::Path;
 use Getopt::Long;
 
 my $test;
+my $build;
 my $incremental;
 my $killexist;
-my $runnumber = 17;
+my $memory;
+my $runnumber;
 my $events = 1000;
 my $mom;
-GetOptions("test"=>\$test, "increment"=>\$incremental, "killexist" => \$killexist, "mom:s" => \$mom);
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "killexist" => \$killexist, "memory:s"=>\$memory, "mom:s" => \$mom, "run:i" =>\$runnumber, "test"=>\$test);
 if ($#ARGV < 3)
 {
     print "usage: run_all.pl <number of jobs> <particle> <pmin> <pmax> <--mom>\n";
     print "parameters:\n";
+    print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
     print "--killexist : delete output file if it already exists (but no jobfile)\n";
     print "--mom <p or pt> : use p or pt for momentum\n";
+    print "--run: <runnumber>\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
+my $isbad = 0;
+
 if (! defined $mom || ($mom ne "pt" and $mom ne "p"))
 {
     print "need to give p or pt for -mom\n";
-    exit(1);
+    $isbad = 1;
 }
 
 my $hostname = `hostname`;
 chomp $hostname;
 if ($hostname !~ /phnxsub/)
 {
-    print "submit only from phnxsub01 or phnxsub02\n";
+    print "submit only from phnxsub hosts\n";
+    $isbad = 1;
+}
+
+if (! defined $runnumber)
+{
+    print "need runnumber with --run <runnumber>\n";
+    $isbad = 1;
+}
+
+if (! defined $build)
+{
+    print "need build with --build <ana build>\n";
+    $isbad = 1;
+}
+if (! -f "outdir.txt")
+{
+    print "could not find outdir.txt\n";
+    $isbad = 1;
+}
+
+if ($isbad > 0)
+{
     exit(1);
 }
+
 
 my $maxsubmit = $ARGV[0];
 my $particle = lc $ARGV[1];
@@ -95,7 +124,13 @@ for (my $isub = 0; $isub < $maxsubmit; $isub++)
 	{
 	    $tstflag="--test";
 	}
-	system("perl run_condor.pl $events $particle $pmin $pmax $mom $outdir $outfile $runnumber $njob $tstflag");
+	if (defined $memory)
+	{
+	    $tstflag = sprintf("%s --memory %s",$tstflag, $memory)
+	}
+	my $subcmd = sprintf("perl run_condor.pl %d %s %d %d %s %s %s %s %d %d %s", $events, $particle, $pmin, $pmax, $mom, $outdir, $outfile, $build, $runnumber, $njob, $tstflag);
+	print "cmd: $subcmd\n";
+	system($subcmd);
 	my $exit_value  = $? >> 8;
 	if ($exit_value != 0)
 	{

@@ -11,8 +11,6 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.391
-
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
     cd $_CONDOR_SCRATCH_DIR
@@ -21,33 +19,7 @@ else
     echo condor scratch NOT set
 fi
 
-# arguments 
-# $1: number of events
-# $2: particle
-# $3: ptmin
-# $4: ptmax
-# $5: output file
-# $6: output dir
-# $7: runnumber
-# $8: sequence
+container_script=container_`basename $this_script`
+singularity exec -B /home -B /direct/sphenix+u -B /gpfs02 -B /sphenix/u -B /sphenix/lustre01 -B /sphenix/user  -B /sphenix/sim /cvmfs/sphenix.sdcc.bnl.gov/singularity/rhic_sl7.sif ./$container_script $*
 
-echo 'here comes your environment'
-
-printenv
-
-echo arg1 \(events\) : $1
-echo arg2 \(particle\): $2
-echo arg3 \(ptmin \(MeV\)\): $3
-echo arg4 \(ptmax \(MeV\)\): $4
-echo arg5 \(output file\): $5
-echo arg6 \(output dir\): $6
-echo arg7 \(runnumber\): $7
-echo arg8 \(sequence\): $8
-
-runnumber=$(printf "%010d" $7)
-sequence=$(printf "%05d" $8)
-
-echo running root.exe -q -b Fun4All_G4_Single_pt.C\($1,\"$2\",$3,$4,\"$5\",\"$6\"\)
-root.exe -q -b Fun4All_G4_Single_pt.C\($1,\"$2\",$3,$4,\"$5\",\"$6\"\)
-
-echo "script done"
+echo "wrapper script done"
