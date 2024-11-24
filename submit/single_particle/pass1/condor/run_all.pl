@@ -21,6 +21,7 @@ if ($#ARGV < 3)
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
     print "--killexist : delete output file if it already exists (but no jobfile)\n";
+    print "-memory: <mem in MB>\n";
     print "--mom <p or pt> : use p or pt for momentum\n";
     print "--run: <runnumber>\n";
     print "--test : dryrun - create jobfiles\n";

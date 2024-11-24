@@ -9,11 +9,12 @@ use File::Basename;
 my $test;
 my $memory = sprintf("4096MB");
 
-GetOptions("test"=>\$test);
+GetOptions("memory:s"=>\$memory, "test"=>\$test);
 if ($#ARGV < 9)
 {
     print "usage: run_condor.pl <events> <particle> <pmin> <pmax> <mom> <outdir> <outfile> <build> <runnumber> <sequence>\n";
     print "options:\n";
+    print "-memory: <mem in MB>\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
 }
