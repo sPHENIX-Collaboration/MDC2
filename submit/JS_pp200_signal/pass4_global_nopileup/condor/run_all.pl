@@ -20,7 +20,7 @@ my $test;
 GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "overwrite"=>\$overwrite, "phenix" => \$phenix, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet10\", <\"Jet30\", <\"Jet40\", \"PhotonJet\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet10\", <\"Jet30\", <\"Jet40\", \"PhotonJet\, \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\", \"Detroit\" production>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";

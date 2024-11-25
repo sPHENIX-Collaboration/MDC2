@@ -8,7 +8,8 @@ Initialdir  	=  $(rundir)
 PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)
 accounting_group = group_sphenix.prod
 accounting_group_user = sphnxpro
-request_memory = 2048MB
+request_memory = $(memory)
+batch_name = $(batchname)
 Priority = $(baseprio)
 job_lease_duration = 3600
 Queue executable, nevents, infile, dstoutfile, dstoutdir, jettrigger, build, runnumber, sequence, outfile, errfile, condorlogfile, rundir, baseprio, memory, batchname from condor.list

@@ -8,29 +8,65 @@ use Getopt::Long;
 use DBI;
 
 
-my $outevents = 0;
-my $runnumber=15;
-my $test;
+my $build;
 my $incremental;
+my $memory;
+my $outevents = 0;
+my $runnumber;
 my $shared;
-my $MHz = 3;
-GetOptions("test"=>\$test, "increment"=>\$incremental, "MHz:i" => \$MHz, "shared" => \$shared);
+my $test;
+my $pileup;
+my $verbosity = 0;
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"Jet40\", \"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\", \"Detroit\" production>\n";
     print "parameters:\n";
+    print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
-    print "--MHz : MHz collision rate\n";
+    print "--memory : memory requirement with unit (MB)\n";
+    print "--pileup : collision rate (with unit, kHz, MHz)\n";
+    print "--run: <runnumber>\n";
     print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
+    print "--verbosity: <level>\n";
     exit(1);
 }
+
+my $isbad = 0;
 
 my $hostname = `hostname`;
 chomp $hostname;
 if ($hostname !~ /phnxsub/)
 {
-    print "submit only from phnxsub01 or phnxsub02\n";
+    print "submit only from phnxsub hosts\n";
+    $isbad = 1;
+}
+if (! defined $pileup)
+{
+    print "need pileup with --pileup <rate with unit> (kHz, MHz)\n";
+    $isbad = 1;
+}
+
+if (! defined $runnumber)
+{
+    print "need runnumber with --run <runnumber>\n";
+    $isbad = 1;
+}
+
+if (! defined $build)
+{
+    print "need build with --build <ana build>\n";
+    $isbad = 1;
+}
+if (! -f "outdir.txt")
+{
+    print "could not find outdir.txt\n";
+    $isbad = 1;
+}
+
+if ($isbad > 0)
+{
     exit(1);
 }
 
@@ -57,14 +93,9 @@ if (-f $condorlistfile)
     unlink $condorlistfile;
 }
 
-if (! -f "outdir.txt")
-{
-    print "could not find outdir.txt\n";
-    exit(1);
-}
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$jettrigger = sprintf("%s_%sMHz",$jettrigger,$MHz);
+$jettrigger = sprintf("%s_%s",$jettrigger,$pileup);
 $outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,lc $jettrigger);
 if (! -d $outdir)
 {
@@ -79,9 +110,13 @@ my %clusterhash = ();
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRACKSEEDS' and filename like '%$outfilestring%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
-my $getclusterfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_CLUSTER' and filename like '%$outfilestring%' and runnumber = $runnumber");
-
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRACKSEEDS' and filename like '%$outfilestring-%' and runnumber = $runnumber order by segment") || die $DBI::errstr;
+my $getclusterfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_CALO_CLUSTER' and filename like '%$outfilestring-%' and runnumber = $runnumber");
+if ($verbosity > 0)
+{
+    print "select filename,segment from datasets where dsttype = 'DST_TRACKSEEDS' and filename like '%$outfilestring-%' and runnumber = $runnumber order by segment\n";
+    print "select filename,segment from datasets where dsttype = 'DST_CALO_CLUSTER' and filename like '%$outfilestring-%' and runnumber = $runnumber\n";
+}
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
 my $nsubmit = 0;
@@ -124,7 +159,11 @@ foreach my $segment (sort keys %trkhash)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $clusterhash{sprintf("%06d",$segment)}, $outfilename, $outdir, $runnumber, $segment, $tstflag);
+	if (defined $memory)
+	{
+	    $tstflag=sprintf("%s %s",$tstflag,$memory);
+	}
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $clusterhash{sprintf("%06d",$segment)}, $outfilename, $outdir, $build, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

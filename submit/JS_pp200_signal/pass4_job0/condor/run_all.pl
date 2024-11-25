@@ -24,9 +24,12 @@ if ($#ARGV < 1)
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
+    print "--memory : memory requirement with unit (MB)\n";
     print "--pileup : collision rate (with unit, kHz, MHz)\n";
+    print "--run: <runnumber>\n";
     print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
+    print "--verbosity: <level>\n";
     exit(1);
 }
 
@@ -123,6 +126,10 @@ while (my @res = $getfiles->fetchrow_array())
 	if (defined $test)
 	{
 	    $tstflag="--test";
+	}
+	if (defined $memory)
+	{
+	    $tstflag=sprintf("%s %s",$tstflag,$memory);
 	}
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $outfilename, $outdir, $build, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";

@@ -31,7 +31,7 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 //________________________________________________________________________________________________
   int Fun4All_G4_Pileup_pp(
     const int nEvents = 0,
-    const string &inputFile = "G4Hits_pythia8_mb-0000000015-000000.root",
+    const string &inputFile = "G4Hits_pythia8_PhotonJet5-0000000022-000000.root",
     const string &backgroundList = "pileupbkgppmb.list",
     const string &outdir = ".",
     const string &jettrigger = "NONE",

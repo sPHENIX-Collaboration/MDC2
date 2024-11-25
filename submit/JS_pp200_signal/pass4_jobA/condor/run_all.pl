@@ -24,9 +24,12 @@ if ($#ARGV < 1)
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
+    print "--memory : memory requirement with unit (MB)\n";
     print "--pileup : collision rate (with unit, kHz, MHz)\n";
+    print "--run: <runnumber>\n";
     print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
+    print "--verbosity: <level>\n";
     exit(1);
 }
 

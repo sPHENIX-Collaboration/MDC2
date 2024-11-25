@@ -10,6 +10,7 @@ my $test;
 my $memory = sprintf("2048MB");
 
 GetOptions("memory:s"=>\$memory, "test"=>\$test);
+
 if ($#ARGV < 7)
 {
     print "usage: run_condor.pl <events>  <jettrigger> <g4hit infile> <outfile> <outdir> <build> <runnumber> <sequence>\n";
