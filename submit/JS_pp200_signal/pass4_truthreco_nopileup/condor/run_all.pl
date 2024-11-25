@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use strict;
 use warnings;
@@ -10,18 +10,22 @@ use DBI;
 
 my $build;
 my $incremental;
+my $memory;
 my $outevents = 0;
 my $overwrite;
 my $runnumber;
 my $shared;
 my $test;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "overwrite"=>\$overwrite, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
+my $verbosity = 0;
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "overwrite"=>\$overwrite, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet10\", <\"Jet30\", <\"Jet40\", \"PhotonJet\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet10\", <\"Jet30\", <\"Jet40\", \"PhotonJet\, \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\", \"Detroit\" production>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
+    print "--memory : memory requirement with unit (MB)\n";
+    print "--overwrite : overwrite eisting output\n";
     print "--run: <runnumber>\n";
     print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
@@ -64,9 +68,13 @@ my $jettrigger = $ARGV[1];
 if ($jettrigger  ne "Jet10" &&
     $jettrigger  ne "Jet30" &&
     $jettrigger  ne "Jet40" &&
-    $jettrigger  ne "PhotonJet")
+    $jettrigger  ne "PhotonJet" &&
+    $jettrigger  ne "PhotonJet5" &&
+    $jettrigger  ne "PhotonJet10" &&
+    $jettrigger  ne "PhotonJet20" &&
+    $jettrigger  ne "Detroit")
 {
-    print "second argument has to be Jet10, Jet30, Jet40 or PhotonJet\n";
+    print "second argument has to be Jet10, Jet30, Jet40, PhotonJet, PhotonJet5, PhotonJet10, PhotonJet20 or Detroit\n";
     exit(1);
 }
 
@@ -94,6 +102,13 @@ my $getclusterfiles = $dbh->prepare("select filename,segment from datasets where
 my $gettrackfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRACKS' and filename like 'DST_TRACKS_$outfilelike%' and runnumber = $runnumber") || die $DBI::errstr;
 my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH' and filename like 'DST_TRUTH_$outfilelike%' and runnumber = $runnumber") || die $DBI::errstr;
 
+if ($verbosity > 0)
+{
+    print "select filename,segment from datasets where dsttype = 'G4Hits' and filename like 'G4Hits_$outfilelike%' and runnumber = $runnumber\n";
+    print "select filename,segment from datasets where dsttype = 'DST_TRKR_CLUSTER' and filename like 'DST_TRKR_CLUSTER_$outfilelike%' and runnumber = $runnumber\n";
+    print "select filename,segment from datasets where dsttype = 'DST_TRACKS' and filename like 'DST_TRACKS_$outfilelike%' and runnumber = $runnumber\n";
+    print "select filename,segment from datasets where dsttype = 'DST_TRUTH' and filename like 'DST_TRUTH_$outfilelike%' and runnumber = $runnumber\n";
+}
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
 
@@ -172,6 +187,10 @@ foreach my $segment (sort keys %trackhash)
         elsif (defined $overwrite)
 	{
 	    $tstflag="--overwrite";
+	}
+	if (defined $memory)
+	{
+	    $tstflag = sprintf("%s %s",$tstflag,$memory);
 	}
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $g4hithash{sprintf("%06d",$segment)}, $clusterhash{sprintf("%06d",$segment)}, $trackhash{sprintf("%06d",$segment)}, $truthhash{sprintf("%06d",$segment)}, $outfilename, $outdir, $build, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
