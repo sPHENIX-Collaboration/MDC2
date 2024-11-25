@@ -5,9 +5,9 @@ if [ $# -eq 0 ]
     exit 1
 fi
 echo $1
-variable=$1
+variable=$1_300kHz
 
-run=19
+run=22
 runnumber=$(printf "%010d" $run)
 
 #exit 0
@@ -22,6 +22,6 @@ for i in `cat bla | awk '{print $12}' | awk -F- '{print $3}' | awk -F. -v runnum
 
 [ -f sedlist ] && rm sedlist
 for i in `cat tmplist`; do echo log/run${run}/${variable}/condor_${variable}-$i >> sedlist; done
-#for i in `cat sedlist`; do  sed -i 's/6144MB/12288MB/' $i; echo $i; done
+for i in `cat sedlist`; do  sed -i 's/4097MB/8192MB/' $i; echo $i; done
 for i in `cat sedlist`; do condor_submit $i; done
 #/direct/sphenix+u/sphnxpro/MDC2/submit/JS_pp200_signal/pass3_job0_nopileup/condor/log/run7/PhotonJet/condor_PhotonJet-0000000007-15130.out

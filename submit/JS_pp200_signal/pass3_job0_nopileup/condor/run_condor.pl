@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use strict;
 use warnings;
@@ -7,7 +7,7 @@ use File::Path;
 use File::Basename;
 
 my $test;
-my $memory = sprintf("4096MB");
+my $memory = sprintf("1000MB");
 
 GetOptions("memory:s"=>\$memory, "test"=>\$test);
 if ($#ARGV < 7)
