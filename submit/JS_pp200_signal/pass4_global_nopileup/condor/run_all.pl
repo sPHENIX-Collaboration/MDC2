@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use strict;
 use warnings;
@@ -10,19 +10,22 @@ use DBI;
 
 my $build;
 my $incremental;
+my $memory;
 my $outevents = 0;
 my $overwrite;
 my $phenix;
 my $runnumber;
 my $shared;
 my $test;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "overwrite"=>\$overwrite, "phenix" => \$phenix, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "overwrite"=>\$overwrite, "phenix" => \$phenix, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", <\"Jet30\", <\"Jet40\", \"PhotonJet\" production>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
+    print "--memory : memory requirement with unit (MB)\n";
+    print "--overwrite : overwrite eisting output\n";
     print "--run: <runnumber>\n";
     print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
@@ -65,9 +68,13 @@ my $jettrigger = $ARGV[1];
 if ($jettrigger  ne "Jet10" &&
     $jettrigger  ne "Jet30" &&
     $jettrigger  ne "Jet40" &&
-    $jettrigger  ne "PhotonJet")
+    $jettrigger  ne "PhotonJet" &&
+    $jettrigger  ne "PhotonJet5" &&
+    $jettrigger  ne "PhotonJet10" &&
+    $jettrigger  ne "PhotonJet20" &&
+    $jettrigger  ne "Detroit")
 {
-    print "second argument has to be Jet10, Jet30, Jet40 or PhotonJet\n";
+    print "second argument has to be Jet10, Jet30, Jet40, PhotonJet, PhotonJet5, PhotonJet10, PhotonJet20 or Detroit\n";
     exit(1);
 }
 
@@ -141,6 +148,10 @@ foreach my $segment (sort keys %trkhash)
         elsif (defined $overwrite)
 	{
 	    $tstflag="--overwrite";
+	}
+	if (defined $memory)
+	{
+	    $tstflag = sprintf("%s %s",$tstflag,$memory);
 	}
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $mbdepdhash{sprintf("%06d",$segment)}, $outfilename, $outdir, $build, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
