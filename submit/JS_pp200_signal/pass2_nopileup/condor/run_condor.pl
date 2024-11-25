@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use strict;
 use warnings;
@@ -8,7 +8,7 @@ use File::Basename;
 
 my $test;
 my $overwrite;
-my $memory = sprintf("2048MB");
+my $memory = sprintf("2000MB");
 GetOptions("overwrite" => \$overwrite, "test"=>\$test);
 if ($#ARGV < 10)
 {
