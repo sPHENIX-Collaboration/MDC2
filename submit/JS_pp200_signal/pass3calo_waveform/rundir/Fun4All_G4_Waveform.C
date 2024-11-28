@@ -22,6 +22,7 @@
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
+#include <fun4all/Fun4AllRunNodeInputManager.h>
 #include <fun4all/Fun4AllServer.h>
 
 #include <ffamodules/CDBInterface.h>
@@ -115,7 +116,7 @@ void Fun4All_G4_Waveform(
   //so I will call the cemc tower reco here just to have the geom node.
   //by doing this it also remove the dependncy for running the calo_cluster before this pass so we can process it independently from G4Hits ;) and all of our output node name is exactly same with real data
   CEMC_Cells();
-  CEMC_Towers();
+  //CEMC_Towers();
 
   CaloWaveformSim *caloWaveformSim = new CaloWaveformSim();
   caloWaveformSim->set_detector_type(CaloTowerDefs::HCALOUT);
@@ -187,6 +188,11 @@ void Fun4All_G4_Waveform(
   ca2->set_softwarezerosuppression(true, 60);
   se->registerSubsystem(ca2);
 
+  Fun4AllInputManager *intrue2 = new Fun4AllRunNodeInputManager("DST_GEO");
+  std::string geoLocation = CDBInterface::instance()->getUrl("calo_geo");
+  intrue2->AddFile(geoLocation);
+  se->registerInputManager(intrue2);
+
   /////////////////////////////////////////////////////
   // Set status of towers, Calibrate towers,  Cluster
   /////////////////////////////////////////////////////
@@ -245,7 +251,7 @@ void Fun4All_G4_Waveform(
   std::cout << "Building clusters" << std::endl;
   RawClusterBuilderTemplate *ClusterBuilder = new RawClusterBuilderTemplate("EmcRawClusterBuilderTemplate");
   ClusterBuilder->Detector("CEMC");
-  ClusterBuilder->set_threshold_energy(0.030);  // for when using basic calibration
+  ClusterBuilder->set_threshold_energy(0.070);  // for when using basic calibration
   std::string emc_prof = getenv("CALIBRATIONROOT");
   emc_prof += "/EmcProfile/CEMCprof_Thresh30MeV.root";
   ClusterBuilder->LoadProfile(emc_prof);
