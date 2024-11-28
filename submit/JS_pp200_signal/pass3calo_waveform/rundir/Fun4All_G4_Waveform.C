@@ -3,7 +3,6 @@
 #ifndef MACRO_FUN4ALLG4WAVEFORM_C
 #define MACRO_FUN4ALLG4WAVEFORM_C
 
-
 #include <GlobalVariables.C>
 
 #include <G4_CEmc_Spacal.C>
@@ -15,8 +14,8 @@
 #include <caloreco/CaloGeomMapping.h>
 #include <caloreco/CaloTowerBuilder.h>
 #include <caloreco/CaloTowerCalib.h>
-#include <caloreco/CaloWaveformProcessing.h>
 #include <caloreco/CaloTowerStatus.h>
+#include <caloreco/CaloWaveformProcessing.h>
 
 #include <calowaveformsim/CaloWaveformSim.h>
 
@@ -30,8 +29,8 @@
 
 #include <fun4allutils/TimerStats.h>
 
-#include <phool/recoConsts.h>
 #include <phool/PHRandomSeed.h>
+#include <phool/recoConsts.h>
 
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libg4centrality.so)
@@ -48,9 +47,8 @@ void Fun4All_G4_Waveform(
     const string &cdbtag = "MDC2")
 
 {
-  
   Fun4AllServer *se = Fun4AllServer::instance();
-  se->Verbosity(1); // set it to 1 if you want event printouts
+  se->Verbosity(1);  // set it to 1 if you want event printouts
 
   recoConsts *rc = recoConsts::instance();
 
@@ -65,7 +63,7 @@ void Fun4All_G4_Waveform(
   // you only need a list that have all G4hits and primary truth to run the
   // correction it is safe to just have the g4hit list
   //-----------------------------
-  
+
   //===============
   // Input options
   //===============
@@ -79,9 +77,6 @@ void Fun4All_G4_Waveform(
   Input::READHITS = true;
 
   INPUTREADHITS::filename[0] = inputFile0;
-    
-
-
 
   //-----------------
   // Initialize the selected Input/Event generation
@@ -92,12 +87,12 @@ void Fun4All_G4_Waveform(
   // register all input generators with Fun4All
   InputRegister();
 
-// register the flag handling
+  // register the flag handling
   FlagHandler *flag = new FlagHandler();
   se->registerSubsystem(flag);
 
   // set up production relatedstuff
-   Enable::PRODUCTION = true;
+  Enable::PRODUCTION = true;
 
   //======================
   // Write the DST
@@ -111,12 +106,12 @@ void Fun4All_G4_Waveform(
   //======================
   // What to run
   //======================
-  //the only reason that we are including the calo_cluster node is we want to use the CEMC geom node from it, 
-  //but we have calib node name confliting(it has a towerinfov1 calib node with the same name we want to usebut we want to make it v2) if we do that...
-  //so I will call the cemc tower reco here just to have the geom node.
-  //by doing this it also remove the dependncy for running the calo_cluster before this pass so we can process it independently from G4Hits ;) and all of our output node name is exactly same with real data
+  // the only reason that we are including the calo_cluster node is we want to use the CEMC geom node from it,
+  // but we have calib node name confliting(it has a towerinfov1 calib node with the same name we want to usebut we want to make it v2) if we do that...
+  // so I will call the cemc tower reco here just to have the geom node.
+  // by doing this it also remove the dependncy for running the calo_cluster before this pass so we can process it independently from G4Hits ;) and all of our output node name is exactly same with real data
   CEMC_Cells();
-  //CEMC_Towers();
+  // CEMC_Towers();
 
   CaloWaveformSim *caloWaveformSim = new CaloWaveformSim();
   caloWaveformSim->set_detector_type(CaloTowerDefs::HCALOUT);
@@ -125,10 +120,9 @@ void Fun4All_G4_Waveform(
   caloWaveformSim->set_pedestalsamples(12);
   caloWaveformSim->set_timewidth(0.2);
   caloWaveformSim->set_peakpos(6);
-  //caloWaveformSim->Verbosity(2);
-  //caloWaveformSim->set_noise_type(CaloWaveformSim::NOISE_NONE);
+  // caloWaveformSim->Verbosity(2);
+  // caloWaveformSim->set_noise_type(CaloWaveformSim::NOISE_NONE);
   se->registerSubsystem(caloWaveformSim);
-  
 
   caloWaveformSim = new CaloWaveformSim();
   caloWaveformSim->set_detector_type(CaloTowerDefs::HCALIN);
@@ -140,7 +134,6 @@ void Fun4All_G4_Waveform(
   //  caloWaveformSim->set_noise_type(CaloWaveformSim::NOISE_NONE);
   se->registerSubsystem(caloWaveformSim);
 
-
   caloWaveformSim = new CaloWaveformSim();
   caloWaveformSim->set_detector_type(CaloTowerDefs::CEMC);
   caloWaveformSim->set_detector("CEMC");
@@ -149,14 +142,14 @@ void Fun4All_G4_Waveform(
   caloWaveformSim->set_timewidth(0.2);
   caloWaveformSim->set_peakpos(6);
   caloWaveformSim->set_calibName("cemc_pi0_twrSlope_v1_default");
-  
+
   //  caloWaveformSim->set_noise_type(CaloWaveformSim::NOISE_NONE);
-  
+
   caloWaveformSim->get_light_collection_model().load_data_file(
-  string(getenv("CALIBRATIONROOT")) +
-  string("/CEMC/LightCollection/Prototype3Module.xml"),
-  "data_grid_light_guide_efficiency", "data_grid_fiber_trans");
-  
+      string(getenv("CALIBRATIONROOT")) +
+          string("/CEMC/LightCollection/Prototype3Module.xml"),
+      "data_grid_light_guide_efficiency", "data_grid_fiber_trans");
+
   se->registerSubsystem(caloWaveformSim);
 
   CaloTowerBuilder *ca2 = new CaloTowerBuilder();
@@ -165,7 +158,7 @@ void Fun4All_G4_Waveform(
   ca2->set_dataflag(false);
   ca2->set_processing_type(CaloWaveformProcessing::TEMPLATE);
   ca2->set_builder_type(CaloTowerDefs::kWaveformTowerSimv1);
-  //30 ADC SZS
+  // 30 ADC SZS
   ca2->set_softwarezerosuppression(true, 30);
   se->registerSubsystem(ca2);
 
@@ -184,7 +177,7 @@ void Fun4All_G4_Waveform(
   ca2->set_dataflag(false);
   ca2->set_processing_type(CaloWaveformProcessing::TEMPLATE);
   ca2->set_builder_type(CaloTowerDefs::kWaveformTowerSimv1);
-  //a large uniform ZS threshold for CEMC, 60 ADC now
+  // a large uniform ZS threshold for CEMC, 60 ADC now
   ca2->set_softwarezerosuppression(true, 60);
   se->registerSubsystem(ca2);
 
@@ -233,9 +226,10 @@ void Fun4All_G4_Waveform(
   se->registerSubsystem(calibIHCal);
 
   ////////////////
-  //MC Calibration
+  // MC Calibration
   std::string MC_Calib = CDBInterface::instance()->getUrl("CEMC_MC_RECALIB");
-  if(MC_Calib.empty()){
+  if (MC_Calib.empty())
+  {
     std::cout << "No MC calibration found :( )" << std::endl;
     gSystem->Exit(0);
   }
@@ -258,7 +252,6 @@ void Fun4All_G4_Waveform(
   ClusterBuilder->set_UseTowerInfo(1);  // to use towerinfo objects rather than old RawTower
   se->registerSubsystem(ClusterBuilder);
 
-
   //--------------
   // Timing module is last to register
   //--------------
@@ -272,7 +265,7 @@ void Fun4All_G4_Waveform(
 
   InputManagers();
   TRandom3 randGen;
-  //get seed
+  // get seed
   unsigned int seed = PHRandomSeed();
   randGen.SetSeed(seed);
   // a int from 0 to 3259
@@ -282,7 +275,6 @@ void Fun4All_G4_Waveform(
   opedname << "pedestal-54256-0" << std::setw(4) << std::setfill('0') << sequence << ".root";
 
   std::string pedestalname = opedname.str();
-  
 
   Fun4AllInputManager *hitsin = new Fun4AllNoSyncDstInputManager("DST2");
   hitsin->AddFile(pedestalname);
@@ -300,30 +292,27 @@ void Fun4All_G4_Waveform(
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     out->AddNode("Sync");
     out->AddNode("EventHeader");
-// Inner Hcal
-    //this is what production macto gives us
+    // Inner Hcal
+    // this is what production macto gives us
     out->AddNode("CLUSTERINFO_HCALIN");
     out->AddNode("TOWERINFO_CALIB_HCALIN");
     out->AddNode("WAVEFORM_HCALIN");
     out->AddNode("TOWERS_HCALIN");
-    
 
-// Outer Hcal
+    // Outer Hcal
     out->AddNode("CLUSTERINFO_HCALOUT");
     out->AddNode("TOWERINFO_CALIB_HCALOUT");
     out->AddNode("WAVEFORM_HCALOUT");
     out->AddNode("TOWERS_HCALOUT");
-    
 
-// CEmc
+    // CEmc
     out->AddNode("CLUSTERINFO_CEMC");
     out->AddNode("CLUSTER_POS_COR_CEMC");
     out->AddNode("TOWERINFO_CALIB_CEMC");
     out->AddNode("WAVEFORM_CEMC");
     out->AddNode("TOWERS_CEMC");
-    
 
-// leave the topo cluster here in case we run this during pass3
+    // leave the topo cluster here in case we run this during pass3
     out->AddNode("TOPOCLUSTER_ALLCALO");
     out->AddNode("TOPOCLUSTER_EMCAL");
     out->AddNode("TOPOCLUSTER_HCAL");
@@ -344,7 +333,7 @@ void Fun4All_G4_Waveform(
   // Exit
   //-----
 
-  CDBInterface::instance()->Print(); // print used DB files
+  CDBInterface::instance()->Print();  // print used DB files
   se->End();
   se->PrintTimer();
   std::cout << "All done" << std::endl;
@@ -356,4 +345,4 @@ void Fun4All_G4_Waveform(
   gSystem->Exit(0);
 }
 
-#endif // MACRO_FUN4ALLG4WAVEFORM_C
+#endif  // MACRO_FUN4ALLG4WAVEFORM_C
