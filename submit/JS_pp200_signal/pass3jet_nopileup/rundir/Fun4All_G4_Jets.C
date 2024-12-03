@@ -24,11 +24,11 @@ R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 
 void Fun4All_G4_Jets(
-    const int nEvents = 10,
-    const string &inputFile = "DST_TRUTH_pythia8_Jet10-0000000050-00000.root",
-    const string &outputFile = "DST_TRUTH_JETS_pythia8_Jet10-0000000050-00000.root",
+    const int nEvents = 0,
+    const string &inputFile = "DST_TRUTH_pythia8_Jet10-0000000021-000000.root",
+    const string &outputFile = "DST_TRUTH_JETS_pythia8_Jet10-0000000021-000000.root",
     const string &outdir = ".",
-    const string &cdbtag = "MDC2_ana.398")
+    const string &cdbtag = "MDC2")
 {
   // this convenience library knows all our i/o objects so you don't
   // have to figure out what is in each dst type
