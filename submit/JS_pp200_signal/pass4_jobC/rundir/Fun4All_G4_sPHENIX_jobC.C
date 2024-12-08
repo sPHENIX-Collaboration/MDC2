@@ -27,9 +27,9 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 int Fun4All_G4_sPHENIX_jobC(
   const int nEvents = 0,
   const int nSkipEvents = 0,
-  const std::string &inputFile1 = "DST_TRACKSEEDS_pythia8_Jet10_3MHz-0000000008-00000.root",
-  const std::string &inputFile2 = "DST_CALO_CLUSTER_pythia8_Jet10_3MHz-0000000008-00000.root",
-  const std::string &outputFile = "DST_TRACKS_pythia8_Jet10_3MHz-0000000008-00000.root",
+  const std::string &inputFile1 = "DST_TRACKSEEDS_pythia8_Jet10_300kHz-0000000022-000000.root",
+  const std::string &inputFile2 = "DST_CALO_CLUSTER_pythia8_Jet10_300kHz-0000000022-000000.root",
+  const std::string &outputFile = "DST_TRACKS_pythia8_Jet10_300kHz-0000000022-000000.root",
   const std::string &outdir = ".",
   const string &cdbtag = "MDC2_ana.418")
 {
