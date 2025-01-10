@@ -322,6 +322,10 @@ if ($lfn =~ /_ampt/)
 {
     $splitstring = "_ampt";
 }
+if ($lfn =~ /_Herwig/)
+{
+    $splitstring = "_Herwig";
+}
 my @sp1 = split(/$splitstring/,$lfn);
 if (! defined $test)
 {
