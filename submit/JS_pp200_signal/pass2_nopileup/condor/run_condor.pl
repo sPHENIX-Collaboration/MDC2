@@ -10,9 +10,9 @@ my $test;
 my $overwrite;
 my $memory = sprintf("2000MB");
 GetOptions("overwrite" => \$overwrite, "test"=>\$test);
-if ($#ARGV < 10)
+if ($#ARGV < 13)
 {
-    print "usage: run_condor.pl <events> <jettrigger> <infile> <calo outfile>  <calo outdir> <global outfile> <global outdir>  <trk outdir> <build> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <jettrigger> <infile> <calo outfile>  <calo outdir> <global outfile> <global outdir>  <trk outdir> <build> <runnumber> <sequence> <enable_calo> <enable_mbd> <enable_trk>\n";
     print "options:\n";
     print "-memory: memory requirement\n";
     print "-overwrite: overwrite existing job files\n";
@@ -36,6 +36,9 @@ my $trkdstoutdir = $ARGV[7];
 my $build = $ARGV[8];
 my $runnumber = $ARGV[9];
 my $sequence = $ARGV[10];
+my $enable_calo = $ARGV[11];
+my $enable_mbd = $ARGV[12];
+my $enable_trk = $ARGV[13];
 if ($sequence < 100)
 {
     $baseprio = 90;
@@ -43,6 +46,24 @@ if ($sequence < 100)
 my $batchname = sprintf("%s %s",basename($executable),$jettrigger);
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s-%010d-%06d",$jettrigger,$runnumber,$sequence);
+# treatment if not all of them are enabled
+if ($enable_calo < 1 || $enable_mbd < 1 ||  $enable_trk< 1)
+{
+    my $enable_prefix = $jettrigger;
+    if ($enable_calo == 1)
+    {
+	$enable_prefix = sprintf("%s_calo", $enable_prefix);
+    }
+    if ($enable_mbd == 1)
+    {
+	$enable_prefix = sprintf("%s_mbd", $enable_prefix);
+    }
+    if ($enable_trk == 1)
+    {
+	$enable_prefix = sprintf("%s_trk", $enable_prefix);
+    }
+    $suffix = sprintf("%s-%010d-%06d",$enable_prefix,$runnumber,$sequence);
+}
 my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$jettrigger);
 if (! -d $logdir)
 {
@@ -77,7 +98,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $infile $calooutfile $calodstoutdir $globaloutfile $globaldstoutdir $trkdstoutdir $jettrigger $build $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $infile $calooutfile $calodstoutdir $globaloutfile $globaldstoutdir $trkdstoutdir $jettrigger $build $runnumber $sequence $enable_calo $enable_mbd $enable_trk\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -103,5 +124,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile, $calooutfile, $calodstoutdir, $globaloutfile, $globaldstoutdir, $trkdstoutdir, $jettrigger, $build, $runnumber $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio, $memory $batchname\n";
+print F "$executable, $nevents, $infile, $calooutfile, $calodstoutdir, $globaloutfile, $globaldstoutdir, $trkdstoutdir, $jettrigger, $build, $runnumber $sequence, $enable_calo, $enable_mbd, $enable_trk, $outfile, $errfile, $condorlogfile, $rundir, $baseprio, $memory $batchname\n";
 close(F);

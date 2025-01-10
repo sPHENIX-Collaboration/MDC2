@@ -104,10 +104,10 @@ if (! -d $outdir)
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH' and filename like '%pythia8_$jettrigger-%' and runnumber = $runnumber order by segment") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH' and filename like 'DST_TRUTH_pythia8_$jettrigger-%' and runnumber = $runnumber order by segment") || die $DBI::errstr;
 if ($verbosity > 0)
 {
-    print "select filename,segment from datasets where dsttype = 'DST_TRUTH' and filename like '%pythia8_$jettrigger-%' and runnumber = $runnumber order by segment\n";
+    print "select filename,segment from datasets where dsttype = 'DST_TRUTH' and filename like 'DST_TRUTH_pythia8_$jettrigger-%' and runnumber = $runnumber order by segment\n";
 }
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 my $nsubmit = 0;

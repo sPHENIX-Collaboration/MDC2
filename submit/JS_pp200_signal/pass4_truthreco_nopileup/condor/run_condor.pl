@@ -21,7 +21,7 @@ if ($#ARGV < 10)
 
 my $localdir=`pwd`;
 chomp $localdir;
-my $baseprio = 47;
+my $baseprio = 57;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_pass4_truthreco_nopileup_js.sh",$rundir);
 my $nevents = $ARGV[0];

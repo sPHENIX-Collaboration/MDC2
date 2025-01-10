@@ -16,9 +16,9 @@ ana_calo=${9}
 ana_mbdepd=${9}
 ana_pass3trk=${9}
 
-run_calo=1
-run_trk=1
-run_mbdepd=1
+run_calo=${12}
+run_mbdepd=${13}
+run_trk=${14}
 
 # just to get a working environment, the specific ana builds for each reconstruction are set later
 source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n

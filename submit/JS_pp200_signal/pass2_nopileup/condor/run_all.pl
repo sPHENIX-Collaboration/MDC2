@@ -13,14 +13,23 @@ my $incremental;
 my $outevents = 0;
 my $overwrite;
 my $runnumber;
+my $disable_calo;
+my $disable_mbd;
+my $disable_trk;
+my $enable_calo = 0;
+my $enable_mbd = 0;
+my $enable_trk = 0;
 my $shared;
 my $test;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "overwrite" => \$overwrite, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
+GetOptions("build:s" => \$build, "disable_calo" => \$disable_calo, "disable_mbd" => \$disable_mbd, "disable_trk" => \$disable_trk, "increment"=>\$incremental, "overwrite" => \$overwrite, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet20\", \"Jet30\", \"Jet40\",\"PhotonJet\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet20\", \"Jet30\", \"Jet40\", \"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\" or \"Detroit\" production>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
+    print "--disable_calo: disable cal reconstruction\n";
+    print "--disable_mbd: disable mbd reconstruction\n";
+    print "--disable_trk: disable trk reconstruction\n";
     print "--increment : submit jobs while processing running\n";
     print "--overwrite : overwrite existing job files\n";
     print "--run: <runnumber>\n";
@@ -99,10 +108,22 @@ my $jettriggerWithUnderScore = sprintf("%s-",$jettrigger);
 
 
 my %outfiletype = ();
-$outfiletype{"DST_CALO_CLUSTER"} = $outdir[0];
-$outfiletype{"DST_MBD_EPD"} = $outdir[1];
-$outfiletype{"DST_TRKR_HIT"} = $outdir[2];
-$outfiletype{"DST_TRUTH"} = $outdir[2];
+if (! defined $disable_calo)
+{
+    $enable_calo = 1;
+    $outfiletype{"DST_CALO_CLUSTER"} = $outdir[0];
+}
+if (! defined $disable_mbd)
+{
+    $enable_mbd = 1;
+    $outfiletype{"DST_MBD_EPD"} = $outdir[1];
+}
+if (! defined $disable_trk)
+{
+    $enable_trk = 1;
+    $outfiletype{"DST_TRKR_HIT"} = $outdir[2];
+    $outfiletype{"DST_TRUTH"} = $outdir[2];
+}
 foreach my $type (sort keys %outfiletype)
 {
     print "type $type, dir: $outfiletype{$type}\n";
@@ -154,7 +175,7 @@ while (my @res = $getfiles->fetchrow_array())
 
 	my $calooutfilename = sprintf("DST_CALO_CLUSTER_pythia8_%s-%010d-%06d.root",$jettrigger,$runnumber,$segment);
 	my $globaloutfilename = sprintf("DST_MBD_EPD_pythia8_%s-%010d-%06d.root",$jettrigger,$runnumber,$segment);
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $calooutfilename, $outdir[0], $globaloutfilename, $outdir[1], $outdir[2], $build, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %s %s %d %d %d %d %d %s", $outevents, $jettrigger, $lfn, $calooutfilename, $outdir[0], $globaloutfilename, $outdir[1], $outdir[2], $build, $runnumber, $segment, $enable_calo, $enable_mbd, $enable_trk, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

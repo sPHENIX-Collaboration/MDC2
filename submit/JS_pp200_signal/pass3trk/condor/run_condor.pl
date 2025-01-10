@@ -7,7 +7,7 @@ use File::Path;
 use File::Basename;
 
 my $test;
-my $memory = sprintf("2048MB");
+my $memory = sprintf("4000MB");
 
 GetOptions("test"=>\$test);
 if ($#ARGV < 7)
@@ -21,7 +21,7 @@ if ($#ARGV < 7)
 
 my $localdir=`pwd`;
 chomp $localdir;
-my $baseprio = 84;
+my $baseprio = 53;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_pass3trk_js.sh",$rundir);
 my $nevents = $ARGV[0];
