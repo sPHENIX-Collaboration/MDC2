@@ -57,10 +57,10 @@ sequence=$(printf "%06d" $8)
 
 filename=timing
 
-echo running root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\"\)
-root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\"\)
+echo running root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
+root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
 
-timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/single_particle/pass2calo_nopileup/timing.run${7}/${6}
+timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/single_particle/pass2calo_nopileup/timing.run${7}/${5}
 
 [ ! -d $timedirname ] &&  mkdir -p $timedirname
 

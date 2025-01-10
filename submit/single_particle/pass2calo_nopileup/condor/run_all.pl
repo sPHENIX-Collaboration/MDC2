@@ -8,15 +8,16 @@ use Getopt::Long;
 use DBI;
 
 
-my $test;
 my $build;
+my $events = 1000;
 my $incremental;
 my $killexist;
 my $memory;
-my $runnumber;
-my $events = 1000;
 my $mom;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "killexist" => \$killexist, "memory:s"=>\$memory, "mom:s" => \$mom, "run:i" =>\$runnumber, "test"=>\$test);
+my $runnumber;
+my $shared;
+my $test;
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "killexist" => \$killexist, "memory:s"=>\$memory, "mom:s" => \$mom, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs> <particle> <pmin> <pmax>\n";
@@ -108,7 +109,7 @@ while (my @res = $getfiles->fetchrow_array())
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_CALO_WAVEFORM_%s-%010d-%06d.root",$filetype,$runnumber,$segment);
+	my $outfilename = sprintf("DST_CALO_CLUSTER_%s-%010d-%06d.root",$filetype,$runnumber,$segment);
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
@@ -123,7 +124,7 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $tstflag = sprintf("%s --memory %s",$tstflag, $memory)
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %s", $outevents, $filetype, $partprop, $lfn, $outfilename, $outdir,  $build, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %s", $events, $filetype, $partprop, $lfn, $outfilename, $outdir,  $build, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
