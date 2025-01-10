@@ -16,7 +16,7 @@ my $type = "MB";
 GetOptions("build:s" => \$build, "increment"=>\$incremental, "run:i" =>\$runnumber, "test"=>\$test);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Herwig_Jet10\", \"Herwig_Jet30\", \"Herwig_MB\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"MB\" production>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
@@ -58,11 +58,12 @@ if ($isbad > 0)
 
 my $maxsubmit = $ARGV[0];
 my $jettrigger = $ARGV[1];
-if ($jettrigger  ne "Herwig_Jet10" &&
-    $jettrigger  ne "Herwig_Jet30" &&
-    $jettrigger  ne "Herwig_MB")
+my $filetype="Herwig";
+if ($jettrigger  ne "Jet10" &&
+    $jettrigger  ne "Jet30" &&
+    $jettrigger  ne "MB")
 {
-    print "second argument has to be Herwig_Jet10, Herwig_Jet30 or Herwig_MB\n";
+    print "second argument has to be Jet10, Jet30 or MB\n";
     exit(1);
 }
 if ($maxsubmit > 50000)
@@ -83,6 +84,7 @@ my $events = 1000; # for running with plugdoor
 my $evtsperfile = 10000;
 my $nmax = $evtsperfile;
 
+$filetype=sprintf("%s_%s",$filetype,$jettrigger);
 my $condorlistfile =  sprintf("condor.list");
 if (-f $condorlistfile)
 {
@@ -100,7 +102,7 @@ my $nsubmit = 0;
 my $lastsegment=getlastsegment();
 OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
 {
-    my $herwigdatfile = sprintf("%s/%s/%s-%06d.hepmc",$herwig_dir,$jettrigger,$jettrigger,$segment);
+    my $herwigdatfile = sprintf("%s/%s/%s-%06d.hepmc",$herwig_dir,$filetype,$filetype,$segment);
     if (! -f $herwigdatfile)
     {
 	print "could not locate $herwigdatfile\n";
@@ -110,7 +112,7 @@ OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
     my $sequence = $segment*$evtsperfile/$events;
     for (my $n=0; $n<$nmax; $n+=$events)
     {
-	my $outfile = sprintf("G4Hits_%s-%010d-%06d.root",$jettrigger,$runnumber,$sequence);
+	my $outfile = sprintf("G4Hits_%s-%010d-%06d.root",$filetype,$runnumber,$sequence);
 	$chkfile->execute($outfile);
 	if ($chkfile->rows == 0)
 	{
@@ -163,7 +165,7 @@ if (-f $condorlistfile)
 
 sub getlastsegment()
 {
-    my $herwigsubdir = sprintf("%s/%s",$herwig_dir,$jettrigger);
+    my $herwigsubdir = sprintf("%s/%s",$herwig_dir,$filetype);
     opendir(DH,$herwigsubdir);
     my @tmpfiles = sort(readdir(DH));
     closedir(DH);
