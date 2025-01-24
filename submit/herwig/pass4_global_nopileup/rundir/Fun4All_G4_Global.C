@@ -2,6 +2,7 @@
 
 #include <G4_Global.C>
 #include <G4_Production.C>
+#include <SaveGitTags.C>
 
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
@@ -24,11 +25,14 @@ int Fun4All_G4_Global(
     const std::string &inputFile2 = "DST_MBD_EPD_pythia8_Jet30-0000000011-00001.root",
     const std::string &outputFile = "DST_GLOBAL_pythia8_Jet30-0000000011-00001.root",
     const std::string &outdir = ".",
-    const string &cdbtag = "MDC2_ana.398")
+    const string &cdbtag = "MDC2_ana.398",
+    const std::string &gitcommit = "none")
 {
   gSystem->Load("libg4dst.so");
   recoConsts *rc = recoConsts::instance();
-
+// save all git tags from build
+  SaveGitTags();
+  rc->set_StringFlag("MDC2_GITID", gitcommit);
   //===============
   // conditions DB flags
   //===============
