@@ -26,7 +26,7 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_MBD_EPD(
     const int nEvents = 1,
-    const string &inputFile = "G4Hits_sHijing_0_20fm-0000000014-000000.root",
+    const string &inputFile = "G4Hits_single_gamma_p_300_5000MeV-0000000017-000000.root",
     const string &outputFile = "DST_MBD_EPD_sHijing_0_20fm-0000000014-000000.root",
     const string &outdir = ".",
     const string &cdbtag = "MDC2_ana.412")
@@ -105,6 +105,9 @@ int Fun4All_G4_MBD_EPD(
 
   EPD_Tiles();
 
+  //--------------
+  // Timing module is last to register
+  //--------------
   TimerStats *ts = new TimerStats();
   ts->OutFileName("jobtime.root");
   se->registerSubsystem(ts);

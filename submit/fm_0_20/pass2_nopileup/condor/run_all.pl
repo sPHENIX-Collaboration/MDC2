@@ -9,18 +9,43 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 14;
-my $test;
+my $build;
+my $disable_calo;
+my $disable_mbd;
+my $disable_trk;
 my $incremental;
+my $runnumber;
 my $shared;
-GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
-if ($#ARGV < 0)
+my $test;
+GetOptions("build:s" => \$build, "disable_calo" => \$disable_calo, "disable_mbd" => \$disable_mbd, "disable_trk" => \$disable_trk, "increment"=>\$incremental, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
+if ($#ARGV < 0 || ! defined $runnumber || ! defined $build)
 {
     print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
+    print "--build: <ana build>\n";
+    print "--disable_calo: disable cal reconstruction\n";
+    print "--disable_mbd: disable mbd reconstruction\n";
+    print "--disable_trk: disable trk reconstruction\n";
     print "--increment : submit jobs while processing running\n";
+    print "--run: <runnumber>\n";
     print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
+    exit(1);
+}
+
+my $enable_calo = 0;
+my $enable_mbd = 0;
+my $enable_trk = 0;
+
+if (! defined $runnumber)
+{
+    print "need runnumber with --run <runnumber>\n";
+    exit(1);
+}
+
+if (! defined $build)
+{
+    print "need build with --build <ana build>\n";
     exit(1);
 }
 
@@ -57,10 +82,23 @@ close(F);
 
 
 my %outfiletype = ();
-$outfiletype{"DST_CALO_CLUSTER"} = $outdir[0];
-$outfiletype{"DST_MBD_EPD"} = $outdir[1];
-$outfiletype{"DST_TRKR_HIT"} = $outdir[2];
-$outfiletype{"DST_TRUTH"} = $outdir[2];
+if (! defined $disable_calo)
+{
+    $enable_calo = 1;
+    $outfiletype{"DST_CALO_CLUSTER"} = $outdir[0];
+}
+if (! defined $disable_mbd)
+{
+    $enable_mbd = 1;
+    $outfiletype{"DST_MBD_EPD"} = $outdir[1];
+}
+if (! defined $disable_trk)
+{
+    $enable_trk = 1;
+    $outfiletype{"DST_TRKR_HIT"} = $outdir[2];
+    $outfiletype{"DST_TRUTH"} = $outdir[2];
+}
+
 foreach my $type (sort keys %outfiletype)
 {
     print "type $type, dir: $outfiletype{$type}\n";
@@ -107,7 +145,7 @@ while (my @res = $getfiles->fetchrow_array())
 	}
 	my $calooutfilename = sprintf("DST_CALO_CLUSTER_sHijing_0_20fm-%010d-%06d.root",$runnumber,$segment);
 	my $globaloutfilename = sprintf("DST_MBD_EPD_sHijing_0_20fm-%010d-%06d.root",$runnumber,$segment);
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %s", $outevents, $lfn, $calooutfilename, $outdir[0], $globaloutfilename, $outdir[1], $outdir[2], $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %s %d %d  %d %d %d %s", $outevents, $lfn, $calooutfilename, $outdir[0], $globaloutfilename, $outdir[1], $outdir[2], $build, $runnumber, $segment, $enable_calo, $enable_mbd, $enable_trk, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

@@ -28,8 +28,8 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_Calo(
     const int nEvents = 1,
-    const string &inputFile0 = "G4Hits_sHijing_0_20fm-0000000014-000000.root",
-    const string &outputFile = "DST_CALO_CLUSTER_sHijing_0_20fm-0000000014-000000.root",
+    const string &inputFile0 = "G4Hits_single_gamma_p_300_5000MeV-0000000017-000000.root",
+    const string &outputFile = "DST_CALO_CLUSTER_single_gamma_p_300_5000MeV-0000000017-000000.root",
     const string &outdir = ".",
     const string &cdbtag = "MDC2_ana.412")
 {
@@ -102,16 +102,19 @@ int Fun4All_G4_Calo(
   Enable::CEMC_CELL = Enable::CEMC && true;
   Enable::CEMC_TOWER = Enable::CEMC_CELL && true;
   Enable::CEMC_CLUSTER = Enable::CEMC_TOWER && true;
+  G4CEMC::useTowerInfoV2 = true;
 
   Enable::HCALIN = true;
   Enable::HCALIN_CELL = Enable::HCALIN && true;
   Enable::HCALIN_TOWER = Enable::HCALIN_CELL && true;
   Enable::HCALIN_CLUSTER = Enable::HCALIN_TOWER && true;
+  G4HCALIN::useTowerInfoV2 = true;
 
   Enable::HCALOUT = true;
   Enable::HCALOUT_CELL = Enable::HCALOUT && true;
   Enable::HCALOUT_TOWER = Enable::HCALOUT_CELL && true;
   Enable::HCALOUT_CLUSTER = Enable::HCALOUT_TOWER && true;
+  G4HCALOUT::useTowerInfoV2 = true;
 
   //------------------
   // Detector Reconstruction
@@ -143,6 +146,9 @@ int Fun4All_G4_Calo(
   // if enabled, do topoClustering early, upstream of any possible jet reconstruction
   if (Enable::TOPOCLUSTER) TopoClusterReco();
 
+  //--------------
+  // Timing module is last to register
+  //--------------
   TimerStats *ts = new TimerStats();
   ts->OutFileName("jobtime.root");
   se->registerSubsystem(ts);

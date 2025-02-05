@@ -137,6 +137,9 @@ int Fun4All_G4_Pass3Trk(
   if (Enable::TPC_CELL) TPC_Cells();
   if (Enable::MICROMEGAS_CELL) Micromegas_Cells();
 
+  //--------------
+  // Timing module is last to register
+  //--------------
   TimerStats *ts = new TimerStats();
   ts->OutFileName("jobtime.root");
   se->registerSubsystem(ts);
