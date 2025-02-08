@@ -11,7 +11,7 @@
 #include <G4_HcalOut_ref.C>
 #include <G4_Input.C>
 #include <G4_Production.C>
-
+#include <SaveGitTags.C>
 
 #include <caloreco/CaloGeomMapping.h>
 #include <caloreco/CaloTowerBuilder.h>
@@ -68,6 +68,8 @@ void Fun4All_G4_Calo(
   //  rc->set_IntFlag("RANDOMSEED", 12345);
   // int seedValue = 491258969;
   // rc->set_IntFlag("RANDOMSEED", seedValue);
+
+  SaveGitTags(); // save the git tags from rebuild.info as rc string flags
 
   //===============
   // conditions DB flags
