@@ -48,6 +48,9 @@ fi
 # $9: build
 # $10: runnumber
 # $11: sequence
+# $12: enable calo
+# $13: enable mbd
+# $14: enable trk
 
 echo 'here comes your environment'
 printenv
@@ -62,6 +65,9 @@ echo arg8 \(jettrigger\): $8
 echo arg9 \(build\): $9
 echo arg10 \(runnumber\): ${10}
 echo arg11 \(sequence\): ${11}
+echo arg12 \(enable calo\): ${12}
+echo arg13 \(enable mbd\): ${13}
+echo arg14 \(enable trk\): ${14}
 echo cdbtag : ${cdbtag}
 
 runnumber=$(printf "%010d" ${10})

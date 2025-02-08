@@ -18,6 +18,7 @@ then
     rsync -av $this_dir/* .
 else
     echo condor scratch NOT set
+    exit 1
 fi
 
 container_script=container_`basename $this_script`

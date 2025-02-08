@@ -26,7 +26,7 @@ int Fun4All_G4_MBD_EPD(
     const string &inputFile = "G4Hits_pythia8_Jet30-0000000019-000000.root",
     const string &outputFile = "DST_BBC_EPD_pythia8_Jet30-0000000019-000000.root",
     const string &outdir = ".",
-    const string &cdbtag = "MDC2_ana.438")
+    const string &cdbtag = "MDC2")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);

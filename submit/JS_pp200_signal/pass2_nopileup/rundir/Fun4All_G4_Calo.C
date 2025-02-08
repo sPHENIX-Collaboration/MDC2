@@ -5,11 +5,13 @@
 
 #include <GlobalVariables.C>
 
+#include <Calo_Calib.C>
 #include <G4_CEmc_Spacal.C>
 #include <G4_HcalIn_ref.C>
 #include <G4_HcalOut_ref.C>
 #include <G4_Input.C>
 #include <G4_Production.C>
+
 
 #include <caloreco/CaloGeomMapping.h>
 #include <caloreco/CaloTowerBuilder.h>
@@ -23,6 +25,7 @@
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllRunNodeInputManager.h>
 #include <fun4all/Fun4AllServer.h>
+#include <fun4all/Fun4AllUtils.h>
 
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
@@ -41,8 +44,8 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 void Fun4All_G4_Calo(
     const int nEvents = 1,
-    const string &inputFile0 = "G4Hits_pythia8_Detroit-0000000021-000000.root",
-    const string &outputFile = "DST_CALO_CLUSTER_pythia8_Detroit-0000000021-000000.root",
+    const string &inputFile0 = "G4Hits_pythia8_Jet30-0000000022-000000.root",
+    const string &outputFile = "DST_CALO_CLUSTER_pythia8_Jet30-0000000022-000000.root",
     const string &outdir = ".",
     const string &cdbtag = "MDC2")
 
@@ -74,9 +77,25 @@ void Fun4All_G4_Calo(
   rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
   CDBInterface::instance()->Verbosity(1);
 
-  // you only need a list that have all G4hits and primary truth to run the
-  // correction it is safe to just have the g4hit list
-  //-----------------------------
+  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
+  int runnumber = runseg.first;
+
+  switch (runnumber)
+  {
+  case 21:  // zero beam xing angle
+    Input::BEAM_CONFIGURATION = Input::pp_ZEROANGLE;
+    break;
+  case 22:  // 1.5 mrad beam xing angle
+    Input::BEAM_CONFIGURATION = Input::pp_COLLISION;
+    break;
+  case 25:  // 1.5 mrad beam xing angle
+    Input::BEAM_CONFIGURATION = Input::AA_COLLISION;
+    break;
+  default:
+    cout << "runnnumber " << runnumber << " not implemented" << endl;
+    gSystem->Exit(1);
+    break;
+  }
 
   //===============
   // Input options
@@ -117,153 +136,15 @@ void Fun4All_G4_Calo(
   DstOut::OutputDir = outdir;
   DstOut::OutputFile = outputFile;
 
-  //======================
-  // What to run
-  //======================
-  // the only reason that we are including the calo_cluster node is we want to use the CEMC geom node from it,
-  // but we have calib node name confliting(it has a towerinfov1 calib node with the same name we want to usebut we want to make it v2) if we do that...
-  // so I will call the cemc tower reco here just to have the geom node.
-  // by doing this it also remove the dependncy for running the calo_cluster before this pass so we can process it independently from G4Hits ;) and all of our output node name is exactly same with real data
-  CEMC_Cells();
+  Enable::CEMC_TOWERINFO = true;
+  Enable::HCALIN_TOWERINFO = true;
+  Enable::HCALOUT_TOWERINFO = true;
 
-  CaloWaveformSim *caloWaveformSim = new CaloWaveformSim();
-  caloWaveformSim->set_detector_type(CaloTowerDefs::HCALOUT);
-  caloWaveformSim->set_detector("HCALOUT");
-  caloWaveformSim->set_nsamples(12);
-  caloWaveformSim->set_pedestalsamples(12);
-  caloWaveformSim->set_timewidth(0.2);
-  caloWaveformSim->set_peakpos(6);
-  // caloWaveformSim->Verbosity(2);
-  // caloWaveformSim->set_noise_type(CaloWaveformSim::NOISE_NONE);
-  se->registerSubsystem(caloWaveformSim);
+  CEMC_Towers();
+  HCALInner_Towers();
+  HCALOuter_Towers();
 
-  caloWaveformSim = new CaloWaveformSim();
-  caloWaveformSim->set_detector_type(CaloTowerDefs::HCALIN);
-  caloWaveformSim->set_detector("HCALIN");
-  caloWaveformSim->set_nsamples(12);
-  caloWaveformSim->set_pedestalsamples(12);
-  caloWaveformSim->set_timewidth(0.2);
-  caloWaveformSim->set_peakpos(6);
-  //  caloWaveformSim->set_noise_type(CaloWaveformSim::NOISE_NONE);
-  se->registerSubsystem(caloWaveformSim);
-
-  caloWaveformSim = new CaloWaveformSim();
-  caloWaveformSim->set_detector_type(CaloTowerDefs::CEMC);
-  caloWaveformSim->set_detector("CEMC");
-  caloWaveformSim->set_nsamples(12);
-  caloWaveformSim->set_pedestalsamples(12);
-  caloWaveformSim->set_timewidth(0.2);
-  caloWaveformSim->set_peakpos(6);
-  caloWaveformSim->set_calibName("cemc_pi0_twrSlope_v1_default");
-
-  //  caloWaveformSim->set_noise_type(CaloWaveformSim::NOISE_NONE);
-
-  caloWaveformSim->get_light_collection_model().load_data_file(
-      string(getenv("CALIBRATIONROOT")) +
-          string("/CEMC/LightCollection/Prototype3Module.xml"),
-      "data_grid_light_guide_efficiency", "data_grid_fiber_trans");
-
-  se->registerSubsystem(caloWaveformSim);
-
-  CaloTowerBuilder *ca2 = new CaloTowerBuilder();
-  ca2->set_detector_type(CaloTowerDefs::HCALOUT);
-  ca2->set_nsamples(12);
-  ca2->set_dataflag(false);
-  ca2->set_processing_type(CaloWaveformProcessing::TEMPLATE);
-  ca2->set_builder_type(CaloTowerDefs::kWaveformTowerSimv1);
-  // 30 ADC SZS
-  ca2->set_softwarezerosuppression(true, 30);
-  se->registerSubsystem(ca2);
-
-  ca2 = new CaloTowerBuilder();
-  ca2->set_detector_type(CaloTowerDefs::HCALIN);
-  ca2->set_nsamples(12);
-  ca2->set_dataflag(false);
-  ca2->set_processing_type(CaloWaveformProcessing::TEMPLATE);
-  ca2->set_builder_type(CaloTowerDefs::kWaveformTowerSimv1);
-  ca2->set_softwarezerosuppression(true, 30);
-  se->registerSubsystem(ca2);
-
-  ca2 = new CaloTowerBuilder();
-  ca2->set_detector_type(CaloTowerDefs::CEMC);
-  ca2->set_nsamples(12);
-  ca2->set_dataflag(false);
-  ca2->set_processing_type(CaloWaveformProcessing::TEMPLATE);
-  ca2->set_builder_type(CaloTowerDefs::kWaveformTowerSimv1);
-  // a large uniform ZS threshold for CEMC, 60 ADC now
-  ca2->set_softwarezerosuppression(true, 60);
-  se->registerSubsystem(ca2);
-
-  Fun4AllInputManager *intrue2 = new Fun4AllRunNodeInputManager("DST_GEO");
-  std::string geoLocation = CDBInterface::instance()->getUrl("calo_geo");
-  intrue2->AddFile(geoLocation);
-  se->registerInputManager(intrue2);
-
-  /////////////////////////////////////////////////////
-  // Set status of towers, Calibrate towers,  Cluster
-  /////////////////////////////////////////////////////
-  std::cout << "status setters" << std::endl;
-  CaloTowerStatus *statusEMC = new CaloTowerStatus("CEMCSTATUS");
-  statusEMC->set_detector_type(CaloTowerDefs::CEMC);
-  statusEMC->set_time_cut(1);
-  se->registerSubsystem(statusEMC);
-
-  CaloTowerStatus *statusHCalIn = new CaloTowerStatus("HCALINSTATUS");
-  statusHCalIn->set_detector_type(CaloTowerDefs::HCALIN);
-  statusHCalIn->set_time_cut(2);
-  se->registerSubsystem(statusHCalIn);
-
-  CaloTowerStatus *statusHCALOUT = new CaloTowerStatus("HCALOUTSTATUS");
-  statusHCALOUT->set_detector_type(CaloTowerDefs::HCALOUT);
-  statusHCALOUT->set_time_cut(2);
-  se->registerSubsystem(statusHCALOUT);
-
-  ////////////////////
-  // Calibrate towers
-  std::cout << "Calibrating EMCal" << std::endl;
-  CaloTowerCalib *calibEMC = new CaloTowerCalib("CEMCCALIB");
-  calibEMC->set_detector_type(CaloTowerDefs::CEMC);
-  calibEMC->set_outputNodePrefix("TOWERINFO_CALIB_");
-  se->registerSubsystem(calibEMC);
-
-  std::cout << "Calibrating OHcal" << std::endl;
-  CaloTowerCalib *calibOHCal = new CaloTowerCalib("HCALOUTCALIB");
-  calibOHCal->set_detector_type(CaloTowerDefs::HCALOUT);
-  calibOHCal->set_outputNodePrefix("TOWERINFO_CALIB_");
-  se->registerSubsystem(calibOHCal);
-
-  std::cout << "Calibrating IHcal" << std::endl;
-  CaloTowerCalib *calibIHCal = new CaloTowerCalib("HCALINCALIB");
-  calibIHCal->set_detector_type(CaloTowerDefs::HCALIN);
-  calibIHCal->set_outputNodePrefix("TOWERINFO_CALIB_");
-  se->registerSubsystem(calibIHCal);
-
-  ////////////////
-  // MC Calibration
-  std::string MC_Calib = CDBInterface::instance()->getUrl("CEMC_MC_RECALIB");
-  if (MC_Calib.empty())
-  {
-    std::cout << "No MC calibration found :( )" << std::endl;
-    gSystem->Exit(0);
-  }
-  CaloTowerCalib *calibEMC_MC = new CaloTowerCalib("CEMCCALIB_MC");
-  calibEMC_MC->set_detector_type(CaloTowerDefs::CEMC);
-  calibEMC_MC->set_inputNodePrefix("TOWERINFO_CALIB_");
-  calibEMC_MC->set_outputNodePrefix("TOWERINFO_CALIB_");
-  calibEMC_MC->set_directURL(MC_Calib);
-  calibEMC_MC->set_doZScrosscalib(false);
-
-  //////////////////
-  // Clusters
-  std::cout << "Building clusters" << std::endl;
-  RawClusterBuilderTemplate *ClusterBuilder = new RawClusterBuilderTemplate("EmcRawClusterBuilderTemplate");
-  ClusterBuilder->Detector("CEMC");
-  ClusterBuilder->set_threshold_energy(0.070);  // for when using basic calibration
-  std::string emc_prof = getenv("CALIBRATIONROOT");
-  emc_prof += "/EmcProfile/CEMCprof_Thresh30MeV.root";
-  ClusterBuilder->LoadProfile(emc_prof);
-  ClusterBuilder->set_UseTowerInfo(1);  // to use towerinfo objects rather than old RawTower
-  se->registerSubsystem(ClusterBuilder);
+  Process_Calo_Calib();
 
   //--------------
   // Timing module is last to register
