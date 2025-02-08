@@ -8,6 +8,7 @@
 #include <G4_Mbd.C>
 #include <G4_Production.C>
 #include <G4_TrkrSimulation.C>
+//#include <SaveGitTags.C>
 
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
@@ -54,7 +55,7 @@ int Fun4All_G4_Pass1_herwig(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
-
+//  SaveGitTags(); // save the git tags from rebuild.info as rc string flags
   //===============
   // conditions DB flags
   //===============

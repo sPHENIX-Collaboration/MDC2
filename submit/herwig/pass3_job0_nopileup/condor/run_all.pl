@@ -19,7 +19,7 @@ my $verbosity = 0;
 GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs>  <\"Jet10\">, <\"Jet30\">, <\"MB\">  production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet10\">, <\"Jet30\">, <\"MB\">  production>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";

@@ -23,10 +23,10 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_MBD_EPD(
     const int nEvents = 1,
-    const string &inputFile = "G4Hits_pythia8_Jet30-0000000019-000000.root",
-    const string &outputFile = "DST_BBC_EPD_pythia8_Jet30-0000000019-000000.root",
+    const string &inputFile = "G4Hits_Herwig_MB-0000000022-000000.root",
+    const string &outputFile = "DST_MBD_EPD_Herwig_MB-0000000022-000000.root",
     const string &outdir = ".",
-    const string &cdbtag = "MDC2_ana.438")
+    const string &cdbtag = "MDC2")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
