@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use strict;
 use warnings;
@@ -48,7 +48,7 @@ my $maxsubmit = $ARGV[0];
 if ($maxsubmit > 500)
 {
     print "beware of gpfs overload, you sure you want to run $maxsubmit jobs?\n";
-    exit(0);
+#    exit(0);
 }
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;

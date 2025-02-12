@@ -81,6 +81,14 @@ int Fun4All_G4_Pass1(
   //===============
   // verbosity setting (applies to all input managers)
   Input::VERBOSITY = 1;  // so we get prinouts of the event number
+
+  switch (runnumber)
+  {
+  case 25:     // run 25: field off
+    G4MAGNET::magfield = "0";
+    break;
+  }
+
   Input::HEPMC = true;
 
   INPUTHEPMC::filename = inputFile;

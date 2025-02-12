@@ -1,16 +1,20 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use strict;
 use warnings;
 use Getopt::Long;
 use File::Path;
+use File::Basename;
 
 my $test;
+my $memory = sprintf("8000MB");
+
 GetOptions("test"=>\$test);
 if ($#ARGV < 7)
 {
     print "usage: run_condor.pl <events> <infile> <outdir> <outfile> <skip> <build> <runnumber> <sequence>\n";
     print "options:\n";
+    print "-memory: memory requirement\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
 }
@@ -35,6 +39,7 @@ if ($sequence < 100)
 {
     $baseprio = 90;
 }
+my $batchname = sprintf("%s",basename($executable));
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%010d-%06d",$runnumber,$sequence);
 my $logdir = sprintf("%s/log/run%d",$localdir,$runnumber);
@@ -74,8 +79,9 @@ print F "accounting_group = group_sphenix.mdc2\n";
 print F "accounting_group_user = sphnxpro\n";
 print F "Requirements = (CPU_Type == \"mdc2\")\n";
 # FTFP_BERT
-print F "request_memory = 8184MB\n";
+print F "request_memory = $memory\n";
 print F "Priority = $baseprio\n";
+print F "batch_name = \"$batchname\"\n";
 #FTFP_BERT_HP
 #print F "request_memory = 12288MB\n";
 #print F "Priority 	= 30\n";
@@ -92,5 +98,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile, $dstoutfile, $skip, $dstoutdir, $build, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $infile, $dstoutfile, $skip, $dstoutdir, $build, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio, $memory $batchname\n";
 close(F);
