@@ -90,6 +90,9 @@ int Fun4All_G4_sPHENIX_job0(
   TPC_Clustering();
   Micromegas_Clustering();
 
+  //--------------
+  // Timing module is last to register
+  //--------------
   TimerStats *ts = new TimerStats();
   ts->OutFileName("jobtime.root");
   se->registerSubsystem(ts);
