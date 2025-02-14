@@ -6,14 +6,17 @@ use Getopt::Long;
 use File::Path;
 use File::Basename;
 
-my $test;
 my $memory = sprintf("2000MB");
-GetOptions("memory:s"=>\$memory, "test"=>\$test);
+my $overwrite;
+my $test;
+
+GetOptions("memory:s"=>\$memory, "overwrite"=>\$overwrite, "test"=>\$test);
 if ($#ARGV < 8)
 {
     print "usage: run_condor.pl <events> <filetype> <partprop> <g4hit infile> <outfile> <outdir> <build> <runnumber> <sequence>\n";
     print "options:\n";
     print "-memory: <mem in MB>\n";
+    print "--overwrite : overwrite existing jobfiles\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
 }
@@ -50,7 +53,7 @@ if (! -d $condorlogdir)
   mkpath($condorlogdir);
 }
 my $jobfile = sprintf("%s/condor%s.job",$logdir,$suffix);
-if (-f $jobfile)
+if (-f $jobfile && ! defined $overwrite)
 {
     print "jobfile $jobfile exists, possible overlapping names\n";
     exit(1);

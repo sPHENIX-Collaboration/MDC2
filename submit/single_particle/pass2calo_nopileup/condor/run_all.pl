@@ -14,10 +14,11 @@ my $incremental;
 my $killexist;
 my $memory;
 my $mom;
+my $overwrite;
 my $runnumber;
 my $shared;
 my $test;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "killexist" => \$killexist, "memory:s"=>\$memory, "mom:s" => \$mom, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "killexist" => \$killexist, "memory:s"=>\$memory, "mom:s" => \$mom, "overwrite"=>\$overwrite, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs> <particle> <pmin> <pmax>\n";
@@ -27,6 +28,7 @@ if ($#ARGV < 0)
     print "--killexist : delete output file if it already exists (but no jobfile)\n";
     print "-memory: <mem in MB>\n";
     print "--mom <p or pt> : use p or pt for momentum\n";
+    print "--overwrite: overwrite output\n";
     print "--run: <runnumber>\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
@@ -123,6 +125,10 @@ while (my @res = $getfiles->fetchrow_array())
 	if (defined $memory)
 	{
 	    $tstflag = sprintf("%s --memory %s",$tstflag, $memory)
+	}
+        if (defined $overwrite)
+	{
+	    $tstflag= sprintf("%s --overwrite",$tstflag);
 	}
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %s", $events, $filetype, $partprop, $lfn, $outfilename, $outdir,  $build, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
