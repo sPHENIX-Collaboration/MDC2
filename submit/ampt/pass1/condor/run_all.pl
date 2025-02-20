@@ -8,23 +8,50 @@ use DBI;
 
 sub getlastsegment;
 
-my $test;
+my $build;
 my $incremental;
-GetOptions("test"=>\$test, "increment"=>\$incremental);
+my $runnumber;
+my $test;
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "run:i" =>\$runnumber, "test"=>\$test);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
+    print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
+    print "--run: <runnumber>\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
+
+my $isbad = 0;
 
 my $hostname = `hostname`;
 chomp $hostname;
 if ($hostname !~ /phnxsub/)
 {
-    print "submit only from phnxsub01 or phnxsub02\n";
+    print "submit only from phnxsub hosts\n";
+    $isbad = 1;
+}
+if (! defined $runnumber)
+{
+    print "need runnumber with --run <runnumber>\n";
+    $isbad = 1;
+}
+
+if (! defined $build)
+{
+    print "need build with --build <ana build>\n";
+    $isbad = 1;
+}
+if (! -f "outdir.txt")
+{
+    print "could not find outdir.txt\n";
+    $isbad = 1;
+}
+
+if ($isbad > 0)
+{
     exit(1);
 }
 
@@ -35,7 +62,6 @@ my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::er
 my $maxsubmit = $ARGV[0];
 my $ampt_runnumber = 1;
 my $ampt_dir = sprintf("/sphenix/sim/sim01/sphnxpro/mdc2/AMPT/AuAu");
-my $runnumber = 14;
 my $events = 200; # for running with plugdoor
 #$events = 100; # for ftfp_bert_hp
 my $evtsperfile = 10000;
@@ -55,13 +81,16 @@ if (! -f "outdir.txt")
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 $outdir = sprintf("%s/run%04d",$outdir,$runnumber);
-mkpath($outdir);
+if (! -d $outdir)
+{
+    mkpath($outdir);
+}
 
 my $nsubmit = 0;
 my $lastsegment=getlastsegment();
 OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
 {
-    my $amptdatfile = sprintf("%s/AMPT_AuAu-%010d-%05d.dat",$ampt_dir,$ampt_runnumber, $segment);
+    my $amptdatfile = sprintf("%s/AMPT_AuAu-%010d-%06d.dat",$ampt_dir,$ampt_runnumber, $segment);
     if (! -f $amptdatfile)
     {
 	print "could not locate $amptdatfile\n";
@@ -80,7 +109,9 @@ OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
 	    {
 		$tstflag="--test";
 	    }
-	    system("perl run_condor.pl $events $amptdatfile $outdir $outfile $n $runnumber $sequence $tstflag");
+	    my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %s %d %d %s", $events, $amptdatfile, $outdir, $outfile, $n, $build, $runnumber, $sequence, $tstflag);
+	    print "cmd: $subcmd\n";
+	    system($subcmd);
 	    my $exit_value  = $? >> 8;
 	    if ($exit_value != 0)
 	    {

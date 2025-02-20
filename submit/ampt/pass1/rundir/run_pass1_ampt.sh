@@ -12,11 +12,12 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-anabuild=ana.416
-
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
-
-cdbtag=MDC2_$anabuild
+# check the current tag (if exist), if no tag, save commit id
+this_gitcommitid=`git describe --exact-match --tags 2> /dev/null`
+if [ $? != 0 ]
+then
+ this_gitcommitid=`git show HEAD | sed -n 1p | cut -d " " -f 2`
+fi
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
@@ -27,40 +28,7 @@ else
    exit -1
 fi
 
-# arguments 
-# $1: number of events
-# $2: hepmc input file
-# $3: output file
-# $4: no events to skip
-# $5: output dir
-# $6: runnumber
-# $7: sequence
+container_script=container_`basename $this_script`
+singularity exec -B /home -B /direct/sphenix+u -B /gpfs02 -B /sphenix/u -B /sphenix/lustre01 -B /sphenix/user  -B /sphenix/sim -B /sphenix/cvmfscalib /cvmfs/sphenix.sdcc.bnl.gov/singularity/rhic_sl7.sif ./$container_script $* $this_gitcommitid
 
-echo 'here comes your environment'
-printenv
-echo arg1 \(events\) : $1
-echo arg2 \(hepmc file\): $2
-echo arg3 \(output file\): $3
-echo arg4 \(skip\): $4
-echo arg5 \(output dir\): $5
-echo arg6 \(runnumber\): $6
-echo arg7 \(sequence\): $7
-echo cdbtag: $cdbtag
-
-runnumber=$(printf "%010d" $6)
-sequence=$(printf "%06d" $7)
-
-filename=timing
-
-echo running root.exe -q -b Fun4All_G4_Pass1.C\($1,\"$2\",\"$3\",$4,\"$5\",\"$cdbtag\"\)
- root.exe -q -b  Fun4All_G4_Pass1.C\($1,\"$2\",\"$3\",$4,\"$5\",\"$cdbtag\"\)
-
-timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/ampt/pass1/timing.run${6}
-
-[ ! -d $timedirname ] && mkdir -p $timedirname
-
-rootfilename=${timedirname}/${filename}-${runnumber}-${sequence}.root
-
-[ -f jobtime.root ] && cp -v jobtime.root $rootfilename
-
-echo "script done"
+echo "wrapper script done"
