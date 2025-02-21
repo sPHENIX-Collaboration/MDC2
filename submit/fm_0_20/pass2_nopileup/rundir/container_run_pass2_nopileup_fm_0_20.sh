@@ -52,6 +52,7 @@ fi
 # $11: enable calo
 # $12: enable mbd
 # $13: enable trk
+# $14: git commit id
 
 echo 'here comes your environment'
 printenv
@@ -68,6 +69,7 @@ echo arg10 \(sequence\): ${10}
 echo arg11 \(enable calo\): ${11}
 echo arg12 \(enable mbd\): ${12}
 echo arg13 \(enable trk\): ${13}
+echo arg14 \(git commit id\): ${14}
 
 
 timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/shijing_hepmc/fm_0_20/pass2_nopileup/timing.run${9}
@@ -87,8 +89,8 @@ then
 
     filename=timing_calo
 
-    echo running calo root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
-    root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
+    echo running calo root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"${14}\"\)
+    root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"${14}\"\)
 
     [ ! -d $timedirname ] && mkdir -p $timedirname
 
@@ -111,8 +113,8 @@ then
 
     filename=timing_mbdepd
 
-    echo root.exe -q -b Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$5\",\"$6\",\"$cdbtag\"\)
-    root.exe -q -b  Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$5\",\"$6\",\"$cdbtag\"\)
+    echo root.exe -q -b Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$5\",\"$6\",\"$cdbtag\",\"${14}\"\)
+    root.exe -q -b  Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$5\",\"$6\",\"$cdbtag\",\"${14}\"\)
 
     [ ! -d $timedirname ] && mkdir -p $timedirname
 
@@ -135,8 +137,8 @@ then
 
     filename=timing_pass3trk
 
-    echo running root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$cdbtag\"\)
-    root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$cdbtag\"\)
+    echo running root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$cdbtag\",\"${14}\"\)
+    root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$cdbtag\",\"${14}\"\)
     [ ! -d $timedirname ] && mkdir -p $timedirname
 
     rootfilename=${timedirname}/${filename}-${runnumber}-${sequence}.root

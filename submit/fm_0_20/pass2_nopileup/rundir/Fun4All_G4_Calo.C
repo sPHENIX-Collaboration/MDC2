@@ -11,7 +11,8 @@
 #include <G4_HcalOut_ref.C>
 #include <G4_Input.C>
 #include <G4_Production.C>
-
+#include <G4_RunSettings.C>
+#include <SaveGitTags.C>
 
 #include <caloreco/CaloGeomMapping.h>
 #include <caloreco/CaloTowerBuilder.h>
@@ -44,16 +45,27 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 void Fun4All_G4_Calo(
     const int nEvents = 1,
-    const string &inputFile0 = "DST_CALO_G4HIT_pythia8_Jet10_300kHz-0000000022-000000.root",
-    const string &outputFile = "DST_CALO_CLUSTER_pythia8_Jet10_300kHz-0000000022-000000.root",
+    const string &inputFile0 = "G4Hits_sHijing_0_20fm-0000000026-000000.root",
+    const string &outputFile = "DST_CALO_CLUSTER_sHijing_0_20fm-0000000026-0000000022-000000.root",
     const string &outdir = ".",
-    const string &cdbtag = "MDC2")
+    const string &cdbtag = "MDC2",
+    const std::string &gitcommit = "none")
 
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);  // set it to 1 if you want event printouts
 
   recoConsts *rc = recoConsts::instance();
+
+  // save all git tags from build
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
 
   // Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
   PHRandomSeed::Verbosity(1);
@@ -80,22 +92,7 @@ void Fun4All_G4_Calo(
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
   int runnumber = runseg.first;
 
-  switch (runnumber)
-  {
-  case 21:  // zero beam xing angle
-    Input::BEAM_CONFIGURATION = Input::pp_ZEROANGLE;
-    break;
-  case 22:  // 1.5 mrad beam xing angle
-    Input::BEAM_CONFIGURATION = Input::pp_COLLISION;
-    break;
-  case 25:  // 1.5 mrad beam xing angle
-    Input::BEAM_CONFIGURATION = Input::AA_COLLISION;
-    break;
-  default:
-    cout << "runnnumber " << runnumber << " not implemented" << endl;
-    gSystem->Exit(1);
-    break;
-  }
+  RunSettings(runnumber);
 
   //===============
   // Input options

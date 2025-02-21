@@ -7,6 +7,7 @@
 #include <G4_OutputManager_Pass3Trk.C>
 #include <G4_Production.C>
 #include <G4_TrkrSimulation.C>
+#include <SaveGitTags.C>
 
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
@@ -28,12 +29,23 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_Pass3Trk(
     const int nEvents = 0,
-    const string &inputFile0 = "G4Hits_sHijing_0_20fm-0000000014-000000.root",
+    const string &inputFile0 = "G4Hits_sHijing_0_20fm-0000000026-000000.root",
     const string &outdir = ".",
-    const string &cdbtag = "MDC2_ana.412")
+    const string &cdbtag = "MDC2",
+    const std::string &gitcommit = "none")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
+
+  // save all git tags from build
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
 
   // Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
   PHRandomSeed::Verbosity(1);
