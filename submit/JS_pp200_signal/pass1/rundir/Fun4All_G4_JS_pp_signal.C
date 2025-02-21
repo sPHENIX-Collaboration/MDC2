@@ -153,7 +153,15 @@ int Fun4All_G4_JS_pp_signal(
   {
     pythia8_config_file += "phpythia8_JS_GJ_ptHat20_MDC2.cfg";
   }
+  else if (jettrigger == "Jet5")
+  {
+    pythia8_config_file += "phpythia8_5GeV_JS_MDC2.cfg";
+  }
   else if (jettrigger == "Jet10")
+  {
+    pythia8_config_file += "phpythia8_10GeV_JS_MDC2.cfg";
+  }
+  else if (jettrigger == "Jet15")
   {
     pythia8_config_file += "phpythia8_15GeV_JS_MDC2.cfg";
   }
@@ -218,9 +226,18 @@ int Fun4All_G4_JS_pp_signal(
       PHPy8JetTrigger *p8_js_signal_trigger = new PHPy8JetTrigger();
       p8_js_signal_trigger->SetEtaHighLow(1.5, -1.5);  // Set eta acceptance for particles into the jet between +/- 1.5
       p8_js_signal_trigger->SetJetR(0.4);              // Set the radius for the trigger jet
-      if (jettrigger == "Jet10")
+      
+      if (jettrigger == "Jet5")
+      {
+	p8_js_signal_trigger->SetMinJetPt(5);  // require a 5 GeV minimum pT jet in the event
+      }
+      else if (jettrigger == "Jet10")
       {
 	p8_js_signal_trigger->SetMinJetPt(10);  // require a 10 GeV minimum pT jet in the event
+      }
+      else if (jettrigger == "Jet15")
+      {
+	p8_js_signal_trigger->SetMinJetPt(15);  // require a 15 GeV minimum pT jet in the event
       }
       else if (jettrigger == "Jet20")
       {
