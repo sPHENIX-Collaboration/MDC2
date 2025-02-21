@@ -20,7 +20,7 @@ my $nsubmit = 10000;
 my $nsafejobs = 50000;
 
 my %submitdir = (
-     "cosmic/pass2_nopileup/condor" => (""),
+#     "cosmic/pass2_nopileup/condor" => (""),
 #    "fm_0_20/pass2/condor" => (""),
 #    "fm_0_20/pass3trk/condor" => (""),
 #    "fm_0_20/pass3calo/condor" => (""),

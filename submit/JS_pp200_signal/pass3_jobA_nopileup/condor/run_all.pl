@@ -65,6 +65,7 @@ if ($isbad > 0)
 my $maxsubmit = $ARGV[0];
 my $jettrigger = $ARGV[1];
 if ($jettrigger  ne "Jet10" &&
+    $jettrigger  ne "Jet20" &&
     $jettrigger  ne "Jet30" &&
     $jettrigger  ne "Jet40" &&
     $jettrigger  ne "PhotonJet" &&

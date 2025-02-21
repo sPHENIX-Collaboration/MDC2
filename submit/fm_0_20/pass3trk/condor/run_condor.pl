@@ -7,9 +7,9 @@ use File::Path;
 
 my $test;
 GetOptions("test"=>\$test);
-if ($#ARGV < 3)
+if ($#ARGV < 6)
 {
-    print "usage: run_condor.pl <events> <trk infile> <truth infile> <outdir> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <trk infile> <truth infile> <outdir> <build> <runnumber> <sequence>\n";
     print "options:\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);

@@ -30,8 +30,8 @@ int Fun4All_G4_sPHENIX_jobC(
   const std::string &inputFile1 = "DST_TRACKSEEDS_sHijing_0_20fm-0000000006-00000.root",
   const std::string &inputFile2 = "DST_CALO_CLUSTER_sHijing_0_20fm-0000000006-00000.root",
   const std::string &outputFile = "DST_TRACKS_sHijing_0_20fm-0000000006-00000.root",
-  const std::string &outdir = "."
-  )
+  const std::string &outdir = ".",
+  const string &cdbtag = "MDC2_ana.412")
 {
 
   // print inputs
@@ -48,7 +48,7 @@ int Fun4All_G4_sPHENIX_jobC(
   //===============
   Enable::CDB = true;
   // tag
-  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG",cdbtag);
   // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
@@ -94,6 +94,9 @@ int Fun4All_G4_sPHENIX_jobC(
   /* we only run the track fit, starting with seed from JobA */
   Tracking_Reco_TrackFit();
   
+  //--------------
+  // Timing module is last to register
+  //--------------
   TimerStats *ts = new TimerStats();
   ts->OutFileName("jobtime.root");
   se->registerSubsystem(ts);

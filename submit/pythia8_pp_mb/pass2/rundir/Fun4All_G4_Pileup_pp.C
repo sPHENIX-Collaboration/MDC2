@@ -77,7 +77,7 @@ int Fun4All_G4_Pileup_pp(
 
   // background input manager
   auto inpile = new Fun4AllDstPileupInputManager("DST_background");
-  inpile->setCollisionRate(pileup); // 3MHz according to BUP
+  inpile->setCollisionRate(pileup);
   double low_time_window = -105.5 / (8.0 / 1000.0);
   double high_time_window = -low_time_window + 50000;
   inpile->setPileupTimeWindow(low_time_window, high_time_window);
@@ -97,7 +97,7 @@ int Fun4All_G4_Pileup_pp(
   //  se->registerOutputManager(out);
   if (Enable::PRODUCTION)
   {
-    CreateDstOutput(pileup,runnumber, segment);
+    CreateDstOutput(pileup, runnumber, segment);
   }
 
   // process events

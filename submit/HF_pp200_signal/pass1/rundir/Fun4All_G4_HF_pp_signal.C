@@ -1,5 +1,5 @@
-#ifndef MACRO_FUN4ALLG4SPHENIX_C
-#define MACRO_FUN4ALLG4SPHENIX_C
+#ifndef MACRO_FUN4ALLG4HFPPSIGNAL_C
+#define MACRO_FUN4ALLG4HFPPSIGNAL_C
 
 #include <GlobalVariables.C>
 
@@ -13,10 +13,12 @@
 #include <phpythia8/PHPy8JetTrigger.h>
 #include <phpythia8/PHPy8ParticleTrigger.h>
 
+#include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/HeadReco.h>
 #include <ffamodules/SyncReco.h>
-#include <ffamodules/CDBInterface.h>
+
+#include <fun4allutils/TimerStats.h>
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
@@ -29,13 +31,15 @@
 
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
+R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_HF_pp_signal(
     const int nEvents = 1,
     // "Charm" or "Bottom"  or "CharmD0"  or "BottomD0" or "MB" or "CharmD0piKJet5" or "CharmD0piKJet12"
     const string &HF_Q_filter = "Charm",
     const string &outputFile = "G4Hits_pythia8_CharmD0piKJet5-0000007-00000.root",
-    const string &outdir = ".")
+    const string &outdir = ".",
+    const string &cdbtag = "MDC2_ana.418")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -57,14 +61,17 @@ int Fun4All_G4_HF_pp_signal(
   //int seedValue = 491258969;
   //rc->set_IntFlag("RANDOMSEED", seedValue);
 
+  TRACKING::pp_mode = true;
+  TRACKING::pp_extended_readout_time = 90000;
+
   //===============
   // conditions DB flags
   //===============
   Enable::CDB = true;
   // global tag
-  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
 
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
   int runnumber=runseg.first;
@@ -242,8 +249,7 @@ int Fun4All_G4_HF_pp_signal(
   Enable::EPD = true;
 
   //! forward flux return plug door. Out of acceptance and off by default.
-//  Enable::PLUGDOOR = true;
-  Enable::PLUGDOOR_BLACKHOLE = true;
+  Enable::PLUGDOOR = true;
 //  Enable::PLUGDOOR_ABSORBER = true;
 
 
@@ -264,6 +270,13 @@ int Fun4All_G4_HF_pp_signal(
   {
     G4Setup();
   }
+
+  //--------------
+  // Timing module is last to register
+  //--------------
+  TimerStats *ts = new TimerStats();
+  ts->OutFileName("jobtime.root");
+  se->registerSubsystem(ts);
 
   //--------------
   // Set up Input Managers

@@ -80,51 +80,22 @@ void Fun4All_G4_Calo(
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
   int runnumber = runseg.first;
 
-  if (runnumber != 0)
-  {
-    rc->set_IntFlag("RUNNUMBER", runnumber);
-  }
-
-
-
   switch (runnumber)
   {
-  case 7:
-  case 10:
-  case 19:
-    Input::BEAM_CONFIGURATION = Input::AA_COLLISION;  // for 2023 sims we want the AA geometry for no pileup sims
-    cout << "using Input::AA_COLLISION" << endl;
-    break;
-  case 8:
-  case 11:
-  case 15:
-  case 20:
-  case 150:
-    Input::BEAM_CONFIGURATION = Input::pp_COLLISION;  // pp collisions
-    cout << "using Input::pp_COLLISION" << endl;
-    break;
-  case 9:
-  case 12:
-    Input::BEAM_CONFIGURATION = Input::pA_COLLISION;  // for 2023 sims we want the AA geometry for no pileup sims
-    cout << "using Input::pA_COLLISION" << endl;
-    break;
-  case 21:  // zero beam xing angle, mvtx rotated
+  case 21:  // zero beam xing angle
     Input::BEAM_CONFIGURATION = Input::pp_ZEROANGLE;
-    Enable::MVTX_APPLYMISALIGNMENT = true;
     break;
-  case 22:  // 1.5 mrad beam xing angle, mvtx rotated
+  case 22:  // 1.5 mrad beam xing angle
     Input::BEAM_CONFIGURATION = Input::pp_COLLISION;
-    Enable::MVTX_APPLYMISALIGNMENT = true;
+    break;
+  case 25:  // 1.5 mrad beam xing angle
+    Input::BEAM_CONFIGURATION = Input::AA_COLLISION;
     break;
   default:
     cout << "runnnumber " << runnumber << " not implemented" << endl;
     gSystem->Exit(1);
     break;
   }
-
-  // you only need a list that have all G4hits and primary truth to run the
-  // correction it is safe to just have the g4hit list
-  //-----------------------------
 
   //===============
   // Input options

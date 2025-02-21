@@ -8,9 +8,9 @@ use File::Path;
 my $test;
 my $overwrite;
 GetOptions("test"=>\$test, "overwrite"=>\$overwrite);
-if ($#ARGV < 8)
+if ($#ARGV < 9)
 {
-    print "usage: run_condor.pl <events> <trkr g4hit file> <trkr cluster file> <tracks file> <truth file> <outfile> <outdir> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <trkr g4hit file> <trkr cluster file> <tracks file> <truth file> <outfile> <outdir> <build> <runnumber> <sequence>\n";
     print "options:\n";
     print "--overwrite : overwrite existing jobfiles\n";
     print "--test: testmode - no condor submission\n";
@@ -29,14 +29,15 @@ my $infile2 = $ARGV[3];
 my $infile3 = $ARGV[4];
 my $outfilename = $ARGV[5];
 my $dstoutdir = $ARGV[6];
-my $runnumber = $ARGV[7];
-my $sequence = $ARGV[8];
+my $build = $ARGV[7];
+my $runnumber = $ARGV[8];
+my $sequence = $ARGV[9];
 if ($sequence < 100)
 {
     $baseprio = 90;
 }
 my $condorlistfile = sprintf("condor.list");
-my $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
+my $suffix = sprintf("%010d-%06d",$runnumber,$sequence);
 my $logdir = sprintf("%s/log/run%d",$localdir,$runnumber);
 if (! -d $logdir)
 {
@@ -64,7 +65,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $infile0 $infile1 $infile2 $infile3 $outfilename $dstoutdir $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $infile0 $infile1 $infile2 $infile3 $outfilename $dstoutdir $build $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -89,5 +90,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile0,  $infile1, $infile2, $infile3, $outfilename, $dstoutdir, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $infile0,  $infile1, $infile2, $infile3, $outfilename, $dstoutdir, $build, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
 close(F);

@@ -65,6 +65,7 @@ if ($isbad > 0)
 my $maxsubmit = $ARGV[0];
 my $jettrigger = $ARGV[1];
 if ($jettrigger  ne "Jet10" &&
+    $jettrigger  ne "Jet20" &&
     $jettrigger  ne "Jet30" &&
     $jettrigger  ne "Jet40" &&
     $jettrigger  ne "PhotonJet" &&
@@ -73,7 +74,7 @@ if ($jettrigger  ne "Jet10" &&
     $jettrigger  ne "PhotonJet20" &&
     $jettrigger  ne "Detroit")
 {
-    print "second argument has to be Jet10, Jet30, Jet40, PhotonJet, PhotonJet5, PhotonJet10, PhotonJet20 or Detroit\n";
+    print "second argument has to be Jet10, Jet20, Jet30, Jet40, PhotonJet, PhotonJet5, PhotonJet10, PhotonJet20 or Detroit\n";
     exit(1);
 }
 

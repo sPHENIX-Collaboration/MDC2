@@ -1,22 +1,21 @@
 #include <GlobalVariables.C>
 
 #include <G4_Production.C>
-#include <Trkr_RecoInit.C>
 #include <Trkr_Clustering.C>
+#include <Trkr_RecoInit.C>
 
-#include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
+#include <ffamodules/FlagHandler.h>
 
 #include <fun4allutils/TimerStats.h>
 
-#include <fun4all/SubsysReco.h>
-#include <fun4all/Fun4AllServer.h>
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
+#include <fun4all/Fun4AllServer.h>
+#include <fun4all/SubsysReco.h>
 
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
-
 
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
@@ -24,26 +23,26 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 //________________________________________________________________________________________________
 int Fun4All_G4_sPHENIX_job0(
-  const int nEvents = 0,
-  const int nSkipEvents = 0,
-  const std::string &inputFile = "DST_TRKR_HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
-  const std::string &outputFile = "DST_TRKR_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000006-00000.root",
-    const string &outdir = ".")
+    const int nEvents = 0,
+    const int nSkipEvents = 0,
+    const std::string &inputFile = "DST_TRKR_HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000019-00000.root",
+    const std::string &outputFile = "DST_TRKR_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000019-00000.root",
+    const string &outdir = ".",
+    const string &cdbtag = "MDC2_ana.435")
 {
-
   // print inputs
   std::cout << "Fun4All_G4_sPHENIX_job0 - nEvents: " << nEvents << std::endl;
   std::cout << "Fun4All_G4_sPHENIX_job0 - nSkipEvents: " << nSkipEvents << std::endl;
   std::cout << "Fun4All_G4_sPHENIX_job0 - inputFile: " << inputFile << std::endl;
   std::cout << "Fun4All_G4_sPHENIX_job0 - outputFile: " << outputFile << std::endl;
-  
+
   recoConsts *rc = recoConsts::instance();
 
   //===============
   // conditions DB flags
   //===============
   Enable::CDB = true;
-  rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
   // set up production relatedstuff
   Enable::PRODUCTION = true;
@@ -60,7 +59,8 @@ int Fun4All_G4_sPHENIX_job0(
   // TPC
   G4TPC::ENABLE_STATIC_DISTORTIONS = false;
   G4TPC::ENABLE_TIME_ORDERED_DISTORTIONS = false;
-  G4TPC::ENABLE_CORRECTIONS = false;
+  G4TPC::ENABLE_STATIC_CORRECTIONS = false;
+  G4TPC::ENABLE_AVERAGE_CORRECTIONS = false;
   G4TPC::DO_HIT_ASSOCIATION = false;
 
   // tracking configuration
@@ -68,7 +68,7 @@ int Fun4All_G4_sPHENIX_job0(
 
   // do not initialize magnetic field in ACTS
   G4TRACKING::init_acts_magfield = false;
-  
+
   // server
   auto se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -88,10 +88,13 @@ int Fun4All_G4_sPHENIX_job0(
   TPC_Clustering();
   Micromegas_Clustering();
 
+  //--------------
+  // Timing module is last to register
+  //--------------
   TimerStats *ts = new TimerStats();
   ts->OutFileName("jobtime.root");
   se->registerSubsystem(ts);
-  
+
   // input manager
   auto in = new Fun4AllDstInputManager("DSTin");
   in->fileopen(inputFile);
@@ -104,18 +107,20 @@ int Fun4All_G4_sPHENIX_job0(
 
   // output manager
   /* all the nodes from DST and RUN are saved to the output */
-    string FullOutFile = DstOut::OutputFile;
+  string FullOutFile = DstOut::OutputFile;
   auto out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
   out->AddNode("Sync");
   out->AddNode("EventHeader");
-  out->AddNode("TRKR_CLUSTER"); 
+  out->AddNode("TRKR_CLUSTER");
   out->AddNode("TRKR_CLUSTERHITASSOC");
   out->AddNode("TRKR_CLUSTERCROSSINGASSOC");
   se->registerOutputManager(out);
 
   // skip events if any specified
-  if( nSkipEvents > 0 )
-  { se->skip( nSkipEvents ); }
+  if (nSkipEvents > 0)
+  {
+    se->skip(nSkipEvents);
+  }
 
   // process events
   se->run(nEvents);

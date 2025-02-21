@@ -9,6 +9,8 @@
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
 
+#include <fun4allutils/TimerStats.h>
+
 #include <fun4all/SubsysReco.h>
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
@@ -20,16 +22,17 @@
 
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
+R__LOAD_LIBRARY(libfun4allutils.so)
 
 void Fun4All_TruthReco(
   const int nEvents = 0,
-  const std::string &dst_trkr_g4hit = "DST_TRKR_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
-  const std::string &dst_trkr_cluster = "DST_TRKR_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
-  const std::string &dst_tracks = "DST_TRACKS_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
-  const std::string &dst_truth = "DST_TRUTH_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
-  const std::string &outputFile = "DST_TRUTH_RECO_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
-  const std::string &outdir = "."
-)
+  const std::string &dst_trkr_g4hit = "DST_TRKR_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000010-000000.root",
+  const std::string &dst_trkr_cluster = "DST_TRKR_CLUSTER_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000010-000000.root",
+  const std::string &dst_tracks = "DST_TRACKS_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000010-000000.root",
+  const std::string &dst_truth = "DST_TRUTH_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000010-000000.root",
+  const std::string &outputFile = "DST_TRUTH_RECO_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000010-000000.root",
+  const std::string &outdir = ".",
+  const string &cdbtag = "MDC2_ana.412")
 {
   gSystem->Load("libg4dst.so");
   Fun4AllServer *se = Fun4AllServer::instance();
@@ -45,7 +48,7 @@ void Fun4All_TruthReco(
   //===============
   Enable::CDB = true;
   // tag
-  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG",cdbtag);
   // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
@@ -59,6 +62,13 @@ void Fun4All_TruthReco(
   se->registerSubsystem(flag);
 
   build_truthreco_tables();
+
+  //--------------
+  // Timing module is last to register
+  //--------------
+  TimerStats *ts = new TimerStats();
+  ts->OutFileName("jobtime.root");
+  se->registerSubsystem(ts);
 
   auto in = new Fun4AllDstInputManager("DSTin");
   in->fileopen(dst_truth);

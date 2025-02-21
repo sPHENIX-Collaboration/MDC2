@@ -11,6 +11,8 @@
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
 
+#include <fun4allutils/TimerStats.h>
+
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
@@ -21,12 +23,14 @@
 
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
+R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_Pass3Trk(
     const int nEvents = 1,
-    const string &inputFile0 = "DST_TRKR_G4HIT_ampt_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
-    const string &inputFile1 = "DST_TRUTH_G4HIT_ampt_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
-    const string &outdir = ".")
+    const string &inputFile0 = "DST_TRKR_G4HIT_ampt_0_20fm_50kHz_bkg_0_20fm-0000000014-000000.root",
+    const string &inputFile1 = "DST_TRUTH_G4HIT_ampt_0_20fm_50kHz_bkg_0_20fm-0000000014-000000.root",
+    const string &outdir = ".",
+    const string &cdbtag = "MDC2_ana.416")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -47,7 +51,7 @@ int Fun4All_G4_Pass3Trk(
   //  rc->set_IntFlag("RANDOMSEED", 12345);
   Enable::CDB = true;
   // tag
-  rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
@@ -102,9 +106,6 @@ int Fun4All_G4_Pass3Trk(
   // Global options (enabled for all enables subsystems - if implemented)
   //  Enable::VERBOSITY = 1;
 
-  // Magnetic field until this is sorted out
-  G4MAGNET::magfield = std::string(getenv("CALIBRATIONROOT")) + std::string("/Field/Map/sphenix3dtrackingmapxyz.root");
-
   // central tracking
   Enable::MVTX = true;
   Enable::MVTX_CELL = Enable::MVTX && true;
@@ -133,6 +134,13 @@ int Fun4All_G4_Pass3Trk(
   if (Enable::TPC_CELL) TPC_Cells();
   if (Enable::MICROMEGAS_CELL) Micromegas_Cells();
 
+
+  //--------------
+  // Timing module is last to register
+  //--------------
+  TimerStats *ts = new TimerStats();
+  ts->OutFileName("jobtime.root");
+  se->registerSubsystem(ts);
 
   //--------------
   // Set up Input Managers

@@ -35,7 +35,6 @@ int Fun4All_G4_Pileup(
     const string &backgroundList = "pileupbkg.list",
     const string &outdir = ".",
     const string &cdbtag = "MDC2_ana.416")
-
 {
   gSystem->Load("libg4dst.so");
   // server

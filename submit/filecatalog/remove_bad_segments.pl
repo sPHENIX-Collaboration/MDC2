@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use strict;
 use warnings;
@@ -170,6 +170,9 @@ if ($#ARGV < 0)
     print "   26 : JS pythia8 PhotonJet > 5GeV\n";
     print "   27 : JS pythia8 PhotonJet > 10GeV\n";
     print "   28 : JS pythia8 PhotonJet > 20GeV\n";
+    print "   29 : Herwig MB\n";
+    print "   30 : Herwig Jet ptmin = 10 GeV\n";
+    print "   31 : Herwig Jet ptmin = 30 GeV\n";
     print "-dsttype:\n";
     foreach my $tp (sort keys %daughters)
     {
@@ -189,7 +192,7 @@ if( ! exists $daughters{$dsttype})
     }
     exit(0);
 }
-if ($system < 1 || $system > 28)
+if ($system < 1 || $system > 31)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
@@ -216,6 +219,13 @@ if ($system < 1 || $system > 28)
     print "   22 : AMPT\n";
     print "   23 : EPOS\n";
     print "   24 : Cosmics\n";
+    print "   25 : JS pythia8 Detroit\n";
+    print "   26 : JS pythia8 PhotonJet > 5GeV\n";
+    print "   27 : JS pythia8 PhotonJet > 10GeV\n";
+    print "   28 : JS pythia8 PhotonJet > 20GeV\n";
+    print "   29 : Herwig MB\n";
+    print "   30 : Herwig Jet ptmin = 10 GeV\n";
+    print "   31 : Herwig Jet ptmin = 30 GeV\n";
     exit(0);
 }
 
@@ -664,11 +674,14 @@ elsif ($system == 25)
     $specialsystemstring{"G4Hits"} = "pythia8_Detroit-";
     $systemstring = "pythia8_Detroit_";
     $topdir = sprintf("%s/JS_pp200_signal",$topdir);
-    $condorfileadd = sprintf("Detroit_%s",$pileup);
     if (defined $nopileup)
     {
 	$condorfileadd = sprintf("Detroit");
         $systemstring = "pythia8_Detroit";
+    }
+    else
+    {
+        $condorfileadd = sprintf("Detroit_%s",$pileup);
     }
     if (defined $embed)
     {
@@ -716,11 +729,14 @@ elsif ($system == 27)
     $specialsystemstring{"G4Hits"} = "pythia8_PhotonJet10-";
     $systemstring = "pythia8_PhotonJet10_";
     $topdir = sprintf("%s/JS_pp200_signal",$topdir);
-    $condorfileadd = sprintf("PhotonJet10_%s",$pileup);
     if (defined $nopileup)
     {
 	$condorfileadd = sprintf("PhotonJet10");
         $systemstring = "pythia8_PhotonJet10";
+    }
+    else
+    {
+      $condorfileadd = sprintf("PhotonJet10_%s",$pileup);
     }
     if (defined $embed)
     {
@@ -742,11 +758,14 @@ elsif ($system == 28)
     $specialsystemstring{"G4Hits"} = "pythia8_PhotonJet20-";
     $systemstring = "pythia8_PhotonJet20_";
     $topdir = sprintf("%s/JS_pp200_signal",$topdir);
-    $condorfileadd = sprintf("PhotonJet20_%s",$pileup);
     if (defined $nopileup)
     {
 	$condorfileadd = sprintf("PhotonJet20");
         $systemstring = "pythia8_PhotonJet20";
+    }
+    else
+    {
+      $condorfileadd = sprintf("PhotonJet20_%s",$pileup);
     }
     if (defined $embed)
     {
@@ -762,6 +781,93 @@ elsif ($system == 28)
 	}
     }
     $specialcondorfileadd{"G4Hits"} = "PhotonJet20";
+}
+elsif ($system == 29)
+{
+    $specialsystemstring{"G4Hits"} = "Herwig_MB-";
+    $systemstring = "Herwig_MB_";
+    $topdir = sprintf("%s/herwig",$topdir);
+    if (defined $nopileup)
+    {
+	$condorfileadd = sprintf("MB");
+        $systemstring = "Herwig_MB";
+    }
+    else
+    {
+      $condorfileadd = sprintf("MB_%s",$pileup);
+    }
+    if (defined $embed)
+    {
+	$condorfileadd = sprintf("Herwig");
+        $systemstring = "Herwig_MB";
+	if ($embed eq "pau")
+	{
+	    $pileupstring = "_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm";
+	}
+	else
+	{
+	    $pileupstring = sprintf("_sHijing_%s_50kHz_bkg_0_20fm",$fm);
+	}
+    }
+    $specialcondorfileadd{"G4Hits"} = "MB";
+}
+elsif ($system == 30)
+{
+    $specialsystemstring{"G4Hits"} = "Herwig_Jet10-";
+    $systemstring = "Herwig_Jet10_";
+    $topdir = sprintf("%s/herwig",$topdir);
+    if (defined $nopileup)
+    {
+	$condorfileadd = sprintf("Jet10");
+        $systemstring = "Herwig_Jet10";
+    }
+    else
+    {
+      $condorfileadd = sprintf("Jet10_%s",$pileup);
+    }
+    if (defined $embed)
+    {
+	$condorfileadd = sprintf("Herwig");
+        $systemstring = "Herwig_Jet10";
+	if ($embed eq "pau")
+	{
+	    $pileupstring = "_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm";
+	}
+	else
+	{
+	    $pileupstring = sprintf("_sHijing_%s_50kHz_bkg_0_20fm",$fm);
+	}
+    }
+    $specialcondorfileadd{"G4Hits"} = "Jet10";
+}
+elsif ($system == 31)
+{
+    $specialsystemstring{"G4Hits"} = "Herwig_Jet30-";
+    $systemstring = "Herwig_Jet30_";
+    $topdir = sprintf("%s/herwig",$topdir);
+    if (defined $nopileup)
+    {
+	$condorfileadd = sprintf("Jet30");
+        $systemstring = "Herwig_Jet30";
+    }
+    else
+    {
+      $condorfileadd = sprintf("Jet30_%s",$pileup);
+    }
+    if (defined $embed)
+    {
+	$condorfileadd = sprintf("Herwig");
+        $systemstring = "Herwig_Jet30";
+	if ($embed eq "pau")
+	{
+	    $pileupstring = "_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm";
+	}
+	else
+	{
+	    $pileupstring = sprintf("_sHijing_%s_50kHz_bkg_0_20fm",$fm);
+	}
+    }
+    $specialcondorfileadd{"G4Hits"} = "Jet30";
 }
 else
 {

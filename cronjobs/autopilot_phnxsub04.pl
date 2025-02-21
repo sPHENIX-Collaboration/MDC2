@@ -17,11 +17,12 @@ if (-f $tagfile)
 my $tagfiletouch = sprintf("touch %s",$tagfile);
 system($tagfiletouch);
 my $nsubmit = 20000;
-my $nsafejobs = 80000;
+my $nsafejobs = 70000;
 
 my %submitdir = (
-    "cosmic/pass2_nopileup/condor" => (""),
-
+#    "cosmic/pass2_nopileup/condor" => ("off"),
+#    "cosmic/pass2calo_nopileup_nozero/condor" => ("off"),
+#    "cosmic/pass3calo_waveform_nopileup/condor" => ("off"),
 #    "fm_0_20/pass2/condor" => (""),
 #    "fm_0_20/pass3trk/condor" => (""),
 #    "fm_0_20/pass3calo/condor" => (""),
@@ -56,6 +57,22 @@ my %submitdir = (
 #     "fm_0_488/pass4_global_nopileup/condor" => (""),
 #     "fm_0_488/pass4_truthreco_nopileup/condor" => (""),
 
+    "ampt/pass2_nopileup/condor" => (""),
+    "ampt/pass2calo_nopileup_nozero/condor" => (""),
+    "ampt/pass3_job0_nopileup/condor" => (""),
+    "ampt/pass3_jobA_nopileup/condor" => (""),
+    "ampt/pass3_jobC_nopileup/condor" => (""),
+    "ampt/pass4_global_nopileup/condor" => (""),
+    "ampt/pass4_truthreco_nopileup/condor" => (""),
+
+    "epos/pass2_nopileup/condor" => (""),
+    "epos/pass2calo_nopileup_nozero/condor" => (""),
+    "epos/pass3_job0_nopileup/condor" => (""),
+    "epos/pass3_jobA_nopileup/condor" => (""),
+    "epos/pass3_jobC_nopileup/condor" => (""),
+    "epos/pass4_global_nopileup/condor" => (""),
+    "epos/pass4_truthreco_nopileup/condor" => (""),
+
 #    "pAu_0_10fm/pass2/condor" => (""),
 #    "pAu_0_10fm/pass3_bbcepd/condor" => (""),
 #    "pAu_0_10fm/pass3trk/condor" => (""),
@@ -84,6 +101,7 @@ my %submitdir = (
 #    "pythia8_pp_mb/pass5_truthreco/condor" => (""),
 
 #    "pythia8_pp_mb/pass2_nopileup/condor" => (""),
+#    "pythia8_pp_mb/pass2calo_waveform_nopileup/condor" => (""),
 #    "pythia8_pp_mb/pass3_job0_nopileup/condor" => (""),
 #    "pythia8_pp_mb/pass3_jobA_nopileup/condor" => (""),
 #    "pythia8_pp_mb/pass3_jobC_nopileup/condor" => (""),
@@ -127,16 +145,17 @@ my %submitdir = (
 #    "JS_pp200_signal/cemc_geo_fix/cemc_hits_pass2/condor" => (""),
 #    "JS_pp200_signal/cemc_geo_fix/cemc_hits_pass3trk/condor" => (""),
 
-#    "JS_pp200_signal/pass2/condor" => (""),
-#    "JS_pp200_signal/pass3calo/condor" => (""),
-#    "JS_pp200_signal/pass3trk/condor" => (""),
-#    "JS_pp200_signal/pass3_bbcepd/condor" => (""),
-#    "JS_pp200_signal/pass4jet/condor" => (""),
-#    "JS_pp200_signal/pass4_job0/condor" => (""),
-#    "JS_pp200_signal/pass4_jobA/condor" => (""),
-#    "JS_pp200_signal/pass4_jobC/condor" => (""),
-#    "JS_pp200_signal/pass5_global/condor" => (""),
-#    "JS_pp200_signal/pass5_truthreco/condor" => (""),
+    "JS_pp200_signal/pass2/condor" => ("-MHz 2"),
+    "JS_pp200_signal/pass3calo/condor" => ("-MHz 2"),
+    "JS_pp200_signal/pass3calo_nozero/condor" => ("-MHz 2"),
+    "JS_pp200_signal/pass3trk/condor" => ("-MHz 2"),
+    "JS_pp200_signal/pass3_mbdepd/condor" => ("-MHz 2"),
+    "JS_pp200_signal/pass4jet/condor" => ("-MHz 2"),
+    "JS_pp200_signal/pass4_job0/condor" => ("-MHz 2"),
+    "JS_pp200_signal/pass4_jobA/condor" => ("-MHz 2"),
+    "JS_pp200_signal/pass4_jobC/condor" => ("-MHz 2"),
+    "JS_pp200_signal/pass5_global/condor" => ("-MHz 2"),
+    "JS_pp200_signal/pass5_truthreco/condor" => ("-MHz 2"),
 
 
 #    "JS_pp200_signal/pass2_nopileup/condor" => (""),
@@ -185,12 +204,13 @@ my %submitdir = (
 my @quarkfilters = ("Charm");
 my @jettriggers_pau = ("Jet10", "Jet20");
 #my @jettriggers2 = ("Jet10", "Jet30", "Jet40", "PhotonJet");
-my @jettriggers2 = ("Jet10", "Jet30", "PhotonJet");
+#my @jettriggers2 = ("Jet10", "Jet30", "PhotonJet");
+my @jettriggers2 = ("Jet10", "Detroit", "PhotonJet5", "PhotonJet10", "PhotonJet20");
 my @cosmics = ("on", "off");
 #my @jettriggers = ("Jet10", "Jet30");
 #my @singleparticles = {"gamma 10000 10000"};
 
-foreach my $subdir ( keys %submitdir)
+foreach my $subdir ( sort keys %submitdir)
 {
     if ($subdir eq "last")
     {

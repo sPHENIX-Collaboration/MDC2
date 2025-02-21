@@ -8,7 +8,8 @@ Initialdir  	=  $(rundir)
 PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)
 accounting_group = group_sphenix.mdc2
 accounting_group_user = sphnxpro
-Requirements = (CPU_Type == "mdc2")
+Requirements = (CPU_Type == "mdc2") && (NumJobStarts?:0) < 1
+
 request_memory = 2048MB
 Priority = $(baseprio)
 job_lease_duration = 3600

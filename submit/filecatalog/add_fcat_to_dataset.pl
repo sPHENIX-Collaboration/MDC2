@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use strict;
 use File::Basename;
@@ -6,7 +6,7 @@ use File::stat;
 use DBI;
 use Getopt::Long;
 
-my $mdc = "TBD";
+my $mdc = "cosmics";
 my $test;
 my $lfncomp;
 GetOptions("lfn:s" => \$lfncomp, "test"=>\$test);
@@ -28,7 +28,9 @@ my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc");
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 #my $getfiles = $dbh->prepare("select lfn,size,full_file_path from files where lfn = 'DST_TRUTH_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000002-02278.root'");
 #my $getfiles = $dbh->prepare("select lfn,size,full_file_path from files where full_file_path like '$dcachedir/%'"); 
-my $getfiles = $dbh->prepare("select lfn,size,full_file_path from files where lfn like '%run2auau_new_2024p007-00054%' and not exists (select * from datasets where files.lfn = datasets.filename)"); 
+#my $getfiles = $dbh->prepare("select lfn,size,full_file_path from files where lfn like '%run2pp_ana441_2024p007-000%' and not exists (select * from datasets where files.lfn = datasets.filename)");
+my $getfiles = $dbh->prepare("select lfn,size,full_file_path from files where lfn like '%ana.386_2023p003-000%' and not exists (select * from datasets where files.lfn = datasets.filename)");
+#my $getfiles = $dbh->prepare("select lfn,size,full_file_path from files where lfn like '%ana399_2023p008-000%' and not exists (select * from datasets where files.lfn = datasets.filename)"); 
 #my $getfiles = $dbh->prepare("select lfn,size,full_file_path from files where lfn = 'G4Hits_sHijing_0_20fm-0000000006-18875.root'");
 #my $chkfile = $dbh->prepare("select size from datasets where filename = ?");
 #my $insertdataset = $dbh->prepare("insert into datasets (filename,runnumber,segment,size,dataset,dsttype,events) values (?,?,?,?,'$mdc',?,?)");
@@ -45,7 +47,7 @@ while (my @res = $getfiles->fetchrow_array)
     my $startstring = substr($lfn,0,length($lfncomp));
     if ($startstring !~ /$lfncomp/)
     {
-	print "not inserting $lfn\n";
+	print "not inserting $lfn, startstring: $startstring, lfn: $lfncomp\n";
 	next;
     }
 }
@@ -91,6 +93,7 @@ elsif ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/)
 my $entries = -1;
 my $substring = substr($lfn,0,4);
 #if ($substring =~ /DST/)
+if ($substring =~ /notrsis/)
 {
   $entries = &getentries($lfn);
 }

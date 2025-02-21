@@ -6,6 +6,8 @@
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
 
+#include <fun4allutils/TimerStats.h>
+
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
@@ -16,14 +18,16 @@
 
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
+R__LOAD_LIBRARY(libfun4allutils.so)
 
 //________________________________________________________________________________________________
 int Fun4All_G4_Global(
-    const int nEvents = 0,
-    const std::string &inputFile1 = "DST_TRACKS_ampt-0000000010-00000.root",
-    const std::string &inputFile2 = "DST_BBC_EPD_ampt-0000000010-00000.root",
-    const std::string &outputFile = "DST_GLOBAL_ampt-0000000010-00000.root",
-    const std::string &outdir = ".")
+  const int nEvents = 0,
+  const std::string &inputFile1 = "DST_TRACKS_ampt_0_20fm-0000000010-00000.root",
+  const std::string &inputFile2 = "DST_BBC_EPD_ampt_0_20fm-0000000010-00000.root",
+  const std::string &outputFile = "DST_GLOBAL_ampt_0_20fm-0000000010-00000.root",
+  const std::string &outdir = ".",
+  const string &cdbtag = "MDC2_ana.418")
 {
   gSystem->Load("libg4dst.so");
   recoConsts *rc = recoConsts::instance();
@@ -33,7 +37,7 @@ int Fun4All_G4_Global(
   //===============
   Enable::CDB = true;
   // tag
-  rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
 
@@ -57,6 +61,13 @@ int Fun4All_G4_Global(
   se->registerSubsystem(flag);
 
   Global_Reco();
+
+  //--------------
+  // Timing module is last to register
+  //--------------
+  TimerStats *ts = new TimerStats();
+  ts->OutFileName("jobtime.root");
+  se->registerSubsystem(ts);
 
   // input manager
   auto in = new Fun4AllDstInputManager("DSTin1");

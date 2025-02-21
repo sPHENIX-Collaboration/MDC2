@@ -11,8 +11,11 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.391
+anabuild=${8}
 
+source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
+
+cdbtag=MDC2_$anabuild
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
@@ -54,13 +57,14 @@ echo arg4 \(dst_tracks\): $4
 echo arg5 \(dst_truth\): $5
 echo arg6 \(output file\): $6
 echo arg7 \(output dir\): $7
-echo arg8 \(runnumber\): $8
-echo arg9 \(sequence\): $9
+echo arg8 \(build\): $8
+echo arg9 \(runnumber\): $9
+echo arg10 \(sequence\): ${10}
 
-runnumber=$(printf "%010d" $8)
-sequence=$(printf "%05d" $9)
+runnumber=$(printf "%010d" $9)
+sequence=$(printf "%06d" ${10})
 
-echo running root.exe -q -b Fun4All_TruthReco.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\"\)
-root.exe -q -b  Fun4All_TruthReco.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\"\)
+echo running root.exe -q -b Fun4All_TruthReco.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"$cdbtag\"\)
+root.exe -q -b  Fun4All_TruthReco.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"$cdbtag\"\)
 
 echo "script done"

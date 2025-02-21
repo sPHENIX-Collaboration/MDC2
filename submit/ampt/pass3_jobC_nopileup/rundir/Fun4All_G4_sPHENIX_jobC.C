@@ -27,11 +27,11 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 int Fun4All_G4_sPHENIX_jobC(
   const int nEvents = 0,
   const int nSkipEvents = 0,
-  const std::string &inputFile1 = "DST_TRACKSEEDS_ampt-0000000010-00000.root",
-  const std::string &inputFile2 = "DST_CALO_CLUSTER_ampt-0000000010-00000.root",
-  const std::string &outputFile = "DST_TRACKS_ampt-0000000010-00000.root",
-  const std::string &outdir = "."
-  )
+  const std::string &inputFile1 = "DST_TRACKSEEDS_ampt_0_20fm-0000000014-000000.root",
+  const std::string &inputFile2 = "DST_CALO_CLUSTER_ampt_0_20fm-0000000014-000000.root",
+  const std::string &outputFile = "DST_TRACKS_ampt_0_20fm-0000000014-000000.root",
+  const std::string &outdir = ".",
+  const string &cdbtag = "MDC2_ana.418")
 {
 
   // print inputs
@@ -48,7 +48,7 @@ int Fun4All_G4_sPHENIX_jobC(
   //===============
   Enable::CDB = true;
   // tag
-  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG",cdbtag);
   // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
@@ -70,9 +70,10 @@ int Fun4All_G4_sPHENIX_jobC(
   G4TPC::ENABLE_TIME_ORDERED_DISTORTIONS = false;
 
   /* distortion corrections */
-  G4TPC::ENABLE_CORRECTIONS = false;
-  G4TPC::correction_filename = string(getenv("CALIBRATIONROOT")) + "/distortion_maps/distortion_corrections_empty.root";
-  
+  G4TPC::ENABLE_STATIC_CORRECTIONS = false;
+  G4TPC::ENABLE_AVERAGE_CORRECTIONS = false;
+  G4TPC::static_correction_filename = string(getenv("CALIBRATIONROOT")) + "/distortion_maps/distortion_corrections_empty.root";
+  G4TPC::average_correction_filename = string(getenv("CALIBRATIONROOT")) + "/distortion_maps/distortion_corrections_empty.root";
   // tracking configuration
   G4TRACKING::use_full_truth_track_seeding = false;
 
@@ -93,6 +94,9 @@ int Fun4All_G4_sPHENIX_jobC(
   /* we only run the track fit, starting with seed from JobA */
   Tracking_Reco_TrackFit();
   
+  //--------------
+  // Timing module is last to register
+  //--------------
   TimerStats *ts = new TimerStats();
   ts->OutFileName("jobtime.root");
   se->registerSubsystem(ts);

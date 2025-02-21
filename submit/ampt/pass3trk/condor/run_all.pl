@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 10;
+my $runnumber = 14;
 my $test;
 my $incremental;
 my $shared;
@@ -66,29 +66,14 @@ $getfiles->execute() || die $DBI::errstr;
 my $ncal = $getfiles->rows;
 while (my @res = $getfiles->fetchrow_array())
 {
-    if ($res[1] < 100000)
-    {
-	$trkhash{sprintf("%05d",$res[1])} = $res[0];
-    }
-    else
-    {
 	$trkhash{sprintf("%06d",$res[1])} = $res[0];
-    }
-
 }
 $getfiles->finish();
 $gettruthfiles->execute() || die $DBI::errstr;
 my $ntruth = $gettruthfiles->rows;
 while (my @res = $gettruthfiles->fetchrow_array())
 {
-    if ($res[1] < 100000)
-    {
-	$truthhash{sprintf("%05d",$res[1])} = $res[0];
-    }
-    else
-    {
 	$truthhash{sprintf("%06d",$res[1])} = $res[0];
-    }
 }
 $gettruthfiles->finish();
 #print "input files: $ncal, truth: $ntruth\n";
@@ -109,11 +94,6 @@ foreach my $segment (sort keys %trkhash)
 	foreach my $type (sort keys %outfiletype)
 	{
             my $lfn =  sprintf("%s_ampt_0_20fm_50kHz_bkg_0_20fm-%010d-%06d.root",$type,$runnumber,$segment);
-	    if ($segment < 100000)
-	    {
-		$lfn =  sprintf("%s_ampt_0_20fm_50kHz_bkg_0_20fm-%010d-%05d.root",$type,$runnumber,$segment);
-
-	    }
 	    $chkfile->execute($lfn);
 	    if ($chkfile->rows > 0)
 	    {
@@ -135,10 +115,6 @@ foreach my $segment (sort keys %trkhash)
 	    $tstflag="--test";
 	}
 	my $truthfile = $truthhash{sprintf("%06d",$segment)};
-	if ($segment < 100000)
-	{
-	    $truthfile = $truthhash{sprintf("%05d",$segment)};
-	}
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %d %s", $outevents, $lfn, $truthfile, $outdir, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);

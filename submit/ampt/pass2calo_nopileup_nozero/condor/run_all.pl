@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $inrunnumber=10;
+my $inrunnumber=14;
 #my $outrunnumber=40;
 my $outrunnumber=$inrunnumber;
 my $test;
@@ -71,10 +71,6 @@ while (my @res = $getfiles->fetchrow_array())
 	my $runnumber = int($2);
 	my $segment = int($3);
 	my $outfilename = sprintf("DST_CALO_NOZERO_ampt_0_20fm-%010d-%06d.root",$outrunnumber,$segment);
-	if ($segment < 100000)
-	{
-	    $outfilename = sprintf("DST_CALO_NOZERO_ampt_0_20fm-%010d-%05d.root",$outrunnumber,$segment);
-	}
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{

@@ -11,8 +11,11 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.391
+anabuild=${6}
 
+source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
+
+cdbtag=MDC2_$anabuild
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
@@ -39,8 +42,9 @@ fi
 # $3: cluster input file
 # $4: output file
 # $5: output dir
-# $6: run number
-# $7: sequence
+# $6: build
+# $7: run number
+# $8: sequence
 
 echo 'here comes your environment'
 printenv
@@ -49,18 +53,19 @@ echo arg2 \(trkr seed file\): $2
 echo arg3 \(cluster file\): $3
 echo arg4 \(output file\): $4
 echo arg5 \(output dir\): $5
-echo arg6 \(runnumber\): $6
-echo arg7 \(sequence\): $7
+echo arg6 \(build\): $6
+echo arg7 \(runnumber\): $7
+echo arg8 \(sequence\): $8
 
-runnumber=$(printf "%010d" $6)
-sequence=$(printf "%05d" $7)
+runnumber=$(printf "%010d" $7)
+sequence=$(printf "%06d" $8)
 
 filename=timing
 
-echo running root.exe -q -b Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\"\)
-root.exe -q -b  Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\"\)
+echo running root.exe -q -b Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\"\)
+root.exe -q -b  Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\"\)
 
-timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/shijing_hepmc/fm_0_20/pass4_jobC/timing.run${6}
+timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/shijing_hepmc/fm_0_20/pass4_jobC/timing.run${7}
 
 [ ! -d $timedirname ] && mkdir -p $timedirname
 

@@ -32,16 +32,12 @@ if ($sequence < 100)
 }
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%010d-%06d",$runnumber,$sequence);
-if ($sequence < 100000)
-{
-    $suffix = sprintf("%010d-%05d",$runnumber,$sequence);
-}
 my $logdir = sprintf("%s/log/run%d",$localdir,$runnumber);
 if (! -d $logdir)
 {
   mkpath($logdir);
 }
-my $condorlogdir = sprintf("/tmp/AMPT/pass2calo_nopileup_nozero/run%d",$runnumber);
+my $condorlogdir = sprintf("/tmp/ampt/pass2calo_nopileup_nozero/run%d",$runnumber);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);

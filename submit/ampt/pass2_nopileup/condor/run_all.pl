@@ -9,7 +9,7 @@ use DBI;
 
 
 my $outevents = 0;
-my $runnumber = 10;
+my $runnumber = 14;
 my $test;
 my $incremental;
 my $shared;
@@ -83,8 +83,8 @@ while (my @res = $getfiles->fetchrow_array())
         my $foundall = 1;
 	foreach my $type (sort keys %outfiletype)
 	{
-            my $lfn =  sprintf("%s_ampt_0_20fm-%010d-%05d.root",$type,$runnumber,$segment);
-            print "checking for $lfn\n";
+            my $lfn =  sprintf("%s_ampt_0_20fm-%010d-%06d.root",$type,$runnumber,$segment);
+#            print "checking for $lfn\n";
 	    $chkfile->execute($lfn);
 	    if ($chkfile->rows > 0)
 	    {
@@ -105,8 +105,8 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $tstflag="--test";
 	}
-	my $calooutfilename = sprintf("DST_CALO_CLUSTER_ampt_0_20fm-%010d-%05d.root",$runnumber,$segment);
-	my $globaloutfilename = sprintf("DST_MBD_EPD_ampt_0_20fm-%010d-%05d.root",$runnumber,$segment);
+	my $calooutfilename = sprintf("DST_CALO_CLUSTER_ampt_0_20fm-%010d-%06d.root",$runnumber,$segment);
+	my $globaloutfilename = sprintf("DST_MBD_EPD_ampt_0_20fm-%010d-%06d.root",$runnumber,$segment);
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %s", $outevents, $lfn, $calooutfilename, $outdir[0], $globaloutfilename, $outdir[1], $outdir[2], $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);

@@ -28,8 +28,8 @@ int Fun4All_G4_sPHENIX_jobA(
   const int nSkipEvents = 0,
   const string &inputFile = "DST_TRKR_CLUSTER_sHijing_0_20fm-0000000006-00000.root",
   const string &outputFile = "DST_TRACKSEEDS_sHijing_0_20fm-0000000006-00000.root",
-  const string &outdir = "."
-  )
+  const string &outdir = ".",
+  const string &cdbtag = "MDC2_ana.412")
 {
 
   // print inputs
@@ -45,7 +45,7 @@ int Fun4All_G4_sPHENIX_jobA(
   //===============
   Enable::CDB = true;
   // tag
-  rc->set_StringFlag("CDB_GLOBALTAG",CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG",cdbtag);
   rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
 
   // set up production relatedstuff
@@ -95,6 +95,9 @@ int Fun4All_G4_sPHENIX_jobA(
   // tracking
   Tracking_Reco_TrackSeed();
 
+  //--------------
+  // Timing module is last to register
+  //--------------
   TimerStats *ts = new TimerStats();
   ts->OutFileName("jobtime.root");
   se->registerSubsystem(ts);

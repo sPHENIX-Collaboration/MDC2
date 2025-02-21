@@ -8,39 +8,43 @@ sub ncondorjobs;
 sub condorcheck;
 
 my $submittopdir = "/sphenix/u/sphnxpro/MDC2/submit";
-
-my $tagfile = sprintf("%s/autopilot_phnxsub03.run",$submittopdir);
+my $thishost=`hostname -s`;
+chomp $thishost;
+my $tagfile = sprintf("%s/autopilot_%s.run",$submittopdir,$thishost);
 if (-f $tagfile)
 {
     exit 0;
 }
 my $tagfiletouch = sprintf("touch %s",$tagfile);
 system($tagfiletouch);
-my $nsubmit = 10000;
-my $nsafejobs = 41000;
+my $nsubmit = 2000;
+my $nsafejobs = 40000;
 
 my %submitdir = (
-     "cosmic/pass2_nopileup/condor" => ("on"),
-     "cosmic/pass2calo_nopileup_nozero/condor" => ("on"),
-     "cosmic/pass3calo_waveform_nopileup/condor" => ("on"),
+#     "cosmic/pass2_nopileup/condor" => ("on"),
+#     "cosmic/pass2calo_nopileup_nozero/condor" => ("on"),
+#     "cosmic/pass3calo_waveform_nopileup/condor" => ("on"),
 
-#    "fm_0_20/pass2/condor" => (""),
-#    "fm_0_20/pass3trk/condor" => (""),
-#    "fm_0_20/pass3calo/condor" => (""),
-#    "fm_0_20/pass3_mbdepd/condor" => (""),
-#    "fm_0_20/pass4_job0/condor" => (""),
-#    "fm_0_20/pass4_jobA/condor" => (""),
-#    "fm_0_20/pass4_jobC/condor" => (""),
-#    "fm_0_20/pass5_global/condor" => (""),
-#    "fm_0_20/pass5_truthreco/condor" => (""),
+#    "fm_0_20/pass2/condor" => ("--run 19 --build ana.435"),
+#    "fm_0_20/pass3trk/condor" => ("--run 19 --build ana.435"),
+#    "fm_0_20/pass3calo/condor" => ("--run 19 --build ana.435"),
+#    "fm_0_20/pass3calo_nozero/condor" => ("--run 19 --build ana.435"),
+#    "fm_0_20/pass3calo_waveform/condor" => ("--run 19 --build ana.435"),
+#    "fm_0_20/pass3_mbdepd/condor" => ("--run 19 --build ana.435"),
+#    "fm_0_20/pass4_job0/condor" => ("--run 19 --build ana.435"),
+#    "fm_0_20/pass4_jobA/condor" => ("--run 19 --build ana.435"),
+#    "fm_0_20/pass4_jobC/condor" => ("--run 19 --build ana.435"),
+#    "fm_0_20/pass5_global/condor" => ("--run 19 --build ana.435"),
+#    "fm_0_20/pass5_truthreco/condor" => ("--run 19 --build ana.435"),
 
-#    "fm_0_20/pass2_nopileup/condor" => (""),
-#    "fm_0_20/pass2calo_nopileup_nozero/condor" => (""),
-#    "fm_0_20/pass3_job0_nopileup/condor" => (""),
-#    "fm_0_20/pass3_jobA_nopileup/condor" => (""),
-#    "fm_0_20/pass3_jobC_nopileup/condor" => (""),
-#    "fm_0_20/pass4_global_nopileup/condor" => (""),
-#    "fm_0_20/pass4_truthreco_nopileup/condor" => (""),
+#    "fm_0_20/pass2_nopileup/condor" => ("--run 19 --build ana.435"),
+#    "fm_0_20/pass2calo_nozero_nopileup/condor" => ("--run 19 --build ana.435"),
+#    "fm_0_20/pass2calo_waveform_nopileup/condor" => ("--run 19 --build ana.435"),
+#    "fm_0_20/pass3_job0_nopileup/condor" => ("--run 19 --build ana.435"),
+#    "fm_0_20/pass3_jobA_nopileup/condor" => ("--run 19 --build ana.435"),
+#    "fm_0_20/pass3_jobC_nopileup/condor" => ("--run 19 --build ana.435"),
+#    "fm_0_20/pass4_global_nopileup/condor" => ("--run 19 --build ana.435"),
+#    "fm_0_20/pass4_truthreco_nopileup/condor" => ("--run 19 --build ana.435"),
 
 #     "fm_0_488/pass2/condor" => (""),
 #     "fm_0_488/pass3trk/condor" => (""),
@@ -124,6 +128,8 @@ my %submitdir = (
 #    "pythia8_pp_mb/pass5_truthreco/condor" => (""),
 
 #    "pythia8_pp_mb/pass2_nopileup/condor" => (""),
+#    "pythia8_pp_mb/pass2calo_waveform_nopileup/condor" => (""),
+#    "pythia8_pp_mb/pass2calo_nopileup_nozero/condor" => (""),
 #    "pythia8_pp_mb/pass3_job0_nopileup/condor" => (""),
 #    "pythia8_pp_mb/pass3_jobA_nopileup/condor" => (""),
 #    "pythia8_pp_mb/pass3_jobC_nopileup/condor" => (""),
@@ -169,11 +175,9 @@ my %submitdir = (
 #     "HF_pp200_signal/pass5_truthreco_embed/condor" => ("--fm 0_488fm"),
 
 
-#    "JS_pp200_signal/cemc_geo_fix/cemc_hits_pass2/condor" => (""),
-#    "JS_pp200_signal/cemc_geo_fix/cemc_hits_pass3trk/condor" => (""),
-#    "JS_pp200_signal/pass2/condor" => (""),
-#    "JS_pp200_signal/pass3calo/condor" => (""),
-#    "JS_pp200_signal/pass3trk/condor" => (""),
+#    "JS_pp200_signal/pass2/condor" => ("--run 21 --build ana.443 --pileup 300kHz"),
+#    "JS_pp200_signal/pass3calo/condor" => ("--run 21 --build ana.444 --pileup 300kHz"),
+#    "JS_pp200_signal/pass3trk/condor" => ("--run 21 --build ana.444 --pileup 300kHz"),
 #    "JS_pp200_signal/pass3_mbdepd/condor" => (""),
 #    "JS_pp200_signal/pass4jet/condor" => (""),
 #    "JS_pp200_signal/pass4_job0/condor" => (""),
@@ -182,27 +186,41 @@ my %submitdir = (
 #    "JS_pp200_signal/pass5_global/condor" => (""),
 #    "JS_pp200_signal/pass5_truthreco/condor" => (""),
 
+#    "JS_pp200_signal/pass2/condor" => ("--run 22 --build ana.443 --pileup 300kHz"),
+#    "JS_pp200_signal/pass2/condor" => ("--run 22 --build ana.443 --pileup 700kHz"),
+#    "JS_pp200_signal/pass2/condor" => ("--run 22 --build ana.443 --pileup 1100kHz"),
+#    "JS_pp200_signal/pass3calo/condor" => ("--run 22 --build ana.444 pileup"), # no -- for pileup
+#    "JS_pp200_signal/pass3_mbdepd/condor" => ("--run 22 --build ana.444 pileup"),
+#    "JS_pp200_signal/pass3trk/condor" => ("--run 22 --build ana.445 pileup"),
+#    "JS_pp200_signal/pass4_job0/condor" => ("--run 22 --build ana.445 pileup"),
+#    "JS_pp200_signal/pass4_jobA/condor" => ("--run 22 --build ana.445 pileup"),
 
-#    "JS_pp200_signal/pass2_nopileup/condor" => (""),
-#    "JS_pp200_signal/pass3jet_nopileup/condor" => (""),
-#    "JS_pp200_signal/pass3_job0_nopileup/condor" => (""),
-#    "JS_pp200_signal/pass3_jobA_nopileup/condor" => (""),
-#    "JS_pp200_signal/pass3_jobC_nopileup/condor" => (""),
-#    "JS_pp200_signal/pass4_global_nopileup/condor" => (""),
-#    "JS_pp200_signal/pass4_truthreco_nopileup/condor" => (""),
 
+#    "JS_pp200_signal/pass2_nopileup/condor" => ("--run 21 --build ana.445"),
+#    "JS_pp200_signal/pass3jet_nopileup/condor" => ("--run 21 --build ana.445"),
+#    "JS_pp200_signal/pass3_job0_nopileup/condor" => ("--run 21 --build ana.445"),
+#    "JS_pp200_signal/pass3_jobA_nopileup/condor" => ("--run 21 --build ana.445"),
+#    "JS_pp200_signal/pass3_jobC_nopileup/condor" => ("--run 19 --build ana.440"),
+#    "JS_pp200_signal/pass4_global_nopileup/condor" => ("--run 19 --build ana.440"),
+#    "JS_pp200_signal/pass4_truthreco_nopileup/condor" => ("--run 19 --build ana.440"),
 
- #   "JS_pp200_signal/pass2_embed/condor" => (""),
-#    "JS_pp200_signal/pass3calo_embed/condor" => (""),
-#    "JS_pp200_signal/pass3_mbdepd_embed/condor" => (""),
-#    "JS_pp200_signal/pass3trk_embed/condor" => (""),
-#    "JS_pp200_signal/pass3calo_nozero_embed/condor" => (""),
-#    "JS_pp200_signal/pass4jet_embed/condor" => (""),
-#    "JS_pp200_signal/pass4_job0_embed/condor" => (""),
-#    "JS_pp200_signal/pass4_jobA_embed/condor" => (""),
-#    "JS_pp200_signal/pass4_jobC_embed/condor" => (""),
-#    "JS_pp200_signal/pass5_global_embed/condor" => (""),
-#    "JS_pp200_signal/pass5_truthreco_embed/condor" => (""),
+#    "JS_pp200_signal/pass2_nopileup/condor" => ("--run 22 --build ana.445"),
+#    "JS_pp200_signal/pass3jet_nopileup/condor" => ("--run 22 --build ana.445"),
+#    "JS_pp200_signal/pass3_job0_nopileup/condor" => ("--run 22 --build ana.445"),
+#    "JS_pp200_signal/pass3_jobA_nopileup/condor" => ("--run 22 --build ana.445"),
+
+#    "JS_pp200_signal/pass2_embed/condor" => ("--run 19 --build ana.435"),
+#    "JS_pp200_signal/pass3calo_embed/condor" => ("--run 19 --build ana.438"),
+#    "JS_pp200_signal/pass3_mbdepd_embed/condor" => ("--run 19 --build ana.435"),
+#    "JS_pp200_signal/pass3trk_embed/condor" => ("--run 19 --build ana.435"),
+#    "JS_pp200_signal/pass3calo_nozero_embed/condor" => ("--run 19 --build ana.435"),
+#    "JS_pp200_signal/pass3calo_waveform_embed/condor" => ("--run 19 --build ana.435"),
+#    "JS_pp200_signal/pass4jet_embed/condor" => ("--run 19 --build ana.435"),
+#    "JS_pp200_signal/pass4_job0_embed/condor" => ("--run 19 --build ana.435"),
+#    "JS_pp200_signal/pass4_jobA_embed/condor" => ("--run 19 --build ana.435"),
+#    "JS_pp200_signal/pass4_jobC_embed/condor" => ("--run 19 --build ana.435"),
+#    "JS_pp200_signal/pass5_global_embed/condor" => ("--run 19 --build ana.435"),
+#    "JS_pp200_signal/pass5_truthreco_embed/condor" => ("--run 19 --build ana.435"),
 
 # either run the above (_embed without flag) or this, 
 # they run from the same directory and will wipe out each others lists
@@ -245,7 +263,11 @@ my @jettriggers_pau = ("Jet10", "Jet20");
 #my @jettriggers2 = ("Jet10", "Jet30", "Jet40", "PhotonJet");
 #my @jettriggers2 = ("Jet10");
 my @jettriggers2 = ("Jet10", "Jet30");
-#my @jettriggers = ("Jet10", "Jet30");
+#my @jettriggers2 = ("Jet10", "Detroit", "PhotonJet5", "PhotonJet10", "PhotonJet20");
+#my @jettriggers = ("Detroit", "PhotonJet5", "PhotonJet10", "PhotonJet20", "Jet10", "Jet30");
+my @jettriggers = ("PhotonJet5", "PhotonJet10", "PhotonJet20", "Jet10", "Jet30");
+my @pileups = ("300kHz", "700kHz", "1100kHz");
+#my @jettriggers = ("Jet30");
 #my @singleparticles = {"gamma 10000 10000"};
 
 foreach my $subdir ( sort keys %submitdir)
@@ -291,12 +313,27 @@ foreach my $subdir ( sort keys %submitdir)
 	}
 	else
 	{
-	    foreach my $qf (@jettriggers2)
+	    foreach my $qf (@jettriggers)
 	    {
-		my $submitcmd = sprintf("perl run_all.pl %d %s -inc %s",$nsubmit,$qf,$submitargs);
-		condorcheck();
-		print "executing $submitcmd in $newdir\n";
-		system($submitcmd);
+		if ($submitargs =~ /pileup/)
+		{
+                    my $newsubmitargs = $submitargs;
+		    $newsubmitargs =~ s/pileup//;
+		    foreach my $pup (@pileups)
+		    {
+			my $submitcmd = sprintf("perl run_all.pl %d %s -inc %s --pileup %s",$nsubmit,$qf,$newsubmitargs,$pup);
+			condorcheck();
+			print "executing $submitcmd in $newdir\n";
+			system($submitcmd);
+		    }
+		}
+		else
+		{
+		    my $submitcmd = sprintf("perl run_all.pl %d %s -inc %s",$nsubmit,$qf,$submitargs);
+		    condorcheck();
+		    print "executing $submitcmd in $newdir\n";
+		    system($submitcmd);
+		}
 	    }
 	}
 

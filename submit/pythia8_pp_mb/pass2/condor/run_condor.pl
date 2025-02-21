@@ -17,7 +17,7 @@ if ($#ARGV < 7)
 
 my $localdir=`pwd`;
 chomp $localdir;
-my $baseprio = 52;
+my $baseprio = 62;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_pileup_pythia8_pp_mb.sh",$rundir);
 my $nevents = $ARGV[0];

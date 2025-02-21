@@ -11,8 +11,11 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.399
+anabuild=ana.418
 
+source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
+
+cdbtag=MDC2_$anabuild
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
@@ -46,24 +49,23 @@ echo arg3 \(output file\): $3
 echo arg4 \(output dir\): $4
 echo arg5 \(runnumber\): $5
 echo arg6 \(sequence\): $6
+echo cdbtag: $cdbtag
 
 runnumber=$(printf "%010d" $5)
-sequence=$(printf "%05d" $6)
+sequence=$(printf "%06d" $6)
 
 filename=timing
 
 
-echo running root.exe -q -b Fun4All_G4_sPHENIX_job0.C\($1,0,\"$2\",\"$3\",\"$4\"\)
-root.exe -q -b  Fun4All_G4_sPHENIX_job0.C\($1,0,\"$2\",\"$3\",\"$4\"\)
+echo running root.exe -q -b Fun4All_G4_sPHENIX_job0.C\($1,0,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
+root.exe -q -b  Fun4All_G4_sPHENIX_job0.C\($1,0,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
 
-timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/shijing_hepmc/fm_0_20/pass3_job0_nopileup/timing.run${runnumber}
-if [ ! -d $timedirname ]
-then
-  mkdir -p $timedirname
-fi
+timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/shijing_hepmc/fm_0_20/pass3_job0_nopileup/timing.run${5}
+
+[ ! -d $timedirname ] && mkdir -p $timedirname
 
 rootfilename=${timedirname}/${filename}-${runnumber}-${sequence}.root
 
-cp -v jobtime.root $rootfilename
+[ -f jobtime.root ] && cp -v jobtime.root $rootfilename
 
 echo "script done"

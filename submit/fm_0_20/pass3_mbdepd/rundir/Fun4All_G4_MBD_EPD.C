@@ -21,12 +21,13 @@
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 
-int Fun4All_G4_MBD_EPD(
+  int Fun4All_G4_MBD_EPD(
     const int nEvents = 1,
-     const string &inputFile1 = "DST_BBC_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000010-00000.root",
-     const string &inputFile2 = "DST_TRUTH_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000010-00000.root",
-     const string &outputFile = "DST_MBD_EPD_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000010-00000.root",
-    const string &outdir = ".")
+    const string &inputFile1 = "DST_BBC_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000010-00000.root",
+    const string &inputFile2 = "DST_TRUTH_G4HIT_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000010-00000.root",
+    const string &outputFile = "DST_MBD_EPD_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000010-00000.root",
+    const string &outdir = ".",
+    const string &cdbtag = "MDC2_ana.412")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -46,7 +47,7 @@ int Fun4All_G4_MBD_EPD(
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
   Enable::CDB = true;
-  rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
   CDBInterface::instance()->Verbosity(1);
 
