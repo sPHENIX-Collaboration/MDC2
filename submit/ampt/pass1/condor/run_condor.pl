@@ -9,7 +9,7 @@ use File::Basename;
 my $test;
 my $memory = sprintf("8000MB");
 
-GetOptions("memory:i"=>\$memory, "test"=>\$test);
+GetOptions("memory:s"=>\$memory, "test"=>\$test);
 if ($#ARGV < 7)
 {
     print "usage: run_condor.pl <events> <infile> <outdir> <outfile> <skip> <build> <runnumber> <sequence>\n";
@@ -42,10 +42,6 @@ if ($sequence < 100)
 my $batchname = sprintf("%s",basename($executable));
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%010d-%06d",$runnumber,$sequence);
-if ($sequence < 100000)
-{
-    $suffix = sprintf("%010d-%06d",$runnumber,$sequence);
-}
 my $logdir = sprintf("%s/log/run%d",$localdir,$runnumber);
 if (! -d $logdir)
 {

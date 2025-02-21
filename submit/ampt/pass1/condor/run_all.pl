@@ -10,15 +10,17 @@ sub getlastsegment;
 
 my $build;
 my $incremental;
+my $memory;
 my $runnumber;
 my $test;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "run:i" =>\$runnumber, "test"=>\$test);
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "run:i" =>\$runnumber, "test"=>\$test);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
+    print "--memory: <memory in MB like 8000MB>\n";
     print "--run: <runnumber>\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
@@ -108,6 +110,10 @@ OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
 	    if (defined $test)
 	    {
 		$tstflag="--test";
+	    }
+	    if (defined $memory)
+	    {
+		$tstflag = sprintf("%s --memory %s",$tstflag,$memory)
 	    }
 	    my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %s %d %d %s", $events, $amptdatfile, $outdir, $outfile, $n, $build, $runnumber, $sequence, $tstflag);
 	    print "cmd: $subcmd\n";
