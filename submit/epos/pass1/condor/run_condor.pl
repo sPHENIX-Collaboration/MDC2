@@ -4,13 +4,14 @@ use strict;
 use warnings;
 use Getopt::Long;
 use File::Path;
+use File::Basename;
 
 my $test;
 my $memory = sprintf("8000MB");
 GetOptions("memory:s"=>\$memory, "test"=>\$test);
-if ($#ARGV < 6)
+if ($#ARGV < 7)
 {
-    print "usage: run_condor.pl <events> <infile> <outdir> <outfile> <skip> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <infile> <outdir> <outfile> <skip> <build> <runnumber> <sequence>\n";
     print "options:\n";
     print "-memory: memory requirement\n";
     print "-test: testmode - no condor submission\n";
@@ -30,12 +31,14 @@ my $infile = $ARGV[1];
 my $dstoutdir = $ARGV[2];
 my $dstoutfile = $ARGV[3];
 my $skip = $ARGV[4];
-my $runnumber = $ARGV[5];
-my $sequence = $ARGV[6];
+my $build = $ARGV[5];
+my $runnumber = $ARGV[6];
+my $sequence = $ARGV[7];
 if ($sequence < 100)
 {
     $baseprio = 90;
 }
+my $batchname = sprintf("%s",basename($executable));
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%010d-%06d",$runnumber,$sequence);
 my $logdir = sprintf("%s/log/run%d",$localdir,$runnumber);
@@ -65,7 +68,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $infile $dstoutfile $skip $dstoutdir $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $infile $dstoutfile $skip $dstoutdir $build $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -75,7 +78,8 @@ print F "accounting_group = group_sphenix.mdc2\n";
 print F "accounting_group_user = sphnxpro\n";
 print F "Requirements = (CPU_Type == \"mdc2\")\n";
 # FTFP_BERT
-print F "request_memory = 8184MB\n";
+print F "request_memory = $memory\n";
+print F "batch_name = \"$batchname\"\n";
 print F "Priority = $baseprio\n";
 #FTFP_BERT_HP
 #print F "request_memory = 12288MB\n";
@@ -93,5 +97,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile, $dstoutfile, $skip, $dstoutdir, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $infile, $dstoutfile, $skip, $dstoutdir, $build,, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio $memory $batchname\n";
 close(F);
