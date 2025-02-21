@@ -97,5 +97,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile, $dstoutfile, $skip, $dstoutdir, $build,, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio $memory $batchname\n";
+print F "$executable, $nevents, $infile, $dstoutfile, $skip, $dstoutdir, $build, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio $memory $batchname\n";
 close(F);
