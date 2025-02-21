@@ -110,7 +110,7 @@ OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
 	    {
 		$tstflag = sprintf("%s --memory %s",$tstflag,$memory)
 	    }
-	    my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %s %d %d %s", $events, $amptdatfile, $outdir, $outfile, $n, $build, $runnumber, $sequence, $tstflag);
+	    my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %s %d %d %s", $events, $eposdatfile, $outdir, $outfile, $n, $build, $runnumber, $sequence, $tstflag);
 	    print "cmd: $subcmd\n";
 	    system($subcmd);
 	    my $exit_value  = $? >> 8;
