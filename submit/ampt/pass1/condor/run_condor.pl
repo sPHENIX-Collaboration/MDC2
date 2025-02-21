@@ -6,6 +6,8 @@ use Getopt::Long;
 use File::Path;
 use File::Basename;
 
+#FTFP_BERT_HP
+#print F "request_memory = 12288MB\n";
 my $test;
 my $memory = sprintf("8000MB");
 
@@ -69,7 +71,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $infile $dstoutfile $skip $dstoutdir $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $infile $dstoutfile $skip $dstoutdir $build $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -78,13 +80,9 @@ print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
 print F "accounting_group = group_sphenix.mdc2\n";
 print F "accounting_group_user = sphnxpro\n";
 print F "Requirements = (CPU_Type == \"mdc2\")\n";
-# FTFP_BERT
 print F "request_memory = $memory\n";
 print F "batch_name = \"$batchname\"\n";
 print F "Priority = $baseprio\n";
-#FTFP_BERT_HP
-#print F "request_memory = 12288MB\n";
-#print F "Priority 	= 30\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);
