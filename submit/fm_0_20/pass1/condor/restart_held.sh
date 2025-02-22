@@ -7,9 +7,8 @@ fi
 run=$1
 runnumber=$(printf "%010d" $run)
 echo restarting run $1
-
 #exit 0
-condor_q | grep ' H ' | grep run_pass1_fm_0_20.sh | grep ${run} > bla
+condor_q | grep ' H ' | grep run_pass1_fm_0_20.sh | grep ${runnumber}  > bla
 [ -s bla ] ||  exit 1
 for i in `cat bla| awk '{print $1}'`; do condor_rm $i; done
 #exit 0
