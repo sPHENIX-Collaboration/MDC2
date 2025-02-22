@@ -1,7 +1,7 @@
 #! /usr/bin/bash
 #exit 0
 
-run=14
+run=26
 runnumber=$(printf "%010d" $run)
 
 condor_q | grep ' H ' | grep run_pass1_ampt.sh > bla
