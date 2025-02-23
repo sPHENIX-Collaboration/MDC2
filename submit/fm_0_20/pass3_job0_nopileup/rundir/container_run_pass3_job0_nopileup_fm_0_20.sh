@@ -41,6 +41,7 @@ fi
 # $5: build
 # $6: run number
 # $7: sequence
+# $8: git commit id
 
 echo 'here comes your environment'
 printenv
@@ -51,6 +52,7 @@ echo arg4 \(output dir\): $4
 echo arg5 \(build\): $5
 echo arg6 \(runnumber\): $6
 echo arg7 \(sequence\): $7
+echo arg8 \(git commit id\): ${8}
 echo cdbtag: $cdbtag
 
 runnumber=$(printf "%010d" $6)
@@ -59,8 +61,8 @@ sequence=$(printf "%06d" $7)
 filename=timing
 
 
-echo running root.exe -q -b Fun4All_G4_sPHENIX_job0.C\($1,0,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
-root.exe -q -b  Fun4All_G4_sPHENIX_job0.C\($1,0,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
+echo running root.exe -q -b Fun4All_G4_sPHENIX_job0.C\($1,0,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"${8}\"\)
+root.exe -q -b  Fun4All_G4_sPHENIX_job0.C\($1,0,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"${8}\"\)
 
 timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/shijing_hepmc/fm_0_20/pass3_job0_nopileup/timing.run${6}
 
