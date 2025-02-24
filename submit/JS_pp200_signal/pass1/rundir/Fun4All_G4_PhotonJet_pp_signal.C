@@ -139,7 +139,7 @@ int Fun4All_G4_PhotonJet_pp_signal(
   }
   else if (photontrigger == "PhotonJet10")
   {
-    pythia8_config_file += "phpythia8_15GeV_JS_MDC2.cfg";
+    pythia8_config_file += "phpythia8_10GeV_JS_MDC2.cfg";
   }
   else if (photontrigger == "PhotonJet20")
   {
