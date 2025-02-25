@@ -1,46 +1,74 @@
+// these include guards are not really needed, but if we ever include this
+// file somewhere they would be missed and we will have to refurbish all macros
 #ifndef MACRO_FUN4ALLG4CALO_C
 #define MACRO_FUN4ALLG4CALO_C
 
 #include <GlobalVariables.C>
 
+#include <Calo_Calib.C>
 #include <G4_CEmc_Spacal.C>
 #include <G4_HcalIn_ref.C>
 #include <G4_HcalOut_ref.C>
 #include <G4_Input.C>
 #include <G4_Production.C>
-#include <G4_TopoClusterReco.C>
+#include <G4_RunSettings.C>
+#include <SaveGitTags.C>
 
-#include <ffamodules/FlagHandler.h>
-#include <ffamodules/CDBInterface.h>
+#include <caloreco/CaloGeomMapping.h>
+#include <caloreco/CaloTowerBuilder.h>
+#include <caloreco/CaloTowerCalib.h>
+#include <caloreco/CaloTowerStatus.h>
+#include <caloreco/CaloWaveformProcessing.h>
 
-#include <fun4allutils/TimerStats.h>
+#include <calowaveformsim/CaloWaveformSim.h>
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
+#include <fun4all/Fun4AllRunNodeInputManager.h>
 #include <fun4all/Fun4AllServer.h>
+#include <fun4all/Fun4AllUtils.h>
+
+#include <ffamodules/CDBInterface.h>
+#include <ffamodules/FlagHandler.h>
+
+#include <fun4allutils/TimerStats.h>
 
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
 
-R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
+R__LOAD_LIBRARY(libg4centrality.so)
+R__LOAD_LIBRARY(libCaloWaveformSim.so)
+R__LOAD_LIBRARY(libcalo_reco.so)
+R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4allutils.so)
 
-int Fun4All_G4_Calo(
+void Fun4All_G4_Calo(
     const int nEvents = 1,
-    const string &inputFile0 = "G4Hits_epos-0000000014-000000.root",
-    const string &outputFile = "DST_CALO_CLUSTER_epos-0000000014-000000.root",
+    const string &inputFile0 = "G4Hits_epos_0_153fm-0000000026-000000.root",
+    const string &outputFile = "DST_CALO_CLUSTER_epos_0_153fm-0000000026-0000000022-000000.root",
     const string &outdir = ".",
-    const string &cdbtag = "MDC2_ana.418")
+    const string &cdbtag = "MDC2",
+    const std::string &gitcommit = "none")
+
 {
   Fun4AllServer *se = Fun4AllServer::instance();
-  se->Verbosity(1);
+  se->Verbosity(1);  // set it to 1 if you want event printouts
 
-  //Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
-  PHRandomSeed::Verbosity(1);
-
-  // just if we set some flags somewhere in this macro
   recoConsts *rc = recoConsts::instance();
+
+  // save all git tags from build
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
+
+  // Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
+  PHRandomSeed::Verbosity(1);
   // By default every random number generator uses
   // PHRandomSeed() which reads /dev/urandom to get its seed
   // if the RANDOMSEED flag is set its value is taken as seed
@@ -50,9 +78,21 @@ int Fun4All_G4_Calo(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
+  // int seedValue = 491258969;
+  // rc->set_IntFlag("RANDOMSEED", seedValue);
+
+  //===============
+  // conditions DB flags
+  //===============
   Enable::CDB = true;
-  rc->set_StringFlag("CDB_GLOBALTAG",cdbtag);
-  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
+  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  CDBInterface::instance()->Verbosity(1);
+
+  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
+  int runnumber = runseg.first;
+
+  RunSettings(runnumber);
 
   //===============
   // Input options
@@ -65,6 +105,7 @@ int Fun4All_G4_Calo(
   // the simulations step completely. The G4Setup macro is only loaded to get information
   // about the number of layers used for the cell reco code
   Input::READHITS = true;
+
   INPUTREADHITS::filename[0] = inputFile0;
 
   //-----------------
@@ -76,12 +117,12 @@ int Fun4All_G4_Calo(
   // register all input generators with Fun4All
   InputRegister();
 
-// register the flag handling
+  // register the flag handling
   FlagHandler *flag = new FlagHandler();
   se->registerSubsystem(flag);
 
   // set up production relatedstuff
-   Enable::PRODUCTION = true;
+  Enable::PRODUCTION = true;
 
   //======================
   // Write the DST
@@ -92,56 +133,15 @@ int Fun4All_G4_Calo(
   DstOut::OutputDir = outdir;
   DstOut::OutputFile = outputFile;
 
-  //======================
-  // What to run
-  //======================
-  // Global options (enabled for all enables subsystems - if implemented)
-  //  Enable::VERBOSITY = 1;
+  Enable::CEMC_TOWERINFO = true;
+  Enable::HCALIN_TOWERINFO = true;
+  Enable::HCALOUT_TOWERINFO = true;
 
-  Enable::CEMC = true;
-  Enable::CEMC_CELL = Enable::CEMC && true;
-  Enable::CEMC_TOWER = Enable::CEMC_CELL && true;
-  Enable::CEMC_CLUSTER = Enable::CEMC_TOWER && true;
+  CEMC_Towers();
+  HCALInner_Towers();
+  HCALOuter_Towers();
 
-  Enable::HCALIN = true;
-  Enable::HCALIN_CELL = Enable::HCALIN && true;
-  Enable::HCALIN_TOWER = Enable::HCALIN_CELL && true;
-  Enable::HCALIN_CLUSTER = Enable::HCALIN_TOWER && true;
-
-  Enable::HCALOUT = true;
-  Enable::HCALOUT_CELL = Enable::HCALOUT && true;
-  Enable::HCALOUT_TOWER = Enable::HCALOUT_CELL && true;
-  Enable::HCALOUT_CLUSTER = Enable::HCALOUT_TOWER && true;
-
-  //------------------
-  // Detector Reconstruction
-  //------------------
-
-  if (Enable::CEMC_CELL) CEMC_Cells();
-
-  if (Enable::HCALIN_CELL) HCALInner_Cells();
-
-  if (Enable::HCALOUT_CELL) HCALOuter_Cells();
-
-  //-----------------------------
-  // CEMC towering and clustering
-  //-----------------------------
-
-  if (Enable::CEMC_TOWER) CEMC_Towers();
-  if (Enable::CEMC_CLUSTER) CEMC_Clusters();
-
-  //-----------------------------
-  // HCAL towering and clustering
-  //-----------------------------
-
-  if (Enable::HCALIN_TOWER) HCALInner_Towers();
-  if (Enable::HCALIN_CLUSTER) HCALInner_Clusters();
-
-  if (Enable::HCALOUT_TOWER) HCALOuter_Towers();
-  if (Enable::HCALOUT_CLUSTER) HCALOuter_Clusters();
-
-  // if enabled, do topoClustering early, upstream of any possible jet reconstruction
-  if (Enable::TOPOCLUSTER) TopoClusterReco();
+  Process_Calo_Calib();
 
   //--------------
   // Timing module is last to register
@@ -155,6 +155,22 @@ int Fun4All_G4_Calo(
   //--------------
 
   InputManagers();
+  TRandom3 randGen;
+  // get seed
+  unsigned int seed = PHRandomSeed();
+  randGen.SetSeed(seed);
+  // a int from 0 to 3259
+  int sequence = randGen.Integer(3260);
+  // pad the name
+  std::ostringstream opedname;
+  opedname << "pedestal-54256-0" << std::setw(4) << std::setfill('0') << sequence << ".root";
+
+  std::string pedestalname = opedname.str();
+
+  Fun4AllInputManager *hitsin = new Fun4AllNoSyncDstInputManager("DST2");
+  hitsin->AddFile(pedestalname);
+  hitsin->Repeat();
+  se->registerInputManager(hitsin);
 
   if (Enable::PRODUCTION)
   {
@@ -167,40 +183,33 @@ int Fun4All_G4_Calo(
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     out->AddNode("Sync");
     out->AddNode("EventHeader");
-// Inner Hcal
-    out->AddNode("TOWER_SIM_HCALIN");
-    out->AddNode("TOWER_RAW_HCALIN");
-    out->AddNode("TOWER_CALIB_HCALIN");
-    out->AddNode("TOWERINFO_RAW_HCALIN");
-    out->AddNode("TOWERINFO_SIM_HCALIN");
+    // Inner Hcal
+    // this is what production macto gives us
+    out->AddNode("CLUSTERINFO_HCALIN");
     out->AddNode("TOWERINFO_CALIB_HCALIN");
-    out->AddNode("CLUSTER_HCALIN");
+    out->AddNode("WAVEFORM_HCALIN");
+    out->AddNode("TOWERS_HCALIN");
 
-// Outer Hcal
-    out->AddNode("TOWER_SIM_HCALOUT");
-    out->AddNode("TOWER_RAW_HCALOUT");
-    out->AddNode("TOWER_CALIB_HCALOUT");
-    out->AddNode("TOWERINFO_RAW_HCALOUT");
-    out->AddNode("TOWERINFO_SIM_HCALOUT");
+    // Outer Hcal
+    out->AddNode("CLUSTERINFO_HCALOUT");
     out->AddNode("TOWERINFO_CALIB_HCALOUT");
-    out->AddNode("CLUSTER_HCALOUT");
+    out->AddNode("WAVEFORM_HCALOUT");
+    out->AddNode("TOWERS_HCALOUT");
 
-// CEmc
-    out->AddNode("TOWER_SIM_CEMC");
-    out->AddNode("TOWER_RAW_CEMC");
-    out->AddNode("TOWER_CALIB_CEMC");
-    out->AddNode("TOWERINFO_RAW_CEMC");
-    out->AddNode("TOWERINFO_SIM_CEMC");
-    out->AddNode("TOWERINFO_CALIB_CEMC");
-    out->AddNode("CLUSTER_CEMC");
+    // CEmc
+    out->AddNode("CLUSTERINFO_CEMC");
     out->AddNode("CLUSTER_POS_COR_CEMC");
+    out->AddNode("TOWERINFO_CALIB_CEMC");
+    out->AddNode("WAVEFORM_CEMC");
+    out->AddNode("TOWERS_CEMC");
 
-// leave the topo cluster here in case we run this during pass3
+    // leave the topo cluster here in case we run this during pass3
     out->AddNode("TOPOCLUSTER_ALLCALO");
     out->AddNode("TOPOCLUSTER_EMCAL");
     out->AddNode("TOPOCLUSTER_HCAL");
     se->registerOutputManager(out);
   }
+
   //-----------------
   // Event processing
   //-----------------
@@ -215,7 +224,7 @@ int Fun4All_G4_Calo(
   // Exit
   //-----
 
-  CDBInterface::instance()->Print(); // print used DB files
+  CDBInterface::instance()->Print();  // print used DB files
   se->End();
   se->PrintTimer();
   std::cout << "All done" << std::endl;
@@ -224,8 +233,7 @@ int Fun4All_G4_Calo(
   {
     Production_MoveOutput();
   }
-
   gSystem->Exit(0);
-  return 0;
 }
-#endif
+
+#endif  // MACRO_FUN4ALLG4CALO_C
