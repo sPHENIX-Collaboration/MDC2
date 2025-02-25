@@ -8,6 +8,7 @@ use Getopt::Long;
 
 my $test;
 my $memory = sprintf("8000MB");
+my $overwrite;
 GetOptions("memory:s"=>\$memory, "overwrite"=>\$overwrite, "test"=>\$test);
 if ($#ARGV < 12)
 {
@@ -72,7 +73,7 @@ if (! -d $condorlogdir)
   mkpath($condorlogdir);
 }
 my $jobfile = sprintf("%s/condor%s.job",$logdir,$suffix);
-if (-f $jobfile)
+if (-f $jobfile && ! defined $overwrite)
 {
     print "jobfile $jobfile exists, possible overlapping names\n";
     exit(1);
