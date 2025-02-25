@@ -90,10 +90,6 @@ int Fun4All_G4_sPHENIX_job0(
   // do not initialize magnetic field in ACTS
   G4TRACKING::init_acts_magfield = false;
   
-  // server
-  auto se = Fun4AllServer::instance();
-  se->Verbosity(1);
-
   // make sure to printout random seeds for reproducibility
   PHRandomSeed::Verbosity(1);
 
