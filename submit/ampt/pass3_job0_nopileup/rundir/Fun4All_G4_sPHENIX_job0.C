@@ -3,6 +3,7 @@
 #include <G4_Production.C>
 #include <Trkr_RecoInit.C>
 #include <Trkr_Clustering.C>
+#include <SaveGitTags.C>
 
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
@@ -29,7 +30,8 @@ int Fun4All_G4_sPHENIX_job0(
   const std::string &inputFile = "DST_TRKR_HIT_ampt_0_20fm-0000000014-000000.root",
   const std::string &outputFile = "DST_TRKR_CLUSTER_ampt_0_20fm-0000000014-000000.root",
   const string &outdir = ".",
-  const string &cdbtag = "MDC2_ana.418")
+  const string &cdbtag = "MDC2",
+  const std::string &gitcommit = "none")
 {
 
   // print inputs
@@ -38,6 +40,23 @@ int Fun4All_G4_sPHENIX_job0(
   std::cout << "Fun4All_G4_sPHENIX_job0 - inputFile: " << inputFile << std::endl;
   std::cout << "Fun4All_G4_sPHENIX_job0 - outputFile: " << outputFile << std::endl;
   
+  // server
+  auto se = Fun4AllServer::instance();
+  se->Verbosity(1);
+
+  // save all git tags from build
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
+
+  // make sure to printout random seeds for reproducibility
+  PHRandomSeed::Verbosity(1);
+
   recoConsts *rc = recoConsts::instance();
 
   //===============
