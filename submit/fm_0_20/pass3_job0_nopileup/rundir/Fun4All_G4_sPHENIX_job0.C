@@ -59,12 +59,15 @@ int Fun4All_G4_sPHENIX_job0(
 
   recoConsts *rc = recoConsts::instance();
 
+  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
+  int runnumber = runseg.first;
+
   //===============
   // conditions DB flags
   //===============
   Enable::CDB = true;
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
-  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP", runnumber);
   // set up production relatedstuff
   Enable::PRODUCTION = true;
   Enable::DSTOUT = true;

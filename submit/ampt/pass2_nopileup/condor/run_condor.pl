@@ -42,7 +42,7 @@ if ($sequence < 100)
 {
     $baseprio = 90;
 }
-my $batchname = sprintf("%s %s",basename($executable),$jettrigger);
+my $batchname = sprintf("%s",basename($executable));
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("-%010d-%06d",$runnumber,$sequence);
 if ($enable_calo < 1 || $enable_mbd < 1 ||  $enable_trk< 1)

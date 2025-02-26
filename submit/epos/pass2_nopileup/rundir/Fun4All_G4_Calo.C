@@ -45,7 +45,7 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 void Fun4All_G4_Calo(
     const int nEvents = 1,
-    const string &inputFile0 = "G4Hits_epos_0_153fm-0000000026-000000.root",
+    const string &inputFile = "G4Hits_epos_0_153fm-0000000026-000000.root",
     const string &outputFile = "DST_CALO_CLUSTER_epos_0_153fm-0000000026-0000000022-000000.root",
     const string &outdir = ".",
     const string &cdbtag = "MDC2",
@@ -81,12 +81,15 @@ void Fun4All_G4_Calo(
   // int seedValue = 491258969;
   // rc->set_IntFlag("RANDOMSEED", seedValue);
 
+  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
+  int runnumber = runseg.first;
+
   //===============
   // conditions DB flags
   //===============
   Enable::CDB = true;
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
-  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP", runnumber);
   CDBInterface::instance()->Verbosity(1);
 
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
@@ -106,7 +109,7 @@ void Fun4All_G4_Calo(
   // about the number of layers used for the cell reco code
   Input::READHITS = true;
 
-  INPUTREADHITS::filename[0] = inputFile0;
+  INPUTREADHITS::filename[0] = inputFile;
 
   //-----------------
   // Initialize the selected Input/Event generation

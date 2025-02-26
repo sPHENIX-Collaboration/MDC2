@@ -29,7 +29,7 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_Pass3Trk(
     const int nEvents = 0,
-    const string &inputFile0 = "G4Hits_epos_0_153fm-0000000026-000000.root",
+    const string &inputFile = "G4Hits_epos_0_153fm-0000000026-000000.root",
     const string &outdir = ".",
     const string &cdbtag = "MDC2",
     const std::string &gitcommit = "none")
@@ -61,14 +61,16 @@ int Fun4All_G4_Pass3Trk(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
+  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
+  int runnumber = runseg.first;
+  int segment = runseg.second;
+
   //===============
   // conditions DB flags
   //===============
   Enable::CDB = true;
-  // tag
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
-  // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP", runnumber);
 
   //===============
   // Input options
@@ -81,7 +83,7 @@ int Fun4All_G4_Pass3Trk(
   // the simulations step completely. The G4Setup macro is only loaded to get information
   // about the number of layers used for the cell reco code
   Input::READHITS = true;
-  INPUTREADHITS::filename[0] = inputFile0;
+  INPUTREADHITS::filename[0] = inputFile;
   //-----------------
   // Initialize the selected Input/Event generation
   //-----------------
@@ -102,9 +104,6 @@ int Fun4All_G4_Pass3Trk(
   Enable::DSTOUT_COMPRESS = false;
   DstOut::OutputDir = outdir;
 
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile0);
-  int runnumber = runseg.first;
-  int segment = abs(runseg.second);
   if (Enable::PRODUCTION)
   {
     PRODUCTION::SaveOutputDir = DstOut::OutputDir;

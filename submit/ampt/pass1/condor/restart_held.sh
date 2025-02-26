@@ -19,5 +19,5 @@ then
 rm sedlist
 fi
 for i in `cat tmplist`; do echo log/run${run}/condor-$i >> sedlist; done
-#for i in `cat sedlist`; do  sed -i 's/4096MB/12288MB/' $i; echo $i; done
+for i in `cat sedlist`; do  sed -i 's/8000MB/10000MB/' $i; echo $i; done
 for i in `cat sedlist`; do condor_submit $i; done
