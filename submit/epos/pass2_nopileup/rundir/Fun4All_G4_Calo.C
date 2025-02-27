@@ -92,9 +92,6 @@ void Fun4All_G4_Calo(
   rc->set_uint64Flag("TIMESTAMP", runnumber);
   CDBInterface::instance()->Verbosity(1);
 
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
-  int runnumber = runseg.first;
-
   RunSettings(runnumber);
 
   //===============

@@ -14,6 +14,7 @@
 #include <fun4all/Fun4AllServer.h>
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
+#include <fun4all/Fun4AllUtils.h>
 
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
@@ -31,7 +32,7 @@ int Fun4All_G4_sPHENIX_job0(
   const std::string &outputFile = "DST_TRKR_CLUSTER_sHijing_0_20fm-0000000026-000000.root",
   const string &outdir = ".",
   const string &cdbtag = "MDC2",
-    const std::string &gitcommit = "none")
+  const std::string &gitcommit = "none")
 {
 
   // print inputs

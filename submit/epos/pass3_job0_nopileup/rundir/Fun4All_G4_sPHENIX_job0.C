@@ -14,6 +14,7 @@
 #include <fun4all/Fun4AllServer.h>
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
+#include <fun4all/Fun4AllUtils.h>
 
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
@@ -93,9 +94,6 @@ int Fun4All_G4_sPHENIX_job0(
   // do not initialize magnetic field in ACTS
   G4TRACKING::init_acts_magfield = false;
   
-  // make sure to printout random seeds for reproducibility
-  PHRandomSeed::Verbosity(1);
-
   FlagHandler *flg = new FlagHandler();
   se->registerSubsystem(flg);
 

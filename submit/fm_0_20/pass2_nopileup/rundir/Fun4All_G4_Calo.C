@@ -82,7 +82,6 @@ void Fun4All_G4_Calo(
   // rc->set_IntFlag("RANDOMSEED", seedValue);
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
   int runnumber = runseg.first;
-  int segment = runseg.second;
 
   //===============
   // conditions DB flags
@@ -91,9 +90,6 @@ void Fun4All_G4_Calo(
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   rc->set_uint64Flag("TIMESTAMP", runnumber);
   CDBInterface::instance()->Verbosity(1);
-
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
-  int runnumber = runseg.first;
 
   RunSettings(runnumber);
 
