@@ -5,9 +5,9 @@ if [ $# -eq 0 ]
 fi
 echo $1
 variable=$1
-run=22
+run=21
 runnumber=$(printf "%010d" $run)
-condor_q | grep ' H ' | grep run_pass4_global_nopileup_js.sh | grep ${variable} > bla
+condor_q | grep ' H ' | grep run_pass4_global_nopileup_js.sh | grep ${variable}  | grep ${runnumber} > bla
 #exit 0
 for i in `cat bla| awk '{print $1}'`; do condor_rm $i; done
 [ -f tmplist ] && rm tmplist

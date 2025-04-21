@@ -7,11 +7,11 @@ fi
 echo $1
 variable=$1
 
-run=21
+run=22
 runnumber=$(printf "%010d" $run)
 
 #exit 0
-condor_q | grep ' H ' | grep run_pass3_job0_nopileup_js.sh | grep ${variable} > bla
+condor_q | grep ' H ' | grep run_pass3_job0_nopileup_js.sh | grep ${variable} | grep ${runnumber} > bla
 
 [ -s bla ] ||  exit 1
 
@@ -22,6 +22,6 @@ for i in `cat bla | awk '{print $12}' | awk -F- '{print $3}' | awk -F. -v runnum
 
 [ -f sedlist ] && rm sedlist
 for i in `cat tmplist`; do echo log/run${run}/${variable}/condor_${variable}-$i >> sedlist; done
-for i in `cat sedlist`; do  sed -i 's/1000MB/12000MB/' $i; echo $i; done
+for i in `cat sedlist`; do  sed -i 's/1000MB/2000MB/' $i; echo $i; done
 for i in `cat sedlist`; do condor_submit $i; done
 #/direct/sphenix+u/sphnxpro/MDC2/submit/JS_pp200_signal/pass3_job0_nopileup/condor/log/run7/PhotonJet/condor_PhotonJet-0000000007-15130.out

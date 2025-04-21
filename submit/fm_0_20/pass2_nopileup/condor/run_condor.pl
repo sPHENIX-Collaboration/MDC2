@@ -7,7 +7,7 @@ use File::Path;
 use File::Basename;
 
 my $test;
-my $memory = sprintf("8000MB");
+my $memory = sprintf("10000MB");
 GetOptions("test"=>\$test);
 if ($#ARGV < 12)
 {

@@ -9,7 +9,7 @@ use File::Basename;
 #FTFP_BERT_HP
 #print F "request_memory = 12288MB\n";
 my $test;
-my $memory = sprintf("8000MB");
+my $memory = sprintf("12000MB");
 
 GetOptions("memory:s"=>\$memory, "test"=>\$test);
 if ($#ARGV < 7)

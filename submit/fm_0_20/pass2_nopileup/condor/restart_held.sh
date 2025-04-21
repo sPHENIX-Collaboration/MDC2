@@ -9,7 +9,7 @@ runnumber=$(printf "%010d" $run)
 echo restarting run $1
 
 #exit 0
-condor_q | grep ' H ' | grep run_pass2_nopileup_fm_0_20.sh | grep ${run} > bla
+condor_q | grep ' H ' | grep run_pass2_nopileup_fm_0_20.sh | grep ${runnumber} > bla
 [ -s bla ] ||  exit 1
 for i in `cat bla| awk '{print $1}'`; do condor_rm $i; done
 #exit 0
@@ -20,5 +20,6 @@ for i in `cat bla | awk '{print $12}' | awk -F- '{print $3}' | awk -F. -v runnum
 
 [ -f sedlist ] && rm sedlist
 for i in `cat tmplist`; do echo log/run${run}/condor-$i >> sedlist; done
-for i in `cat sedlist`; do  sed -i 's/8000MB/15000MB/' $i; echo $i; done
+for i in `cat sedlist`; do  sed -i 's/10000MB/12000MB/' $i; echo $i; done
+for i in `cat sedlist`; do  sed -i 's/8000MB/10000MB/' $i; echo $i; done
 for i in `cat sedlist`; do condor_submit $i; done

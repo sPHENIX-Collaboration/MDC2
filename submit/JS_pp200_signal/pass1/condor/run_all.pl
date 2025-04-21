@@ -39,9 +39,9 @@ if (! defined $build)
 
 my $hostname = `hostname`;
 chomp $hostname;
-if ($hostname !~ /phnxsub/)
+if ($hostname !~ /phnxsub/ && $hostname !~ /sphnxprod/)
 {
-    print "submit only from phnxsub01 or phnxsub02\n";
+    print "submit only from phnxsub or sphnxprod nodes\n";
     exit(1);
 }
 
