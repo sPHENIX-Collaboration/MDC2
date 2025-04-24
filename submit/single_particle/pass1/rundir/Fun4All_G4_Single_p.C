@@ -161,6 +161,7 @@ int Fun4All_G4_Single_p(
 
   // central tracking
   Enable::MVTX = true;
+  Enable::MVTX_APPLYMISALIGNMENT = true;
 
   Enable::INTT = true;
 

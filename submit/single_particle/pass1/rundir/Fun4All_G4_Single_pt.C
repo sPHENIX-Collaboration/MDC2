@@ -116,9 +116,9 @@ int Fun4All_G4_Single_pt(
                                                                                 PHG4SimpleEventGenerator::Uniform,
                                                                                 PHG4SimpleEventGenerator::Uniform);
       INPUTGENERATOR::SimpleEventGenerator[0]->set_vertex_distribution_mean(0., 0., 0.);
-      INPUTGENERATOR::SimpleEventGenerator[0]->set_vertex_distribution_width(0., 0., 240.);
+      INPUTGENERATOR::SimpleEventGenerator[0]->set_vertex_distribution_width(0., 0., 0.);
     }
-    INPUTGENERATOR::SimpleEventGenerator[0]->set_eta_range(-2, 2);
+    INPUTGENERATOR::SimpleEventGenerator[0]->set_eta_range(-1.5, 1.5);
     INPUTGENERATOR::SimpleEventGenerator[0]->set_phi_range(-M_PI, M_PI);
     INPUTGENERATOR::SimpleEventGenerator[0]->set_pt_range(pmin/1000., pmax/1000.);
   }
@@ -161,6 +161,7 @@ int Fun4All_G4_Single_pt(
 
   // central tracking
   Enable::MVTX = true;
+  Enable::MVTX_APPLYMISALIGNMENT = true;
 
   Enable::INTT = true;
 
