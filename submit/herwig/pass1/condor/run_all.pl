@@ -66,11 +66,11 @@ if ($jettrigger  ne "Jet10" &&
     print "second argument has to be Jet10, Jet30 or MB\n";
     exit(1);
 }
-if ($maxsubmit > 50000)
-{
-    print "beware of gpfs overload, you sure you want to run $maxsubmit jobs?\n";
-    exit(0);
-}
+#if ($maxsubmit > 50000)
+#{
+#    print "beware of gpfs overload, you sure you want to run $maxsubmit jobs?\n";
+#    exit(0);
+#}
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
@@ -81,7 +81,7 @@ my $herwig_dir = sprintf("/sphenix/sim/sim01/sphnxpro/mdc2/herwig");
 my $events = 1000; # for running with plugdoor
 #$events = 200;
 #$events = 100; # for ftfp_bert_hp
-my $evtsperfile = 10000;
+my $evtsperfile = 1000;
 my $nmax = $evtsperfile;
 
 $filetype=sprintf("%s_%s",$filetype,$jettrigger);
@@ -102,7 +102,7 @@ my $nsubmit = 0;
 my $lastsegment=getlastsegment();
 OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
 {
-    my $herwigdatfile = sprintf("%s/%s/%s-%06d.hepmc",$herwig_dir,$filetype,$filetype,$segment);
+    my $herwigdatfile = sprintf("%s/%s/%s_filtered-%06d.hepmc",$herwig_dir,$filetype,$filetype,$segment);
     if (! -f $herwigdatfile)
     {
 	print "could not locate $herwigdatfile\n";

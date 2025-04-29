@@ -8,7 +8,8 @@
 #include <G4_Mbd.C>
 #include <G4_Production.C>
 #include <G4_TrkrSimulation.C>
-//#include <SaveGitTags.C>
+#include <G4_RunSettings.C>
+#include <SaveGitTags.C>
 
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
@@ -36,7 +37,7 @@ int Fun4All_G4_Pass1_herwig(
     const string &outputFile = "G4Hits_herwig_mb-0000000021-000000.root",
     const int skip = 0,
     const string &outdir = ".",
-    const string &cdbtag = "MDC2_ana.449")
+    const string &cdbtag = "MDC2")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(0);
@@ -55,15 +56,7 @@ int Fun4All_G4_Pass1_herwig(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
-//  SaveGitTags(); // save the git tags from rebuild.info as rc string flags
-  //===============
-  // conditions DB flags
-  //===============
-  Enable::CDB = true;
-  // global tag
-  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
-  // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  SaveGitTags(); // save the git tags from rebuild.info as rc string flags
 
   // this extracts the runnumber and segment from the output filename
   // and sets this so the server can pick it up
@@ -78,6 +71,15 @@ int Fun4All_G4_Pass1_herwig(
   }
 
   //===============
+  // conditions DB flags
+  //===============
+  Enable::CDB = true;
+  // global tag
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
+  // 64 bit timestamp
+  rc->set_uint64Flag("TIMESTAMP", runnumber);
+
+  //===============
   // Input options
   //===============
   // verbosity setting (applies to all input managers)
@@ -87,23 +89,9 @@ int Fun4All_G4_Pass1_herwig(
   INPUTHEPMC::filename = inputFile;
 
   // Event pile up simulation with collision rate in Hz MB collisions.
-  // Input::PILEUPRATE = 100e3;
   // Enable this is emulating the nominal pp/pA/AA collision vertex distribution
-  switch (runnumber)
-  {
-  case 21:
-    Input::BEAM_CONFIGURATION = Input::pp_ZEROANGLE;
-    Enable::MVTX_APPLYMISALIGNMENT = true;
-    break;
-  case 22: // zero beam xing angle, mvtx rotated
-    Input::BEAM_CONFIGURATION = Input::pp_COLLISION;
-    Enable::MVTX_APPLYMISALIGNMENT = true;
-    break;
-  default:
-    cout << "runnnumber " << runnumber << " not implemented" << endl;
-    gSystem->Exit(1);
-    break;
-  }
+
+  RunSettings(runnumber);
 
   //-----------------
   // Initialize the selected Input/Event generation
