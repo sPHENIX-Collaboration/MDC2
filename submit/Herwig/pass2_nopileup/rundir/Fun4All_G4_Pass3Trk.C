@@ -7,6 +7,7 @@
 #include <G4_OutputManager_Pass3Trk.C>
 #include <G4_Production.C>
 #include <G4_TrkrSimulation.C>
+#include <SaveGitTags.C>
 
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
@@ -50,6 +51,12 @@ int Fun4All_G4_Pass3Trk(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
+
+  SaveGitTags(); // save the git tags from rebuild.info as rc string flags
+
+  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile0);
+  int runnumber = runseg.first;
+
   //===============
   // conditions DB flags
   //===============
@@ -57,7 +64,7 @@ int Fun4All_G4_Pass3Trk(
   // tag
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP", runnumber);
   CDBInterface::instance()->Verbosity(1);
 
   //===============

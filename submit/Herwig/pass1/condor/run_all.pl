@@ -31,7 +31,7 @@ chomp $hostname;
 if ($hostname !~ /phnxprod/)
 {
     print "submit only from phnxprod hosts\n";
-    $isbad = 1;
+#    $isbad = 1;
 }
 if (! defined $runnumber)
 {
@@ -137,7 +137,7 @@ OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
 	    {
 		$nsubmit++;
 	    }
-	    if ($nsubmit >= $maxsubmit || $nsubmit >= 20000)
+	    if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit >= 20000)
 	    {
 		print "maximum number of submissions reached, exiting\n";
 		last OUTER;

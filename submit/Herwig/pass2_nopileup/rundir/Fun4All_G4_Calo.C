@@ -11,6 +11,7 @@
 #include <G4_HcalOut_ref.C>
 #include <G4_Input.C>
 #include <G4_Production.C>
+#include <SaveGitTags.C>
 
 
 #include <caloreco/CaloGeomMapping.h>
@@ -69,33 +70,18 @@ void Fun4All_G4_Calo(
   // int seedValue = 491258969;
   // rc->set_IntFlag("RANDOMSEED", seedValue);
 
+  SaveGitTags(); // save the git tags from rebuild.info as rc string flags
+
+  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
+  int runnumber = runseg.first;
+
   //===============
   // conditions DB flags
   //===============
   Enable::CDB = true;
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
-  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP", runnumber);
   CDBInterface::instance()->Verbosity(1);
-
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
-  int runnumber = runseg.first;
-
-  switch (runnumber)
-  {
-  case 21:  // zero beam xing angle
-    Input::BEAM_CONFIGURATION = Input::pp_ZEROANGLE;
-    break;
-  case 22:  // 1.5 mrad beam xing angle
-    Input::BEAM_CONFIGURATION = Input::pp_COLLISION;
-    break;
-  case 25:  // 1.5 mrad beam xing angle
-    Input::BEAM_CONFIGURATION = Input::AA_COLLISION;
-    break;
-  default:
-    cout << "runnnumber " << runnumber << " not implemented" << endl;
-    gSystem->Exit(1);
-    break;
-  }
 
   //===============
   // Input options

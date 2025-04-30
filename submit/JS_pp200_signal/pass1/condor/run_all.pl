@@ -42,7 +42,7 @@ chomp $hostname;
 if ($hostname !~ /phnxsub/ && $hostname !~ /sphnxprod/)
 {
     print "submit only from phnxsub or sphnxprod nodes\n";
-    exit(1);
+#    exit(1);
 }
 
 my $maxsubmit = $ARGV[0];
