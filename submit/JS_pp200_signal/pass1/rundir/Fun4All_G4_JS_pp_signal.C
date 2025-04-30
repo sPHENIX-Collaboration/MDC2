@@ -9,6 +9,8 @@
 #include <G4_Mbd.C>
 #include <G4_Production.C>
 #include <G4_TrkrSimulation.C>
+#include <G4_RunSettings.C>
+#include <SaveGitTags.C>
 
 #include <phpythia8/PHPy8JetTrigger.h>
 #include <phpythia8/PHPy8ParticleTrigger.h>
@@ -65,18 +67,10 @@ int Fun4All_G4_JS_pp_signal(
   //  rc->set_IntFlag("RANDOMSEED", 12345);
   // int seedValue = 491258969;
   // rc->set_IntFlag("RANDOMSEED", seedValue);
+  SaveGitTags(); // save the git tags from rebuild.info as rc string flags
 
   TRACKING::pp_mode = true;
   TRACKING::pp_extended_readout_time = 90000;
-
-  //===============
-  // conditions DB flags
-  //===============
-  Enable::CDB = true;
-  // global tag
-  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
-  // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
 
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
   int runnumber = runseg.first;
@@ -89,47 +83,23 @@ int Fun4All_G4_JS_pp_signal(
   }
 
   //===============
+  // conditions DB flags
+  //===============
+  Enable::CDB = true;
+  // global tag
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
+  // 64 bit timestamp
+  rc->set_uint64Flag("TIMESTAMP", runnumber);
+
+
+  //===============
   // Input options
   //===============
   // verbosity setting (applies to all input managers)
   Input::VERBOSITY = 0;
 
-  // Enable this is emulating the nominal pp/pA/AA collision vertex distribution
-  //  Input::BEAM_CONFIGURATION = Input::AA_COLLISION; // for 2023 sims we want the AA geometry for no pileup sims
-  switch (runnumber)
-  {
-  case 7:
-  case 10:
-  case 19:
-    Input::BEAM_CONFIGURATION = Input::AA_COLLISION;  // for 2023 sims we want the AA geometry for no pileup sims
-    cout << "using Input::AA_COLLISION" << endl;
-    break;
-  case 8:
-  case 11:
-  case 15:
-  case 20:
-  case 150:
-    Input::BEAM_CONFIGURATION = Input::pp_COLLISION;  // pp collisions
-    cout << "using Input::pp_COLLISION" << endl;
-    break;
-  case 9:
-  case 12:
-    Input::BEAM_CONFIGURATION = Input::pA_COLLISION;  // for 2023 sims we want the AA geometry for no pileup sims
-    cout << "using Input::pA_COLLISION" << endl;
-    break;
-  case 21: // zero beam xing angle, mvtx rotated
-    Input::BEAM_CONFIGURATION = Input::pp_ZEROANGLE;
-    Enable::MVTX_APPLYMISALIGNMENT = true;
-    break;
-  case 22: // zero beam xing angle, mvtx rotated
-    Input::BEAM_CONFIGURATION = Input::pp_COLLISION;
-    Enable::MVTX_APPLYMISALIGNMENT = true;
-    break;
-  default:
-    cout << "runnnumber " << runnumber << " not implemented" << endl;
-    gSystem->Exit(1);
-    break;
-  }
+  RunSettings(runnumber);
+
   Input::PYTHIA8 = true;
 
   //-----------------
