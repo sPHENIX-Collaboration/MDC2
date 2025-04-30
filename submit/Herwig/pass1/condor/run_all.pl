@@ -177,6 +177,11 @@ sub getlastsegment()
 	    push(@files,$f);
 	}
     }
+    if ($#files <= 0)
+    {
+	print "no hepmc files found in $herwigsubdir\n";
+	exit(1);
+    }
     my $last_segment = -1;
     if ($files[$#files] =~ /(\S+)-(\d+).*\..*/ )
     {
