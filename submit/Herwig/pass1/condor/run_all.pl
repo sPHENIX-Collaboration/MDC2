@@ -28,9 +28,9 @@ my $isbad = 0;
 
 my $hostname = `hostname`;
 chomp $hostname;
-if ($hostname !~ /phnxsub/)
+if ($hostname !~ /phnxprod/)
 {
-    print "submit only from phnxsub hosts\n";
+    print "submit only from phnxprod hosts\n";
     $isbad = 1;
 }
 if (! defined $runnumber)
@@ -77,7 +77,7 @@ $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
 my $herwig_runnumber = 1;
-my $herwig_dir = sprintf("/sphenix/sim/sim01/sphnxpro/mdc2/herwig");
+my $herwig_dir = sprintf("/sphenix/sim/sim01/sphnxpro/mdc2/Herwig");
 my $events = 1000; # for running with plugdoor
 #$events = 200;
 #$events = 100; # for ftfp_bert_hp
