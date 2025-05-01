@@ -11,6 +11,7 @@
 #include <G4_HcalOut_ref.C>
 #include <G4_Input.C>
 #include <G4_Production.C>
+#include <G4_RunSettings.C>
 #include <SaveGitTags.C>
 
 #include <caloreco/CaloGeomMapping.h>
@@ -44,8 +45,8 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 void Fun4All_G4_Calo(
     const int nEvents = 1,
-    const string &inputFile0 = "G4Hits_pythia8_Jet30-0000000022-000000.root",
-    const string &outputFile = "DST_CALO_CLUSTER_pythia8_Jet30-0000000022-000000.root",
+    const string &inputFile0 = "G4Hits_pythia8_Jet10-0000000021-000000.root",
+    const string &outputFile = "DST_CALO_CLUSTER_pythia8_Jet10-0000000021-000000.root",
     const string &outdir = ".",
     const string &cdbtag = "MDC2")
 
@@ -74,30 +75,16 @@ void Fun4All_G4_Calo(
   //===============
   // conditions DB flags
   //===============
-  Enable::CDB = true;
-  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
-  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
-  CDBInterface::instance()->Verbosity(1);
 
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
   int runnumber = runseg.first;
 
-  switch (runnumber)
-  {
-  case 21:  // zero beam xing angle
-    Input::BEAM_CONFIGURATION = Input::pp_ZEROANGLE;
-    break;
-  case 22:  // 1.5 mrad beam xing angle
-    Input::BEAM_CONFIGURATION = Input::pp_COLLISION;
-    break;
-  case 25:  // 1.5 mrad beam xing angle
-    Input::BEAM_CONFIGURATION = Input::AA_COLLISION;
-    break;
-  default:
-    cout << "runnnumber " << runnumber << " not implemented" << endl;
-    gSystem->Exit(1);
-    break;
-  }
+  RunSettings(runnumber);
+
+  Enable::CDB = true;
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
+  rc->set_uint64Flag("TIMESTAMP", runnumber);
+  CDBInterface::instance()->Verbosity(1);
 
   //===============
   // Input options
@@ -221,7 +208,7 @@ void Fun4All_G4_Calo(
   // if we use a negative number of events we go back to the command line here
   if (nEvents < 0)
   {
-    return 0;
+    return;
   }
   se->run(nEvents);
 
