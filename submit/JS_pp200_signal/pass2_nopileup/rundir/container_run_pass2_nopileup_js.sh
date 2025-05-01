@@ -21,7 +21,7 @@ run_mbdepd=${13}
 run_trk=${14}
 
 # just to get a working environment, the specific ana builds for each reconstruction are set later
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n
+source /opt/sphenix/core/bin/sphenix_setup.sh -n
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
@@ -77,7 +77,7 @@ sequence=$(printf "%06d" ${11})
 # Calorimeter Reconstruction
 if [ ${run_calo} -gt 0 ]
 then
-    source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_calo
+    source /opt/sphenix/core/bin/sphenix_setup.sh -n $ana_calo
     echo 'here comes your environment for Fun4All_G4_Calo.C'
     cdbtag=MDC2_$ana_calo
     printenv
@@ -90,7 +90,7 @@ fi
 # Global Reconstruction
 if [ ${run_mbdepd} -gt 0 ]
 then
-    source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_mbdepd
+    source /opt/sphenix/core/bin/sphenix_setup.sh -n $ana_mbdepd
     echo 'here comes your environment for Fun4All_G4_MBD_EPD.C'
     cdbtag=MDC2_$ana_mbdepd
     printenv
@@ -103,7 +103,7 @@ fi
 # pass3 tracking
 if [ ${run_trk} -gt 0 ]
 then
-    source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_pass3trk
+    source /opt/sphenix/core/bin/sphenix_setup.sh -n $ana_pass3trk
     echo 'here comes your environment for Fun4All_G4_Pass3Trk.C'
     cdbtag=MDC2_$ana_pass3trk
     printenv

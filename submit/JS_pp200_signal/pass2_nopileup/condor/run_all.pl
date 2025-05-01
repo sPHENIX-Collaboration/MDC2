@@ -42,9 +42,9 @@ my $isbad = 0;
 
 my $hostname = `hostname`;
 chomp $hostname;
-if ($hostname !~ /phnxsub/)
+if ($hostname !~ /phnxprod/)
 {
-    print "submit only from phnxsub hosts\n";
+    print "submit only from phnxprod hosts\n";
     $isbad = 1;
 }
 if (! defined $runnumber)
