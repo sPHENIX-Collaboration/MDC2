@@ -26,8 +26,8 @@ fi
 # arguments 
 # $1: number of events
 # $2: runnumber
-# $3: sequence
-# $4: input dir
+# $3: daqhost
+# $4: output dir
 
 
 echo 'here comes your environment'

@@ -52,6 +52,9 @@ my $username = getpwuid( $< );
 
 my $size = stat($file)->size;
 
+my $md5sum = &getmd5($file);
+my $entries = &getentries($file);
+
 my $copycmd;
 my $outfile = sprintf("%s/%s",$outdir,$lfn);
 
@@ -156,8 +159,6 @@ else
 {
     $outsize = $size;
 }
-my $md5sum = &getmd5($file);
-my $entries = &getentries($file);
 if ($outsize != $size)
 {
     print STDERR "filesize mismatch between origin $file ($size) and copy $outfile ($outsize)\n";
