@@ -23,7 +23,8 @@ my $outdir = ".";
 my $test;
 my $verbosity;
 my $use_rsync;
-GetOptions("outdir:s"=>\$outdir, "test"=>\$test, "verbosity" => \$verbosity);
+my $use_mv;
+GetOptions("mv" => \$use_mv, "outdir:s"=>\$outdir, "test"=>\$test, "verbosity" => \$verbosity);
 
 
 my $file = $ARGV[0];
@@ -40,9 +41,9 @@ if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/)
     $runnumber = int($2);
     $segment = int($3);
 }
-            my $lower = $runnumber - $runnumber%100;
-            my $upper = $lower + 100;
-            my $runpath = sprintf("run_%08d_%08d",$lower,$upper);
+my $lower = $runnumber - $runnumber%100;
+my $upper = $lower + 100;
+my $runpath = sprintf("run_%08d_%08d",$lower,$upper);
 
 $outdir = sprintf("%s/%s",$outdir,$runpath);
 # get the username so othere users cannot mess with the production DBs
@@ -55,16 +56,16 @@ my $copycmd;
 my $outfile = sprintf("%s/%s",$outdir,$lfn);
 
 my $outhost;
-    $copycmd = sprintf("cp %s %s",$file,$outfile);
-    if (defined $use_rsync)
-    {
-	$copycmd = sprintf("rsync -av %s %s",$file,$outfile);
-    }
-    $outhost = 'gpfs';
-    if ($outdir =~ /lustre/)
-    {
-	$outhost = 'lustre';
-    }
+$copycmd = sprintf("cp %s %s",$file,$outfile);
+if (defined $use_rsync)
+{
+    $copycmd = sprintf("rsync -av %s %s",$file,$outfile);
+}
+$outhost = 'gpfs';
+if ($outdir =~ /lustre/)
+{
+    $outhost = 'lustre';
+}
 
 if (defined $verbosity)
 {
@@ -86,7 +87,6 @@ if (defined $test)
 {
     print "cmd: $copycmd\n";
 }
-
 else
 {
     my $ncopytry = 0;
@@ -113,6 +113,10 @@ else
 	    $ncopytry++;
 	}
     }
+    if (defined $use_mv)
+    {
+	unlink $file;
+    }
 }
 # down here only things for the production account
 # 1) on failed copy - copy to backup dir
@@ -124,10 +128,10 @@ if ($username ne "sphnxpro")
 }
 my $outfileexists = 0;
 
-    if (-f $outfile)
-    {
-	$outfileexists = 1;
-    }
+if (-f $outfile)
+{
+    $outfileexists = 1;
+}
 
 my $outsize = 0;
 my $imax = 100;
@@ -162,8 +166,8 @@ if ($outsize != $size)
 my $dbh;
 my $attempts = 0;
 
-CONNECTAGAIN:
-if ($attempts > 0)
+ CONNECTAGAIN:
+    if ($attempts > 0)
 {
     sleep(int(rand(21) + 10)); # sleep 10-30 seconds before retrying
 }
@@ -219,7 +223,7 @@ sub getmd5
 
 sub getentries
 {
-#write stupid macro to get events
+    #write stupid macro to get events
     if (! -f "GetEntries.C")
     {
 	open(F,">GetEntries.C");
@@ -253,7 +257,7 @@ sub getentries
     while(my $entr = <F2>)
     {
 	chomp $entr;
-#	print "$entr\n";
+	#	print "$entr\n";
 	if ($entr =~ /$file/)
 	{
 	    $checknow = 1;

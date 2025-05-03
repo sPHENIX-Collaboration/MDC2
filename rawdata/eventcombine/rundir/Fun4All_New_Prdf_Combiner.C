@@ -64,15 +64,18 @@ void Fun4All_New_Prdf_Combiner(int nEvents = 0,
 //   clkchk->Verbosity(3);
  clkchk->set_delBadPkts(true);
   se->registerSubsystem(clkchk);
-  std::string outfile = outdir + "/" + "DST_TRIGGERED_EVENT_" + daqhost + "_run3cosmics_new_nocdbtag_v000.root";
+  std::string outfile = "DST_TRIGGERED_EVENT_" + daqhost + "_run2pp_new_nocdbtag_v001.root";
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("dstout",outfile);
   out->UseFileRule();
   out->SetNEvents(100000); 
+  out->SetClosingScript("copyscript.pl");      // script to call on file close (not quite working yet...)
+  out->SetClosingScriptArgs(" -mv -outdir " + outdir);  // additional beyond the name of the file
   se->registerOutputManager(out);
-  if (nEvents >= 0)
+  if (nEvents < 0)
   {
-    se->run(nEvents);
+    return;
   }
+  se->run(nEvents);
   se->End();
   delete se;
   std::cout << "all done" << std::endl;
