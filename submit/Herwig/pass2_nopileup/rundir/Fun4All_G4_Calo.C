@@ -11,8 +11,8 @@
 #include <G4_HcalOut_ref.C>
 #include <G4_Input.C>
 #include <G4_Production.C>
+#include <G4_RunSettings.C>
 #include <SaveGitTags.C>
-
 
 #include <caloreco/CaloGeomMapping.h>
 #include <caloreco/CaloTowerBuilder.h>
@@ -72,12 +72,15 @@ void Fun4All_G4_Calo(
 
   SaveGitTags(); // save the git tags from rebuild.info as rc string flags
 
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
-  int runnumber = runseg.first;
-
   //===============
   // conditions DB flags
   //===============
+
+  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
+  int runnumber = runseg.first;
+
+  RunSettings(runnumber);
+
   Enable::CDB = true;
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   rc->set_uint64Flag("TIMESTAMP", runnumber);
@@ -205,7 +208,7 @@ void Fun4All_G4_Calo(
   // if we use a negative number of events we go back to the command line here
   if (nEvents < 0)
   {
-    return 0;
+    return;
   }
   se->run(nEvents);
 

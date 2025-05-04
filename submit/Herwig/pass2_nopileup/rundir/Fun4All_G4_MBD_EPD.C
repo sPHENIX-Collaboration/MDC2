@@ -7,6 +7,7 @@
 #include <G4_Input.C>
 #include <G4_Mbd.C>
 #include <G4_Production.C>
+#include <G4_RunSettings.C>
 #include <SaveGitTags.C>
 
 #include <ffamodules/CDBInterface.h>
@@ -22,7 +23,7 @@
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 
-int Fun4All_G4_MBD_EPD(
+void Fun4All_G4_MBD_EPD(
     const int nEvents = 1,
     const string &inputFile = "G4Hits_Herwig_MB-0000000022-000000.root",
     const string &outputFile = "DST_MBD_EPD_Herwig_MB-0000000022-000000.root",
@@ -46,16 +47,23 @@ int Fun4All_G4_MBD_EPD(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
+
   SaveGitTags(); // save the git tags from rebuild.info as rc string flags
+
+  //===============
+  // conditions DB flags
+  //===============
 
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
   int runnumber = runseg.first;
-  
+
   Enable::CDB = true;
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   rc->set_uint64Flag("TIMESTAMP", runnumber);
   CDBInterface::instance()->Verbosity(1);
-  
+
+  RunSettings(runnumber);
+
   //===============
   // Input options
   //===============
@@ -136,14 +144,14 @@ int Fun4All_G4_MBD_EPD(
   // if we use a negative number of events we go back to the command line here
   if (nEvents < 0)
   {
-    return 0;
+    return;
   }
   // if we run the particle generator and use 0 it'll run forever
   if (nEvents == 0 && !Input::HEPMC && !Input::READHITS)
   {
     cout << "using 0 for number of events is a bad idea when using particle generators" << endl;
     cout << "it will run forever, so I just return without running anything" << endl;
-    return 0;
+    return;
   }
 
   se->run(nEvents);
@@ -163,6 +171,5 @@ int Fun4All_G4_MBD_EPD(
   }
 
   gSystem->Exit(0);
-  return 0;
 }
 #endif
