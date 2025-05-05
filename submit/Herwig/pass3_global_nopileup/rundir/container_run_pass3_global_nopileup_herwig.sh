@@ -11,7 +11,7 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-anabuild=${6}
+anabuild=${5}
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
 
@@ -60,7 +60,7 @@ echo cdbtag: $cdbtag
 runnumber=$(printf "%010d" $6)
 sequence=$(printf "%06d" $7)
 
-echo running root.exe -q -b Fun4All_G4_Global.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\",\"$8\"\)
-root.exe -q -b  Fun4All_G4_Global.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\",\"$8\"\)
+echo running root.exe -q -b Fun4All_G4_Global.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"$8\"\)
+root.exe -q -b  Fun4All_G4_Global.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"$8\"\)
 
 echo "script done"

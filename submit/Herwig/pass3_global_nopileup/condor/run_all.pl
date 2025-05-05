@@ -151,6 +151,7 @@ while (my @res = $getfiles->fetchrow_array())
 	}
     }
 }
+$getfiles->finish();
 $chkfile->finish();
 $dbh->disconnect;
 

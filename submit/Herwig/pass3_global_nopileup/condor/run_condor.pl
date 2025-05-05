@@ -10,9 +10,9 @@ my $test;
 my $overwrite;
 my $memory = sprintf("500MB");
 GetOptions("memory:s"=>\$memory, "overwrite"=>\$overwrite, "test"=>\$test);
-if ($#ARGV < 8)
+if ($#ARGV < 7)
 {
-    print "usage: run_condor.pl <events> <seeds infile> <mbdepd infile> <jettrigger> <outfile> <outdir>  <build> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <jettrigger> <mbdepd infile> <outfile> <outdir>  <build> <runnumber> <sequence>\n";
     print "options:\n";
     print "-memory: memory requirement\n";
     print "--overwrite : overwrite existing jobfiles\n";
@@ -45,7 +45,7 @@ if (! -d $logdir)
 {
   mkpath($logdir);
 }
-my $condorlogdir = sprintf("/tmp/herwig/pass3_global_nopileup/run%d/%s",$runnumber,$jettrigger);
+my $condorlogdir = sprintf("/tmp/Herwig/pass3_global_nopileup/run%d/%s",$runnumber,$jettrigger);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);
