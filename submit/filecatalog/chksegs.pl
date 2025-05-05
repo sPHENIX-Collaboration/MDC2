@@ -694,7 +694,7 @@ elsif ($system == 29)
     {
 	$systemstring = sprintf("%s-",$systemstring_g4hits);
     }
-    $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
+    $systemstring_g4hits = sprintf("%s",$systemstring_g4hits);
     $gpfsdir = "herwig";
 #    $systemstring = "DST_HF_BOTTOM_pythia8-";
 #    $gpfsdir = "HF_pp200_signal";

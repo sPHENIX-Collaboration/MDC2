@@ -786,10 +786,10 @@ elsif ($system == 29)
 {
     $specialsystemstring{"G4Hits"} = "Herwig_MB-";
     $systemstring = "Herwig_MB_";
-    $topdir = sprintf("%s/herwig",$topdir);
+    $topdir = sprintf("%s/Herwig",$topdir);
     if (defined $nopileup)
     {
-	$condorfileadd = sprintf("MB");
+#	$condorfileadd = sprintf("MB");
         $systemstring = "Herwig_MB";
     }
     else
