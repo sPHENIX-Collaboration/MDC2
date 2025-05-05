@@ -16,6 +16,7 @@
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
+#include <fun4all/Fun4AllUtils.h>
 
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
@@ -25,8 +26,8 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 void Fun4All_G4_MBD_EPD(
     const int nEvents = 1,
-    const string &inputFile = "G4Hits_pythia8_Jet30-0000000019-000000.root",
-    const string &outputFile = "DST_BBC_EPD_pythia8_Jet30-0000000019-000000.root",
+    const string &inputFile = "G4Hits_pythia8_Jet30-0000000022-000000.root",
+    const string &outputFile = "DST_BBC_EPD_pythia8_Jet30-0000000022-000000.root",
     const string &outdir = ".",
     const string &cdbtag = "MDC2")
 {

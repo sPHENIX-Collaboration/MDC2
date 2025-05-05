@@ -2,11 +2,11 @@
 #define MACRO_FUN4ALLG4PASS3TRK_C
 
 #include <GlobalVariables.C>
-
 #include <G4_Input.C>
 #include <G4_OutputManager_Pass3Trk.C>
 #include <G4_Production.C>
 #include <G4_TrkrSimulation.C>
+#include <SaveGitTags.C>
 
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
@@ -25,7 +25,7 @@ R__LOAD_LIBRARY(libffamodules.so)
 
 int Fun4All_G4_Pass3Trk(
     const int nEvents = 0,
-    const string &inputFile0 = "G4Hits_pythia8_Jet30-0000000019-000000.root",
+    const string &inputFile0 = "G4Hits_pythia8_Jet30-0000000022-000000.root",
     const string &outdir = ".",
     const string &jettrigger = "Jet30",
     const string &cdbtag = "MDC2")
@@ -50,6 +50,12 @@ int Fun4All_G4_Pass3Trk(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
+
+  SaveGitTags(); // save the git tags from rebuild.info as rc string flags
+
+  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile0);
+  int runnumber = runseg.first;
+
   //===============
   // conditions DB flags
   //===============
@@ -57,7 +63,7 @@ int Fun4All_G4_Pass3Trk(
   // tag
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP", runnumber);
   CDBInterface::instance()->Verbosity(1);
 
   //===============
@@ -111,6 +117,7 @@ int Fun4All_G4_Pass3Trk(
   // central tracking
   Enable::MVTX = true;
   Enable::MVTX_CELL = Enable::MVTX && true;
+  Enable::MVTX_APPLYMISALIGNMENT = true;
 
   Enable::INTT = true;
   Enable::INTT_CELL = Enable::INTT && true;
