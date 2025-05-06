@@ -23,24 +23,34 @@ if ($#ARGV < 0)
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
-
+my $isbad = 0;
 if (! defined $runnumber)
 {
     print "need runnumber with --run <runnumber>\n";
-    exit(1);
+    $isbad = 1;
 }
 
 if (! defined $build)
 {
     print "need build with --build <ana build>\n";
+    $isbad = 1;
+}
+if (! -f "outdir.txt")
+{
+    print "could not find outdir.txt\n";
+    $isbad = 1;
+}
+
+if ($isbad > 0)
+{
     exit(1);
 }
 
 my $hostname = `hostname`;
 chomp $hostname;
-if ($hostname !~ /phnxsub/)
+if ($hostname !~ /sphnxprod/)
 {
-    print "submit only from phnxsub hosts\n";
+    print "submit only from sphnxprod nodes\n";
     exit(1);
 }
 
@@ -56,7 +66,7 @@ $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
 my $hijing_runnumber = 1;
-my $hijing_dir = sprintf("/sphenix/sim/sim01/sphnxpro/MDC1/sHijing_HepMC/data");
+my $hijing_dir = sprintf("/sphenix/lustre01/sphnxpro/mdc2/sHijing_HepMC/data");
 my $events = 200; # for running with plugdoor
 #$events = 200;
 #$events = 100; # for ftfp_bert_hp
@@ -69,15 +79,13 @@ if (-f $condorlistfile)
     unlink $condorlistfile;
 }
 
-if (! -f "outdir.txt")
-{
-    print "could not find outdir.txt\n";
-    exit(1);
-}
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 $outdir = sprintf("%s/run%04d",$outdir,$runnumber);
-mkpath($outdir);
+if (! -d $outdir)
+{
+  mkpath($outdir);
+}
 
 my $nsubmit = 0;
 my $lastsegment=getlastsegment();

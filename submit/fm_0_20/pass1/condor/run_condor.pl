@@ -9,7 +9,7 @@ use File::Basename;
 my $test;
 my $memory = sprintf("12000MB");
 
-GetOptions("test"=>\$test);
+GetOptions("memory:s"=>\$memory, "test"=>\$test);
 if ($#ARGV < 7)
 {
     print "usage: run_condor.pl <events> <infile> <outdir> <outfile> <skip> <build> <runnumber> <sequence>\n";
@@ -75,9 +75,6 @@ print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
 print F "Initialdir  	= $rundir\n";
 print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
-print F "accounting_group = group_sphenix.mdc2\n";
-print F "accounting_group_user = sphnxpro\n";
-print F "Requirements = (CPU_Type == \"mdc2\")\n";
 # FTFP_BERT
 print F "request_memory = $memory\n";
 print F "Priority = $baseprio\n";
@@ -98,5 +95,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile, $dstoutfile, $skip, $dstoutdir, $build, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio, $memory $batchname\n";
+print F "$executable, $nevents, $infile, $dstoutfile, $skip, $dstoutdir, $build, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio, $memory, $batchname\n";
 close(F);

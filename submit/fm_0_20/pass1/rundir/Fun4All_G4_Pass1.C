@@ -67,15 +67,6 @@ int Fun4All_G4_Pass1(
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
 
-  //===============
-  // conditions DB flags
-  //===============
-  Enable::CDB = true;
-  // global tag
-  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
-  // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
-
   // this extracts the runnumber and segment from the output filename
   // and sets this so the server can pick it up
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
@@ -88,15 +79,22 @@ int Fun4All_G4_Pass1(
     syncman->SegmentNumber(segment);
   }
 
+  RunSettings(runnumber);
+
+  //===============
+  // conditions DB flags
+  //===============
+  Enable::CDB = true;
+  // global tag
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
+  // 64 bit timestamp
+  rc->set_uint64Flag("TIMESTAMP", runnumber);
+
   //===============
   // Input options
   //===============
   // verbosity setting (applies to all input managers)
   Input::VERBOSITY = 1;  // so we get prinouts of the event number
-
-  Input::BEAM_CONFIGURATION = Input::AA_COLLISION;  // for 2023 sims we want the AA geometry for no pileup sims
-
-  RunSettings(runnumber);
 
   Input::HEPMC = true;
 
