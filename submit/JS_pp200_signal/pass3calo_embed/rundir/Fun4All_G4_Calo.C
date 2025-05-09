@@ -41,8 +41,8 @@ R__LOAD_LIBRARY(libcalo_reco.so)
 
 int Fun4All_G4_Calo(
     const int nEvents = 1,
-    const string &inputFile0 = "DST_CALO_G4HIT_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000019-000000.root",
-    const string &outputFile = "DST_CALO_CLUSTER_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000019-000000.root",
+    const string &inputFile0 = "DST_CALO_G4HIT_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000023-000000.root",
+    const string &outputFile = "DST_CALO_CLUSTER_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000023-000000.root",
     const string &outdir = ".",
     const string &cdbtag = "MDC2")
 {
@@ -191,6 +191,7 @@ int Fun4All_G4_Calo(
     out->AddNode("TOWERINFO_CALIB_CEMC");
     out->AddNode("WAVEFORM_CEMC");
     out->AddNode("TOWERS_CEMC");
+    se->registerOutputManager(out);
   }
   //-----------------
   // Event processing
