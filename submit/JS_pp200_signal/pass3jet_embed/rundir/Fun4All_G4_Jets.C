@@ -26,7 +26,7 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 void Fun4All_G4_Jets(
     const int nEvents = 0,
-    const string &inputFile = "DST_TRUTH_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000023-000000.root",
+    const string &inputFile = "DST_TRUTH_G4HIT_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000023-000000.root",
     const string &outputFile = "DST_TRUTH_JETS_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000023-000000.root",
     const string &outdir = ".",
     const string &cdbtag = "MDC2")
