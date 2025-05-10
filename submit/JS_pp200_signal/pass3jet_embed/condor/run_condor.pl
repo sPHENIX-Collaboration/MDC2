@@ -22,7 +22,7 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 54;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_pass4jet_embed_js.sh",$rundir);
+my $executable = sprintf("%s/run_pass3jet_embed_js.sh",$rundir);
 my $nevents = $ARGV[0];
 my $jettrigger = $ARGV[1];
 my $infile = $ARGV[2];
@@ -44,7 +44,7 @@ if (! -d $logdir)
 {
   mkpath($logdir);
 }
-my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass4jet_embed/%s/run%d/%s",$fm,$runnumber,$jettrigger);
+my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass3jet_embed/%s/run%d/%s",$fm,$runnumber,$jettrigger);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);
