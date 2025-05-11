@@ -12,17 +12,19 @@ my $build;
 my $incremental;
 my $fm = "0_20fm";
 my $outevents = 0;
+my $overwrite;
 my $runnumber;
 my $test;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "fm:s" =>\$fm, "run:i" =>\$runnumber, "test"=>\$test);
+GetOptions("build:s" => \$build, "fm:s" =>\$fm, "increment"=>\$incremental, "overwrite"=> \$overwrite, "run:i" =>\$runnumber, "test"=>\$test);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"Jet40\", \"PhotonJet\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet10\">, <\"Jet15\">, <\"Jet20\">, <\"Jet30\">, <\"Jet40\">, <\"Jet50\">, <\"PhotonJet\">, <\"PhotonJet5\">, <\"PhotonJet10\">, <\"PhotonJet20\">, <\"Detroit\"> production>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--fm : fermi range for embedding\n";
-    print "--run: <runnumber>\n";
     print "--increment : submit jobs while processing running\n";
+    print "--overwrite : overwrite exiting jobfiles\n";
+    print "--run: <runnumber>\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
@@ -30,9 +32,9 @@ my $isbad = 0;
 
 my $hostname = `hostname`;
 chomp $hostname;
-if ($hostname !~ /phnxsub/)
+if ($hostname !~ /sphnxprod/)
 {
-    print "submit only from phnxsub hosts\n";
+    print "submit only from sphnxprod hosts\n";
     $isbad = 1;
 }
 if (! defined $runnumber)
@@ -60,11 +62,18 @@ if ($isbad > 0)
 my $maxsubmit = $ARGV[0];
 my $jettrigger = $ARGV[1];
 if ($jettrigger  ne "Jet10" &&
+    $jettrigger  ne "Jet20" &&
+    $jettrigger  ne "Jet15" &&
     $jettrigger  ne "Jet30" &&
     $jettrigger  ne "Jet40" &&
-    $jettrigger  ne "PhotonJet")
+    $jettrigger  ne "Jet50" &&
+    $jettrigger  ne "PhotonJet" &&
+    $jettrigger  ne "PhotonJet5" &&
+    $jettrigger  ne "PhotonJet10" &&
+    $jettrigger  ne "PhotonJet20" &&
+    $jettrigger  ne "Detroit")
 {
-    print "second argument has to be Jet10, Jet30, Jet40 or PhotonJet\n";
+    print "second argument has to be Jet10, Jet30, Jet40, PhotonJet, PhotonJet5, PhotonJet10, PhotonJet20 or Detroit\n";
     exit(1);
 }
 
@@ -181,6 +190,10 @@ foreach my $segment (sort { $a <=> $b } keys %trkhash)
 	if (defined $test)
 	{
 	    $tstflag="--test";
+	}
+        elsif (defined $overwrite)
+	{
+	    $tstflag="--overwrite";
 	}
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %s %d %d %s %s", $outevents, $jettrigger, $lfn, $bbchash{sprintf("%06d",$segment)}, $calohash{sprintf("%06d",$segment)}, $truthhash{sprintf("%06d",$segment)}, $outdir, $build, $runnumber, $segment, $fm, $tstflag);
 	print "cmd: $subcmd\n";

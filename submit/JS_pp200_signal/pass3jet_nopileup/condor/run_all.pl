@@ -19,7 +19,7 @@ my $verbosity = 0;
 GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet10\", <\"Jet30\", <\"Jet40\", \"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\", \"Detroit\"  production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet10\">, <\"Jet15\">, <\"Jet30\">, <\"Jet40\">, <\"Jet50\">, \"PhotonJet\">, \"PhotonJet5\">, \"PhotonJet10\">, \"PhotonJet20\">, \"Detroit\">  production>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
@@ -35,9 +35,9 @@ my $isbad = 0;
 
 my $hostname = `hostname`;
 chomp $hostname;
-if ($hostname !~ /phnxsub/)
+if ($hostname !~ /phnxprod/)
 {
-    print "submit only from phnxsub hosts\n";
+    print "submit only from phnxprod hosts\n";
     $isbad = 1;
 }
 if (! defined $runnumber)
@@ -65,17 +65,19 @@ if ($isbad > 0)
 my $maxsubmit = $ARGV[0];
 my $jettrigger = $ARGV[1];
 if ($jettrigger  ne "Jet10" &&
+    $jettrigger  ne "Jet15" &&
     $jettrigger  ne "Jet20" &&
     $jettrigger  ne "Jet30" &&
     $jettrigger  ne "Jet40" &&
+    $jettrigger  ne "Jet50" &&
     $jettrigger  ne "PhotonJet" &&
     $jettrigger  ne "PhotonJet5" &&
     $jettrigger  ne "PhotonJet10" &&
     $jettrigger  ne "PhotonJet20" &&
     $jettrigger  ne "Detroit")
 {
-    print "second argument has to be Jet10, Jet30, Jet40, PhotonJet, PhotonJet5, PhotonJet10, PhotonJet20 or Detroit\n";
-    exit(1);
+    print "second argument has to be Jet10, Jet15, Jet20, Jet30, Jet40, Jet50, PhotonJet, PhotonJet5, PhotonJet10, PhotonJet20 or Detroit\n";
+     exit(1);
 }
 
 my $condorlistfile =  sprintf("condor.list");
@@ -96,7 +98,6 @@ my $jettriggerWithDash = sprintf("%s-",$jettrigger);
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-#my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH' and filename like '%pythia8_$jettriggerWithDash%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
 my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'G4Hits' and filename like '%pythia8_$jettriggerWithDash%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 my $nsubmit = 0;

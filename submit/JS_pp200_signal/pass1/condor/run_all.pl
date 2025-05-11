@@ -25,24 +25,36 @@ if ($#ARGV < 1)
     exit(1);
 }
 
+my $isbad = 0;
+
 if (! defined $runnumber)
 {
     print "need runnumber with --run <runnumber>\n";
-    exit(1);
+    $isbad = 1;
 }
 
 if (! defined $build)
 {
     print "need build with --build <ana build>\n";
+    $isbad = 1;
+}
+if (! -f "outdir.txt")
+{
+    print "could not find outdir.txt\n";
+    $isbad = 1;
+}
+
+if ($isbad > 0)
+{
     exit(1);
 }
 
 my $hostname = `hostname`;
 chomp $hostname;
-if ($hostname !~ /phnxsub/ && $hostname !~ /sphnxprod/)
+if ($hostname !~ /sphnxprod/)
 {
-    print "submit only from phnxsub or sphnxprod nodes\n";
-#    exit(1);
+    print "submit only from sphnxprod nodes\n";
+    exit(1);
 }
 
 my $maxsubmit = $ARGV[0];
@@ -79,15 +91,13 @@ if (-f $condorlistfile)
     unlink $condorlistfile;
 }
 
-if (! -f "outdir.txt")
-{
-    print "could not find outdir.txt\n";
-    exit(1);
-}
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 $outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,lc $jettrigger);
-mkpath($outdir);
+if (! -d $outdir)
+{
+  mkpath($outdir);
+}
 
 my $localdir=`pwd`;
 chomp $localdir;

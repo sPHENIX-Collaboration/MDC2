@@ -8,8 +8,11 @@
 #include <G4_Mbd.C>
 #include <G4_OutputManager_Embed.C>
 #include <G4_Production.C>
+#include <G4_RunSettings.C>
+#include <SaveGitTags.C>
 
 #include <phpythia8/PHPy8JetTrigger.h>
+#include <phpythia8/PHPy8ParticleTrigger.h>
 
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
@@ -38,10 +41,12 @@ int Fun4All_G4_Embed(
     const string &outdir = ".",
     const string &jettrigger = "Jet30",
     const string &fmrange = "0_20fm",
-    const string &cdbtag = "MDC2_ana.398")
+    const string &cdbtag = "MDC2")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
+
+  CDBInterface::instance()->Verbosity(1);
 
   // Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
   PHRandomSeed::Verbosity(1);
@@ -57,19 +62,23 @@ int Fun4All_G4_Embed(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
+  SaveGitTags(); // save the git tags from rebuild.info as rc string flags
 
+ 
   //===============
   // conditions DB flags
   //===============
+  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(embed_input_file0);
+  int runnumber = runseg.first;
+  int segment = runseg.second;
+  RunSettings(runnumber);
+
   Enable::CDB = true;
   // tag
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP", runnumber);
 
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(embed_input_file0);
-  int runnumber = runseg.first;
-  int segment = runseg.second;
   if (runnumber != 0)
   {
     rc->set_IntFlag("RUNNUMBER", runnumber);
@@ -120,21 +129,49 @@ int Fun4All_G4_Embed(
   if (Input::PYTHIA8)
   {
     string pythia8_config_file = string(getenv("CALIBRATIONROOT")) + "/Generators/JetStructure_TG/";
-    if (jettrigger == "Jet10")
+    if (jettrigger == "PhotonJet")
+    {
+      pythia8_config_file += "phpythia8_JS_GJ_MDC2.cfg";
+    }
+    else if (jettrigger == "PhotonJet5")
+    {
+      pythia8_config_file += "phpythia8_JS_GJ_ptHat5_MDC2.cfg";
+    }
+    else if (jettrigger == "PhotonJet10")
+    {
+      pythia8_config_file += "phpythia8_JS_GJ_ptHat10_MDC2.cfg";
+    }
+    else if (jettrigger == "PhotonJet20")
+    {
+      pythia8_config_file += "phpythia8_JS_GJ_ptHat20_MDC2.cfg";
+    }
+    else if (jettrigger == "Jet5")
+    {
+      pythia8_config_file += "phpythia8_5GeV_JS_MDC2.cfg";
+    }
+    else if (jettrigger == "Jet10")
+    {
+      pythia8_config_file += "phpythia8_10GeV_JS_MDC2.cfg";
+    }
+    else if (jettrigger == "Jet15")
     {
       pythia8_config_file += "phpythia8_15GeV_JS_MDC2.cfg";
+    }
+    else if (jettrigger == "Jet20")
+    {
+      pythia8_config_file += "phpythia8_20GeV_JS_MDC2.cfg";
     }
     else if (jettrigger == "Jet30")
     {
       pythia8_config_file += "phpythia8_30GeV_JS_MDC2.cfg";
     }
-    else if (jettrigger == "Jet40")
+    else if (jettrigger == "Jet50")
     {
-      pythia8_config_file += "phpythia8_40GeV_JS_MDC2.cfg";
+      pythia8_config_file += "phpythia8_50GeV_JS_MDC2.cfg";
     }
-    else if (jettrigger == "PhotonJet")
+    else if (jettrigger == "Detroit")
     {
-      pythia8_config_file += "phpythia8_JS_GJ_MDC2.cfg";
+      pythia8_config_file =  string(getenv("CALIBRATIONROOT")) + "/Generators/phpythia8_detroit_minBias.cfg";
     }
     else
     {
@@ -156,37 +193,84 @@ int Fun4All_G4_Embed(
 
   if (Input::PYTHIA8)
   {
-    //! apply sPHENIX nominal beam parameter with 2mrad crossing as defined in sPH-TRG-2020-001
-    PHPy8JetTrigger *p8_js_signal_trigger = new PHPy8JetTrigger();
-    p8_js_signal_trigger->SetEtaHighLow(1.5, -1.5);  // Set eta acceptance for particles into the jet between +/- 1.5
-    p8_js_signal_trigger->SetJetR(0.4);              // Set the radius for the trigger jet
-    if (jettrigger == "Jet10")
+    if (jettrigger.find("PhotonJet") != string::npos)
     {
-      p8_js_signal_trigger->SetMinJetPt(10);  // require a 10 GeV minimum pT jet in the event
+      PHPy8ParticleTrigger *p8_photon_jet_trigger = new PHPy8ParticleTrigger();
+      p8_photon_jet_trigger->SetStableParticleOnly(false); // process unstable particles that include quarks
+      p8_photon_jet_trigger->AddParticles(22);
+      p8_photon_jet_trigger->SetEtaHighLow(1.5, -1.5); // sample a rapidity range higher than the sPHENIX tracking pseudorapidity
+      std::vector<int> partentsId{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,-22,-21,-20,-19,-18,-17,-16,-15,-14,-13,-12,-11,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1};
+      p8_photon_jet_trigger->AddParents(partentsId);
+      if (jettrigger == "PhotonJet5")
+      {
+	p8_photon_jet_trigger->SetPtLow(5);
+      }
+      else if (jettrigger == "PhotonJet10")
+      {
+	p8_photon_jet_trigger->SetPtLow(10);
+      }
+      else if (jettrigger == "PhotonJet20")
+      {
+	p8_photon_jet_trigger->SetPtLow(20);
+      }
+      else
+      {
+	cout << "invalid jettrigger: " << jettrigger << endl;
+	gSystem->Exit(1);
+      }
+      INPUTGENERATOR::Pythia8->register_trigger(p8_photon_jet_trigger);
+      INPUTGENERATOR::Pythia8->set_trigger_OR();
     }
-    else if (jettrigger == "Jet30")
+    else if (jettrigger.find("Jet") != string::npos)
     {
-      p8_js_signal_trigger->SetMinJetPt(30);  // require a 30 GeV minimum pT jet in the event
+      PHPy8JetTrigger *p8_js_signal_trigger = new PHPy8JetTrigger();
+      p8_js_signal_trigger->SetEtaHighLow(1.5, -1.5);  // Set eta acceptance for particles into the jet between +/- 1.5
+      p8_js_signal_trigger->SetJetR(0.4);              // Set the radius for the trigger jet
+      
+      if (jettrigger == "Jet5")
+      {
+	p8_js_signal_trigger->SetMinJetPt(5);  // require a 5 GeV minimum pT jet in the event
+      }
+      else if (jettrigger == "Jet10")
+      {
+	p8_js_signal_trigger->SetMinJetPt(10);  // require a 10 GeV minimum pT jet in the event
+      }
+      else if (jettrigger == "Jet15")
+      {
+	p8_js_signal_trigger->SetMinJetPt(15);  // require a 15 GeV minimum pT jet in the event
+      }
+      else if (jettrigger == "Jet20")
+      {
+	p8_js_signal_trigger->SetMinJetPt(20);  // require a 20 GeV minimum pT jet in the event
+      }
+      else if (jettrigger == "Jet30")
+      {
+	p8_js_signal_trigger->SetMinJetPt(30);  // require a 30 GeV minimum pT jet in the event
+      }
+      else if (jettrigger == "Jet40")
+      {
+	p8_js_signal_trigger->SetMinJetPt(40);  // require a 30 GeV minimum pT jet in the event
+      }
+      else if (jettrigger == "Jet50")
+      {
+	p8_js_signal_trigger->SetMinJetPt(50);  // require a 30 GeV minimum pT jet in the event
+      }
+      else
+      {
+	cout << "invalid jettrigger: " << jettrigger << endl;
+	gSystem->Exit(1);
+      }
+      INPUTGENERATOR::Pythia8->register_trigger(p8_js_signal_trigger);
+      INPUTGENERATOR::Pythia8->set_trigger_AND();
     }
-    else if (jettrigger == "Jet40")
+    else if (jettrigger == "Detroit")
     {
-      p8_js_signal_trigger->SetMinJetPt(30);  // require a 30 GeV minimum pT jet in the event
-    }
-    else if (jettrigger == "PhotonJet")
-    {
-      delete p8_js_signal_trigger;
-      p8_js_signal_trigger = nullptr;
-      cout << "no cut for PhotonJet" << endl;
+      cout << "using detroit - no cuts" << std::endl;
     }
     else
     {
-      cout << "invalid jettrigger: " << jettrigger << endl;
+      cout << "Invalid jettrigger for cuts " << jettrigger << endl;
       gSystem->Exit(1);
-    }
-    if (p8_js_signal_trigger)
-    {
-      INPUTGENERATOR::Pythia8->register_trigger(p8_js_signal_trigger);
-      INPUTGENERATOR::Pythia8->set_trigger_AND();
     }
     Input::ApplysPHENIXBeamParameter(INPUTGENERATOR::Pythia8);
   }

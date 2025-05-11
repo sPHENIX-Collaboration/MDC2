@@ -176,7 +176,7 @@ void Fun4All_G4_Calo(
     out->AddNode("Sync");
     out->AddNode("EventHeader");
     // Inner Hcal
-    // this is what production macto gives us
+    // this is what production macro gives us
     out->AddNode("CLUSTERINFO_HCALIN");
     out->AddNode("TOWERINFO_CALIB_HCALIN");
     out->AddNode("WAVEFORM_HCALIN");
@@ -194,12 +194,6 @@ void Fun4All_G4_Calo(
     out->AddNode("TOWERINFO_CALIB_CEMC");
     out->AddNode("WAVEFORM_CEMC");
     out->AddNode("TOWERS_CEMC");
-
-    // leave the topo cluster here in case we run this during pass3
-    out->AddNode("TOPOCLUSTER_ALLCALO");
-    out->AddNode("TOPOCLUSTER_EMCAL");
-    out->AddNode("TOPOCLUSTER_HCAL");
-    se->registerOutputManager(out);
   }
 
   //-----------------

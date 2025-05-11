@@ -8,6 +8,7 @@
 #include <G4_HIJetReco.C>
 #include <G4_Jets.C>
 #include <G4_Production.C>
+#include <SaveGitTags.C>
 
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
@@ -17,6 +18,7 @@
 #include <fun4all/Fun4AllInputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
+#include <fun4all/Fun4AllUtils.h>
 
 #include <phool/recoConsts.h>
 
@@ -38,12 +40,17 @@ void Fun4All_G4_Jets(
 
   recoConsts *rc = recoConsts::instance();
 
+// save all git tags from build
+  SaveGitTags();
+
   //===============
   // conditions DB flags
   //===============
+  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
+  int runnumber = runseg.first;
   Enable::CDB = true;
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
-  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP", runnumber);
   CDBInterface::instance()->Verbosity(1);
 
   Fun4AllInputManager *in = new Fun4AllDstInputManager("DSTTRUTH");

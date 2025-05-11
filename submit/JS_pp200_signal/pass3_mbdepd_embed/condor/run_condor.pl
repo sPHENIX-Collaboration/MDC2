@@ -4,8 +4,10 @@ use strict;
 use warnings;
 use Getopt::Long;
 use File::Path;
+use File::Basename;
 
 my $test;
+my $memory = sprintf("4000MB");
 GetOptions("test"=>\$test);
 if ($#ARGV < 8)
 {
@@ -34,6 +36,7 @@ if ($sequence < 100)
 {
     $baseprio = 90;
 }
+my $batchname = sprintf("%s %s",basename($executable),$jettrigger);
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s-%010d-%06d",$jettrigger,$runnumber,$sequence);
 my $logdir = sprintf("%s/log/%s/run%d/%s",$localdir,$fm,$runnumber,$jettrigger);
@@ -69,12 +72,9 @@ print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
 print F "Initialdir  	= $rundir\n";
 print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
-#print F "accounting_group = group_sphenix.prod\n";
-print F "accounting_group = group_sphenix.mdc2\n";
-print F "accounting_group_user = sphnxpro\n";
-print F "Requirements = (CPU_Type == \"mdc2\")\n";
-print F "request_memory = 2048MB\n";
 print F "Priority = $baseprio\n";
+print F "request_memory = $memory\n";
+print F "batch_name = \"$batchname\"\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);
@@ -88,5 +88,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile0 $infile1, $dstoutfile, $dstoutdir, $jettrigger,$build,  $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $infile0 $infile1, $dstoutfile, $dstoutdir, $jettrigger,$build,  $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio, $memory, $batchname\n";
 close(F);

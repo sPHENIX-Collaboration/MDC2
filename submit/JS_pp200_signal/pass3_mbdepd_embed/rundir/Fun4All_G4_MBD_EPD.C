@@ -7,6 +7,7 @@
 #include <G4_Input.C>
 #include <G4_Mbd.C>
 #include <G4_Production.C>
+#include <SaveGitTags.C>
 
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
@@ -14,6 +15,7 @@
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
+#include <fun4all/Fun4AllUtils.h>
 
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
@@ -23,11 +25,11 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_MBD_EPD(
     const int nEvents = 1,
-    const string &inputFile1 = "DST_BBC_G4HIT_pythia8_Jet10_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000010-00000.root",
-    const string &inputFile2 = "DST_TRUTH_G4HIT_pythia8_Jet10_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000010-00000.root",
-    const string &outputFile = "DST_MBD_EPD_pythia8_Jet10_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000010-00000.root",
+    const string &inputFile1 = "DST_BBC_G4HIT_pythia8_Jet10_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000023-00000.root",
+    const string &inputFile2 = "DST_TRUTH_G4HIT_pythia8_Jet10_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000023-00000.root",
+    const string &outputFile = "DST_MBD_EPD_pythia8_Jet10_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000023-00000.root",
     const string &outdir = ".",
-    const string &cdbtag = "MDC2_ana.398")
+    const string &cdbtag = "MDC2")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -46,9 +48,18 @@ int Fun4All_G4_MBD_EPD(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
+
+  SaveGitTags(); // save the git tags from rebuild.info as rc string flags
+
+  //===============
+  // conditions DB flags
+  //===============
+  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
+  int runnumber = runseg.first;
+
   Enable::CDB = true;
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
-  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP", runnumber);
   CDBInterface::instance()->Verbosity(1);
 
   //===============

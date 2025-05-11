@@ -13,7 +13,7 @@ echo running: $this_script $*
 
 anabuild=${7}
 
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
+source /opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
 
 cdbtag=MDC2_$anabuild
 
@@ -58,8 +58,8 @@ echo arg8 \(runnumber\): $8
 echo arg9 \(sequence\): $9
 echo cdbtag: $cdbtag
 
-runnumber=$(printf "%010d" $7)
-sequence=$(printf "%05d" $8)
+runnumber=$(printf "%010d" $8)
+sequence=$(printf "%05d" $9)
 
 echo running root.exe -q -b Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\"\)
 root.exe -q -b  Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\"\)

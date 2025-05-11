@@ -4,14 +4,20 @@ use strict;
 use warnings;
 use Getopt::Long;
 use File::Path;
+use File::Basename;
 
 my $test;
-GetOptions("test"=>\$test);
+my $memory = sprintf("12000MB");
+my $overwrite;
+
+GetOptions("memory:s" => \$memory, "overwrite"=>\$overwrite, "test"=>\$test);
 if ($#ARGV < 10)
 {
     print "usage: run_condor.pl <events> <jettrigger> <trk embedfile> <bbc embedfile> <calo embedfile> <truth embedfile> <outdir> <build> <runnumber> <sequence> <fm range>\n";
     print "options:\n";
-    print "-test: testmode - no condor submission\n";
+    print "--memory: memory requirement\n";
+    print "--overwrite : overwrite existing jobfiles\n";
+    print "--test: testmode - no condor submission\n";
     exit(-2);
 }
 
@@ -35,6 +41,7 @@ if ($sequence < 100)
 {
     $baseprio = 90;
 }
+my $batchname = sprintf("%s %s",basename($executable),$jettrigger);
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s-%010d-%06d",$jettrigger,$runnumber,$sequence);
 my $logdir = sprintf("%s/log/%s/run%d/%s",$localdir,$fm,$runnumber,$jettrigger);
@@ -48,7 +55,7 @@ if (! -d $condorlogdir)
   mkpath($condorlogdir);
 }
 my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
-if (-f $jobfile)
+if (-f $jobfile && ! defined $overwrite)
 {
     print "jobfile $jobfile exists, possible overlapping names\n";
     exit(1);
@@ -70,13 +77,9 @@ print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
 print F "Initialdir  	= $rundir\n";
 print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
-#print F "accounting_group = group_sphenix.prod\n";
-print F "accounting_group = group_sphenix.mdc2\n";
-print F "accounting_group_user = sphnxpro\n";
-print F "Requirements = (CPU_Type == \"mdc2\")\n";
-#print F "request_memory = 11000MB\n";
-print F "request_memory = 12288MB\n";
+print F "request_memory = $memory\n";
 print F "Priority = $baseprio\n";
+print F "batch_name = \"$batchname\"\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);
@@ -90,5 +93,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile0,  $infile1, $infile2, $infile3, $dstoutdir, $jettrigger, $build, $runnumber, $sequence, $fm, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $infile0,  $infile1, $infile2, $infile3, $dstoutdir, $jettrigger, $build, $runnumber, $sequence, $fm, $outfile, $errfile, $condorlogfile, $rundir, $baseprio, $memory, $batchname\n";
 close(F);
