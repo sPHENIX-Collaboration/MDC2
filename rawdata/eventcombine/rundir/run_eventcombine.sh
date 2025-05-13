@@ -42,6 +42,7 @@ echo arg4 \(outdir\): $4
 runnumber=$(printf "%010d" $2)
 
 perl CreateListFiles.pl $2 $3
+ls -l
 echo running root.exe -q -b Fun4All_New_Prdf_Combiner.C\($1,\"$3\"\,\"$4\"\)
 root.exe -q -b Fun4All_New_Prdf_Combiner.C\($1,\"$3\"\,\"$4\"\)
 
