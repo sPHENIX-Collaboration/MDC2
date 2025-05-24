@@ -27,6 +27,7 @@ void Fun4All_New_Prdf_Combiner(int nEvents = 0,
   se->VerbosityDownscale(100000);
   Fun4AllTriggeredInputManager *in = new Fun4AllTriggeredInputManager("Tin");
   SingleTriggeredInput *gl1 = new SingleGl1TriggeredInput("Gl1in");
+  gl1->KeepPackets();
   gl1->AddListFile("gl1daq.list");
 //  gl1->Verbosity(10);
   in->registerGl1TriggeredInput(gl1);
