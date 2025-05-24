@@ -24,7 +24,7 @@ void Fun4All_New_Prdf_Combiner(int nEvents = 0,
 
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
-  se->VerbosityDownscale(1000);
+  se->VerbosityDownscale(100000);
   Fun4AllTriggeredInputManager *in = new Fun4AllTriggeredInputManager("Tin");
   SingleTriggeredInput *gl1 = new SingleGl1TriggeredInput("Gl1in");
   gl1->AddListFile("gl1daq.list");
@@ -43,6 +43,10 @@ void Fun4All_New_Prdf_Combiner(int nEvents = 0,
     {
       infile.close();
       input = new SingleTriggeredInput(daqhost);
+      if (strcmp(daqhost,"seb18") == 0)
+      {
+	input->KeepPackets();
+      }
 //  input->Verbosity(10);
 //      input->FakeProblemEvent(10);
       input->AddListFile(daqlist);
@@ -64,12 +68,13 @@ void Fun4All_New_Prdf_Combiner(int nEvents = 0,
 //   clkchk->Verbosity(3);
  clkchk->set_delBadPkts(true);
   se->registerSubsystem(clkchk);
-  std::string outfile = "DST_TRIGGERED_EVENT_" + daqhost + "_run2pp_new_nocdbtag_v001.root";
+  std::string outfile = "DST_TRIGGERED_EVENT_" + daqhost + "_run2pp_new_nocdbtag_v003.root";
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("dstout",outfile);
+  out->SplitLevel(0);
   out->UseFileRule();
-  out->SetNEvents(100000); 
-  out->SetClosingScript("copyscript.pl");      // script to call on file close (not quite working yet...)
-  out->SetClosingScriptArgs(" -mv -outdir " + outdir);  // additional beyond the name of the file
+  out->SetNEvents(100000);
+  out->SetClosingScript("copyscript.pl");
+  out->SetClosingScriptArgs(" -mv -outdir " + outdir);
   se->registerOutputManager(out);
   if (nEvents < 0)
   {
