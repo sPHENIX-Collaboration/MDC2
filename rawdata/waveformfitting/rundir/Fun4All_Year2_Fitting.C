@@ -29,7 +29,7 @@ R__LOAD_LIBRARY(libcalotrigger.so)
 
 // this pass containis the reco process that's stable wrt time stamps(raw tower building)
 void Fun4All_Year2_Fitting(int nEvents = 100,
-			   const std::string inlist = "file.list",
+			   const std::string inlist = "files.list",
                            const std::string &outfile = "DST_CALOFITTING_run2pp_ana487_2024p018_v001-00048099-00000.root",
                            const std::string &outfile_hist = "HIST_CALOFITTINGQA_run2pp_ana487_2024p018_v001-00047748-00000.root",
                            const std::string &dbtag = "2024p018")
@@ -38,6 +38,7 @@ void Fun4All_Year2_Fitting(int nEvents = 100,
 
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
+  se->VerbosityDownscale(1000);
 
   recoConsts *rc = recoConsts::instance();
 
@@ -86,10 +87,6 @@ void Fun4All_Year2_Fitting(int nEvents = 100,
     }
   
        Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfile);
-   // out->StripNode("CEMCPackets");
-   // out->StripNode("HCALPackets");
-  // out->StripNode("ZDCPackets");
-  // out->StripNode("SEPDPackets");
    out->StripCompositeNode("Packets");
    se->registerOutputManager(out);
   // se->Print();

@@ -56,7 +56,7 @@ if (! -d $qaoutdir)
 }
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
-my $getruns = $dbh->prepare("select runnumber,segment from datasets where runnumber >= $min_runnumber and runnumber <= $max_runnumber and filename like 'DST_TRIGGERED_EVENT_seb18_run2pp_new_nocdbtag_v002-%' order by runnumber,segment");
+my $getruns = $dbh->prepare("select runnumber,segment from datasets where runnumber >= $min_runnumber and runnumber <= $max_runnumber and filename like 'DST_TRIGGERED_EVENT_seb18_run2pp_new_nocdbtag_v003-%' order by runnumber,segment");
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 my $nsubmit = 0;
 $getruns->execute();
@@ -85,7 +85,6 @@ while (my @runs = $getruns->fetchrow_array())
     my $subcmd = sprintf("perl run_condor.pl %d %d %d %s %s %s %s %s",$events, $runnumber, $segment, $outfilename, $outdir, $qaoutfilename, $qaoutdir, $tstflag);
     print "cmd: $subcmd\n";
     system($subcmd);
-    last;
     my $exit_value  = $? >> 8;
     if ($exit_value != 0)
     {
