@@ -8,7 +8,7 @@ this_script=`readlink -f $this_script`
 this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n new
+source /opt/sphenix/core/bin/sphenix_setup.sh -n ana.487
 
 hostname
 
@@ -49,14 +49,15 @@ perl CreateListFiles.pl $2 $3
 ls -l
 echo running root.exe -q -b Fun4All_Year2_Fitting.C\($1,\"files.list\",\"$4\",\"$6\"\)
 root.exe -q -b Fun4All_Year2_Fitting.C\($1,\"files.list\",\"$4\",\"$6\"\)
-if [-f $4 ]
+ls -l
+if [ -f $4 ]
 then
     copyscript.pl $4 -mv -outdir $5
 else
     echo could not find $4
     exit 1
 fi
-if [-f $6 ]
+if [ -f $6 ]
 then
     copyscript.pl $6 -mv -outdir $7
 else

@@ -75,6 +75,11 @@ void Fun4All_Year2_Fitting(int nEvents = 100,
     {
       while (std::getline(infile, line))
       {
+	if (line[0] == '#')
+	{
+	  std::cout << "found commented out line " << line << std::endl;
+	  continue;
+	}
 	std::cout << line << std::endl;
 	std::string magname = "DSTin_" + std::to_string(iman);
 	In = new Fun4AllDstInputManager(magname);
