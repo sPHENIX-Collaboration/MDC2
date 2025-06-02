@@ -7,8 +7,8 @@ use Getopt::Long;
 use DBI;
 # first physics run in run2pp: 47289
 # last physics run (from prod): 53880
-my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production2/run2pp/physics/caloy2fitting/ana487_2024p018_v001");
-my $qaoutdir = sprintf("/sphenix/data/data02/sphnxpro/production2/run2pp/physics/caloy2fitting/ana487_2024p018_v001");
+my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production2/run2pp/physics/caloy2fitting/ana489_2024p019_v004");
+my $qaoutdir = sprintf("/sphenix/data/data02/sphnxpro/production2/run2pp/physics/caloy2fitting/ana489_2024p019_v004");
 my $test;
 my $incremental;
 my $killexist;
@@ -56,7 +56,7 @@ if (! -d $qaoutdir)
 }
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
-my $getruns = $dbh->prepare("select runnumber,segment from datasets where runnumber >= $min_runnumber and runnumber <= $max_runnumber and filename like 'DST_TRIGGERED_EVENT_seb18_run2pp_new_nocdbtag_v003-%' order by runnumber,segment");
+my $getruns = $dbh->prepare("select runnumber,segment from datasets where runnumber >= $min_runnumber and runnumber <= $max_runnumber and filename like 'DST_TRIGGERED_EVENT_seb18_run2pp_new_nocdbtag_v004-%' order by runnumber,segment");
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 my $nsubmit = 0;
 $getruns->execute();
@@ -64,8 +64,8 @@ while (my @runs = $getruns->fetchrow_array())
 {
     my $runnumber=$runs[0];
     my $segment = $runs[1];
-        my $outfilename = sprintf("DST_CALOFITTING_run2pp_ana487_2024p018_v001-%08d-%05d.root",$runnumber,$segment);
-        my $qaoutfilename = sprintf("HIST_CALOFITTINGQA_run2pp_ana487_2024p018_v001-%08d-%05d.root",$runnumber,$segment);
+        my $outfilename = sprintf("DST_CALOFITTING_run2pp_ana489_2024p019_v004-%08d-%05d.root",$runnumber,$segment);
+        my $qaoutfilename = sprintf("HIST_CALOFITTINGQA_run2pp_ana489_2024p019_v004-%08d-%05d.root",$runnumber,$segment);
         $chkfile->execute($outfilename);
         if ($chkfile->rows > 0)
         {
