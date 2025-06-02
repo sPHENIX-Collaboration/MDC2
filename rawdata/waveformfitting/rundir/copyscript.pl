@@ -190,7 +190,7 @@ my $insertdataset = $dbh->prepare("insert into datasets (filename,runnumber,segm
 # first files table
 $insertfile->execute($lfn,$outhost,$outfile,$size,$md5sum);
 
-my $splitstring = "_ana487_2024p018_v001";
+my $splitstring = "_ana489_2024p019_v004";
 my @sp1 = split(/$splitstring/,$lfn);
 if (! defined $test)
 {

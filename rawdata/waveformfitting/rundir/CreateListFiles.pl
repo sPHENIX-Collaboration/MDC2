@@ -45,7 +45,7 @@ my $inlist = sprintf("files.list");
 open(F,">$inlist");
 while (my @res = $getfiles->fetchrow_array())
 {
-    if ($res[0] =~ /DST_TRIGGERED_EVENT/ && $res[0] =~ /run2pp_new_nocdbtag_v003/)
+    if ($res[0] =~ /DST_TRIGGERED_EVENT/ && $res[0] =~ /run2pp_new_nocdbtag_v004/)
     {
 	print F "$res[0]\n";
     }
