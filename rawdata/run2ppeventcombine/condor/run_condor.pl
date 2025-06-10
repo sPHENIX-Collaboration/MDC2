@@ -36,7 +36,7 @@ if (! -d $logdir)
 {
 mkpath($logdir);
 }
-my $condorlogdir = sprintf("/tmp/rawdata/eventcombine");
+my $condorlogdir = sprintf("/tmp/rawdata/run2ppeventcombine");
 if (! -d $condorlogdir)
 {
 mkpath($condorlogdir);
