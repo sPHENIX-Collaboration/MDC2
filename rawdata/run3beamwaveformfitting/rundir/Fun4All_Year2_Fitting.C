@@ -60,8 +60,8 @@ void Fun4All_Year2_Fitting(int nEvents = 100,
 
   ///////////////////////////////////
   // Validation
-  CaloFittingQA *ca = new CaloFittingQA("CaloFittingQA");
-  se->registerSubsystem(ca);
+//  CaloFittingQA *ca = new CaloFittingQA("CaloFittingQA");
+//  se->registerSubsystem(ca);
 
   // Fun4AllInputManager *In = new Fun4AllDstInputManager("in");
   // In->AddFile(fname);

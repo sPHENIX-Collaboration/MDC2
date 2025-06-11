@@ -8,7 +8,7 @@ this_script=`readlink -f $this_script`
 this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n ana.491
+source /opt/sphenix/core/bin/sphenix_setup.sh -n new
 
 hostname
 
@@ -57,11 +57,11 @@ else
     echo could not find $4
     exit 1
 fi
-if [ -f $6 ]
-then
-    copyscript.pl $6 -mv -outdir $7
-else
-    echo could not find $6
-fi
+#if [ -f $6 ]
+#then
+#    copyscript.pl $6 -mv -outdir $7
+#else
+#    echo could not find $6
+#fi
 
 echo "script done"

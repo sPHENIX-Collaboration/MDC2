@@ -7,8 +7,6 @@ use Getopt::Long;
 use DBI;
 # first physics run in run3beam: 53381
 # last physics run (from prod): 54974
-my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production/run3auau/beam/caloy2fitting/ana491_2025p002_v000");
-my $qaoutdir = sprintf("/sphenix/lustre01/sphnxpro/production/run3auau/beam/caloy2fitting/ana491_2025p002_v000");
 my $test;
 my $incremental;
 my $killexist;
@@ -56,16 +54,42 @@ if (! -d $qaoutdir)
 }
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
-my $getruns = $dbh->prepare("select runnumber,segment from datasets where runnumber >= $min_runnumber and runnumber <= $max_runnumber and filename like 'DST_TRIGGERED_EVENT_seb18_run3beam_new_nocdbtag_v000-%' order by runnumber,segment");
+my $getruns = $dbh->prepare("select runnumber,segment,filename from datasets where runnumber >= $min_runnumber and runnumber <= $max_runnumber and (filename like 'DST_TRIGGERED_EVENT_seb18_run3auau_new_nocdbtag_v000-%' or filename like 'DST_TRIGGERED_EVENT_seb18_run3beam_new_nocdbtag_v000-%') order by runnumber,segment");
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 my $nsubmit = 0;
 $getruns->execute();
+my %dircreated = ();
 while (my @runs = $getruns->fetchrow_array())
 {
     my $runnumber=$runs[0];
     my $segment = $runs[1];
-    my $outfilename = sprintf("DST_CALOFITTING_run3beam_ana491_2025p002_v000-%08d-%05d.root",$runnumber,$segment);
-    my $qaoutfilename = sprintf("HIST_CALOFITTINGQA_run3beam_ana491_2025p002_v000-%08d-%05d.root",$runnumber,$segment);
+    my $runtype = "physics";
+    if ($runs[2] =~ /beam/)
+    {
+	$runtype = "beam";
+    }
+	my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production/run3auau/%s/caloy2fitting/new_2025p002_v000",$runtype);
+    my $qaoutdir = sprintf("/sphenix/lustre01/sphnxpro/production/run3auau/%s/caloy2fitting/new_2025p002_v000",$runtype);
+    if (! exists $dircreated{$runtype})
+    {
+	if (! -d $outdir)
+	{
+	    mkpath($outdir);
+	}
+	if (! -d $qaoutdir)
+	{
+	    mkpath($qaoutdir);
+	}
+	$dircreated{$runtype} = 1;
+    }
+    my $outfilename = sprintf("DST_CALOFITTING_run3auau_ana491_2025p002_v000-%08d-%05d.root",$runnumber,$segment);
+    my $qaoutfilename = sprintf("HIST_CALOFITTINGQA_run3auau_ana491_2025p002_v000-%08d-%05d.root",$runnumber,$segment);
+    if ($runs[2] =~ /beam/)
+    {
+	$outfilename = sprintf("DST_CALOFITTING_run3%s_ana491_2025p002_v000-%08d-%05d.root",$runtype,$runnumber,$segment);
+	$qaoutfilename = sprintf("HIST_CALOFITTINGQA_run3%s_ana491_2025p002_v000-%08d-%05d.root",$runtype,$runnumber,$segment);
+    }
+    
     $chkfile->execute($outfilename);
     if ($chkfile->rows > 0)
     {
