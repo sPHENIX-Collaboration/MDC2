@@ -85,9 +85,9 @@ int Fun4All_G4_Pass1_herwig(
   // verbosity setting (applies to all input managers)
   Input::VERBOSITY = 1;  // so we get prinouts of the event number
   Input::HEPMC = true;
+  Input::EmbedId = 1;
 
   INPUTHEPMC::filename = inputFile;
-  INPUTHEPMC::_embedding_id = 1;
 
   // Event pile up simulation with collision rate in Hz MB collisions.
   // Enable this is emulating the nominal pp/pA/AA collision vertex distribution
