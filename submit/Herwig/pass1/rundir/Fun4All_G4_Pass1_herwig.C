@@ -87,6 +87,7 @@ int Fun4All_G4_Pass1_herwig(
   Input::HEPMC = true;
 
   INPUTHEPMC::filename = inputFile;
+  INPUTHEPMC::_embedding_id = 1;
 
   // Event pile up simulation with collision rate in Hz MB collisions.
   // Enable this is emulating the nominal pp/pA/AA collision vertex distribution
