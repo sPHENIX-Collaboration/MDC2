@@ -13,7 +13,7 @@ push(@fmrange,"epos");
 push(@fmrange,"cosmic");
 push(@fmrange,"fm_0_488");
 push(@fmrange,"fm_0_20");
-push(@fmrange,"herwig");
+push(@fmrange,"Herwig");
 push(@fmrange,"HF_pp200_signal");
 push(@fmrange,"JS_pp200_signal");
 push(@fmrange,"pAu_0_10fm");
@@ -23,9 +23,6 @@ push(@fmrange,"single_particle/geantino");
 
 my @passes = ();
 push(@passes,"caloreco");
-push(@passes,"cemc_geo_fix/cemc_hits");
-push(@passes,"cemc_geo_fix/cemc_hits_pass2");
-push(@passes,"cemc_geo_fix/cemc_hits_pass3trk");
 push(@passes,"eventcombine");
 push(@passes,"job0");
 push(@passes,"pass1");
@@ -92,6 +89,8 @@ push(@passes,"newtracking");
 push(@passes,"pass5compress");
 push(@passes,"pass5trk");
 push(@passes,"striptruth");
+push(@passes,"waveformfitting");
+
 
 foreach my $fm (sort @fmrange)
 {
