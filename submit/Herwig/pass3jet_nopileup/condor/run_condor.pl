@@ -43,7 +43,7 @@ if (! -d $logdir)
 {
   mkpath($logdir);
 }
-my $condorlogdir = sprintf("/tmp/herwig/pass3jet_nopileup/run%d/%s",$runnumber,$jettrigger);
+my $condorlogdir = sprintf("/tmp/Herwig/pass3jet_nopileup/run%d/%s",$runnumber,$jettrigger);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);
@@ -71,10 +71,6 @@ print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
 print F "Initialdir  	= $rundir\n";
 print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
-#print F "accounting_group = group_sphenix.prod\n";
-print F "accounting_group = group_sphenix.mdc2\n";
-print F "accounting_group_user = sphnxpro\n";
-print F "Requirements = (CPU_Type == \"mdc2\")\n";
 print F "request_memory = $memory\n";
 print F "batch_name = \"$batchname\"\n";
 print F "Priority = $baseprio\n";
