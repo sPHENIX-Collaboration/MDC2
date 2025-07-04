@@ -57,11 +57,11 @@ else
     echo could not find $4
     exit 1
 fi
-#if [ -f $6 ]
-#then
-#    copyscript.pl $6 -mv -outdir $7
-#else
-#    echo could not find $6
-#fi
+if [ -f $6 ]
+then
+    copyscript.pl $6 -mv -outdir $7
+else
+    echo could not find $6
+fi
 
 echo "script done"
