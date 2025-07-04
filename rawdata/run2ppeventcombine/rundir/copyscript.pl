@@ -185,20 +185,20 @@ if ($attempts > 0)
 }
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $insertfile = $dbh->prepare("insert into files (lfn,full_host_name,full_file_path,time,size,md5) values (?,?,?,'now',?,?) on conflict (lfn,full_host_name,full_file_path) do update set time = EXCLUDED.time, size = EXCLUDED.size, md5 = EXCLUDED.md5");
-my $insertdataset = $dbh->prepare("insert into datasets (filename,runnumber,segment,size,dataset,dsttype,events) values (?,?,?,?,'new_nocdbtag_v005',?,?) on conflict (filename,dataset) do update set runnumber = EXCLUDED.runnumber, segment = EXCLUDED.segment, size = EXCLUDED.size, dsttype = EXCLUDED.dsttype, events = EXCLUDED.events");
+my $insertdataset = $dbh->prepare("insert into datasets (filename,runnumber,segment,size,dataset,dsttype,events,tag) values (?,?,?,?,'run2pp',?,?) on conflict (filename,dataset) do update set runnumber = EXCLUDED.runnumber, segment = EXCLUDED.segment, size = EXCLUDED.size, dsttype = EXCLUDED.dsttype, events = EXCLUDED.events");
 
 # first files table
 $insertfile->execute($lfn,$outhost,$outfile,$size,$md5sum);
 
-my $splitstring = "_new_nocdbtag";
+my $splitstring = "_run2pp_new_nocdbtag";
 my @sp1 = split(/$splitstring/,$lfn);
 if (! defined $test)
 {
-    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries);
+    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries,'new_newcdbtag_v005');
 }
 else
 {
-    print "db cmd: insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0])\n";
+    print "db cmd: insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries)\n";
 }
 
 $insertfile->finish();

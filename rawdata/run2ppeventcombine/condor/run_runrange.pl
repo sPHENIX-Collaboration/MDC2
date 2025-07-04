@@ -7,7 +7,7 @@ use Getopt::Long;
 use DBI;
 # first physics run in run2pp: 47289
 # last physics run (from prod): 53880
-my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production2/run2pp/physics/new_nocdbtag_v005");
+my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production2/run2pp/physics/new_nocdbtag_v006");
 my $test;
 my $incremental;
 my $killexist;
@@ -46,7 +46,7 @@ if (-f $condorlistfile)
 }
 
 my $dbh = DBI->connect("dbi:ODBC:daq","phnxrc") || die $DBI::errstr;
-my $getruns = $dbh->prepare("select runnumber from run where runnumber>= $min_runnumber and runnumber <= $max_runnumber and runtype='physics' and eventsinrun >= 100000 order by runnumber");
+my $getruns = $dbh->prepare("select runnumber from run where runnumber>= $min_runnumber and runnumber <= $max_runnumber and runtype='physics' and eventsinrun >= 100000 and EXTRACT(EPOCH FROM (ertimestamp-brtimestamp)) > 300 order by runnumber");
 my $gethosts = $dbh->prepare("select hostname from hostinfo where runnumber = ? and hostname like 'seb%'");
 my $nsubmit = 0;
 $getruns->execute();

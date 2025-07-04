@@ -1,8 +1,4 @@
 #!/usr/bin/bash
-perl run_runrange.pl 47289 47999
-perl run_runrange.pl 48000 48999
-perl run_runrange.pl 49000 49999
-perl run_runrange.pl 50000 50999
-perl run_runrange.pl 51000 51999
-perl run_runrange.pl 52000 52999
-perl run_runrange.pl 53000 53880
+perl run_runrange.pl 47289 47299 --inc
+for i in {47300..53700..100}; do j=$((i+99)); perl run_runrange.pl $i $j --inc; done
+perl run_runrange.pl 53800 53880 --inc

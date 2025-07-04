@@ -21,7 +21,7 @@ else
 }
 my $localdir=`pwd`;
 chomp $localdir;
-my $baseprio = 91;
+my $baseprio = 191;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run2pp_eventcombine.sh",$rundir);
 my $nevents = $ARGV[0];
