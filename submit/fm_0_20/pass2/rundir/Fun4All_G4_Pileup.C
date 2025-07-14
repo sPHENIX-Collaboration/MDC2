@@ -53,6 +53,7 @@ int Fun4All_G4_Pileup(
   }
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
   int runnumber = runseg.first;
+  int segment = abs(runseg.second);
 
   //===============
   // conditions DB flags
@@ -70,9 +71,6 @@ int Fun4All_G4_Pileup(
   Enable::PRODUCTION = true;
   Enable::DSTOUT = true;
   DstOut::OutputDir = outdir;
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
-  int runnumber = runseg.first;
-  int segment = abs(runseg.second);
   if (Enable::PRODUCTION)
   {
     PRODUCTION::SaveOutputDir = DstOut::OutputDir;
