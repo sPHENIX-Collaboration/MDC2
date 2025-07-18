@@ -11,11 +11,11 @@ runnumber=$(printf "%010d" $run)
 fm=0_20fm
 withhijing=${fm}_50kHz_bkg_0_20fm
 #exit 0
-condor_q | grep ' H ' | grep run_pass2_embed_js | grep ${withhijing} | grep ${variable} | grep ${runnumber} > bla
+#condor_q | grep ' H ' | grep run_pass2_embed_js | grep ${withhijing} | grep ${variable} | grep ${runnumber} > bla
 
-[ -s bla ] ||  exit 1
+#[ -s bla ] ||  exit 1
 
-for i in `cat bla| awk '{print $1}'`; do condor_rm $i; done
+#for i in `cat bla| awk '{print $1}'`; do condor_rm $i; done
 
 [ -f tmplist ] && rm tmplist
 for i in `cat bla | awk '{print $12}' | awk -F- '{print $3}' | awk -F.  -v runnumber=${runnumber} '{print ""runnumber"-"$1".job"}'`; do echo $i >> tmplist ; done

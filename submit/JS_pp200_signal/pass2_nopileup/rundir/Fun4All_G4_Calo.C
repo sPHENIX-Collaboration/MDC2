@@ -194,6 +194,7 @@ void Fun4All_G4_Calo(
     out->AddNode("TOWERINFO_CALIB_CEMC");
     out->AddNode("WAVEFORM_CEMC");
     out->AddNode("TOWERS_CEMC");
+    se->registerOutputManager(out);
   }
 
   //-----------------

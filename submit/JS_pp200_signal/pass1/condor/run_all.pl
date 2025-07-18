@@ -9,7 +9,7 @@ my $build;
 my $incremental;
 my $killexist;
 my $runnumber;
-my $events = 1000;
+my $events = 100;
 my $test;
 my $photonjet = 0;
 GetOptions("build:s" => \$build, "increment"=>\$incremental, "killexist" => \$killexist, "run:i" =>\$runnumber, "test"=>\$test);
