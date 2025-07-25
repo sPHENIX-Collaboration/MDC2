@@ -52,9 +52,9 @@ R__LOAD_LIBRARY(libglobalQA.so)
 R__LOAD_LIBRARY(libcaloTreeGen.so)
 
 void Fun4All_Year2_Calib(int nEvents = 100,
-                         const std::string &fname = "DST_CALOFITTING_run2pp_new_newcdbtag_v006-00047289-00000.root",
-                         const std::string &outfile = "DST_CALO_run2pp_new_newcdbtag_v006-00047289-00000.root",
-                         const std::string &outfile_hist = "HIST_CALOQA_run2pp_new_newcdbtag_v006-00047289-00000.root",
+                         const std::string &fname = "DST_CALOFITTING_run2pp_new_newcdbtag_v007-00047289-00000.root",
+                         const std::string &outfile = "DST_CALO_run2pp_new_newcdbtag_v007-00047289-00000.root",
+                         const std::string &outfile_hist = "HIST_CALOQA_run2pp_new_newcdbtag_v007-00047289-00000.root",
                          const std::string &dbtag = "newcdbtag")
 {
   // towerinfov1=kPRDFTowerv1, v2=:kWaveformTowerv2, v3=kPRDFWaveform, v4=kPRDFTowerv4

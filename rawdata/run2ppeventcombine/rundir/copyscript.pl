@@ -194,7 +194,7 @@ my $splitstring = "_run2pp_new_nocdbtag";
 my @sp1 = split(/$splitstring/,$lfn);
 if (! defined $test)
 {
-    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries,'new_newcdbtag_v006');
+    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries,'new_nocdbtag_v007');
 }
 else
 {

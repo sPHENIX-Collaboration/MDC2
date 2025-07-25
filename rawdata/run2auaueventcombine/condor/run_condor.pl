@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Getopt::Long;
 use File::Path;
+use File::Basename;
 
 my $test;
 GetOptions("test"=>\$test);
@@ -27,17 +28,18 @@ my $nevents = $ARGV[0];
 my $runnumber = $ARGV[1];
 my $daqhost = $ARGV[2];
 my $outdir = $ARGV[3];
+my $batchname = sprintf("%s",basename($executable));
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s_%010d",$daqhost,$runnumber);
 my $logdir = sprintf("%s/log",$localdir);
 if (! -d $logdir)
 {
-mkpath($logdir);
+    mkpath($logdir);
 }
 my $condorlogdir = sprintf("/tmp/rawdata/run2auaueventcombine");
 if (! -d $condorlogdir)
 {
-mkpath($condorlogdir);
+    mkpath($condorlogdir);
 }
 my $jobfile = sprintf("%s/condor-%s.job",$logdir,$suffix);
 if (-f $jobfile)
@@ -65,7 +67,7 @@ print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
 print F "request_memory = 2048MB\n";
 print F "Priority = $baseprio\n";
 print F "Rank = -SlotID\n";
-print F "batch_name = evtcombine_auau2\n";
+print F "batch_name = \"$batchname\"\n";
 print F "request_xferslots = 1\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
@@ -80,5 +82,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $runnumber, $daqhost, $outdir, $errfile, $outfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $runnumber, $daqhost, $outdir, $errfile, $outfile, $condorlogfile, $rundir, $baseprio, $batchname\n";
 close(F);

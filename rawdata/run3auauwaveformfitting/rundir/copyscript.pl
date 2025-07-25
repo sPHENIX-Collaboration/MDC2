@@ -190,12 +190,12 @@ my $insertdataset = $dbh->prepare("insert into datasets (filename,runnumber,segm
 # first files table
 $insertfile->execute($lfn,$outhost,$outfile,$size,$md5sum);
 
-my $splitstring = "_run3auau_new_newcdbtag_v006";
+my $splitstring = "_run3auau_new_newcdbtag_v007";
 my @sp1 = split(/$splitstring/,$lfn);
 if (! defined $test)
 {
-#    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries,"new_newcdbtag_v006");
-    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries,'new_newcdbtag_v006');
+#    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries,"new_newcdbtag_v007");
+    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries,'new_newcdbtag_v007');
 }
 else
 {

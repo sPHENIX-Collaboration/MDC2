@@ -7,14 +7,14 @@ use Getopt::Long;
 use DBI;
 # first physics run in run2pp: 47289
 # last physics run (from prod): 53880
-my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production2/run2pp/physics/caloy2calib/new_newcdbtag_v006");
-my $qaoutdir = sprintf("/sphenix/data/data02/sphnxpro/production2/run2pp/physics/caloy2calib/new_newcdbtag_v006");
-my $test;
+my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production2/run2pp/physics/caloy2calib/new_newcdbtag_v007");
+my $qaoutdir = sprintf("/sphenix/data/data02/sphnxpro/production2/run2pp/physics/caloy2calib/new_newcdbtag_v007");
+my $events = 0;
 my $incremental;
 my $killexist;
-my $shared;
-my $events = 0;
 my $overwrite;
+my $shared;
+my $test;
 my $verbosity = 0;
 GetOptions("increment"=>\$incremental, "killexist" => \$killexist, "overwrite" => \$overwrite, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
 if ($#ARGV < 1)
@@ -58,7 +58,7 @@ if (! -d $qaoutdir)
 }
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
-my $getruns = $dbh->prepare("select runnumber,segment,filename from datasets where runnumber >= $min_runnumber and runnumber <= $max_runnumber and filename like 'DST_CALOFITTING_run2pp_new_newcdbtag_v006-%' order by runnumber,segment");
+my $getruns = $dbh->prepare("select runnumber,segment,filename from datasets where runnumber >= $min_runnumber and runnumber <= $max_runnumber and filename like 'DST_CALOFITTING_run2pp_new_newcdbtag_v007-%' order by runnumber,segment");
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 my $nsubmit = 0;
 $getruns->execute();
@@ -67,8 +67,8 @@ while (my @runs = $getruns->fetchrow_array())
     my $runnumber=$runs[0];
     my $segment = $runs[1];
     my $lfn = $runs[2];
-    my $outfilename = sprintf("DST_CALO_run2pp_new_newcdbtag_v006-%08d-%05d.root",$runnumber,$segment);
-    my $qaoutfilename = sprintf("HIST_CALOQA_run2pp_new_newcdbtag_v006-%08d-%05d.root",$runnumber,$segment);
+    my $outfilename = sprintf("DST_CALO_run2pp_new_newcdbtag_v007-%08d-%05d.root",$runnumber,$segment);
+    my $qaoutfilename = sprintf("HIST_CALOQA_run2pp_new_newcdbtag_v007-%08d-%05d.root",$runnumber,$segment);
     $chkfile->execute($outfilename);
     if ($chkfile->rows > 0)
     {

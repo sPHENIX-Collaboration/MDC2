@@ -10,6 +10,6 @@ request_memory = 2048MB
 Priority = $(baseprio)
 job_lease_duration = 3600
 Rank = -SlotID
-batch_name = evtcombine_auau2
+batch_name = $(batchname)
 request_xferslots = 1
-Queue executable, nevents, runnumber, daqhost, outdir, errfile, outfile, condorlogfile, rundir, baseprio from condor.list
+Queue executable, nevents, runnumber, daqhost, outdir, errfile, outfile, condorlogfile, rundir, baseprio, batchname from condor.list

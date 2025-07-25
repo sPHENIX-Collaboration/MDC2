@@ -7,8 +7,8 @@ use Getopt::Long;
 use DBI;
 # first physics run in run2pp: 47289
 # last physics run (from prod): 53880
-my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production2/run2pp/physics/caloy2fitting/new_newcdbtag_v006");
-my $qaoutdir = sprintf("/sphenix/data/data02/sphnxpro/production2/run2pp/physics/caloy2fitting/new_newcdbtag_v006");
+my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production2/run2pp/physics/caloy2fitting/new_newcdbtag_v007");
+my $qaoutdir = sprintf("/sphenix/data/data02/sphnxpro/production2/run2pp/physics/caloy2fitting/new_newcdbtag_v007");
 
 my $events = 0;
 my $incremental;
@@ -24,6 +24,7 @@ if ($#ARGV < 1)
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--killexist : delete output file if it already exists (but no jobfile)\n";
+    print "--overwrite : process missing files even if job files exists\n";
     print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
@@ -58,7 +59,7 @@ if (! -d $qaoutdir)
 }
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
-my $getruns = $dbh->prepare("select runnumber,segment from datasets where runnumber >= $min_runnumber and runnumber <= $max_runnumber and filename like 'DST_TRIGGERED_EVENT_seb18_run2pp_new_nocdbtag_v006-%' order by runnumber,segment");
+my $getruns = $dbh->prepare("select runnumber,segment from datasets where runnumber >= $min_runnumber and runnumber <= $max_runnumber and filename like 'DST_TRIGGERED_EVENT_seb18_run2pp_new_nocdbtag_v007-%' order by runnumber,segment");
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 my $checkallsegs = $dbh->prepare("select filename from datasets where runnumber=? and segment=? and filename like ?");
 my $nsubmit = 0;
@@ -67,7 +68,7 @@ while (my @runs = $getruns->fetchrow_array())
 {
     my $runnumber=$runs[0];
     my $segment = $runs[1];
-    my $typelike = sprintf("DST_TRIGGERED_EVENT_\%%_run2pp_new_nocdbtag_v006-\%%");
+    my $typelike = sprintf("DST_TRIGGERED_EVENT_\%%_run2pp_new_nocdbtag_v007-\%%");
      $checkallsegs->execute($runnumber,$segment,$typelike);
     my $nfiles = $checkallsegs->rows;
     if ($nfiles != 20)
@@ -75,8 +76,8 @@ while (my @runs = $getruns->fetchrow_array())
 	print "found only $nfiles for run $runnumber, segment $segment, ignoring\n";
 	next;
     }
-       my $outfilename = sprintf("DST_CALOFITTING_run2pp_new_newcdbtag_v006_v006-%08d-%05d.root",$runnumber,$segment);
-        my $qaoutfilename = sprintf("HIST_CALOFITTINGQA_run2pp_new_newcdbtag_v006-%08d-%05d.root",$runnumber,$segment);
+       my $outfilename = sprintf("DST_CALOFITTING_run2pp_new_newcdbtag_v007-%08d-%05d.root",$runnumber,$segment);
+        my $qaoutfilename = sprintf("HIST_CALOFITTINGQA_run2pp_new_newcdbtag_v007-%08d-%05d.root",$runnumber,$segment);
         $chkfile->execute($outfilename);
         if ($chkfile->rows > 0)
         {
@@ -121,6 +122,7 @@ while (my @runs = $getruns->fetchrow_array())
 }
 $getruns->finish();
 $chkfile->finish();
+$checkallsegs->finish();
 $dbh->disconnect;
 
 my $jobfile = sprintf("condor.job");
