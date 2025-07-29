@@ -69,7 +69,7 @@ void Fun4All_New_Prdf_Combiner(int nEvents = 0,
 //   clkchk->Verbosity(3);
  clkchk->set_delBadPkts(true);
   se->registerSubsystem(clkchk);
-  std::string outfile = "DST_TRIGGERED_EVENT_" + daqhost + "_run2auau_new_nocdbtag_v004.root";
+  std::string outfile = "DST_TRIGGERED_EVENT_" + daqhost + "_run3cosmics_new_nocdbtag_v007.root";
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("dstout",outfile);
   out->SplitLevel(0);
   out->UseFileRule();

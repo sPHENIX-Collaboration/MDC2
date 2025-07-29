@@ -25,7 +25,7 @@ int Fun4All_G4_Global(
     const std::string &inputFile = "DST_MBD_EPD_Herwig_Jet30-0000000011-00001.root",
     const std::string &outputFile = "DST_GLOBAL_Herwig_Jet30-0000000011-00001.root",
     const std::string &outdir = ".",
-    const string &cdbtag = "MDC2_ana.398",
+    const string &cdbtag = "MDC2",
     const std::string &gitcommit = "none")
 {
   gSystem->Load("libg4dst.so");

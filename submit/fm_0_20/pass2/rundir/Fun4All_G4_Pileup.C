@@ -5,6 +5,7 @@
 
 #include <G4_OutputManager_Pileup.C>
 #include <G4_Production.C>
+#include <SaveGitTags.C>
 
 #include <g4main/Fun4AllDstPileupInputManager.h>
 #include <g4main/PHG4VertexSelection.h>
@@ -28,10 +29,11 @@ R__LOAD_LIBRARY(libg4testbench.so)
 //________________________________________________________________________________________________
 int Fun4All_G4_Pileup(
     const int nEvents = 0,
-    const string &inputFile = "G4Hits_sHijing_0_20fm-0000000019-00000.root",
+    const string &inputFile = "G4Hits_sHijing_0_20fm-0000000030-00000.root",
     const string &backgroundList = "pileupbkg.list",
     const string &outdir = ".",
-    const string &cdbtag = "MDC2_ana.412")
+    const string &cdbtag = "MDC2",
+    const std::string &gitcommit = "none")
 
 {
   gSystem->Load("libg4dst.so");
@@ -40,6 +42,18 @@ int Fun4All_G4_Pileup(
   se->Verbosity(1);
 
   auto rc = recoConsts::instance();
+  // save all git tags from build
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
+  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
+  int runnumber = runseg.first;
+  int segment = abs(runseg.second);
 
   //===============
   // conditions DB flags
@@ -48,7 +62,7 @@ int Fun4All_G4_Pileup(
   // global tag
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP", runnumber);
 
   FlagHandler *flag = new FlagHandler();
   se->registerSubsystem(flag);
@@ -57,9 +71,6 @@ int Fun4All_G4_Pileup(
   Enable::PRODUCTION = true;
   Enable::DSTOUT = true;
   DstOut::OutputDir = outdir;
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
-  int runnumber = runseg.first;
-  int segment = abs(runseg.second);
   if (Enable::PRODUCTION)
   {
     PRODUCTION::SaveOutputDir = DstOut::OutputDir;

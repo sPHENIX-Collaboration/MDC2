@@ -12,9 +12,10 @@ my $build;
 my $incremental;
 my $outevents = 0;
 my $runnumber;
+my $startsegment = 0;
 my $test;
 my $verbosity;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "run:i" =>\$runnumber, "test"=>\$test, "verbose"=>\$verbosity);
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "run:i" =>\$runnumber, "startsegment:i" => \$startsegment, "test"=>\$test, "verbose"=>\$verbosity);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
@@ -22,6 +23,7 @@ if ($#ARGV < 0)
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
     print "--run: <runnumber>\n";
+    print "--startsegment: starting segment\n";
     print "--test : dryrun - create jobfiles\n";
     print "--verbose : turn on blabbering\n";
     exit(1);
@@ -92,7 +94,7 @@ if (! -d $logdir)
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%sHijing_0_20fm%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%sHijing_0_20fm%' and runnumber = $runnumber and segment >= $startsegment order by segment") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
 my $getbkglastsegment = $dbh->prepare("select max(segment) from datasets where dsttype = 'G4Hits' and filename like '%sHijing_0_20fm%' and runnumber = $runnumber");

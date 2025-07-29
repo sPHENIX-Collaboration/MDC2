@@ -7,13 +7,15 @@ use File::Path;
 use File::Basename;
 
 my $test;
-GetOptions("test"=>\$test);
+my $overwrite;
+GetOptions("overwrite" => \$overwrite, "test"=>\$test);
 if ($#ARGV < 6)
 {
     print "not enough arguments: $#ARGV, need 7, here is the list\n";
     print "usage: run_condor.pl <events> <runnumber> <segment> <outfile> <outdir> <qafile> <qadir>\n";
     print "options:\n";
-    print "-test: testmode - no condor submission\n";
+    print "--overwrite: overwrite existing job files\n";
+    print "--test: testmode - no condor submission\n";
     exit(-2);
 }
 else
@@ -46,7 +48,7 @@ if (! -d $condorlogdir)
 mkpath($condorlogdir);
 }
 my $jobfile = sprintf("%s/condor-%s.job",$logdir,$suffix);
-if (-f $jobfile)
+if (-f $jobfile && !defined $overwrite)
 {
     print "jobfile $jobfile exists, possible overlapping names\n";
     exit(1);

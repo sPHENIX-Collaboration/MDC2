@@ -195,10 +195,6 @@ void Fun4All_G4_Calo(
     out->AddNode("WAVEFORM_CEMC");
     out->AddNode("TOWERS_CEMC");
 
-    // leave the topo cluster here in case we run this during pass3
-    out->AddNode("TOPOCLUSTER_ALLCALO");
-    out->AddNode("TOPOCLUSTER_EMCAL");
-    out->AddNode("TOPOCLUSTER_HCAL");
     se->registerOutputManager(out);
   }
 

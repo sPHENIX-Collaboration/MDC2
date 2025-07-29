@@ -13,7 +13,8 @@ echo running: $this_script $*
 
 anabuild=${5}
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
+#source /opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
+source /opt/sphenix/core/bin/sphenix_setup.sh -n new
 
 cdbtag=MDC2_$anabuild
 

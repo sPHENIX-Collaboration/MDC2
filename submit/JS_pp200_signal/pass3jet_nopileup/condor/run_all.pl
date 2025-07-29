@@ -35,9 +35,9 @@ my $isbad = 0;
 
 my $hostname = `hostname`;
 chomp $hostname;
-if ($hostname !~ /phnxprod/)
+if ($hostname !~ /sphnxprod/)
 {
-    print "submit only from phnxprod hosts\n";
+    print "submit only from sphnxprod hosts\n";
     $isbad = 1;
 }
 if (! defined $runnumber)
@@ -98,7 +98,7 @@ my $jettriggerWithDash = sprintf("%s-",$jettrigger);
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'G4Hits' and filename like '%pythia8_$jettriggerWithDash%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'G4Hits' and filename like '%pythia8_$jettriggerWithDash%' and runnumber = $runnumber order by segment") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
@@ -117,7 +117,7 @@ while (my @res = $getfiles->fetchrow_array())
 	    {
 		print "$outfilename exists\n";
 	    }
-	    next;
+            next;
         }
         my $tstflag="";
         if (defined $test)

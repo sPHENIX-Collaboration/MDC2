@@ -187,16 +187,18 @@ if ($attempts > 0)
 }
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $insertfile = $dbh->prepare("insert into files (lfn,full_host_name,full_file_path,time,size,md5) values (?,?,?,'now',?,?) on conflict (lfn,full_host_name,full_file_path) do update set time = EXCLUDED.time, size = EXCLUDED.size, md5 = EXCLUDED.md5");
-my $insertdataset = $dbh->prepare("insert into datasets (filename,runnumber,segment,size,dataset,dsttype,events,firstevent,lastevent) values (?,?,?,?,'new_nocdbtag_v004',?,?,?,?) on conflict (filename,dataset) do update set runnumber = EXCLUDED.runnumber, segment = EXCLUDED.segment, size = EXCLUDED.size, dsttype = EXCLUDED.dsttype, events = EXCLUDED.events");
+my $insertdataset = $dbh->prepare("insert into datasets (filename,runnumber,segment,size,dataset,dsttype,events,tag) values (?,?,?,?,'run3cosmics',?,?,?) on conflict (filename,dataset) do update set runnumber = EXCLUDED.runnumber, segment = EXCLUDED.segment, size = EXCLUDED.size, dsttype = EXCLUDED.dsttype, events = EXCLUDED.events");
+#my $insertdataset = $dbh->prepare("insert into datasets (filename,runnumber,segment,size,dataset,dsttype,events,firstevent,lastevent) values (?,?,?,?,'new_nocdbtag_v007',?,?,?,?) on conflict (filename,dataset) do update set runnumber = EXCLUDED.runnumber, segment = EXCLUDED.segment, size = EXCLUDED.size, dsttype = EXCLUDED.dsttype, events = EXCLUDED.events");
 
 # first files table
 $insertfile->execute($lfn,$outhost,$outfile,$size,$md5sum);
 
-my $splitstring = "_new_nocdbtag";
+my $splitstring = "_run3cosmics_";
 my @sp1 = split(/$splitstring/,$lfn);
 if (! defined $test)
 {
-    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries,$firstevent,$lastevent);
+   $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries,'new_nocdbtag_v007');
+#    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries,$firstevent,$lastevent);
 }
 else
 {

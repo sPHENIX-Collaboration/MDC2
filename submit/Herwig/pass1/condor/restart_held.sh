@@ -4,7 +4,7 @@ then
   echo "No arguments supplied"
   exit 1
 fi
-run=21
+run=28
 runnumber=$(printf "%010d" $run)
 echo restarting $1
 variable=$1
@@ -23,6 +23,6 @@ for i in `cat bla | awk '{print $12}' | awk -F- '{print $3}' | awk -F. -v runnum
 
 [ -f sedlist ] && rm sedlist
 for i in `cat tmplist`; do echo log/run${run}/${variable}/condor-$i >> sedlist; done
-#for i in `cat sedlist`; do  sed -i 's/5120MB/8192MB/' $i; echo $i; done
+for i in `cat sedlist`; do  sed -i 's/5500MB/8000MB/' $i; echo $i; done
 for i in `cat sedlist`; do condor_submit $i; done
 

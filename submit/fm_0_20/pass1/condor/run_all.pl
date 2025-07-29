@@ -11,14 +11,16 @@ sub getlastsegment;
 my $build;
 my $incremental;
 my $runnumber;
+my $startsegment;
 my $test;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "run:i" =>\$runnumber, "test"=>\$test);
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "run:i" =>\$runnumber, "startsegment:i" => \$startsegment, "test"=>\$test);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
+    print "--startsegment: starting segment\n";
     print "--run: <runnumber>\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
@@ -101,6 +103,14 @@ OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
     my $sequence = $segment*$evtsperfile/$events;
     for (my $n=0; $n<$nmax; $n+=$events)
     {
+	if (defined $startsegment)
+	{
+	    if ($sequence < $startsegment)
+	    {
+		$sequence++;
+		next;
+	    }
+	}
 	my $outfile = sprintf("G4Hits_sHijing_0_20fm-%010d-%06d.root",$runnumber,$sequence);
 	$chkfile->execute($outfile);
 	if ($chkfile->rows == 0)

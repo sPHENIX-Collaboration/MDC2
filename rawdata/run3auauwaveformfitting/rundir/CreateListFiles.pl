@@ -45,7 +45,8 @@ my $inlist = sprintf("files.list");
 open(F,">$inlist");
 while (my @res = $getfiles->fetchrow_array())
 {
-    if ($res[0] =~ /DST_TRIGGERED_EVENT/ && ($res[0] =~ /run3beam_new_nocdbtag_v005/ || $res[0] =~ /run3auau_new_nocdbtag_v005/))
+    print "found $res[0]\n";
+    if ($res[0] =~ /DST_TRIGGERED_EVENT/ && ($res[0] =~ /run3beam_new_nocdbtag_v001/ || $res[0] =~ /run3auau_new_nocdbtag_v001/))
     {
 	print F "$res[0]\n";
     }
