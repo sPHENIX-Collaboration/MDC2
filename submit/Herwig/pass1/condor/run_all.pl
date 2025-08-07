@@ -10,16 +10,20 @@ sub getlastsegment;
 
 my $build;
 my $incremental;
+my $memory;
+my $overwrite;
 my $runnumber;
 my $test;
 my $type = "MB";
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "run:i" =>\$runnumber, "test"=>\$test);
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "overwrite"=>\$overwrite, "run:i" =>\$runnumber, "test"=>\$test);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"MB\" production>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
+    print "--memory: <mem in MB>\n";
+    print "--overwrite : overwrite existing jobfiles and restart\n";
     print "--run: <runnumber>\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
@@ -77,7 +81,7 @@ $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
 my $herwig_runnumber = 1;
-my $herwig_dir = sprintf("/sphenix/sim/sim01/sphnxpro/mdc2/HerwigHepMC");
+my $herwig_dir = sprintf("/sphenix/lustre01/sphnxpro/mdc2/HerwigHepMC");
 my $events = 1000; # for running with plugdoor
 #$events = 200;
 #$events = 100; # for ftfp_bert_hp
@@ -120,6 +124,14 @@ OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
 	    if (defined $test)
 	    {
 		$tstflag="--test";
+	    }
+	    if (defined $memory)
+	    {
+		$tstflag = sprintf("%s --memory %s",$tstflag, $memory)
+	    }
+	    if (defined $overwrite)
+	    {
+		$tstflag="--overwrite";
 	    }
             my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %s %s %d %d %s", $events, $herwigdatfile, $outdir, $outfile, $n, $build, $jettrigger, $runnumber, $sequence, $tstflag);
 	    print "cmd: $subcmd\n";
