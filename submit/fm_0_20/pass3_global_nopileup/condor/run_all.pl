@@ -125,6 +125,7 @@ while (my @res = $getfiles->fetchrow_array())
     }
 }
 $chkfile->finish();
+$getfiles->finish();
 $dbh->disconnect;
 
 my $jobfile = sprintf("condor.job");

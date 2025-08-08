@@ -13,7 +13,7 @@ echo running: $this_script $*
 
 this_gitcommitid=`git show HEAD | sed -n 1p | cut -d " " -f 2`
 
-anabuild=${6}
+anabuild=${5}
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
 
