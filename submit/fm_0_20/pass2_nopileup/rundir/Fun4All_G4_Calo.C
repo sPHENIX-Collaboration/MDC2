@@ -215,7 +215,7 @@ void Fun4All_G4_Calo(
   // if we use a negative number of events we go back to the command line here
   if (nEvents < 0)
   {
-    return 0;
+    return;
   }
   se->run(nEvents);
 

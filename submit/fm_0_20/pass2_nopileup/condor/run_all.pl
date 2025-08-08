@@ -14,10 +14,12 @@ my $disable_calo;
 my $disable_mbd;
 my $disable_trk;
 my $incremental;
+my $overwrite;
 my $runnumber;
 my $shared;
+my $startsegment = 0;
 my $test;
-GetOptions("build:s" => \$build, "disable_calo" => \$disable_calo, "disable_mbd" => \$disable_mbd, "disable_trk" => \$disable_trk, "increment"=>\$incremental, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
+GetOptions("build:s" => \$build, "disable_calo" => \$disable_calo, "disable_mbd" => \$disable_mbd, "disable_trk" => \$disable_trk, "increment"=>\$incremental, "overwrite" => \$overwrite, "run:i" =>\$runnumber, "shared" => \$shared, "startsegment:i" => \$startsegment, "test"=>\$test);
 if ($#ARGV < 0 || ! defined $runnumber || ! defined $build)
 {
     print "usage: run_all.pl <number of jobs>\n";
@@ -27,8 +29,10 @@ if ($#ARGV < 0 || ! defined $runnumber || ! defined $build)
     print "--disable_mbd: disable mbd reconstruction\n";
     print "--disable_trk: disable trk reconstruction\n";
     print "--increment : submit jobs while processing running\n";
+    print "--overwrite : overwrite existing job files\n";
     print "--run: <runnumber>\n";
     print "--shared : submit jobs to shared pool\n";
+    print "--startsegment: starting segment\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
@@ -51,9 +55,9 @@ if (! defined $build)
 
 my $hostname = `hostname`;
 chomp $hostname;
-if ($hostname !~ /phnxsub/)
+if ($hostname !~ /sphnxprod/)
 {
-    print "submit only from phnxsub01 or phnxsub02\n";
+    print "submit only from sphnxprod01-04\n";
     exit(1);
 }
 my $maxsubmit = $ARGV[0];
@@ -106,7 +110,7 @@ foreach my $type (sort keys %outfiletype)
 #die;
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%sHijing_0_20fm%' and runnumber = $runnumber and segment < 100000 order by filename") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%sHijing_0_20fm%' and runnumber = $runnumber and segment >= $startsegment order by filename") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
@@ -142,6 +146,10 @@ while (my @res = $getfiles->fetchrow_array())
 	if (defined $test)
 	{
 	    $tstflag="--test";
+	}
+	if (defined $overwrite)
+	{
+	    $tstflag= sprintf("%s --overwrite", $tstflag)
 	}
 	my $calooutfilename = sprintf("DST_CALO_CLUSTER_sHijing_0_20fm-%010d-%06d.root",$runnumber,$segment);
 	my $globaloutfilename = sprintf("DST_MBD_EPD_sHijing_0_20fm-%010d-%06d.root",$runnumber,$segment);

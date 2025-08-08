@@ -8,12 +8,14 @@ use File::Basename;
 
 my $test;
 my $memory = sprintf("10000MB");
-GetOptions("test"=>\$test);
+my $overwrite;
+GetOptions("overwrite" => \$overwrite, "test"=>\$test);
 if ($#ARGV < 12)
 {
     print "usage: run_condor.pl <events> <infile> <calo outfile>  <calo outdir> <global outfile> <global outdir> <trk outdir> <build> <runnumber> <sequence> <enable_calo> <enable_mbd> <enable_trk>\n";
     print "options:\n";
     print "-memory: memory requirement\n";
+    print "--overwrite: overwrite existing job files\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
 }
@@ -59,7 +61,7 @@ if ($enable_calo < 1 || $enable_mbd < 1 ||  $enable_trk< 1)
     {
 	$enable_prefix = sprintf("%s_trk", $enable_prefix);
     }
-    $suffix = sprintf("_%s-%010d-%06d",$enable_prefix,$runnumber,$sequence);
+    $suffix = sprintf("%s-%010d-%06d",$enable_prefix,$runnumber,$sequence);
 }
 my $logdir = sprintf("%s/log/run%d",$localdir,$runnumber);
 if (! -d $logdir)
@@ -74,8 +76,15 @@ if (! -d $condorlogdir)
 my $jobfile = sprintf("%s/condor%s.job",$logdir,$suffix);
 if (-f $jobfile)
 {
-    print "jobfile $jobfile exists, possible overlapping names\n";
-    exit(1);
+    if (defined $overwrite)
+    {
+	print "rerunning  $jobfile\n";
+    }
+    else
+    {
+	print "jobfile $jobfile exists, possible overlapping names\n";
+	exit(1);
+    }
 }
 my $condorlogfile = sprintf("%s/condor%s.log",$condorlogdir,$suffix);
 if (-f $condorlogfile)

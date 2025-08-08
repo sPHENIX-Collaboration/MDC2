@@ -21,7 +21,7 @@ run_mbdepd=${12}
 run_trk=${13}
 
 # just to get a working environment, the specific ana builds for each reconstruction are set later
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n
+source /opt/sphenix/core/bin/sphenix_setup.sh -n
 
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
@@ -79,7 +79,7 @@ timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/shijing_hepmc/fm_0_20/pass2_no
 
 if [ ${run_calo} -gt 0 ]
 then
-    source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_calo
+    source /opt/sphenix/core/bin/sphenix_setup.sh -n $ana_calo
     cdbtag=MDC2_${ana_calo}
 
 
@@ -105,7 +105,7 @@ fi
 
 if [ ${run_mbdepd} -gt 0 ]
 then
-    source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_mbdepd
+    source /opt/sphenix/core/bin/sphenix_setup.sh -n $ana_mbdepd
     cdbtag=MDC2_${ana_mbdepd}
     echo 'here comes your environment for Fun4All_G4_MBD_EPD.C'
     printenv
@@ -129,7 +129,7 @@ fi
 
 if [ ${run_trk} -gt 0 ]
 then
-    source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $ana_pass3trk
+    source /opt/sphenix/core/bin/sphenix_setup.sh -n $ana_pass3trk
     cdbtag=MDC2_${ana_pass3trk}
     echo 'here comes your environment for Fun4All_G4_Pass3Trk.C'
     printenv
