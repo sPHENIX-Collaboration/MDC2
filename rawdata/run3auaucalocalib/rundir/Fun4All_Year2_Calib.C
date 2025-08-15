@@ -52,10 +52,10 @@ R__LOAD_LIBRARY(libglobalQA.so)
 R__LOAD_LIBRARY(libcaloTreeGen.so)
 
 void Fun4All_Year2_Calib(int nEvents = 100,
-                         const std::string &fname = "DST_CALOFITTING_run3auau_ana502_2025p004_v001-00047289-00000.root",
-                         const std::string &outfile = "DST_CALO_run3auau_ana502_2025p004_v001-00047289-00000.root",
-                         const std::string &outfile_hist = "HIST_CALOQA_run3auau_ana502_2025p004_v001-00047289-00000.root",
-                         const std::string &dbtag = "2025p004")
+                         const std::string &fname = "DST_CALOFITTING_run3auau_ana502_2025p004_v001-00067507-00000.root",
+                         const std::string &outfile = "DST_CALO_run3auau_ana502_2025p005_v001-00067507-00000.root",
+                         const std::string &outfile_hist = "HIST_CALOQA_run3auau_ana502_2025p005_v001-00067507-00000.root",
+                         const std::string &dbtag = "2025p005")
 {
   // towerinfov1=kPRDFTowerv1, v2=:kWaveformTowerv2, v3=kPRDFWaveform, v4=kPRDFTowerv4
   CaloTowerDefs::BuilderType buildertype = CaloTowerDefs::kPRDFTowerv4;
@@ -82,8 +82,8 @@ void Fun4All_Year2_Calib(int nEvents = 100,
   se->registerSubsystem(mbdreco);
 
   // sEPD Reconstruction--Calib Info
-  // EpdReco *epdreco = new EpdReco();
-  // se->registerSubsystem(epdreco);
+  EpdReco *epdreco = new EpdReco();
+  se->registerSubsystem(epdreco);
 
   // ZDC Reconstruction--Calib Info
   ZdcReco *zdcreco = new ZdcReco();
@@ -130,7 +130,7 @@ void Fun4All_Year2_Calib(int nEvents = 100,
   se->registerOutputManager(out);
   if (segment == 0)
   {
-    se->skip(2); // event combining sometimes messes up first 2 events, skip them for 0 segment
+//    se->skip(2); // event combining sometimes messes up first 2 events, skip them for 0 segment
   }
   se->run(nEvents);
   se->End();
