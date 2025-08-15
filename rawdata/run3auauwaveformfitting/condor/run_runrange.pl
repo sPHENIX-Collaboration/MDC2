@@ -5,8 +5,8 @@ use warnings;
 use File::Path;
 use Getopt::Long;
 use DBI;
-# first physics run in run3beam: 53381
-# last physics run (from prod): 54974
+# first physics run in run3bean: 66457
+# last physics run (from prod): tbd
 my $test;
 my $incremental;
 my $killexist;
@@ -48,9 +48,9 @@ if (-f $condorlistfile)
 }
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
-my $getruns = $dbh->prepare("select runnumber,segment,filename from datasets where runnumber >= $min_runnumber and runnumber <= $max_runnumber and (filename like 'DST_TRIGGERED_EVENT_seb18_run3auau_new_nocdbtag_v001-%' or filename like 'DST_TRIGGERED_EVENT_seb18_run3beam_new_nocdbtag_v001-%') order by runnumber,segment");
+my $getruns = $dbh->prepare("select runnumber,segment,filename from datasets where runnumber >= $min_runnumber and runnumber <= $max_runnumber and (filename like 'DST_TRIGGERED_EVENT_seb18_run3auau_ana502_nocdbtag_v001-%' or filename like 'DST_TRIGGERED_EVENT_seb18_run3beam_ana502_nocdbtag_v001-%') order by runnumber,segment");
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
-my $checkallsegs = $dbh->prepare("select filename from datasets where runnumber=? and segment=? and filename like ?");#'DST_TRIGGERED_EVENT_%_run3auau_new_nocdbtag_v000-%'");
+my $checkallsegs = $dbh->prepare("select filename from datasets where runnumber=? and segment=? and filename like ?");
 my $nsubmit = 0;
 $getruns->execute();
 my %dircreated = ();
@@ -59,11 +59,11 @@ while (my @runs = $getruns->fetchrow_array())
     my $runnumber=$runs[0];
     my $segment = $runs[1];
     my $runtype = "physics";
-    my $typelike = sprintf("DST_TRIGGERED_EVENT_\%%_run3auau_new_nocdbtag_v001-\%%");
+    my $typelike = sprintf("DST_TRIGGERED_EVENT_\%%_run3auau_ana502_nocdbtag_v001-\%%");
     if ($runs[2] =~ /beam/)
     {
 	$runtype = "beam";
-        $typelike = sprintf("DST_TRIGGERED_EVENT_\%%_run3beam_new_nocdbtag_v001-\%%");
+        $typelike = sprintf("DST_TRIGGERED_EVENT_\%%_run3beam_ana502_nocdbtag_v001-\%%");
     }
     $checkallsegs->execute($runnumber,$segment,$typelike);
     my $nfiles = $checkallsegs->rows;
@@ -77,8 +77,8 @@ while (my @runs = $getruns->fetchrow_array())
 	print "found only $nfiles for run $runnumber, segment $segment, ignoring\n";
 	next;
     }
-    my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production2/run3auau/%s/caloy2fitting/new_newcdbtag_v007",$runtype);
-    my $qaoutdir = sprintf("/sphenix/data/data02/sphnxpro/production2/run3auau/%s/caloy2fitting/new_newcdbtag_v007",$runtype);
+    my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production2/run3auau/%s/calofitting/ana502_2025p004_v001",$runtype);
+    my $qaoutdir = sprintf("/sphenix/data/data02/sphnxpro/production2/run3auau/%s/calofitting/ana502_2025p004_v001",$runtype);
     if (! exists $dircreated{$runtype})
     {
 	if (! -d $outdir)
@@ -91,12 +91,12 @@ while (my @runs = $getruns->fetchrow_array())
 	}
 	$dircreated{$runtype} = 1;
     }
-    my $outfilename = sprintf("DST_CALOFITTING_run3auau_new_newcdbtag_v007-%08d-%05d.root",$runnumber,$segment);
-    my $qaoutfilename = sprintf("HIST_CALOFITTINGQA_run3auau_new_newcdbtag_v007-%08d-%05d.root",$runnumber,$segment);
+    my $outfilename = sprintf("DST_CALOFITTING_run3auau_ana502_2025p004_v001-%08d-%05d.root",$runnumber,$segment);
+    my $qaoutfilename = sprintf("HIST_CALOFITTINGQA_run3auau_ana502_2025p004_v001-%08d-%05d.root",$runnumber,$segment);
     if ($runs[2] =~ /beam/)
     {
-	$outfilename = sprintf("DST_CALOFITTING_run3%s_new_newcdbtag_v007-%08d-%05d.root",$runtype,$runnumber,$segment);
-	$qaoutfilename = sprintf("HIST_CALOFITTINGQA_run3%s_new_newcdbtag_v007-%08d-%05d.root",$runtype,$runnumber,$segment);
+	$outfilename = sprintf("DST_CALOFITTING_run3%s_ana502_2025p004_v001-%08d-%05d.root",$runtype,$runnumber,$segment);
+	$qaoutfilename = sprintf("HIST_CALOFITTINGQA_run3%s_ana502_2025p004_v001-%08d-%05d.root",$runtype,$runnumber,$segment);
     }
     
     $chkfile->execute($outfilename);
