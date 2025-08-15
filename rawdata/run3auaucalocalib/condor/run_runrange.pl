@@ -46,7 +46,7 @@ if (-f $condorlistfile)
 }
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
-my $getruns = $dbh->prepare("select runnumber,segment,filename from datasets where runnumber >= $min_runnumber and runnumber <= $max_runnumber and (filename like 'DST_CALOFITTING_run3auau_new_newcdbtag_v007-%' or filename like 'DST_CALOFITTING_run3beam_new_newcdbtag_v007-%') order by runnumber,segment");
+my $getruns = $dbh->prepare("select runnumber,segment,filename from datasets where runnumber >= $min_runnumber and runnumber <= $max_runnumber and (filename like 'DST_CALOFITTING_run3auau_ana502_2025p004_v001-%' or filename like 'DST_CALOFITTING_run3beam_ana502_2025p004_v001-%') order by runnumber,segment");
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 my $nsubmit = 0;
 my %dircreated = ();
@@ -62,8 +62,8 @@ while (my @runs = $getruns->fetchrow_array())
 	$runtype = "beam";
     }
    
-    my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production/run3auau/%s/caloy2calib/new_newcdbtag_v007",$runtype);
-    my $qaoutdir = sprintf("/sphenix/data/data02/sphnxpro/production/run3auau/%s/caloy2calib/new_newcdbtag_v007",$runtype);
+    my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production/run3auau/%s/calocalib/ana502_2025p004_v001",$runtype);
+    my $qaoutdir = sprintf("/sphenix/data/data02/sphnxpro/production/run3auau/%s/calocalib/ana502_2025p004_v001",$runtype);
     if (! exists $dircreated{$runtype})
     {
 	if (! -d $outdir)
@@ -76,12 +76,12 @@ while (my @runs = $getruns->fetchrow_array())
 	}
 	$dircreated{$runtype} = 1;
     }
-    my $outfilename = sprintf("DST_CALO_run3auau_new_newcdbtag_v007-%08d-%05d.root",$runnumber,$segment);
-    my $qaoutfilename = sprintf("HIST_CALOQA_run3auau_new_newcdbtag_v007-%08d-%05d.root",$runnumber,$segment);
+    my $outfilename = sprintf("DST_CALO_run3auau_ana502_2025p004_v001-%08d-%05d.root",$runnumber,$segment);
+    my $qaoutfilename = sprintf("HIST_CALOQA_run3auau_ana502_2025p004_v001-%08d-%05d.root",$runnumber,$segment);
     if ($runs[2] =~ /beam/)
     {
-	$outfilename = sprintf("DST_CALO_run3%s_new_newcdbtag_v007-%08d-%05d.root",$runtype,$runnumber,$segment);
-	$qaoutfilename = sprintf("HIST_CALOQA_run3%s_new_newcdbtag_v007-%08d-%05d.root",$runtype,$runnumber,$segment);
+	$outfilename = sprintf("DST_CALO_run3%s_ana502_2025p004_v001-%08d-%05d.root",$runtype,$runnumber,$segment);
+	$qaoutfilename = sprintf("HIST_CALOQA_run3%s_ana502_2025p004_v001-%08d-%05d.root",$runtype,$runnumber,$segment);
     }
     $chkfile->execute($outfilename);
     if ($chkfile->rows > 0)

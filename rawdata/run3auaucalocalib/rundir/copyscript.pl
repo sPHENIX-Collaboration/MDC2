@@ -194,7 +194,7 @@ my $splitstring = "_run3auau_";
 my @sp1 = split(/$splitstring/,$lfn);
 if (! defined $test)
 {
-    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries,'new_newcdbtag_v007');
+    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries,'ana502_2025p004_v001');
 }
 else
 {
