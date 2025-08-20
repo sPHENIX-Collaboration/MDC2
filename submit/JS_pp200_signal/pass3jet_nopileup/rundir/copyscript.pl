@@ -37,6 +37,15 @@ if (! -f $file)
 }
 # get the username so othere users cannot mess with the production DBs
 my $username = getpwuid( $< );
+if (! defined $username)
+{
+    # print out error
+    if ($! != 0)
+    {
+        print "System error: $!\n"; # $! will provide a descriptive error message
+    }
+    $username = $USER;
+}
 
 my $lfn = basename($file);
 
