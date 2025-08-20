@@ -30,9 +30,9 @@ R__LOAD_LIBRARY(libcalotrigger.so)
 // this pass containis the reco process that's stable wrt time stamps(raw tower building)
 void Fun4All_Year2_Fitting(int nEvents = 100,
 			   const std::string inlist = "files.list",
-                           const std::string &outfile = "DST_CALOFITTING_run2pp_new_nocdbtag_v007-00048099-00000.root",
-                           const std::string &outfile_hist = "HIST_CALOFITTINGQA_run2pp_new_nocdbtag_v007-00047748-00000.root",
-                           const std::string &dbtag = "newcdbtag")
+                           const std::string &outfile = "DST_CALOFITTING_run2pp_ana502_2024p022_v001-00048099-00000.root",
+                           const std::string &outfile_hist = "HIST_CALOFITTINGQA_run2pp_ana502_2024p022_v001-00048099-00000.root",
+                           const std::string &dbtag = "2024p022")
 {
   gSystem->Load("libg4dst.so");
 
@@ -69,31 +69,31 @@ void Fun4All_Year2_Fitting(int nEvents = 100,
   Fun4AllInputManager *In = nullptr;
   ifstream infile;
   infile.open(inlist);
-    int iman = 0;
-    std::string line;
-    if (infile.is_open())
+  int iman = 0;
+  std::string line;
+  if (infile.is_open())
+  {
+    while (std::getline(infile, line))
     {
-      while (std::getline(infile, line))
+      if (line[0] == '#')
       {
-	if (line[0] == '#')
-	{
-	  std::cout << "found commented out line " << line << std::endl;
-	  continue;
-	}
-	std::cout << line << std::endl;
-	std::string magname = "DSTin_" + std::to_string(iman);
-	In = new Fun4AllDstInputManager(magname);
-	In->Verbosity(1);
-	In->AddFile(line);
-	se->registerInputManager(In);
-	iman++;
+	std::cout << "found commented out line " << line << std::endl;
+	continue;
       }
-      infile.close();
+      std::cout << line << std::endl;
+      std::string magname = "DSTin_" + std::to_string(iman);
+      In = new Fun4AllDstInputManager(magname);
+      In->Verbosity(1);
+      In->AddFile(line);
+      se->registerInputManager(In);
+      iman++;
     }
+    infile.close();
+  }
   
-       Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfile);
-   out->StripCompositeNode("Packets");
-   se->registerOutputManager(out);
+  Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfile);
+  out->StripCompositeNode("Packets");
+  se->registerOutputManager(out);
   // se->Print();
   if (nEvents < 0)
   {
