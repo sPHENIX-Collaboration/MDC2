@@ -48,6 +48,15 @@ my $runpath = sprintf("run_%08d_%08d",$lower,$upper);
 $outdir = sprintf("%s/%s",$outdir,$runpath);
 # get the username so othere users cannot mess with the production DBs
 my $username = getpwuid( $< );
+if (! defined $username)
+{
+    # print out error
+    if ($! != 0)
+    {
+        print "System error: $!\n"; # $! will provide a descriptive error message
+    }
+    $username = $USER;
+}
 
 
 my $size = stat($file)->size;
@@ -194,7 +203,7 @@ my $splitstring = "_run3auau_";
 my @sp1 = split(/$splitstring/,$lfn);
 if (! defined $test)
 {
-    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries,'ana502_2025p004_v001');
+    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries,'ana502_2025p005_v001');
 }
 else
 {
