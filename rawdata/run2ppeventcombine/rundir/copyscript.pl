@@ -46,9 +46,17 @@ my $upper = $lower + 100;
 my $runpath = sprintf("run_%08d_%08d",$lower,$upper);
 
 $outdir = sprintf("%s/%s",$outdir,$runpath);
-# get the username so othere users cannot mess with the production DBs
+# get the username so other users cannot mess with the production DBs
 my $username = getpwuid( $< );
-
+if (! defined $username)
+{
+    # print out error
+    if ($! != 0)
+    {
+        print "System error: $!\n"; # $! will provide a descriptive error message
+    }
+    $username = $USER;
+}
 
 my $size = stat($file)->size;
 
@@ -190,11 +198,11 @@ my $insertdataset = $dbh->prepare("insert into datasets (filename,runnumber,segm
 # first files table
 $insertfile->execute($lfn,$outhost,$outfile,$size,$md5sum);
 
-my $splitstring = "_run2pp_new_nocdbtag";
+my $splitstring = "_run2pp_";
 my @sp1 = split(/$splitstring/,$lfn);
 if (! defined $test)
 {
-    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries,'new_nocdbtag_v007');
+    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries,'ana502_nocdbtag_v001');
 }
 else
 {
