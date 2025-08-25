@@ -24,7 +24,7 @@ my $test;
 my $use_xrdcp;
 my $use_rsync;
 my $use_mcs3;
-my $use_dd;
+my $use_dd = 1;
 my $verbosity;
 GetOptions("dd" => \$use_dd, "mcs3" => \$use_mcs3, "outdir:s"=>\$outdir, "rsync"=>\$use_rsync, "test"=>\$test, "verbosity" => \$verbosity, "xrdcp"=>\$use_xrdcp);
 
@@ -125,7 +125,7 @@ else
 	$outhost = 'lustre';
 	if (defined $use_dd)
 	{
-	    $copycmd = sprintf("dd if=%s of=%s bs=4M oflag=direct",$file,$outfile);
+	    $copycmd = sprintf("dd if=%s of=%s bs=12M",$file,$outfile);
 	}
 	else
 	{
