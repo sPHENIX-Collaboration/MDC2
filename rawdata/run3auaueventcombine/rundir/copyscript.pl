@@ -22,9 +22,10 @@ my $backupdir = sprintf("/sphenix/sim/sim01/sphnxpro/MDC2/backup");
 my $outdir = ".";
 my $test;
 my $verbosity;
+my $use_dd = 1;
 my $use_rsync;
 my $use_mv;
-GetOptions("mv" => \$use_mv, "outdir:s"=>\$outdir, "test"=>\$test, "verbosity" => \$verbosity);
+GetOptions("dd" => \$use_dd, "mv" => \$use_mv, "outdir:s"=>\$outdir, "test"=>\$test, "verbosity" => \$verbosity);
 
 
 my $file = $ARGV[0];
@@ -69,6 +70,10 @@ my $outfile = sprintf("%s/%s",$outdir,$lfn);
 
 my $outhost;
 $copycmd = sprintf("cp %s %s",$file,$outfile);
+if (defined $use_dd)
+{
+    $copycmd = sprintf("dd if=%s of=%s bs=12M",$file,$outfile);
+}
 if (defined $use_rsync)
 {
     $copycmd = sprintf("rsync -av %s %s",$file,$outfile);
