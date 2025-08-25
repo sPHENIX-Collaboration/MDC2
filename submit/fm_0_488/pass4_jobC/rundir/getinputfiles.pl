@@ -19,7 +19,7 @@ my $filelist;
 my $use_dcache;
 my $use_xrdcp;
 my $use_mcs3;
-my $use_dd;
+my $use_dd = 1;
 
 GetOptions("dcache" => \$use_dcache, "dd" => \$use_dd, "filelist" => \$filelist, "mcs3" => \$use_mcs3, "test"=>\$test, "xrdcp"=>\$use_xrdcp);
 
@@ -127,7 +127,7 @@ foreach my $file (keys %filemd5)
 	{
 	    if (defined $use_dd)
 	    {
-		$copycmd = sprintf("dd if=%s of=%s bs=4M iflag=direct",$file,basename($file));
+		$copycmd = sprintf("dd if=%s of=%s bs=12M",$file,basename($file));
 	    }
 	    else
 	    {
