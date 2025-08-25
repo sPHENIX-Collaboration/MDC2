@@ -36,10 +36,10 @@ R__LOAD_LIBRARY(libLiteCaloEvalTowSlope.so)
 
 void Fun4All_New_HCalCosmics(int nEvents = 100,
                              const std::string inlist = "files.list",
-                             const std::string &outfile = "DST_CALOFITTING_run2auau_ana491_2024p020_v007-00054530-00000.root",
-                             const std::string &outfile_hist1 = "HIST_COSMIC_HCALOUT_run2auau_ana491_2024p020_v007-00054530-00000.root",
-                             const std::string &outfile_hist2 = "HIST_COSMIC_HCALIN_run2auau_ana491_2024p020_v007-00054530-00000.root",
-                             const std::string &dbtag = "newcdbtag")
+                             const std::string &outfile = "DST_CALOFITTING_run3cosmics_ana502_2025p004_v001-00054530-00000.root",
+                             const std::string &outfile_hist1 = "HIST_COSMIC_HCALOUT_run3cosmics_ana502_2025p004_v001-00054530-00000.root",
+                             const std::string &outfile_hist2 = "HIST_COSMIC_HCALIN_run3cosmics_ana502_2025p004_v001-00054530-00000.root",
+                             const std::string &dbtag = "2025p004")
 {
   // v1 uncomment:
   // CaloTowerDefs::BuilderType buildertype = CaloTowerDefs:::kPRDFTowerv1;
@@ -167,14 +167,17 @@ void Fun4All_New_HCalCosmics(int nEvents = 100,
   wt3->TowerPrefix("TOWERINFO_CALIB_");
   se->registerSubsystem(wt3);
 
-  // this strips all nodes under the Packets PHCompositeNode
-  // (means removes all offline packets)
-  // char dstoutfile[500];
-  // sprintf(dstoutfile, "%s-%08d-%05d.root", outfile.c_str(), runnumber, segment);
-  Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfile);
-  out->StripCompositeNode("Packets");
-  se->registerOutputManager(out);
-
+  if (runnumber <= 66455)
+  {
+    char dstoutfile[500];
+    sprintf(dstoutfile, "%s-%08d-%05d.root", outfile.c_str(), runnumber, segment);
+    Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfile);
+    // this strips all nodes under the Packets PHCompositeNode
+    // (means removes all offline packets)
+    out->StripCompositeNode("Packets");
+    se->registerOutputManager(out);
+  }
+  
   se->run(nEvents);
   se->End();
   CDBInterface::instance()->Print();  // print used DB files

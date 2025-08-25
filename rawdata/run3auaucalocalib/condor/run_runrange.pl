@@ -10,16 +10,18 @@ use DBI;
 my $test;
 my $incremental;
 my $killexist;
+my $overwrite;
 my $shared;
 my $events = 0;
 my $verbosity = 0;
-GetOptions("increment"=>\$incremental, "killexist" => \$killexist, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
+GetOptions("increment"=>\$incremental, "killexist" => \$killexist, "overwrite" => \$overwrite, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
 if ($#ARGV < 1)
 {
     print "usage: run_runrange.pl <min runnumber> <max runnumber>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--killexist : delete output file if it already exists (but no jobfile)\n";
+    print "--overwrite : overwrite existing job files\n";
     print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
@@ -62,8 +64,8 @@ while (my @runs = $getruns->fetchrow_array())
 	$runtype = "beam";
     }
    
-    my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production/run3auau/%s/calocalib/ana502_2025p004_v001",$runtype);
-    my $qaoutdir = sprintf("/sphenix/data/data02/sphnxpro/production/run3auau/%s/calocalib/ana502_2025p004_v001",$runtype);
+    my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production/run3auau/%s/calocalib/ana502_2025p005_v001",$runtype);
+    my $qaoutdir = sprintf("/sphenix/data/data02/sphnxpro/production/run3auau/%s/calocalib/ana502_2025p005_v001",$runtype);
     if (! exists $dircreated{$runtype})
     {
 	if (! -d $outdir)
@@ -76,12 +78,12 @@ while (my @runs = $getruns->fetchrow_array())
 	}
 	$dircreated{$runtype} = 1;
     }
-    my $outfilename = sprintf("DST_CALO_run3auau_ana502_2025p004_v001-%08d-%05d.root",$runnumber,$segment);
-    my $qaoutfilename = sprintf("HIST_CALOQA_run3auau_ana502_2025p004_v001-%08d-%05d.root",$runnumber,$segment);
+    my $outfilename = sprintf("DST_CALO_run3auau_ana502_2025p005_v001-%08d-%05d.root",$runnumber,$segment);
+    my $qaoutfilename = sprintf("HIST_CALOQA_run3auau_ana502_2025p005_v001-%08d-%05d.root",$runnumber,$segment);
     if ($runs[2] =~ /beam/)
     {
-	$outfilename = sprintf("DST_CALO_run3%s_ana502_2025p004_v001-%08d-%05d.root",$runtype,$runnumber,$segment);
-	$qaoutfilename = sprintf("HIST_CALOQA_run3%s_ana502_2025p004_v001-%08d-%05d.root",$runtype,$runnumber,$segment);
+	$outfilename = sprintf("DST_CALO_run3%s_ana502_2025p005_v001-%08d-%05d.root",$runtype,$runnumber,$segment);
+	$qaoutfilename = sprintf("HIST_CALOQA_run3%s_ana502_2025p005_v001-%08d-%05d.root",$runtype,$runnumber,$segment);
     }
     $chkfile->execute($outfilename);
     if ($chkfile->rows > 0)
@@ -96,6 +98,10 @@ while (my @runs = $getruns->fetchrow_array())
     if (defined $test)
     {
 	$tstflag="--test";
+    }
+    if (defined $overwrite)
+    {
+	$tstflag= sprintf("%s --overwrite", $tstflag)
     }
     #    print "executing perl run_condor.pl $events $runnumber $jobno $indir $tstflag\n";
 

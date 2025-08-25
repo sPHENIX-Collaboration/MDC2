@@ -24,7 +24,7 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 91;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/cosmics_eventcombine.sh",$rundir);
+my $executable = sprintf("%s/run3cosmics_eventcombine.sh",$rundir);
 my $nevents = $ARGV[0];
 my $runnumber = $ARGV[1];
 my $daqhost = $ARGV[2];

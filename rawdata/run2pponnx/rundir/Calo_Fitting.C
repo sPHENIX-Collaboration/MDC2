@@ -31,8 +31,8 @@ void Process_Calo_Fitting()
   CaloWaveformProcessing *onnxproc = ctbEMCal->get_WaveformProcessing();
   if (onnxproc)
   {
-onnxproc->set_model_file("model_1.onnx");
-onnxproc->set_onnx_factor(0,134.198);
+    onnxproc->set_model_file("model_1.onnx");
+    onnxproc->set_onnx_factor(0,134.198);
     onnxproc->set_onnx_factor(1,1.731);
     onnxproc->set_onnx_factor(2,591.512);
     onnxproc->set_onnx_offset(0,116.752 );

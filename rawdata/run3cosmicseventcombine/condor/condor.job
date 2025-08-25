@@ -11,5 +11,5 @@ Priority = $(baseprio)
 job_lease_duration = 3600
 Rank = -SlotID
 batch_name = $(batchname)
-request_xferslots = 1
+request_xferslots = 3
 Queue executable, nevents, runnumber, daqhost, outdir, errfile, outfile, condorlogfile, rundir, baseprio, batchname from condor.list

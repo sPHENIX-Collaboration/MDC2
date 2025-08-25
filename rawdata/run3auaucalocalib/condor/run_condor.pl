@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use strict;
 use warnings;
@@ -7,12 +7,14 @@ use File::Path;
 use File::Basename;
 
 my $test;
-GetOptions("test"=>\$test);
+my $overwrite;
+GetOptions("overwrite" => \$overwrite, "test"=>\$test);
 if ($#ARGV < 7)
 {
     print "not enough arguments: $#ARGV, need 8, here is the list\n";
     print "usage: run_condor.pl <events> <runnumber> <segment> <infile> <outfile> <outdir> <qafile> <qadir>\n";
     print "options:\n";
+    print "--overwrite: overwrite existing job files\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
 }
@@ -39,15 +41,15 @@ my $suffix = sprintf("%08d-%05d",$runnumber,$segment);
 my $logdir = sprintf("%s/log",$localdir);
 if (! -d $logdir)
 {
-mkpath($logdir);
+    mkpath($logdir);
 }
 my $condorlogdir = sprintf("/tmp/rawdata/run3auaucalocalib");
 if (! -d $condorlogdir)
 {
-mkpath($condorlogdir);
+    mkpath($condorlogdir);
 }
 my $jobfile = sprintf("%s/condor-%s.job",$logdir,$suffix);
-if (-f $jobfile)
+if (-f $jobfile && !defined $overwrite)
 {
     print "jobfile $jobfile exists, possible overlapping names\n";
     exit(1);

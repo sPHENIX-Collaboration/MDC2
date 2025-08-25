@@ -7,7 +7,8 @@ use File::Path;
 use File::Basename;
 
 my $test;
-GetOptions("test"=>\$test);
+my $overwrite;
+GetOptions("overwrite" => \$overwrite, "test"=>\$test);
 if ($#ARGV < 7)
 {
     print "not enough arguments: $#ARGV, need 8, here is the list\n";
@@ -24,7 +25,7 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 91;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_waveformfitting_cosmics.sh",$rundir);
+my $executable = sprintf("%s/run3cosmics_waveformfitting.sh",$rundir);
 my $nevents = $ARGV[0];
 my $runnumber = $ARGV[1];
 my $segment = $ARGV[2];
@@ -47,7 +48,7 @@ if (! -d $condorlogdir)
 mkpath($condorlogdir);
 }
 my $jobfile = sprintf("%s/condor-%s.job",$logdir,$suffix);
-if (-f $jobfile)
+if (-f $jobfile && !defined $overwrite)
 {
     print "jobfile $jobfile exists, possible overlapping names\n";
     exit(1);

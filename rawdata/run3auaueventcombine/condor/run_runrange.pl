@@ -46,13 +46,63 @@ if (-f $condorlistfile)
 }
 
 my $dbh = DBI->connect("dbi:ODBC:daq","phnxrc") || die $DBI::errstr;
+$dbh->{LongReadLen}=2000; # full file paths need to fit in here
+my $dbh2 = DBI->connect("dbi:ODBC:RawDataCatalog_read","phnxrc") || die $DBI::errstr;
+$dbh2->{LongReadLen}=2000; # full file paths need to fit in here
+
 my $getruns = $dbh->prepare("select runnumber from run where runnumber>= $min_runnumber and runnumber <= $max_runnumber and (runtype='physics' or runtype='beam') and eventsinrun >= 100000 order by runnumber");
 my $gethosts = $dbh->prepare("select hostname from hostinfo where runnumber = ? and hostname like 'seb%'");
+my $fullrun = $dbh->prepare("select distinct(transferred_to_sdcc) from filelist where runnumber = ? and sequence > 0 and hostname like 'seb%'");
+my $getdaqsegs = $dbh->prepare("select count(*),hostname from filelist where runnumber = ? group by hostname");
+my $getrawsegs = $dbh2->prepare("select count(*),daqhost from datasets where runnumber = ? and status > 0 group by daqhost");
+my $getrawsegsfirst = $dbh2->prepare("select daqhost from datasets where runnumber = ? and segment=0 and status > 0");
 my $nsubmit = 0;
 $getruns->execute();
 while (my @runs = $getruns->fetchrow_array())
 {
+    my %goodtogo = ();
+    my $fullruntransferred = 0;
     my $runnumber=$runs[0];
+    $fullrun->execute($runnumber);
+    my $ntfstat =  $fullrun->rows;
+    if ($ntfstat > 1) # find t and f for segment > 0 -->  transfer ongoing
+    {
+	next; # transfer not done yet, since we need all segments anyway for the event combining
+    }
+    else
+    {
+        my @tstat = $fullrun->fetchrow_array();
+	if ($tstat[0] == 0)
+	{
+	    $getrawsegsfirst->execute($runnumber);
+	    while (my @res = $getrawsegsfirst->fetchrow_array())
+	    {
+		$goodtogo{$res[0]} = 1;
+	    }
+	}
+	else
+	{
+	    my %daqfiles = ();
+	    $getdaqsegs->execute($runnumber);
+	    while (my @res = $getdaqsegs->fetchrow_array())
+	    {
+		$daqfiles{$res[1]} = $res[0];
+	    }
+	    $getrawsegs->execute($runnumber);
+	    while (my @res = $getrawsegs->fetchrow_array())
+	    {
+		if ($daqfiles{$res[1]} == $res[0])
+		{
+		    $goodtogo{$res[1]} = 1;
+		}
+	    }
+	}
+	if (! exists $goodtogo{"gl1daq"})
+	{
+	    print "not all GL1 files for $runnumber on disk\n";
+	    next;
+	}
+    }
     $gethosts->execute($runnumber);
     while (my @res = $gethosts->fetchrow_array())
     {
@@ -60,6 +110,11 @@ while (my @runs = $getruns->fetchrow_array())
 	# seb19 is the ll1, that needs special packet handling which we dont have yet
 	if ($daqhost =~ /seb19/)
 	{
+	    next;
+	}
+	if (! exists $goodtogo{$res[0]})
+	{
+	    print "not all files for run $runnumber from $res[0] on disk yet\n";
 	    next;
 	}
 	my $tstflag="";

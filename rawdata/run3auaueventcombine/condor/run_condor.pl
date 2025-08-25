@@ -35,12 +35,12 @@ my $suffix = sprintf("%s_%010d",$daqhost,$runnumber);
 my $logdir = sprintf("%s/log",$localdir);
 if (! -d $logdir)
 {
-mkpath($logdir);
+    mkpath($logdir);
 }
 my $condorlogdir = sprintf("/tmp/rawdata/run3auaueventcombine");
 if (! -d $condorlogdir)
 {
-mkpath($condorlogdir);
+    mkpath($condorlogdir);
 }
 my $jobfile = sprintf("%s/condor-%s.job",$logdir,$suffix);
 if (-f $jobfile)

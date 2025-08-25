@@ -49,6 +49,12 @@ runnumber=$(printf "%010d" $2)
 ls -l
 echo running root.exe -q -b Fun4All_Year2_Calib.C\($1,\"$4\",\"$5\",\"$7\"\)
 root.exe -q -b Fun4All_Year2_Calib.C\($1,\"$4\",\"$5\",\"$7\"\)
+getinputfiles.pl $4
+if [ $? -ne 0 ]
+then
+    echo error from getinputfiles.pl  $4, exiting
+    exit -1
+fi
 ls -l
 if [ -f $5 ]
 then

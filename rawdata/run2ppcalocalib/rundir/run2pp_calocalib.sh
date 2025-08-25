@@ -8,7 +8,7 @@ this_script=`readlink -f $this_script`
 this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n new
+source /opt/sphenix/core/bin/sphenix_setup.sh -n ana.502
 
 hostname
 
@@ -45,7 +45,12 @@ echo arg7 \(qa outfile\): $7
 echo arg8 \(qa outdir\): $8
 
 runnumber=$(printf "%010d" $2)
-
+getinputfiles.pl $4
+if [ $? -ne 0 ]
+then
+    echo error from getinputfiles.pl  $4, exiting
+    exit -1
+fi
 ls -l
 echo running root.exe -q -b Fun4All_Year2_Calib.C\($1,\"$4\",\"$5\",\"$7\"\)
 root.exe -q -b Fun4All_Year2_Calib.C\($1,\"$4\",\"$5\",\"$7\"\)

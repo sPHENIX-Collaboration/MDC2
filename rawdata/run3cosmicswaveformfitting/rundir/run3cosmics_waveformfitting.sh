@@ -48,6 +48,13 @@ echo arg8 \(qa outdir\): $8
 runnumber=$(printf "%010d" $2)
 
 perl CreateListFiles.pl $2 $3
+getinputfiles.pl  --filelist files.list
+if [ $? -ne 0 ]
+then
+    cat inputfiles.list
+    echo error from getinputfiles.pl  --filelist inputfiles.list, exiting
+    exit -1
+fi
 ls -l
 echo running root.exe -q -b Fun4All_New_HCalCosmics.C\($1,\"files.list\",\"$4\",\"$6\",\"$7\"\)
 root.exe -q -b Fun4All_New_HCalCosmics.C\($1,\"files.list\",\"$4\",\"$6\",\"$7\"\)
@@ -57,7 +64,6 @@ then
     copyscript.pl $4 -mv -outdir $5
 else
     echo could not find $4
-    exit 1
 fi
 if [ -f $6 ]
 then

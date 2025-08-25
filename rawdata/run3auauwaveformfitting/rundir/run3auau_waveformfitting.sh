@@ -46,6 +46,13 @@ echo arg7 \(qa outdir\): $7
 runnumber=$(printf "%010d" $2)
 
 perl CreateListFiles.pl $2 $3
+getinputfiles.pl  --filelist files.list
+if [ $? -ne 0 ]
+then
+    cat inputfiles.list
+    echo error from getinputfiles.pl  --filelist inputfiles.list, exiting
+    exit -1
+fi
 ls -l
 echo running root.exe -q -b Fun4All_Year2_Fitting.C\($1,\"files.list\",\"$4\",\"$6\"\)
 root.exe -q -b Fun4All_Year2_Fitting.C\($1,\"files.list\",\"$4\",\"$6\"\)

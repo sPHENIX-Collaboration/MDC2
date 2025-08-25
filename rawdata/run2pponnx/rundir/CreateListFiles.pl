@@ -1,3 +1,4 @@
+
 #!/usr/bin/env perl
 
 use strict;
@@ -45,7 +46,7 @@ my $inlist = sprintf("files.list");
 open(F,">$inlist");
 while (my @res = $getfiles->fetchrow_array())
 {
-    if ($res[0] =~ /DST_TRIGGERED_EVENT/ && $res[0] =~ /run2pp_new_nocdbtag_v007/)
+    if ($res[0] =~ /DST_TRIGGERED_EVENT/ && $res[0] =~ /run2pp_ana502_nocdbtag_v001/)
     {
 	print F "$res[0]\n";
     }
