@@ -50,7 +50,7 @@ getinputfiles.pl --dd  --filelist files.list
 if [ $? -ne 0 ]
 then
     cat inputfiles.list
-    echo error from getinputfiles.pl  --filelist inputfiles.list, exiting
+    echo error from getinputfiles.pl  --dd --filelist inputfiles.list, exiting
     exit -1
 fi
 ls -l
