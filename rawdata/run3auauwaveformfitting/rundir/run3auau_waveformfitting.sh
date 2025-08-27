@@ -46,7 +46,7 @@ echo arg7 \(qa outdir\): $7
 runnumber=$(printf "%010d" $2)
 
 perl CreateListFiles.pl $2 $3
-getinputfiles.pl  --filelist files.list
+getinputfiles.pl --dd  --filelist files.list
 if [ $? -ne 0 ]
 then
     cat inputfiles.list
@@ -59,14 +59,14 @@ root.exe -q -b Fun4All_Year2_Fitting.C\($1,\"files.list\",\"$4\",\"$6\"\)
 ls -l
 if [ -f $4 ]
 then
-    copyscript.pl $4 -mv -outdir $5
+    copyscript.pl $4 -mv -dd -outdir $5
 else
     echo could not find $4
     exit 1
 fi
 if [ -f $6 ]
 then
-    copyscript.pl $6 -mv -outdir $7
+    copyscript.pl $6 -mv -dd -outdir $7
 else
     echo could not find $6
 fi
