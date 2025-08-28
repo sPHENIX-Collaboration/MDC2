@@ -243,9 +243,9 @@ sub getentries
 {
     my @retarray;
     #write stupid macro to get events
-    if (! -f "GetEntries.C")
+    if (! -f "GetEntriesAndEventNr.C")
     {
-	open(F,">GetEntries.C");
+	open(F,">GetEntriesAndEventNr.C");
 	print F "#ifndef MACRO_GETENTRIES_C\n";
 	print F "#define MACRO_GETENTRIES_C\n";
 	print F "#include <frog/FROG.h>\n";
@@ -254,7 +254,7 @@ sub getentries
 	print F "R__LOAD_LIBRARY(libFROG.so)\n";
 	print F "R__LOAD_LIBRARY(libffaobjects.so)\n";
 	print F "\n";
-	print F "void GetEntries(const std::string &file)\n";
+	print F "void GetEntriesAndEventNr(const std::string &file)\n";
 	print F "{\n";
 	print F "  gSystem->Load(\"libFROG.so\");\n";
 	print F "  gSystem->Load(\"libg4dst.so\");\n";
@@ -300,7 +300,7 @@ sub getentries
 	close(F);
     }
     my $file = $_[0];
-    open(F2,"root.exe -q -b GetEntries.C\\(\\\"$file\\\"\\) 2>&1 |");
+    open(F2,"root.exe -q -b GetEntriesAndEventNr.C\\(\\\"$file\\\"\\) 2>&1 |");
     my $checknow = 0;
     my $entries = -2;
     my $firstevt = -1;
@@ -308,7 +308,6 @@ sub getentries
     while(my $entr = <F2>)
     {
 	chomp $entr;
-	#	print "$entr\n";
 	if ($entr =~ /$file/)
 	{
 	    $checknow = 1;
