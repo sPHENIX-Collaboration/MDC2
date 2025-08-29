@@ -52,10 +52,10 @@ R__LOAD_LIBRARY(libglobalQA.so)
 R__LOAD_LIBRARY(libcaloTreeGen.so)
 
 void Fun4All_Year2_Calib(int nEvents = 100,
-                         const std::string &fname = "DST_CALOFITTING_run3auau_ana502_2025p004_v001-00067507-00000.root",
-                         const std::string &outfile = "DST_CALO_run3auau_ana502_2025p005_v001-00067507-00000.root",
-                         const std::string &outfile_hist = "HIST_CALOQA_run3auau_ana502_2025p005_v001-00067507-00000.root",
-                         const std::string &dbtag = "2025p005")
+                         const std::string &fname = "DST_CALOFITTING_run3auau_new_newcdbtag_v001-00067507-00000.root",
+                         const std::string &outfile = "DST_CALO_run3auau_new_newcdbtag_v001-00067507-00000.root",
+                         const std::string &outfile_hist = "HIST_CALOQA_run3auau_new_newcdbtag_v001-00067507-00000.root",
+                         const std::string &dbtag = "newcdbtag")
 {
   // towerinfov1=kPRDFTowerv1, v2=:kWaveformTowerv2, v3=kPRDFWaveform, v4=kPRDFTowerv4
   CaloTowerDefs::BuilderType buildertype = CaloTowerDefs::kPRDFTowerv4;
