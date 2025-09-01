@@ -4,6 +4,8 @@
 #include <Calo_Fitting.C>
 #include <QA.C>
 
+#include <calopacketskimmer/CaloPacketSkimmer.h>
+
 #include <calotrigger/TriggerRunInfoReco.h>
 
 #include <calovalid/CaloFittingQA.h>
@@ -26,12 +28,13 @@
 R__LOAD_LIBRARY(libfun4allraw.so)
 R__LOAD_LIBRARY(libcalovalid.so)
 R__LOAD_LIBRARY(libcalotrigger.so)
+R__LOAD_LIBRARY(libCaloPacketSkimmer.so)
 
 // this pass containis the reco process that's stable wrt time stamps(raw tower building)
 void Fun4All_Year2_Fitting(int nEvents = 100,
 			   const std::string inlist = "files.list",
-                           const std::string &outfile = "DST_CALOFITTING_run2pp_ana502_2024p022_v001-00048099-00000.root",
-                           const std::string &outfile_hist = "HIST_CALOFITTINGQA_run2pp_ana502_2024p022_v001-00048099-00000.root",
+                           const std::string &outfile = "DST_CALOFITTING_run2pp_ana509_2024p022_v001-00048099-00000.root",
+                           const std::string &outfile_hist = "HIST_CALOFITTINGQA_run2pp_ana509_2024p022_v001-00048099-00000.root",
                            const std::string &dbtag = "2024p022")
 {
   gSystem->Load("libg4dst.so");
@@ -55,6 +58,9 @@ void Fun4All_Year2_Fitting(int nEvents = 100,
   // Get info from DB and store in DSTs
   TriggerRunInfoReco *triggerinfo = new TriggerRunInfoReco();
   se->registerSubsystem(triggerinfo);
+
+  CaloPacketSkimmer *calopacket = new CaloPacketSkimmer();
+  se->registerSubsystem(calopacket);
 
   Process_Calo_Fitting();
 
