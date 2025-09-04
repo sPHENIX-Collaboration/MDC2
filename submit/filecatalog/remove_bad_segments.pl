@@ -20,17 +20,26 @@ my $nopileup;
 my $verbose;
 my $embed;
 my $mom;
+my $nobkgpileup;
 my $ptmin;
 my $ptmax;
 my $particle;
 my $pileup;
 my $magnet;
-GetOptions("dsttype:s"=>\$dsttype, "embed:s"=>\$embed, "fm:s" =>\$fm, "kill"=>\$kill, "magnet:s" => \$magnet, "nopileup"=>\$nopileup, "pileup:s" => \$pileup, "runnumber:i" => \$runnumber, "type:i"=>\$system, "verbose" => \$verbose);
+GetOptions("dsttype:s"=>\$dsttype, "embed:s"=>\$embed, "fm:s" =>\$fm, "kill"=>\$kill, "magnet:s" => \$magnet, "nobkgpileup" => \$nobkgpileup, "nopileup"=>\$nopileup, "pileup:s" => \$pileup, "runnumber:i" => \$runnumber, "type:i"=>\$system, "verbose" => \$verbose);
 
 #if (! defined $pileup)
 #{
 #   $pileup = "3MHz";
 #}
+
+my $AuAu_bkgpileup = sprintf("_50kHz_bkg_0_20fm");
+my $pAu_bkgpileup = sprintf("_500kHz_bkg_0_10fm");
+if (defined $nobkgpileup)
+{
+    $pAu_bkgpileup = sprintf("");
+    $AuAu_bkgpileup = sprintf("");
+}
 
 #my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 my $attempts = 0;
@@ -82,8 +91,8 @@ my %daughters = (
     "DST_TRUTH_DISTORT" => [ "DST_TRKR_HIT_DISTORT", "DST_TRACKS_DISTORT" ],
     "DST_TRACKS" => [ "DST_GLOBAL", "DST_TRUTH_RECO" ],
     "DST_TRACKS_DISTORT" => [ "" ],
-    "DST_CALO_CLUSTER" => [ "DST_TRACKS" ],
-#    "DST_CALO_CLUSTER" => [ "" ],
+#    "DST_CALO_CLUSTER" => [ "DST_TRACKS" ],
+    "DST_CALO_CLUSTER" => [ "" ],
     "DST_CALO_NOZERO" => [ "DST_CALO_WAVEFORM" ],
     "DST_CALO_WAVEFORM" => [ "" ],
     "DSTOLD_BBC_G4HIT" => [ "" ],
@@ -175,6 +184,7 @@ if ($#ARGV < 0)
     print "   31 : Herwig Jet ptmin = 30 GeV\n";
     print "   32 : JS pythia8 Jet >15GeV\n";
     print "   33 : JS pythia8 Jet >50GeV\n";
+    print "   34 : JS pythia8 Jet >70GeV\n";
     print "-dsttype:\n";
     foreach my $tp (sort keys %daughters)
     {
@@ -194,7 +204,7 @@ if( ! exists $daughters{$dsttype})
     }
     exit(0);
 }
-if ($system < 1 || $system > 33)
+if ($system < 1 || $system > 34)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
@@ -230,6 +240,7 @@ if ($system < 1 || $system > 33)
     print "   31 : Herwig Jet ptmin = 30 GeV\n";
     print "   32 : JS pythia8 Jet >15GeV\n";
     print "   33 : JS pythia8 Jet >50GeV\n";
+    print "   34 : JS pythia8 Jet >70GeV\n";
     exit(0);
 }
 
@@ -262,7 +273,7 @@ my %productionsubdir = (
     "DST_TRUTH_DISTORT" => "pass3distort",
     "G4Hits" => "pass1"
     );
-if (defined $nopileup)
+if (defined $nopileup && !defined $nobkgpileup)
 {
     $productionsubdir{"DST_TRKR_HIT"} = "pass2_nopileup";
     $productionsubdir{"DST_CALO_CLUSTER"} = "pass2_nopileup";
@@ -270,13 +281,25 @@ if (defined $nopileup)
     $productionsubdir{"DST_CALO_WAVEFORM"} = "pass2calo_waveform_nopileup";
     $productionsubdir{"DST_BBC_EPD"} = "pass2_nopileup";
     $productionsubdir{"DST_MBD_EPD"} = "pass2_nopileup";
-    $productionsubdir{"DST_GLOBAL"} = "pass4_global_nopileup";
+    $productionsubdir{"DST_GLOBAL"} = "pass3_global_nopileup";
     $productionsubdir{"DST_TRKR_CLUSTER"} = "pass3_job0_nopileup";
     $productionsubdir{"DST_TRUTH"} = "pass2_nopileup";
     $productionsubdir{"DST_TRACKS"} = "pass3_jobC_nopileup";
     $productionsubdir{"DST_TRACKSEEDS"} = "pass3_jobA_nopileup";
     $productionsubdir{"DST_TRUTH_JET" } = "pass3jet_nopileup",
     $productionsubdir{"DST_TRUTH_RECO"} = "pass4_truthreco_nopileup"
+}
+if (defined $nobkgpileup)
+{
+    $productionsubdir{"DST_BBC_G4HIT"} = "pass2_embed_nopileup";
+    $productionsubdir{"DST_CALO_CLUSTER"} = "pass3calo_embed_nopileup";
+    $productionsubdir{"DST_CALO_G4HIT"} = "pass2_embed_nopileup";
+    $productionsubdir{"DST_TRKR_G4HIT"} = "pass2_embed_nopileup";
+    $productionsubdir{"DST_TRUTH_G4HIT"} = "pass2_embed_nopileup";
+    $productionsubdir{"DST_BBC_EPD"} = "pass3_mbdepd_embed_nopileup";
+    $productionsubdir{"DST_MBD_EPD"} = "pass3_mbdepd_embed_nopileup";
+    $productionsubdir{"DST_GLOBAL"} = "pass4_global_embed_nopileup";
+    $productionsubdir{"DST_TRUTH_JET" } = "pass3jet_embed_nopileup",
 }
 
 if (defined $pileup)
@@ -453,7 +476,7 @@ elsif ($system == 11)
 	}
 	else
 	{
-	    $pileupstring = sprintf("_sHijing_%s_50kHz_bkg_0_20fm",$fm);
+	    $pileupstring = sprintf("_sHijing_%s%s",$fm,$AuAu_bkgpileup);
 	}
     }
     $specialcondorfileadd{"G4Hits"} = "Jet30";
@@ -463,11 +486,14 @@ elsif ($system == 12)
     $specialsystemstring{"G4Hits"} = "pythia8_Jet10-";
     $systemstring = "pythia8_Jet10_";
     $topdir = sprintf("%s/JS_pp200_signal",$topdir);
-    $condorfileadd = sprintf("Jet10_%s",$pileup);
     if (defined $nopileup)
     {
 	$condorfileadd = sprintf("Jet10");
         $systemstring = "pythia8_Jet10";
+    }
+    else
+    {
+      $condorfileadd = sprintf("Jet10_%s",$pileup);
     }
     if (defined $embed)
     {
@@ -479,7 +505,7 @@ elsif ($system == 12)
 	}
 	else
 	{
-	    $pileupstring = sprintf("_sHijing_%s_50kHz_bkg_0_20fm",$fm);
+	    $pileupstring = sprintf("_sHijing_%s%s",$fm,$AuAu_bkgpileup);
 	}
     }
     $specialcondorfileadd{"G4Hits"} = "Jet10";
@@ -505,7 +531,7 @@ elsif ($system == 13)
 	}
 	else
 	{
-	    $pileupstring = sprintf("_sHijing_%s_50kHz_bkg_0_20fm",$fm);
+	    $pileupstring = sprintf("_sHijing_%s%s",$fm,$AuAu_bkgpileup);
 	}
     }
     $specialcondorfileadd{"G4Hits"} = "PhotonJet";
@@ -603,7 +629,7 @@ elsif ($system == 19)
 	}
 	else
 	{
-	    $pileupstring = sprintf("_sHijing_%s_50kHz_bkg_0_20fm",$fm);
+	    $pileupstring = sprintf("_sHijing_%s%s",$fm,$AuAu_bkgpileup);
 	}
     }
     $specialcondorfileadd{"G4Hits"} = "Jet40";
@@ -697,7 +723,7 @@ elsif ($system == 25)
 	}
 	else
 	{
-	    $pileupstring = sprintf("_sHijing_%s_50kHz_bkg_0_20fm",$fm);
+	    $pileupstring = sprintf("_sHijing_%s%s",$fm,$AuAu_bkgpileup);
 	}
     }
     $specialcondorfileadd{"G4Hits"} = "Detroit";
@@ -723,7 +749,7 @@ elsif ($system == 26)
 	}
 	else
 	{
-	    $pileupstring = sprintf("_sHijing_%s_50kHz_bkg_0_20fm",$fm);
+	    $pileupstring = sprintf("_sHijing_%s%s",$fm,$AuAu_bkgpileup);
 	}
     }
     $specialcondorfileadd{"G4Hits"} = "PhotonJet5";
@@ -752,7 +778,7 @@ elsif ($system == 27)
 	}
 	else
 	{
-	    $pileupstring = sprintf("_sHijing_%s_50kHz_bkg_0_20fm",$fm);
+	    $pileupstring = sprintf("_sHijing_%s%s",$fm,$AuAu_bkgpileup);
 	}
     }
     $specialcondorfileadd{"G4Hits"} = "PhotonJet10";
@@ -781,7 +807,7 @@ elsif ($system == 28)
 	}
 	else
 	{
-	    $pileupstring = sprintf("_sHijing_%s_50kHz_bkg_0_20fm",$fm);
+	    $pileupstring = sprintf("_sHijing_%s%s",$fm,$AuAu_bkgpileup);
 	}
     }
     $specialcondorfileadd{"G4Hits"} = "PhotonJet20";
@@ -810,7 +836,7 @@ elsif ($system == 29)
 	}
 	else
 	{
-	    $pileupstring = sprintf("_sHijing_%s_50kHz_bkg_0_20fm",$fm);
+	    $pileupstring = sprintf("_sHijing_%s%s",$fm,$AuAu_bkgpileup);
 	}
     }
     $specialcondorfileadd{"G4Hits"} = "MB";
@@ -839,7 +865,7 @@ elsif ($system == 30)
 	}
 	else
 	{
-	    $pileupstring = sprintf("_sHijing_%s_50kHz_bkg_0_20fm",$fm);
+	    $pileupstring = sprintf("_sHijing_%s%s",$fm,$AuAu_bkgpileup);
 	}
     }
     $specialcondorfileadd{"G4Hits"} = "Jet10";
@@ -868,7 +894,7 @@ elsif ($system == 31)
 	}
 	else
 	{
-	    $pileupstring = sprintf("_sHijing_%s_50kHz_bkg_0_20fm",$fm);
+	    $pileupstring = sprintf("_sHijing_%s%s",$fm,$AuAu_bkgpileup);
 	}
     }
     $specialcondorfileadd{"G4Hits"} = "Jet30";
@@ -897,7 +923,7 @@ elsif ($system == 32)
 	}
 	else
 	{
-	    $pileupstring = sprintf("_sHijing_%s_50kHz_bkg_0_20fm",$fm);
+	    $pileupstring = sprintf("_sHijing_%s%s",$fm,$AuAu_bkgpileup);
 	}
     }
     $specialcondorfileadd{"G4Hits"} = "Jet15";
@@ -907,11 +933,14 @@ elsif ($system == 33)
     $specialsystemstring{"G4Hits"} = "pythia8_Jet50-";
     $systemstring = "pythia8_Jet50_";
     $topdir = sprintf("%s/JS_pp200_signal",$topdir);
-    $condorfileadd = sprintf("Jet50_%s",$pileup);
     if (defined $nopileup)
     {
 	$condorfileadd = sprintf("Jet50");
         $systemstring = "pythia8_Jet50";
+    }
+    else
+    {
+      $condorfileadd = sprintf("Jet50_%s",$pileup);
     }
     if (defined $embed)
     {
@@ -923,10 +952,39 @@ elsif ($system == 33)
 	}
 	else
 	{
-	    $pileupstring = sprintf("_sHijing_%s_50kHz_bkg_0_20fm",$fm);
+	    $pileupstring = sprintf("_sHijing_%s%s",$fm,$AuAu_bkgpileup);
 	}
     }
     $specialcondorfileadd{"G4Hits"} = "Jet50";
+}
+elsif ($system == 34)
+{
+    $specialsystemstring{"G4Hits"} = "pythia8_Jet70-";
+    $systemstring = "pythia8_Jet70_";
+    $topdir = sprintf("%s/JS_pp200_signal",$topdir);
+    if (defined $nopileup)
+    {
+	$condorfileadd = sprintf("Jet70");
+        $systemstring = "pythia8_Jet70";
+    }
+    else
+    {
+      $condorfileadd = sprintf("Jet70_%s",$pileup);
+    }
+    if (defined $embed)
+    {
+	$condorfileadd = sprintf("Jet70");
+        $systemstring = "pythia8_Jet70";
+	if ($embed eq "pau")
+	{
+	    $pileupstring = "_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm";
+	}
+	else
+	{
+	    $pileupstring = sprintf("_sHijing_%s%s",$fm,$AuAu_bkgpileup);
+	}
+    }
+    $specialcondorfileadd{"G4Hits"} = "Jet70";
 }
 else
 {
