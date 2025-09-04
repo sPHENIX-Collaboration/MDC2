@@ -35,7 +35,7 @@ int Fun4All_G4_Cosmic(
   const string &outputFile = "G4Hits_cosmic-0000016-000000.root",
   const string &outdir = ".",
   const string &field = "magnet_on",
-  const string &cdbtag = "MDC2_ana.417")
+  const string &cdbtag = "MDC2")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
