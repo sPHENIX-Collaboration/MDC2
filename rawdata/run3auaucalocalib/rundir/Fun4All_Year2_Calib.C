@@ -22,6 +22,8 @@
 
 #include <globalqa/GlobalQA.h>
 
+#include <eventplaneinfo/EventPlaneCalibration.h>
+
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/HeadReco.h>
@@ -49,12 +51,13 @@ R__LOAD_LIBRARY(libzdcinfo.so)
 R__LOAD_LIBRARY(libglobalvertex.so)
 R__LOAD_LIBRARY(libcalovalid.so)
 R__LOAD_LIBRARY(libglobalQA.so)
-R__LOAD_LIBRARY(libcaloTreeGen.so)
+R__LOAD_LIBRARY(libeventplaneinfo.so)
 
 void Fun4All_Year2_Calib(int nEvents = 100,
                          const std::string &fname = "DST_CALOFITTING_run3auau_new_newcdbtag_v001-00067507-00000.root",
                          const std::string &outfile = "DST_CALO_run3auau_new_newcdbtag_v001-00067507-00000.root",
                          const std::string &outfile_hist = "HIST_CALOQA_run3auau_new_newcdbtag_v001-00067507-00000.root",
+                         const std::string &outfile_sepd = "CALIB_EVENTPLANE_run3auau_new_newcdbtag_v001-00067507-00000.root",
                          const std::string &dbtag = "newcdbtag")
 {
   // towerinfov1=kPRDFTowerv1, v2=:kWaveformTowerv2, v3=kPRDFWaveform, v4=kPRDFTowerv4
@@ -95,6 +98,21 @@ void Fun4All_Year2_Calib(int nEvents = 100,
   GlobalVertexReco *gvertex = new GlobalVertexReco();
   se->registerSubsystem(gvertex);
 
+    /////////////////////////////////////////////////////
+  // Set status of CALO towers, Calibrate towers,  Cluster
+  Process_Calo_Calib();
+
+  EventPlaneCalibration *eprec = new EventPlaneCalibration();
+  eprec->set_outfilename(outfile_sepd);
+  eprec->set_sepd_epreco(true);
+  se->registerSubsystem(eprec);
+
+  ///////////////////////////////////
+  // Validation
+  CaloValid *ca = new CaloValid("CaloValid");
+  ca->set_timing_cut_width(200);
+  se->registerSubsystem(ca);
+
   GlobalQA *gqa = new GlobalQA("GlobalQA");
   se->registerSubsystem(gqa);
 
@@ -106,15 +124,6 @@ void Fun4All_Year2_Calib(int nEvents = 100,
   intrue2->AddFile(geoLocation);
   se->registerInputManager(intrue2);
 
-  /////////////////////////////////////////////////////
-  // Set status of CALO towers, Calibrate towers,  Cluster
-  Process_Calo_Calib();
-
-  ///////////////////////////////////
-  // Validation
-  CaloValid *ca = new CaloValid("CaloValid");
-  ca->set_timing_cut_width(200);
-  se->registerSubsystem(ca);
 
   Fun4AllInputManager *In = new Fun4AllDstInputManager("in");
   In->AddFile(fname);
