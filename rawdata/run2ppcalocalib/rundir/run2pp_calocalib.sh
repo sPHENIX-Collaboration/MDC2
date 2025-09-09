@@ -8,7 +8,7 @@ this_script=`readlink -f $this_script`
 this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n ana.502
+source /opt/sphenix/core/bin/sphenix_setup.sh -n ana.509
 
 hostname
 
@@ -45,10 +45,10 @@ echo arg7 \(qa outfile\): $7
 echo arg8 \(qa outdir\): $8
 
 runnumber=$(printf "%010d" $2)
-getinputfiles.pl $4
+getinputfiles.pl -dd $4
 if [ $? -ne 0 ]
 then
-    echo error from getinputfiles.pl  $4, exiting
+    echo error from getinputfiles.pl -dd $4, exiting
     exit -1
 fi
 ls -l
@@ -57,14 +57,14 @@ root.exe -q -b Fun4All_Year2_Calib.C\($1,\"$4\",\"$5\",\"$7\"\)
 ls -l
 if [ -f $5 ]
 then
-    copyscript.pl $5 -mv -outdir $6
+    copyscript.pl $5 -dd -mv -outdir $6
 else
     echo could not find $5
     exit 1
 fi
 if [ -f $7 ]
 then
-    copyscript.pl $7 -mv -outdir $8
+    copyscript.pl $7 -dd -mv -outdir $8
 else
     echo could not find $7
 fi
