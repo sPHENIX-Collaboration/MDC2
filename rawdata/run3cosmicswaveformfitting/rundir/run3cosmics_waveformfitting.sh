@@ -48,7 +48,7 @@ echo arg8 \(qa outdir\): $8
 runnumber=$(printf "%010d" $2)
 
 perl CreateListFiles.pl $2 $3
-getinputfiles.pl  --filelist files.list
+getinputfiles.pl -dd --filelist files.list
 if [ $? -ne 0 ]
 then
     cat inputfiles.list
@@ -61,19 +61,19 @@ root.exe -q -b Fun4All_New_HCalCosmics.C\($1,\"files.list\",\"$4\",\"$6\",\"$7\"
 ls -l
 if [ -f $4 ]
 then
-    copyscript.pl $4 -mv -outdir $5
+    copyscript.pl $4 -dd -mv -outdir $5
 else
     echo could not find $4
 fi
 if [ -f $6 ]
 then
-    copyscript.pl $6 -mv -outdir $8
+    copyscript.pl $6 -dd -mv -outdir $8
 else
     echo could not find $6
 fi
 if [ -f $7 ]
 then
-    copyscript.pl $7 -mv -outdir $8
+    copyscript.pl $7 -dd -mv -outdir $8
 else
     echo could not find $7
 fi
