@@ -22,9 +22,9 @@ my $backupdir = sprintf("/sphenix/sim/sim01/sphnxpro/MDC2/backup");
 my $outdir = ".";
 my $test;
 my $verbosity;
-my $use_dd = 1;
-my $use_rsync;
+my $use_dd;
 my $use_mv;
+my $use_rsync;
 GetOptions("dd" => \$use_dd, "mv" => \$use_mv, "outdir:s"=>\$outdir, "test"=>\$test, "verbosity" => \$verbosity);
 
 
@@ -63,8 +63,7 @@ if (! defined $username)
 my $size = stat($file)->size;
 
 my $md5sum = &getmd5($file);
-my $entries = &getentries($file);
-
+my ($entries,$firstevent,$lastevent) = &getentries($lfn);
 my $copycmd;
 my $outfile = sprintf("%s/%s",$outdir,$lfn);
 
@@ -72,7 +71,7 @@ my $outhost;
 $copycmd = sprintf("cp %s %s",$file,$outfile);
 if (defined $use_dd)
 {
-    $copycmd = sprintf("dd if=%s of=%s bs=12M",$file,$outfile);
+    $copycmd = sprintf("dd if=%s of=%s bs=12M 2>&1",$file,$outfile);
 }
 if (defined $use_rsync)
 {
@@ -199,17 +198,17 @@ if ($attempts > 0)
 }
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $insertfile = $dbh->prepare("insert into files (lfn,full_host_name,full_file_path,time,size,md5) values (?,?,?,'now',?,?) on conflict (lfn,full_host_name,full_file_path) do update set time = EXCLUDED.time, size = EXCLUDED.size, md5 = EXCLUDED.md5");
-my $insertdataset = $dbh->prepare("insert into datasets (filename,runnumber,segment,size,dataset,dsttype,events,tag) values (?,?,?,?,'run3auau',?,?,?) on conflict (filename,dataset) do update set runnumber = EXCLUDED.runnumber, segment = EXCLUDED.segment, size = EXCLUDED.size, dsttype = EXCLUDED.dsttype, events = EXCLUDED.events");
+my $insertdataset = $dbh->prepare("insert into datasets (filename,runnumber,segment,size,dataset,dsttype,events,firstevent,lastevent,tag) values (?,?,?,?,'run3auau',?,?,?,?,?) on conflict (filename,dataset) do update set runnumber = EXCLUDED.runnumber, segment = EXCLUDED.segment, size = EXCLUDED.size, dsttype = EXCLUDED.dsttype, events = EXCLUDED.events");
 
 # first files table
 $insertfile->execute($lfn,$outhost,$outfile,$size,$md5sum);
 
 my $splitstring = "_run3auau_";
+
 my @sp1 = split(/$splitstring/,$lfn);
 if (! defined $test)
 {
-#    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries,"new_newcdbtag_v007");
-    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries,'ana502_nocdbtag_v001');
+    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries,$firstevent,$lastevent,'ana502_nocdbtag_v001');
 }
 else
 {
@@ -239,15 +238,20 @@ sub getmd5
 
 sub getentries
 {
+    my @retarray;
     #write stupid macro to get events
-    if (! -f "GetEntries.C")
+    if (! -f "GetEntriesAndEventNr.C")
     {
-	open(F,">GetEntries.C");
+	open(F,">GetEntriesAndEventNr.C");
 	print F "#ifndef MACRO_GETENTRIES_C\n";
 	print F "#define MACRO_GETENTRIES_C\n";
 	print F "#include <frog/FROG.h>\n";
+	print F "#include <ffaobjects/EventHeaderv1.h>\n";
+	print F "\n";
 	print F "R__LOAD_LIBRARY(libFROG.so)\n";
-	print F "void GetEntries(const std::string &file)\n";
+	print F "R__LOAD_LIBRARY(libffaobjects.so)\n";
+	print F "\n";
+	print F "void GetEntriesAndEventNr(const std::string &file)\n";
 	print F "{\n";
 	print F "  gSystem->Load(\"libFROG.so\");\n";
 	print F "  gSystem->Load(\"libg4dst.so\");\n";
@@ -261,38 +265,69 @@ sub getentries
 	print F "  TFile *f = TFile::Open(fr->location(file));\n";
 	print F "  cout << \"Getting events for \" << file << endl;\n";
 	print F "  TTree *T = (TTree *) f->Get(\"T\");\n";
-	print F "  cout << \"Number of Entries: \" <<  T->GetEntries() << endl;\n";
+	print F "  long lastEvent = -1;\n";
+	print F "  long firstEvent = -1;\n";
+	print F "  if (! T)\n";
+	print F "  {\n";
+	print F "    cout << \"Number of Entries: -2\" << endl;\n";
+	print F "    cout << \"First event number: \" << firstEvent << endl;\n";
+	print F "    cout << \"Last event number: \" << lastEvent << endl;\n";
+	print F "  }\n";
+	print F "  else\n";
+	print F "  {\n";
+	print F "    cout << \"Number of Entries: \" <<  T->GetEntries() << endl;\n";
+	print F "    EventHeaderv1 *eventhead {nullptr};\n";
+	print F "    Int_t iret = -9;\n";
+	print F "    iret = T->SetBranchAddress(\"DST#EventHeader\",&eventhead);\n";
+	print F "    T->GetEntry(0);\n";
+	print F "    if (eventhead)\n";
+	print F "    {\n";
+	print F "      firstEvent=eventhead->get_EvtSequence();\n";
+	print F "    }\n";
+	print F "    T->GetEntry(T->GetEntries()-1);\n";
+	print F "    if (eventhead)\n";
+	print F "    {\n";
+	print F "      lastEvent=eventhead->get_EvtSequence();\n";
+	print F "    }\n";
+	print F "    cout << \"First event number: \" << firstEvent << endl;\n";
+	print F "    cout << \"Last event number: \" << lastEvent << endl;\n";
+	print F "  }\n";
 	print F "}\n";
 	print F "#endif\n";
 	close(F);
     }
     my $file = $_[0];
-    open(F2,"root.exe -q -b GetEntries.C\\(\\\"$file\\\"\\) 2>&1 |");
-    my $checknow = 0;
+    open(F2,"root.exe -q -b GetEntriesAndEventNr.C\\(\\\"$file\\\"\\) 2>&1 |");
     my $entries = -2;
+    my $firstevt = -1;
+    my $lastevt = -1;
     while(my $entr = <F2>)
     {
+	print $entr;
 	chomp $entr;
-	#	print "$entr\n";
-	if ($entr =~ /$file/)
+	if ($entr =~ /Number of Entries/)
 	{
-	    $checknow = 1;
-	    next;
+	    my @sp1 = split(/:/,$entr);
+	    $entries = $sp1[$#sp1];
+	    $entries =~ s/ //g; #just to be safe, strip empty spaces
 	}
-	if ($checknow == 1)
+	if ($entr =~ /First event number/)
 	{
-	    if ($entr =~ /Number of Entries/)
-	    {
-		my @sp1 = split(/:/,$entr);
-		$entries = $sp1[$#sp1];
-		$entries =~ s/ //g; #just to be safe, strip empty spaces 
-		last;
-	    }
+	    my @sp1 = split(/:/,$entr);
+	    $firstevt = $sp1[$#sp1];
+	    $firstevt =~ s/ //g; #just to be safe, strip empty spaces
+	}
+	if ($entr =~ /Last event number/)
+	{
+	    my @sp1 = split(/:/,$entr);
+	    $lastevt = $sp1[$#sp1];
+	    $lastevt =~ s/ //g; #just to be safe, strip empty spaces
 	}
     }
     close(F2);
-    print "file $file, entries: $entries\n";
-    return $entries;
+    push @retarray, $entries,$firstevt,$lastevt;
+    print "file $file, entries: $entries, first evt: $firstevt, last evt: $lastevt\n";
+    return @retarray;
 }
 
 sub islustremounted

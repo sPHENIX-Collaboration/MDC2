@@ -67,13 +67,24 @@ while (my @runs = $getruns->fetchrow_array())
     my $ntfstat =  $fullrun->rows;
     if ($ntfstat > 1) # find t and f for segment > 0 -->  transfer ongoing
     {
+	print "run $runnumber is still being transferred\n";
 	next; # transfer not done yet, since we need all segments anyway for the event combining
+    }
+    elsif ($ntfstat == 0)
+    {
+	print "run $runnumber has only 0th segment\n";
+	    $getrawsegsfirst->execute($runnumber);
+	    while (my @res = $getrawsegsfirst->fetchrow_array())
+	    {
+		$goodtogo{$res[0]} = 1;
+	    }
     }
     else
     {
         my @tstat = $fullrun->fetchrow_array();
 	if ($tstat[0] == 0)
 	{
+	    print "single file transfer for run $runnumber\n";
 	    $getrawsegsfirst->execute($runnumber);
 	    while (my @res = $getrawsegsfirst->fetchrow_array())
 	    {
@@ -82,6 +93,7 @@ while (my @runs = $getruns->fetchrow_array())
 	}
 	else
 	{
+	    print "all files transferred for run $runnumber\n";
 	    my %daqfiles = ();
 	    $getdaqsegs->execute($runnumber);
 	    while (my @res = $getdaqsegs->fetchrow_array())
