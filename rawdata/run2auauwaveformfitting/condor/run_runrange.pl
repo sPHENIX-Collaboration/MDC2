@@ -7,8 +7,8 @@ use Getopt::Long;
 use DBI;
 # first physics run in run2auau: 53381
 # last physics run (from prod): 54974
-my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production2/run2auau/physics/calofitting/ana502_2024p022_v001");
-my $qaoutdir = sprintf("/sphenix/data/data02/sphnxpro/production2/run2auau/physics/calofitting/ana502_2024p022_v001");
+my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production2/run2auau/physics/calofitting/ana509_2024p022_v001");
+my $qaoutdir = sprintf("/sphenix/data/data02/sphnxpro/production2/run2auau/physics/calofitting/ana509_2024p022_v001");
 my $events = 0;
 my $incremental;
 my $killexist;
@@ -76,8 +76,8 @@ while (my @runs = $getruns->fetchrow_array())
 	next;
     }
 
-    my $outfilename = sprintf("DST_CALOFITTING_run2auau_ana502_2024p022_v001-%08d-%05d.root",$runnumber,$segment);
-    my $qaoutfilename = sprintf("HIST_CALOFITTINGQA_run2auau_ana502_2024p022_v001-%08d-%05d.root",$runnumber,$segment);
+    my $outfilename = sprintf("DST_CALOFITTING_run2auau_ana509_2024p022_v001-%08d-%05d.root",$runnumber,$segment);
+    my $qaoutfilename = sprintf("HIST_CALOFITTINGQA_run2auau_ana509_2024p022_v001-%08d-%05d.root",$runnumber,$segment);
     $chkfile->execute($outfilename);
     if ($chkfile->rows > 0)
     {
