@@ -62,7 +62,6 @@ then
     copyscript.pl $4 -mv -dd -outdir $5
 else
     echo could not find $4
-    exit 1
 fi
 if [ -f $6 ]
 then

@@ -33,8 +33,8 @@ R__LOAD_LIBRARY(libCaloPacketSkimmer.so)
 // this pass containis the reco process that's stable wrt time stamps(raw tower building)
 void Fun4All_Year2_Fitting(int nEvents = 100,
 			   const std::string inlist = "files.list",
-                           const std::string &outfile = "DST_CALOFITTING_run3auau_new_newcdbtag_v001-00054530-00000.root",
-                           const std::string &outfile_hist = "HIST_CALOFITTINGQA_run3auau_new_newcdbtag_v001-00054530-00000.root",
+                           const std::string &outfile = "DST_CALOFITTING_run3auau_new_newcdbtag_v008-00054530-00000.root",
+                           const std::string &outfile_hist = "HIST_CALOFITTINGQA_run3auau_new_newcdbtag_v008-00054530-00000.root",
                            const std::string &dbtag = "newcdbtag")
 {
   gSystem->Load("libg4dst.so");

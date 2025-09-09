@@ -77,8 +77,8 @@ while (my @runs = $getruns->fetchrow_array())
 	print "found only $nfiles for run $runnumber, segment $segment, ignoring\n";
 	next;
     }
-    my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production2/run3auau/%s/calofitting/new_newcdbtag_v001",$runtype);
-    my $qaoutdir = sprintf("/sphenix/data/data02/sphnxpro/production2/run3auau/%s/calofitting/new_newcdbtag_v001",$runtype);
+    my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production2/run3auau/%s/calofitting/new_newcdbtag_v008",$runtype);
+    my $qaoutdir = sprintf("/sphenix/data/data02/sphnxpro/production2/run3auau/%s/calofitting/new_newcdbtag_v008",$runtype);
     if (! exists $dircreated{$runtype})
     {
 	if (! -d $outdir)
@@ -91,15 +91,15 @@ while (my @runs = $getruns->fetchrow_array())
 	}
 	$dircreated{$runtype} = 1;
     }
-    my $outfilename = sprintf("DST_CALOFITTING_run3auau_new_newcdbtag_v001-%08d-%05d.root",$runnumber,$segment);
-    my $qaoutfilename = sprintf("HIST_CALOFITTINGQA_run3auau_new_newcdbtag_v001-%08d-%05d.root",$runnumber,$segment);
+    my $outfilename = sprintf("DST_CALOFITTING_run3auau_new_newcdbtag_v008-%08d-%05d.root",$runnumber,$segment);
+    my $qaoutfilename = sprintf("HIST_CALOFITTINGQA_run3auau_new_newcdbtag_v008-%08d-%05d.root",$runnumber,$segment);
     if ($runs[2] =~ /beam/)
     {
-	$outfilename = sprintf("DST_CALOFITTING_run3%s_new_newcdbtag_v001-%08d-%05d.root",$runtype,$runnumber,$segment);
-	$qaoutfilename = sprintf("HIST_CALOFITTINGQA_run3%s_new_newcdbtag_v001-%08d-%05d.root",$runtype,$runnumber,$segment);
+	$outfilename = sprintf("DST_CALOFITTING_run3%s_new_newcdbtag_v008-%08d-%05d.root",$runtype,$runnumber,$segment);
+	$qaoutfilename = sprintf("HIST_CALOFITTINGQA_run3%s_new_newcdbtag_v008-%08d-%05d.root",$runtype,$runnumber,$segment);
     }
     
-    $chkfile->execute($outfilename);
+    $chkfile->execute($qaoutfilename);
     if ($chkfile->rows > 0)
     {
 	if ($verbosity > 0)

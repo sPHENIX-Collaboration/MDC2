@@ -211,7 +211,7 @@ if ($lfn =~ /_run3beam_/)
 my @sp1 = split(/$splitstring/,$lfn);
 if (! defined $test)
 {
-    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries,$firstevent,$lastevent,'new_newcdbtag_v001');
+    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries,$firstevent,$lastevent,'new_newcdbtag_v008');
 }
 else
 {
@@ -280,7 +280,7 @@ sub getentries
 	print F "  long firstEvent = -1;\n";
 	print F "  if (T) // this makes only sense if we have a T TTree\n";
 	print F "  {\n";
-	print F "    SyncObjectv1 *sync;\n";
+	print F "    SyncObjectv1 *sync {nullptr};\n";
 	print F "    T->SetBranchAddress(\"DST#Sync\",&sync);\n";
 	print F "    T->GetEntry(0);\n";
 	print F "    if (sync)\n";
@@ -301,38 +301,29 @@ sub getentries
     }
     my $file = $_[0];
     open(F2,"root.exe -q -b GetEntriesAndEventNr.C\\(\\\"$file\\\"\\) 2>&1 |");
-    my $checknow = 0;
     my $entries = -2;
     my $firstevt = -1;
     my $lastevt = -1;
     while(my $entr = <F2>)
     {
 	chomp $entr;
-	if ($entr =~ /$file/)
+	if ($entr =~ /Number of Entries/)
 	{
-	    $checknow = 1;
-	    next;
+	    my @sp1 = split(/:/,$entr);
+	    $entries = $sp1[$#sp1];
+	    $entries =~ s/ //g; #just to be safe, strip empty spaces
 	}
-	if ($checknow == 1)
+	if ($entr =~ /First event number/)
 	{
-	    if ($entr =~ /Number of Entries/)
-	    {
-		my @sp1 = split(/:/,$entr);
-		$entries = $sp1[$#sp1];
-		$entries =~ s/ //g; #just to be safe, strip empty spaces
-	    }
-	    if ($entr =~ /First event number/)
-	    {
-		my @sp1 = split(/:/,$entr);
-		$firstevt = $sp1[$#sp1];
-		$firstevt =~ s/ //g; #just to be safe, strip empty spaces
-	    }
-	    if ($entr =~ /Last event number/)
-	    {
-		my @sp1 = split(/:/,$entr);
-		$lastevt = $sp1[$#sp1];
-		$lastevt =~ s/ //g; #just to be safe, strip empty spaces
-	    }
+	    my @sp1 = split(/:/,$entr);
+	    $firstevt = $sp1[$#sp1];
+	    $firstevt =~ s/ //g; #just to be safe, strip empty spaces
+	}
+	if ($entr =~ /Last event number/)
+	{
+	    my @sp1 = split(/:/,$entr);
+	    $lastevt = $sp1[$#sp1];
+	    $lastevt =~ s/ //g; #just to be safe, strip empty spaces
 	}
     }
     close(F2);
