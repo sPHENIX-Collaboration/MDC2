@@ -78,15 +78,17 @@ while (my @runs = $getruns->fetchrow_array())
     }
     my $outfilename = sprintf("DST_CALOFITTING_run2pp_ana509_2024p022_v001-%08d-%05d.root",$runnumber,$segment);
     my $qaoutfilename = sprintf("HIST_CALOFITTINGQA_run2pp_ana509_2024p022_v001-%08d-%05d.root",$runnumber,$segment);
-    $chkfile->execute($outfilename);
+    $chkfile->execute($qaoutfilename);
     if ($chkfile->rows > 0)
     {
 	if ($verbosity > 0)
 	{
-	    print "$outfilename exists\n";
+	    print "$qaoutfilename exists\n";
 	}
 	next;
     }
+#    print "$qaoutfilename missing\n";
+#    die;
     my $tstflag="";
     if (defined $test)
     {
