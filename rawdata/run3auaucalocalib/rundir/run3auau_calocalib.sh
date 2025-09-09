@@ -25,10 +25,12 @@ fi
 
 # arguments 
 # $1: number of events
-# $2: dst outfile
-# $3: dst outdir
-# $4: qa outfile
-# $5: qa outdir
+# $5: dst outfile
+# $6: dst outdir
+# $7: qa outfile
+# $8: qa outdir
+# $9: calib ep outfile
+# $10: calib ep outdir
 
 
 echo 'here comes your environment'
@@ -43,18 +45,20 @@ echo arg5 \(dst outfile\): $5
 echo arg6 \(dst outdir\): $6
 echo arg7 \(qa outfile\): $7
 echo arg8 \(qa outdir\): $8
+echo arg9 \(calib ep outfile\): $9
+echo arg10 \(calib ep outdir\): ${10}
 
 runnumber=$(printf "%010d" $2)
 
-ls -l
-echo running root.exe -q -b Fun4All_Year2_Calib.C\($1,\"$4\",\"$5\",\"$7\"\)
-root.exe -q -b Fun4All_Year2_Calib.C\($1,\"$4\",\"$5\",\"$7\"\)
 getinputfiles.pl -dd $4
 if [ $? -ne 0 ]
 then
     echo error from getinputfiles.pl  $4, exiting
     exit -1
 fi
+ls -l
+echo running root.exe -q -b Fun4All_Year2_Calib.C\($1,\"$4\",\"$5\",\"$7\",\"$9\"\)
+root.exe -q -b Fun4All_Year2_Calib.C\($1,\"$4\",\"$5\",\"$7\",\"$9\"\)
 ls -l
 if [ -f $5 ]
 then
@@ -68,6 +72,12 @@ then
     copyscript.pl $7 -dd -mv -outdir $8
 else
     echo could not find $7
+fi
+if [ -f $9 ]
+then
+    copyscript.pl $9 -dd -mv -outdir ${10}
+else
+    echo could not find $9
 fi
 
 echo "script done"

@@ -1,6 +1,6 @@
 Universe 	= vanilla
 Executable 	= $(executable)
-Arguments       = $(nevents) $(runnumber) $(segment) $(infile) $(dstoutfile) $(dstoutdir) $(qafile) $(qadir)
+Arguments       = $(nevents) $(runnumber) $(segment) $(infile) $(dstoutfile) $(dstoutdir) $(qafile) $(qadir) $(calib_ep_file) $(calib_ep_dir)
 Output  	= $(outfile)
 Error 		= $(errfile)
 Log  		= $(condorlogfile)
@@ -11,4 +11,4 @@ Priority = $(baseprio)
 job_lease_duration = 3600
 Rank = -SlotID
 batch_name = $(batchname)
-Queue executable, nevents, runnumber, segment, infile, dstoutfile, dstoutdir, qafile, qadir, errfile, outfile, condorlogfile, rundir, baseprio, batchname from condor.list
+Queue executable, nevents, runnumber, segment, infile, dstoutfile, dstoutdir, qafile, qadir, calib_ep_file, calib_ep_dir, errfile, outfile, condorlogfile, rundir, baseprio, batchname from condor.list

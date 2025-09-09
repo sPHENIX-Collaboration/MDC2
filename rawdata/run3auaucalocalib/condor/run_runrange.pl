@@ -48,7 +48,7 @@ if (-f $condorlistfile)
 }
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
-my $getruns = $dbh->prepare("select runnumber,segment,filename from datasets where runnumber >= $min_runnumber and runnumber <= $max_runnumber and (filename like 'DST_CALOFITTING_run3auau_new_newcdbtag_v001-%' or filename like 'DST_CALOFITTING_run3beam_new_newcdbtag_v001-%') order by runnumber,segment");
+my $getruns = $dbh->prepare("select runnumber,segment,filename from datasets where runnumber >= $min_runnumber and runnumber <= $max_runnumber and (filename like 'DST_CALOFITTING_run3auau_new_newcdbtag_v008-%' or filename like 'DST_CALOFITTING_run3beam_new_newcdbtag_v008-%') order by runnumber,segment");
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 my $nsubmit = 0;
 my %dircreated = ();
@@ -64,8 +64,9 @@ while (my @runs = $getruns->fetchrow_array())
 	$runtype = "beam";
     }
    
-    my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production/run3auau/%s/calocalib/new_newcdbtag_v001",$runtype);
-    my $qaoutdir = sprintf("/sphenix/data/data02/sphnxpro/production/run3auau/%s/calocalib/new_newcdbtag_v001",$runtype);
+    my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production/run3auau/%s/calocalib/new_newcdbtag_v008",$runtype);
+    my $qaoutdir = sprintf("/sphenix/data/data02/sphnxpro/production/run3auau/%s/calocalib/new_newcdbtag_v008",$runtype);
+    my $calib_ep_outdir = sprintf("/sphenix/data/data02/sphnxpro/production/run3auau/%s/calibeventplane/new_newcdbtag_v008",$runtype);
     if (! exists $dircreated{$runtype})
     {
 	if (! -d $outdir)
@@ -78,12 +79,14 @@ while (my @runs = $getruns->fetchrow_array())
 	}
 	$dircreated{$runtype} = 1;
     }
-    my $outfilename = sprintf("DST_CALO_run3auau_new_newcdbtag_v001-%08d-%05d.root",$runnumber,$segment);
-    my $qaoutfilename = sprintf("HIST_CALOQA_run3auau_new_newcdbtag_v001-%08d-%05d.root",$runnumber,$segment);
+    my $outfilename = sprintf("DST_CALO_run3auau_new_newcdbtag_v008-%08d-%05d.root",$runnumber,$segment);
+    my $qaoutfilename = sprintf("HIST_CALOQA_run3auau_new_newcdbtag_v008-%08d-%05d.root",$runnumber,$segment);
+    my $calib_ep_outfilename = sprintf("CALIB_EVENTPLANE_run3auau_new_newcdbtag_v008-%08d-%05d.root",$runnumber,$segment);
     if ($runs[2] =~ /beam/)
     {
-	$outfilename = sprintf("DST_CALO_run3%s_new_newcdbtag_v001-%08d-%05d.root",$runtype,$runnumber,$segment);
-	$qaoutfilename = sprintf("HIST_CALOQA_run3%s_new_newcdbtag_v001-%08d-%05d.root",$runtype,$runnumber,$segment);
+	$outfilename = sprintf("DST_CALO_run3%s_new_newcdbtag_v008-%08d-%05d.root",$runtype,$runnumber,$segment);
+	$qaoutfilename = sprintf("HIST_CALOQA_run3%s_new_newcdbtag_v008-%08d-%05d.root",$runtype,$runnumber,$segment);
+	$calib_ep_outfilename = sprintf("CALIB_EVENTPLANE_run3%s_new_newcdbtag_v008-%08d-%05d.root",$runtype,$runnumber,$segment);
     }
     $chkfile->execute($outfilename);
     if ($chkfile->rows > 0)
@@ -105,7 +108,7 @@ while (my @runs = $getruns->fetchrow_array())
     }
     #    print "executing perl run_condor.pl $events $runnumber $jobno $indir $tstflag\n";
 
-    my $subcmd = sprintf("perl run_condor.pl %d %d %d %s %s %s %s %s %s",$events, $runnumber, $segment, $lfn, $outfilename, $outdir, $qaoutfilename, $qaoutdir, $tstflag);
+    my $subcmd = sprintf("perl run_condor.pl %d %d %d %s %s %s %s %s %s %s %s",$events, $runnumber, $segment, $lfn, $outfilename, $outdir, $qaoutfilename, $qaoutdir, $calib_ep_outfilename, $calib_ep_outdir, $tstflag);
     print "cmd: $subcmd\n";
     system($subcmd);
     my $exit_value  = $? >> 8;

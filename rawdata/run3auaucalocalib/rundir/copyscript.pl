@@ -211,7 +211,7 @@ if ($lfn =~ /_run3beam_/)
 my @sp1 = split(/$splitstring/,$lfn);
 if (! defined $test)
 {
-    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries,$firstevent,$lastevent,'new_newcdbtag_v001');
+    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries,$firstevent,$lastevent,'new_newcdbtag_v008');
 }
 else
 {
@@ -279,7 +279,7 @@ sub getentries
 	print F "  else\n";
 	print F "  {\n";
 	print F "    cout << \"Number of Entries: \" <<  T->GetEntries() << endl;\n";
-	print F "    SyncObjectv1 *sync;\n";
+	print F "    SyncObjectv1 *sync {nullptr};\n";
 	print F "    Int_t iret = -9;\n";
 	print F "    iret = T->SetBranchAddress(\"DST#Sync\",&sync);\n";
 	print F "    T->GetEntry(0);\n";

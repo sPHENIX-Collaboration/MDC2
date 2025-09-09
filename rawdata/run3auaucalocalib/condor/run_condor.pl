@@ -35,6 +35,8 @@ my $dstoutfile = $ARGV[4];
 my $dstoutdir = $ARGV[5];
 my $qafile = $ARGV[6];
 my $qadir = $ARGV[7];
+my $calib_ep_file = $ARGV[8];
+my $calib_ep_dir = $ARGV[9];
 my $batchname = sprintf("%s",basename($executable));
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%08d-%05d",$runnumber,$segment);
@@ -65,7 +67,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $runnumber $segment $infile $dstoutfile $dstoutdir $qafile $qadir\"\n";
+print F "Arguments       = \"$nevents $runnumber $segment $infile $dstoutfile $dstoutdir $qafile $qadir $calib_ep_file $calib_ep_dir\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -88,5 +90,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $runnumber, $segment, $infile, $dstoutfile, $dstoutdir, $qafile, $qadir, $errfile, $outfile, $condorlogfile, $rundir, $baseprio, $batchname\n";
+print F "$executable, $nevents, $runnumber, $segment, $infile, $dstoutfile, $dstoutdir, $qafile, $qadir, $calib_ep_file, $calib_ep_dir, $errfile, $outfile, $condorlogfile, $rundir, $baseprio, $batchname\n";
 close(F);
