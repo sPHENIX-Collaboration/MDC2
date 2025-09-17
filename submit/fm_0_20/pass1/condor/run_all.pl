@@ -10,18 +10,20 @@ sub getlastsegment;
 
 my $build;
 my $incremental;
+my $overwrite;
 my $runnumber;
 my $startsegment;
 my $test;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "run:i" =>\$runnumber, "startsegment:i" => \$startsegment, "test"=>\$test);
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "overwrite"=> \$overwrite, "run:i" =>\$runnumber, "startsegment:i" => \$startsegment, "test"=>\$test);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
-    print "--startsegment: starting segment\n";
+    print "--overwrite : overwrite exiting jobfiles\n";
     print "--run: <runnumber>\n";
+    print "--startsegment: starting segment\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
@@ -119,6 +121,10 @@ OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
 	    if (defined $test)
 	    {
 		$tstflag="--test";
+	    }
+	    elsif (defined $overwrite)
+	    {
+		$tstflag="--overwrite";
 	    }
             my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %s %d %d %s", $events, $hijingdatfile, $outdir, $outfile, $n, $build, $runnumber, $sequence, $tstflag);
 	    print "cmd: $subcmd\n";
