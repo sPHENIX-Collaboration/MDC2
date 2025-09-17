@@ -123,10 +123,6 @@ int Fun4All_G4_JS_pp_signal(
   {
     pythia8_config_file += "phpythia8_JS_GJ_ptHat20_MDC2.cfg";
   }
-  else if (jettrigger == "Jet5")
-  {
-    pythia8_config_file += "phpythia8_5GeV_JS_MDC2.cfg";
-  }
   else if (jettrigger == "Jet10")
   {
     pythia8_config_file += "phpythia8_10GeV_JS_MDC2.cfg";
@@ -151,7 +147,7 @@ int Fun4All_G4_JS_pp_signal(
   {
     pythia8_config_file += "phpythia8_70GeV_JS_MDC2.cfg";
   }
-  else if (jettrigger == "Detroit")
+  else if (jettrigger == "Detroit" || jettrigger=="Jet5")
   {
     pythia8_config_file =  string(getenv("CALIBRATIONROOT")) + "/Generators/phpythia8_detroit_minBias.cfg";
   }
