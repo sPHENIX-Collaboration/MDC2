@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use strict;
 use warnings;
@@ -9,18 +9,19 @@ my $build;
 my $incremental;
 my $killexist;
 my $runnumber;
-my $events = 100;
+my $events = 1000;
+my $startsegment = -1;
 my $test;
-my $photonjet = 0;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "killexist" => \$killexist, "run:i" =>\$runnumber, "test"=>\$test);
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "killexist" => \$killexist, "run:i" =>\$runnumber, "startsegment:i" => \$startsegment, "test"=>\$test);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet15\", \"Jet20\", \"Jet30\", \"Jet40\", \"Jet50\", \"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\", \"Detroit\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet5\", \"Jet10\", \"Jet15\", \"Jet20\", \"Jet30\", \"Jet40\", \"Jet50\", \"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\", \"Detroit\" production>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
     print "--killexist : delete output file if it already exists (but no jobfile)\n";
     print "--run: <runnumber>\n";
+    print "--startsegment: starting segment\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
@@ -60,29 +61,23 @@ if ($hostname !~ /sphnxprod/)
 my $maxsubmit = $ARGV[0];
 my $jettrigger = $ARGV[1];
 my $filetype="pythia8";
-if ($jettrigger  ne "Jet10" &&
+if ($jettrigger  ne "Jet5" &&
+    $jettrigger  ne "Jet10" &&
     $jettrigger  ne "Jet20" &&
     $jettrigger  ne "Jet15" &&
     $jettrigger  ne "Jet30" &&
     $jettrigger  ne "Jet40" &&
     $jettrigger  ne "Jet50" &&
+    $jettrigger  ne "Jet70" &&
     $jettrigger  ne "PhotonJet" &&
     $jettrigger  ne "PhotonJet5" &&
     $jettrigger  ne "PhotonJet10" &&
     $jettrigger  ne "PhotonJet20" &&
     $jettrigger  ne "Detroit")
 {
-    print "second argument has to be Jet10, Jet30, Jet40, PhotonJet, PhotonJet5, PhotonJet10, PhotonJet20 or Detroit\n";
+    print "second argument has to be Jet5, Jet10, Jet30, Jet40, Jet50, Jet70, PhotonJet, PhotonJet5, PhotonJet10, PhotonJet20 or Detroit\n";
     exit(1);
 }
-# set the photonjet variable for photon jet configs
-#if ($jettrigger  eq "PhotonJet5" ||
-#    $jettrigger  eq "PhotonJet10" ||
-#    $jettrigger  eq "PhotonJet20")
-#{
-#    $photonjet = 1;
-#}
-
 
 $filetype=sprintf("%s_%s",$filetype,$jettrigger);
 my $condorlistfile =  sprintf("condor.list");
@@ -107,8 +102,9 @@ my $njob = 0;
 OUTER: for (my $isub = 0; $isub < $maxsubmit; $isub++)
 {
     my $jobfile = sprintf("%s/condor_%s-%010d-%06d.job",$logdir,$jettrigger,$runnumber,$njob);
-    while (-f $jobfile)
+    while (-f $jobfile || $njob<=$startsegment)
     {
+#	print "found jobfile $jobfile, njob: $njob, startsegment: $startsegment\n";
 	$njob++;
 	$jobfile = sprintf("%s/condor_%s-%010d-%06d.job",$logdir,$jettrigger,$runnumber,$njob);
     }
@@ -130,7 +126,7 @@ OUTER: for (my $isub = 0; $isub < $maxsubmit; $isub++)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %d %s",$events, $jettrigger, $outdir, $outfile, $build, $photonjet, $runnumber, $njob, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s",$events, $jettrigger, $outdir, $outfile, $build, $runnumber, $njob, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

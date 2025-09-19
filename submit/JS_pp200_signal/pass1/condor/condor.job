@@ -1,6 +1,6 @@
 Universe 	= vanilla
 Executable 	= $(executable)
-Arguments       = $(nevents) $(jettrigger) $(dstoutfile) $(dstoutdir) $(build)  $(photonjet) $(runnumber) $(sequence)
+Arguments       = $(nevents) $(jettrigger) $(dstoutfile) $(dstoutdir) $(build) $(runnumber) $(sequence)
 Output  	= $(outfile)
 Error 		= $(errfile)
 Log  		= $(condorlogfile)
@@ -10,4 +10,4 @@ request_memory = $(memory)
 Priority = $(baseprio)
 job_lease_duration = 3600
 batch_name = $(batchname)
-Queue executable, nevents, jettrigger, dstoutfile, dstoutdir, build, photonjet, runnumber, sequence, outfile, errfile, condorlogfile, rundir, baseprio, memory, batchname from condor.list
+Queue executable, nevents, jettrigger, dstoutfile, dstoutdir, build, runnumber, sequence, outfile, errfile, condorlogfile, rundir, baseprio, memory, batchname from condor.list
