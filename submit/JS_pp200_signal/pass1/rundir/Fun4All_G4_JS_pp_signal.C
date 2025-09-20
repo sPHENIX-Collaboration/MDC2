@@ -113,15 +113,15 @@ int Fun4All_G4_JS_pp_signal(
   }
   else if (jettrigger == "PhotonJet5")
   {
-    pythia8_config_file += "phpythia8_JS_GJ_ptHat5_MDC2.cfg";
+    pythia8_config_file += "phpythia8_5GeV_JS_MDC2.cfg";
   }
   else if (jettrigger == "PhotonJet10")
   {
-    pythia8_config_file += "phpythia8_JS_GJ_ptHat10_MDC2.cfg";
+    pythia8_config_file += "phpythia8_10GeV_JS_MDC2.cfg";
   }
   else if (jettrigger == "PhotonJet20")
   {
-    pythia8_config_file += "phpythia8_JS_GJ_ptHat20_MDC2.cfg";
+    pythia8_config_file += "phpythia8_20GeV_JS_MDC2.cfg";
   }
   else if (jettrigger == "Jet10")
   {
