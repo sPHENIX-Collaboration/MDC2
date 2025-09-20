@@ -7,11 +7,11 @@ fi
 echo $1
 variable=$1
 
-run=10
+run=28
 runnumber=$(printf "%010d" $run)
 
 #exit 0
-condor_q | grep ' H ' | grep run_pass4_global_nopileup_js.sh | grep ${variable} > bla
+condor_q | grep ' H ' | grep run_pass3_global_nopileup_js.sh | grep ${variable} > bla
 
 [ -s bla ] ||  exit 1
 
