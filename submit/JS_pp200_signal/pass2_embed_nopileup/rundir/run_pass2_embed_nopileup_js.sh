@@ -31,7 +31,7 @@ then
     cd $_CONDOR_SCRATCH_DIR
     rsync -av $this_dir/* .
     echo $2 > inputfiles.list
-    getinputfiles.pl  --filelist inputfiles.list
+    getinputfiles.pl  -dd --filelist inputfiles.list
     if [ $? -ne 0 ]
     then
         cat inputfiles.list

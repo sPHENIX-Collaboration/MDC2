@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use strict;
 use warnings;
@@ -14,8 +14,9 @@ my $fm = "0_20fm";
 my $outevents = 0;
 my $overwrite;
 my $runnumber;
+my $startsegment = 0;
 my $test;
-GetOptions("build:s" => \$build, "fm:s" =>\$fm, "increment"=>\$incremental, "overwrite"=> \$overwrite, "run:i" =>\$runnumber, "test"=>\$test);
+GetOptions("build:s" => \$build, "fm:s" =>\$fm, "increment"=>\$incremental, "overwrite"=> \$overwrite, "run:i" =>\$runnumber, "startsegment:i" => \$startsegment, "test"=>\$test);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\">, <\"Jet15\">, <\"Jet20\">, <\"Jet30\">, <\"Jet40\">, <\"Jet50\">, <\"PhotonJet\">, <\"PhotonJet5\">, <\"PhotonJet10\">, <\"PhotonJet20\">, <\"Detroit\"> production>\n";
@@ -25,6 +26,7 @@ if ($#ARGV < 1)
     print "--increment : submit jobs while processing running\n";
     print "--overwrite : overwrite exiting jobfiles\n";
     print "--run: <runnumber>\n";
+    print "--startsegment: starting segment\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
@@ -105,14 +107,14 @@ $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $nsubmit = 0;
 
 my %trkhash = ();
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'G4Hits' and filename like 'G4Hits_$embedfilelike%' and runnumber = $runnumber order by segment") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'G4Hits' and filename like 'G4Hits_$embedfilelike%' and runnumber = $runnumber and segment >= $startsegment order by segment") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 $getfiles->execute() || die $DBI::errstr;
 my $ncal = $getfiles->rows;
 while (my @res = $getfiles->fetchrow_array())
 {
     my $lfn = $res[0];
-    print "found $lfn\n";
+#    print "found $lfn\n";
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
 	my $runnumber = int($2);
