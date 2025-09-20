@@ -7,7 +7,7 @@ fi
 echo $1
 variable=$1
 
-run=22
+run=28
 runnumber=$(printf "%010d" $run)
 
 #exit 0
