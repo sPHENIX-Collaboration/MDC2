@@ -127,7 +127,7 @@ foreach my $file (keys %filemd5)
 	{
 	    if (defined $use_dd)
 	    {
-		$copycmd = sprintf("dd if=%s of=%s bs=12M",$file,basename($file));
+		$copycmd = sprintf("dd if=%s of=%s bs=12M 2>&1",$file,basename($file));
 	    }
 	    else
 	    {
