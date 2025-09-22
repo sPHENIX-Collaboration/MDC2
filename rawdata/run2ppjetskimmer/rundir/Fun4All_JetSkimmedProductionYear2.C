@@ -50,10 +50,10 @@ R__LOAD_LIBRARY(libcalovalid.so)
 R__LOAD_LIBRARY(libJetDSTSkimmer.so)
 
 void Fun4All_JetSkimmedProductionYear2(int nEvents=100,
-                        const std::string &fname = "DST_CALOFITTING_run2pp_ana509_2024p022_v001-00052661-000000.root",
-                        const std::string& outfile_low= "DST_JETCALO_run2pp_ana509_2024p022_v001-00052661-000000.root",
-                        const std::string& outfile_high= "DST_Jet_run2pp_ana509_2024p022_v001-00052661-000000.root",
-                        const std::string& outfile_tree= "HIST_JETQA_run2pp_ana509_2024p022_v001-00052661-000000.root",
+                        const std::string &fname = "DST_CALOFITTING_run2pp_ana509_2024p022_v001-00047289-00000.root",
+                        const std::string& outfile_low= "DST_JETCALO_run2pp_ana509_2024p022_v001-00047289-00000.root",
+                        const std::string& outfile_high= "DST_Jet_run2pp_ana509_2024p022_v001-00047289-00000.root",
+                        const std::string& outfile_hist= "HIST_JETQA_run2pp_ana509_2024p022_v001-00047289-00000.root",
                         const std::string& dbtag= "2024p022"
   )
 {
