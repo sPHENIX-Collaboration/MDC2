@@ -6,7 +6,7 @@ Error 		= $(errfile)
 Log  		= $(condorlogfile)
 Initialdir  	=  $(rundir)
 PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)
-request_memory = 2500MB
+request_memory = 4000MB
 Priority = $(baseprio)
 job_lease_duration = 3600
 Rank = -SlotID
