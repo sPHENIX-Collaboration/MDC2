@@ -23,7 +23,7 @@ my $pileup;
 my $magnet;
 GetOptions("embed:s" => \$embed, "exist" => \$file_exist_check, "fm:s" =>\$fm, "magnet:s" => \$magnet, "nobkgpileup" => \$nobkgpileup, "pileup:s" => \$pileup, "run:i"=>\$runnumber, "type:i"=>\$system, "verbosity" => \$verbosity, "nopileup" => \$nopileup);
 
-if ($system < 1 || $system > 34)
+if ($system < 1 || $system > 35)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
@@ -60,6 +60,7 @@ if ($system < 1 || $system > 34)
     print "   32 : JS pythia8 Jet >15GeV\n";
     print "   33 : JS pythia8 Jet >50GeV\n";
     print "   34 : JS pythia8 Jet >70GeV\n";
+    print "   35 : JS pythia8 Jet >5GeV\n";
     exit(0);
 }
 
@@ -251,7 +252,17 @@ elsif ($system == 11)
     }
     else
     {
-	$systemstring = sprintf("%s-",$systemstring_g4hits);
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
     }
     $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
     $gpfsdir = "js_pp200_signal";
@@ -287,7 +298,17 @@ elsif ($system == 12)
     }
     else
     {
-	$systemstring = sprintf("%s-",$systemstring_g4hits);
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
     }
     $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
     $gpfsdir = "js_pp200_signal";
@@ -311,7 +332,17 @@ elsif ($system == 13)
     }
     else
     {
-	$systemstring = sprintf("%s-",$systemstring_g4hits);
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
     }
     $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
     $gpfsdir = "js_pp200_signal";
@@ -345,7 +376,17 @@ elsif ($system == 14)
     }
     else
     {
-	$systemstring = sprintf("%s-",$systemstring_g4hits);
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
     }
     $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
 #    $gpfsdir = "multiple_particle";
@@ -416,7 +457,17 @@ elsif ($system == 19)
     }
     else
     {
-	$systemstring = sprintf("%s-",$systemstring_g4hits);
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
     }
     $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
     $gpfsdir = "js_pp200_signal";
@@ -466,7 +517,17 @@ elsif ($system == 21)
     }
     else
     {
-	$systemstring = sprintf("%s-",$systemstring_g4hits);
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
     }
     $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
     $gpfsdir = "js_pp200_signal";
@@ -561,7 +622,17 @@ elsif ($system == 25) # detroit
     }
     else
     {
-	$systemstring = sprintf("%s-",$systemstring_g4hits);
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
     }
     $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
     $gpfsdir = "js_pp200_signal";
@@ -595,7 +666,17 @@ elsif ($system == 26)
     }
     else
     {
-	$systemstring = sprintf("%s-",$systemstring_g4hits);
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
     }
     $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
     $gpfsdir = "js_pp200_signal";
@@ -631,7 +712,17 @@ elsif ($system == 27)
     }
     else
     {
-	$systemstring = sprintf("%s-",$systemstring_g4hits);
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
     }
     $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
     $gpfsdir = "js_pp200_signal";
@@ -667,7 +758,17 @@ elsif ($system == 28)
     }
     else
     {
-	$systemstring = sprintf("%s-",$systemstring_g4hits);
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
     }
     $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
     $gpfsdir = "js_pp200_signal";
@@ -703,7 +804,17 @@ elsif ($system == 29)
     }
     else
     {
-	$systemstring = sprintf("%s-",$systemstring_g4hits);
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
     }
     $systemstring_g4hits = sprintf("%s",$systemstring_g4hits);
     $gpfsdir = "herwig";
@@ -739,7 +850,17 @@ elsif ($system == 30)
     }
     else
     {
-	$systemstring = sprintf("%s-",$systemstring_g4hits);
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
     }
     $systemstring_g4hits = sprintf("%s",$systemstring_g4hits);
     $gpfsdir = "herwig";
@@ -775,7 +896,17 @@ elsif ($system == 31)
     }
     else
     {
-	$systemstring = sprintf("%s-",$systemstring_g4hits);
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
     }
     $systemstring_g4hits = sprintf("%s",$systemstring_g4hits);
     $gpfsdir = "herwig";
@@ -811,7 +942,17 @@ elsif ($system == 32)
     }
     else
     {
-	$systemstring = sprintf("%s",$systemstring_g4hits);
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
     }
     $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
     $gpfsdir = "js_pp200_signal";
@@ -847,7 +988,17 @@ elsif ($system == 33)
     }
     else
     {
-	$systemstring = sprintf("%s-",$systemstring_g4hits);
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
     }
     $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
     $gpfsdir = "js_pp200_signal";
@@ -883,7 +1034,63 @@ elsif ($system == 34)
     }
     else
     {
-	$systemstring = sprintf("%s-",$systemstring_g4hits);
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
+    }
+    $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
+    $gpfsdir = "js_pp200_signal";
+#    $systemstring = "DST_HF_BOTTOM_pythia8-";
+#    $gpfsdir = "HF_pp200_signal";
+}
+elsif ($system == 35)
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "pythia8_Jet5";
+    if (! defined $nopileup)
+    {
+	    if (defined $embed)
+	    {
+		if ($embed eq "auau")
+		{
+		    $systemstring = sprintf("%s_sHijing_%s%s",$systemstring_g4hits,$fm,$AuAu_bkgpileup);
+		}
+		elsif ($embed eq "pau")
+		{
+		    $systemstring = sprintf("%s_sHijing_pAu_0_10fm%s",$systemstring_g4hits,$pAu_bkgpileup);
+		}
+		else
+		{
+		    print "bad embed val: $embed, valid values auau, pau\n";
+		    exit(0);
+		}
+	    }
+	    else
+	    {
+		$systemstring = sprintf("%s_%s",$systemstring_g4hits,$pileup);
+	    }
+    }
+    else
+    {
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
     }
     $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
     $gpfsdir = "js_pp200_signal";
