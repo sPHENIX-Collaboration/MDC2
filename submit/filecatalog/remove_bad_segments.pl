@@ -185,6 +185,7 @@ if ($#ARGV < 0)
     print "   32 : JS pythia8 Jet >15GeV\n";
     print "   33 : JS pythia8 Jet >50GeV\n";
     print "   34 : JS pythia8 Jet >70GeV\n";
+    print "   35 : JS pythia8 Jet >5GeV\n";
     print "-dsttype:\n";
     foreach my $tp (sort keys %daughters)
     {
@@ -204,7 +205,7 @@ if( ! exists $daughters{$dsttype})
     }
     exit(0);
 }
-if ($system < 1 || $system > 34)
+if ($system < 1 || $system > 35)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
@@ -241,6 +242,7 @@ if ($system < 1 || $system > 34)
     print "   32 : JS pythia8 Jet >15GeV\n";
     print "   33 : JS pythia8 Jet >50GeV\n";
     print "   34 : JS pythia8 Jet >70GeV\n";
+    print "   35 : JS pythia8 Jet >5GeV\n";
     exit(0);
 }
 
@@ -985,6 +987,35 @@ elsif ($system == 34)
 	}
     }
     $specialcondorfileadd{"G4Hits"} = "Jet70";
+}
+elsif ($system == 35)
+{
+    $specialsystemstring{"G4Hits"} = "pythia8_Jet5-";
+    $systemstring = "pythia8_Jet5_";
+    $topdir = sprintf("%s/JS_pp200_signal",$topdir);
+    if (defined $nopileup)
+    {
+	$condorfileadd = sprintf("Jet5");
+        $systemstring = "pythia8_Jet5";
+    }
+    else
+    {
+      $condorfileadd = sprintf("Jet5_%s",$pileup);
+    }
+    if (defined $embed)
+    {
+	$condorfileadd = sprintf("Jet5");
+        $systemstring = "pythia8_Jet5";
+	if ($embed eq "pau")
+	{
+	    $pileupstring = "_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm";
+	}
+	else
+	{
+	    $pileupstring = sprintf("_sHijing_%s%s",$fm,$AuAu_bkgpileup);
+	}
+    }
+    $specialcondorfileadd{"G4Hits"} = "Jet5";
 }
 else
 {
