@@ -22,10 +22,10 @@ R__LOAD_LIBRARY(libfun4all.so)
 //________________________________________________________________________________________________
 int Fun4All_G4_Global(
     const int nEvents = 0,
-    const std::string &inputFile = "DST_MBD_EPD_pythia8_Jet10_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000023-00000.root",
-    const std::string &outputFile = "DST_GLOBAL_pythia8_Jet10_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000023-00000.root",
+    const std::string &inputFile = "DST_MBD_EPD_pythia8_Jet10_sHijing_0_20fm-0000000033-00000.root",
+    const std::string &outputFile = "DST_GLOBAL_pythia8_Jet10_sHijing_0_20fm-0000000033-00000.root",
     const std::string &outdir = ".",
-    const string &cdbtag = "MDC2_ana.398")
+    const string &cdbtag = "MDC2")
 {
   gSystem->Load("libg4dst.so");
   recoConsts *rc = recoConsts::instance();
