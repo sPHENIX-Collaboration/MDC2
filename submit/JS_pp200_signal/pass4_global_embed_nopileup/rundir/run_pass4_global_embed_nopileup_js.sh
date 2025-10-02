@@ -11,7 +11,7 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-anabuild=${6}
+anabuild=${5}
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
 
