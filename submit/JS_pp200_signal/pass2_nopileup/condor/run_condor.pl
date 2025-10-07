@@ -8,8 +8,8 @@ use File::Basename;
 
 my $test;
 my $overwrite;
-my $memory = sprintf("2000MB");
-GetOptions("overwrite" => \$overwrite, "test"=>\$test);
+my $memory = sprintf("4000MB");
+GetOptions("memory:s"=>\$memory, "overwrite" => \$overwrite, "test"=>\$test);
 if ($#ARGV < 13)
 {
     print "usage: run_condor.pl <events> <jettrigger> <infile> <calo outfile>  <calo outdir> <global outfile> <global outdir>  <trk outdir> <build> <runnumber> <sequence> <enable_calo> <enable_mbd> <enable_trk>\n";
