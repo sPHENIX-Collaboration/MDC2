@@ -6,15 +6,17 @@ use Getopt::Long;
 use File::Path;
 use File::Basename;
 
+my $memory = sprintf("3000MB");
+my $overwrite;
 my $test;
-my $memory = sprintf("1000MB");
 
-GetOptions("memory:s"=>\$memory, "test"=>\$test);
+GetOptions("memory:s"=>\$memory, "overwrite" => \$overwrite, "test"=>\$test);
 if ($#ARGV < 7)
 {
     print "usage: run_condor.pl <events> <jettrigger> <trk clusters> <outfile> <outdir> <build> <runnumber> <sequence>\n";
     print "options:\n";
     print "-memory: memory requirement\n";
+    print "--overwrite: overwrite existing job files\n";
     print "-test: testmode - no condor submission\n";
     exit(-2);
 }
@@ -52,8 +54,15 @@ if (! -d $condorlogdir)
 my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
 if (-f $jobfile)
 {
-    print "jobfile $jobfile exists, possible overlapping names\n";
-    exit(1);
+    if (defined $overwrite)
+    {
+	print "rerunning  $jobfile\n";
+    }
+    else
+    {
+	print "jobfile $jobfile exists, possible overlapping names\n";
+	exit(1);
+    }
 }
 my $condorlogfile = sprintf("%s/condor_%s.log",$condorlogdir,$suffix);
 if (-f $condorlogfile)
@@ -72,10 +81,6 @@ print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
 print F "Initialdir  	= $rundir\n";
 print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
-#print F "accounting_group = group_sphenix.prod\n";
-print F "accounting_group = group_sphenix.mdc2\n";
-print F "accounting_group_user = sphnxpro\n";
-print F "Requirements = (CPU_Type == \"mdc2\")\n";
 print F "request_memory = $memory\n";
 print F "batch_name = \"$batchname\"\n";
 print F "Priority = $baseprio\n";

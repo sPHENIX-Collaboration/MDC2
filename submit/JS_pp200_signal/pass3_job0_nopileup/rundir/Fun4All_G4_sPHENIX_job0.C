@@ -1,6 +1,7 @@
 #include <GlobalVariables.C>
 
 #include <G4_Production.C>
+#include <SaveGitTags.C>
 #include <Trkr_Clustering.C>
 #include <Trkr_RecoInit.C>
 
@@ -12,6 +13,7 @@
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
+#include <fun4all/Fun4AllUtils.h>
 #include <fun4all/SubsysReco.h>
 
 #include <phool/PHRandomSeed.h>
@@ -38,12 +40,20 @@ int Fun4All_G4_sPHENIX_job0(
 
   recoConsts *rc = recoConsts::instance();
 
+  SaveGitTags(); // save the git tags from rebuild.info as rc string flags
+
+  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
+  int runnumber = runseg.first;
+  int segment = abs(runseg.second);
+
   //===============
   // conditions DB flags
   //===============
   Enable::CDB = true;
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
-  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP", runnumber);
+  CDBInterface::instance()->Verbosity(1);
+
   // set up production relatedstuff
   Enable::PRODUCTION = true;
   Enable::DSTOUT = true;
