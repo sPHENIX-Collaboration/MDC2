@@ -2,6 +2,7 @@
 
 #include <G4_Magnet.C>
 #include <G4_Production.C>
+#include <SaveGitTags.C>
 #include <Trkr_RecoInit.C>
 #include <Trkr_Reco.C>
 
@@ -14,6 +15,7 @@
 #include <fun4all/Fun4AllServer.h>
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
+#include <fun4all/Fun4AllUtils.h>
 
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
@@ -26,10 +28,10 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 int Fun4All_G4_sPHENIX_jobA(
   const int nEvents = 0,
   const int nSkipEvents = 0,
-  const string &inputFile = "DST_TRKR_CLUSTER_pythia8_Jet10-0000000019-00000.root",
-  const string &outputFile = "DST_TRACKSEEDS_pythia8_Jet10-0000000019-00000.root",
+  const string &inputFile = "DST_TRKR_CLUSTER_pythia8_Jet10-0000000028-00000.root",
+  const string &outputFile = "DST_TRACKSEEDS_pythia8_Jet10-0000000028-00000.root",
   const string &outdir = ".",
-  const string &cdbtag = "MDC2_ana.412")
+  const string &cdbtag = "MDC2")
 {
 
   // print inputs
@@ -40,13 +42,19 @@ int Fun4All_G4_sPHENIX_jobA(
 
   recoConsts *rc = recoConsts::instance();
 
+  SaveGitTags(); // save the git tags from rebuild.info as rc string flags
+
+  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
+  int runnumber = runseg.first;
+  int segment = abs(runseg.second);
+
   //===============
   // conditions DB flags
   //===============
   Enable::CDB = true;
   // tag
   rc->set_StringFlag("CDB_GLOBALTAG",cdbtag);
-  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP",runnumber);
 
   // set up production relatedstuff
   Enable::PRODUCTION = true;
