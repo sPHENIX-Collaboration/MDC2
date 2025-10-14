@@ -24,6 +24,14 @@ if ($#ARGV < 1)
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
+open(F,"donotprocess.runs");
+my %donotprocess = ();
+while (my $brline = <F>)
+{
+    chomp $brline;
+    my @sp1 = split(/ /,$brline);
+	$donotprocess{$sp1[0]} = 1;
+}
 my $maxsubmit = 0;
 my $hostname = `hostname`;
 chomp $hostname;
@@ -53,6 +61,11 @@ $getruns->execute();
 while (my @runs = $getruns->fetchrow_array())
 {
     my $runnumber=$runs[0];
+    if (exists $donotprocess{$runnumber})
+    {
+	print "ignoring run $runnumber from donotprocess.runs\n";
+	next;
+    }
     $gethosts->execute($runnumber);
     while (my @res = $gethosts->fetchrow_array())
     {
