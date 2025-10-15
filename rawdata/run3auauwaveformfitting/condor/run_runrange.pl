@@ -48,7 +48,7 @@ if (-f $condorlistfile)
 }
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
-my $getruns = $dbh->prepare("select runnumber,segment,filename from datasets where runnumber >= $min_runnumber and runnumber <= $max_runnumber and (filename like 'DST_TRIGGERED_EVENT_seb18_run3auau_ana502_nocdbtag_v001-%' or filename like 'DST_TRIGGERED_EVENT_seb18_run3beam_ana502_nocdbtag_v001-%') order by runnumber,segment");
+my $getruns = $dbh->prepare("select runnumber,segment,filename from datasets where runnumber >= $min_runnumber and runnumber <= $max_runnumber and filename like 'DST_TRIGGERED_EVENT_seb18_run3auau_ana502_nocdbtag_v001-%' order by runnumber,segment");
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 my $checkallsegs = $dbh->prepare("select filename from datasets where runnumber=? and segment=? and filename like ?");
 my $nsubmit = 0;

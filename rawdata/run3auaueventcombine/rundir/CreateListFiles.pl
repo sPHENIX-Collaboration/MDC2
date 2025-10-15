@@ -36,13 +36,19 @@ if ($attempts > 0)
 }
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 
-my $getfiles = $dbh->prepare("select filename,daqhost from datasets where runnumber = $runnumber and (daqhost = '$daqhost' or daqhost = 'gl1daq') order by filename");
+my $getfiles = $dbh->prepare("select filename,daqhost,status from datasets where runnumber = $runnumber and (daqhost = '$daqhost' or daqhost = 'gl1daq')  order by filename");
 
 $getfiles->execute();
 
 my %flist = ();
 while (my @res = $getfiles->fetchrow_array())
 {
+    my $status = $res[2];
+    if ($status <= 0)
+    {
+	print "$res[0] not in lustre\n";
+	next;
+    }
     push @{$flist{$res[1]}}, $res[0];
 #    print "$res[0] on $res[1]\n";
 }

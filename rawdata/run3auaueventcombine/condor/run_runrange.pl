@@ -24,6 +24,14 @@ if ($#ARGV < 1)
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
+open(F,"donotprocess.runs");
+my %donotprocess = ();
+while (my $brline = <F>)
+{
+    chomp $brline;
+    my @sp1 = split(/ /,$brline);
+	$donotprocess{$sp1[0]} = 1;
+}
 my $maxsubmit = 0;
 my $hostname = `hostname`;
 chomp $hostname;
@@ -50,7 +58,7 @@ $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $dbh2 = DBI->connect("dbi:ODBC:RawDataCatalog_read","phnxrc") || die $DBI::errstr;
 $dbh2->{LongReadLen}=2000; # full file paths need to fit in here
 
-my $getruns = $dbh->prepare("select runnumber from run where runnumber>= $min_runnumber and runnumber <= $max_runnumber and (runtype='physics' or runtype='beam') and eventsinrun >= 100000 order by runnumber");
+my $getruns = $dbh->prepare("select runnumber from run where runnumber>= $min_runnumber and runnumber <= $max_runnumber and runtype='physics' and eventsinrun >= 100000 and EXTRACT(EPOCH FROM (ertimestamp-brtimestamp)) >= 300 order by runnumber");
 my $gethosts = $dbh->prepare("select hostname from hostinfo where runnumber = ? and hostname like 'seb%'");
 my $fullrun = $dbh->prepare("select distinct(transferred_to_sdcc) from filelist where runnumber = ? and sequence > 0 and hostname like 'seb%'");
 my $getdaqsegs = $dbh->prepare("select count(*),hostname from filelist where runnumber = ? group by hostname");
@@ -60,9 +68,14 @@ my $nsubmit = 0;
 $getruns->execute();
 while (my @runs = $getruns->fetchrow_array())
 {
+    my $runnumber=$runs[0];
+    if (exists $donotprocess{$runnumber})
+    {
+	print "ignoring run $runnumber from donotprocess.runs\n";
+	next;
+    }
     my %goodtogo = ();
     my $fullruntransferred = 0;
-    my $runnumber=$runs[0];
     $fullrun->execute($runnumber);
     my $ntfstat =  $fullrun->rows;
     if ($ntfstat > 1) # find t and f for segment > 0 -->  transfer ongoing
@@ -126,7 +139,14 @@ while (my @runs = $getruns->fetchrow_array())
 	}
 	if (! exists $goodtogo{$res[0]})
 	{
+	    if ($ntfstat == 0)
+	    {
+		print "not zeroth segment for run $runnumber from $res[0] on disk yet\n";
+	    }
+	    else
+	    {
 	    print "not all files for run $runnumber from $res[0] on disk yet\n";
+	    }
 	    next;
 	}
 	my $tstflag="";
