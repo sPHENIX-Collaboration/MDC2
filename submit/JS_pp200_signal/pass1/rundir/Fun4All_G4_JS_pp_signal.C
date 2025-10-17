@@ -39,12 +39,12 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_JS_pp_signal(
     const int nEvents = 1,
-    const string &jettrigger = "Jet10",  // or "PhotonJet"
-    const string &outputFile = "G4Hits_pythia8_Jet10-0000150-000000.root",
+    const string &jettrigger = "Jet30",  // or "PhotonJet"
+    const string &outputFile = "G4Hits_pythia8_Jet30-0000028-000000.root",
     const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
     const int skip = 0,
     const string &outdir = ".",
-    const string &cdbtag = "MDC2_ana.433")
+    const string &cdbtag = "MDC2")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
