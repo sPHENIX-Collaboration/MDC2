@@ -14,6 +14,7 @@
 #include <fun4all/Fun4AllServer.h>
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
+#include <fun4all/Fun4AllSyncManager.h>
 
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
@@ -27,11 +28,11 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 int Fun4All_G4_sPHENIX_jobC(
   const int nEvents = 0,
   const int nSkipEvents = 0,
-  const std::string &inputFile1 = "DST_TRACKSEEDS_pythia8_Jet30-0000000019-00000.root",
-  const std::string &inputFile2 = "DST_CALO_CLUSTER_pythia8_Jet30-0000000019-00000.root",
-  const std::string &outputFile = "DST_TRACKS_pythia8_Jet30-0000000019-00000.root",
+  const std::string &inputFile1 = "DST_TRACKSEEDS_pythia8_Jet30-0000000028-000000.root",
+  const std::string &inputFile2 = "DST_CALO_CLUSTER_pythia8_Jet30-0000000028-000000.root",
+  const std::string &outputFile = "DST_TRACKS_pythia8_Jet30-0000000028-000000.root",
   const std::string &outdir = ".",
-  const string &cdbtag = "MDC2_ana.412")
+  const string &cdbtag = "MDC2")
 {
 
   // print inputs
@@ -80,7 +81,7 @@ int Fun4All_G4_sPHENIX_jobC(
   // server
   auto se = Fun4AllServer::instance();
   se->Verbosity(1);
-
+//  se->getSyncManager()->Verbosity(10);
   // make sure to printout random seeds for reproducibility
   PHRandomSeed::Verbosity(1);
 
