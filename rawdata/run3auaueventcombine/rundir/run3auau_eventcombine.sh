@@ -8,7 +8,7 @@ this_script=`readlink -f $this_script`
 this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n ana.502
+source /opt/sphenix/core/bin/sphenix_setup.sh -n ana.516
 
 hostname
 

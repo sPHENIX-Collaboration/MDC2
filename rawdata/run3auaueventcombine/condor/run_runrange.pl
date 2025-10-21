@@ -7,19 +7,21 @@ use Getopt::Long;
 use DBI;
 # first physics run in run3auau: 53881
 # last physics run (from prod): 56000
-my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production2/run3auau/physics/ana502_nocdbtag_v001");
+my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production2/run3auau/physics/ana516_nocdbtag_v001");
 my $test;
 my $incremental;
 my $killexist;
+my $overwrite;
 my $shared;
 my $events = 0;
-GetOptions("increment"=>\$incremental, "killexist" => \$killexist, "shared" => \$shared, "test"=>\$test);
+GetOptions("increment"=>\$incremental, "killexist" => \$killexist, "overwrite" => \$overwrite, "shared" => \$shared, "test"=>\$test);
 if ($#ARGV < 1)
 {
     print "usage: run_runrange.pl <min runnumber> <max runnumber>\n";
     print "parameters:\n";
     print "--increment : submit jobs while processing running\n";
     print "--killexist : delete output file if it already exists (but no jobfile)\n";
+    print "--overwrite : overwrite existing job files\n";
     print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
@@ -153,6 +155,10 @@ while (my @runs = $getruns->fetchrow_array())
 	if (defined $test)
 	{
 	    $tstflag="--test";
+	}
+	if (defined $overwrite)
+	{
+	    $tstflag= sprintf("%s --overwrite", $tstflag)
 	}
 	#    print "executing perl run_condor.pl $events $runnumber $jobno $indir $tstflag\n";
 
