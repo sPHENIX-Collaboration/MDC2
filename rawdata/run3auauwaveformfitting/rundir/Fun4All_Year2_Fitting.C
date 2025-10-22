@@ -59,7 +59,7 @@ void Fun4All_Year2_Fitting(int nEvents = 100,
   TriggerRunInfoReco *triggerinfo = new TriggerRunInfoReco();
   se->registerSubsystem(triggerinfo);
 
-  CaloPacketSkimmer *calopacket = new CaloPacketSkimmer();
+  CaloPacketSkimmer *calopacket = new CaloPacketSkimmer("SKIMMER");
   se->registerSubsystem(calopacket);
 
   Process_Calo_Fitting();
@@ -103,6 +103,7 @@ void Fun4All_Year2_Fitting(int nEvents = 100,
     }
        Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfile);
    out->StripCompositeNode("Packets");
+   out->AddEventSelector("SKIMMER");
    se->registerOutputManager(out);
   // se->Print();
   if (nEvents < 0)
