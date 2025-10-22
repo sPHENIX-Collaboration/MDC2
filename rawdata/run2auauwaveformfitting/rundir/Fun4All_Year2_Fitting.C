@@ -4,6 +4,8 @@
 #include <Calo_Fitting.C>
 #include <QA.C>
 
+#include <calopacketskimmer/CaloPacketSkimmer.h>
+
 #include <calotrigger/TriggerRunInfoReco.h>
 
 #include <calovalid/CaloFittingQA.h>
@@ -26,8 +28,9 @@
 R__LOAD_LIBRARY(libfun4allraw.so)
 R__LOAD_LIBRARY(libcalovalid.so)
 R__LOAD_LIBRARY(libcalotrigger.so)
+R__LOAD_LIBRARY(libCaloPacketSkimmer.so)
 
-// this pass contains the reco process that's stable wrt time stamps(raw tower building)
+// this pass containis the reco process that's stable wrt time stamps(raw tower building)
 void Fun4All_Year2_Fitting(int nEvents = 100,
 			   const std::string inlist = "files.list",
                            const std::string &outfile = "DST_CALOFITTING_run2auau_ana509_2024p022_v001-00054530-00000.root",
@@ -56,6 +59,9 @@ void Fun4All_Year2_Fitting(int nEvents = 100,
   TriggerRunInfoReco *triggerinfo = new TriggerRunInfoReco();
   se->registerSubsystem(triggerinfo);
 
+  CaloPacketSkimmer *calopacket = new CaloPacketSkimmer("SKIMMER");
+  se->registerSubsystem(calopacket);
+
   Process_Calo_Fitting();
 
   ///////////////////////////////////
@@ -69,31 +75,32 @@ void Fun4All_Year2_Fitting(int nEvents = 100,
   Fun4AllInputManager *In = nullptr;
   ifstream infile;
   infile.open(inlist);
-    int iman = 0;
-    std::string line;
-    if (infile.is_open())
+  int iman = 0;
+  std::string line;
+  if (infile.is_open())
+  {
+    while (std::getline(infile, line))
     {
-      while (std::getline(infile, line))
+      if (line[0] == '#')
       {
-	if (line[0] == '#')
-	{
-	  std::cout << "found commented out line " << line << std::endl;
-	  continue;
-	}
-	std::cout << line << std::endl;
-	std::string magname = "DSTin_" + std::to_string(iman);
-	In = new Fun4AllDstInputManager(magname);
-	In->Verbosity(1);
-	In->AddFile(line);
-	se->registerInputManager(In);
-	iman++;
+	std::cout << "found commented out line " << line << std::endl;
+	continue;
       }
-      infile.close();
+      std::cout << line << std::endl;
+      std::string magname = "DSTin_" + std::to_string(iman);
+      In = new Fun4AllDstInputManager(magname);
+      In->Verbosity(1);
+      In->AddFile(line);
+      se->registerInputManager(In);
+      iman++;
     }
+    infile.close();
+  }
   
-       Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfile);
-   out->StripCompositeNode("Packets");
-   se->registerOutputManager(out);
+  Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfile);
+  out->StripCompositeNode("Packets");
+  out->AddEventSelector("SKIMMER");
+  se->registerOutputManager(out);
   // se->Print();
   if (nEvents < 0)
   {
