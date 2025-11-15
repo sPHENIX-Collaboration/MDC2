@@ -361,6 +361,7 @@ int Fun4All_G4_JS_pp_signal(
   {
     string FullOutFile = DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
+    out->StripCompositeNode("RECO_TRACKING_GEOMETRY");
     se->registerOutputManager(out);
   }
   //-----------------
