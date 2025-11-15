@@ -99,9 +99,6 @@ int Fun4All_G4_Pass3Trk(
   Enable::DSTOUT_COMPRESS = false;
   DstOut::OutputDir = outdir;
 
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile0);
-  int runnumber = runseg.first;
-  int segment = abs(runseg.second);
   if (Enable::PRODUCTION)
   {
     PRODUCTION::SaveOutputDir = DstOut::OutputDir;
