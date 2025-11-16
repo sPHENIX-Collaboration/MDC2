@@ -62,6 +62,7 @@ void CreateDstOutput(int runnumber, int segment, const string &jettrigger)
 
 void AddCommonNodes(Fun4AllOutputManager *out)
 {
+  out->StripCompositeNode("RECO_TRACKING_GEOMETRY");
   out->AddNode("Sync");
   out->AddNode("EventHeader");
   return;
@@ -87,12 +88,13 @@ void DstOutput_move()
       if (scriptexists)
       {
 //        mvcmd = copyscript + " -outdir " + PRODUCTION::SaveOutputDir + " " + *iter + " --test";
-        mvcmd = copyscript + " -outdir " + PRODUCTION::SaveOutputDir + " " + *iter;
+        mvcmd = "perl " + copyscript + " -dd -outdir " + PRODUCTION::SaveOutputDir + " " + *iter;
       }
       else
       {
 	mvcmd = "cp " + *iter + " " + PRODUCTION::SaveOutputDir;
       }
+      std::cout << "move command: " << mvcmd << std::endl;
       gSystem->Exec(mvcmd.c_str());
     }
   }

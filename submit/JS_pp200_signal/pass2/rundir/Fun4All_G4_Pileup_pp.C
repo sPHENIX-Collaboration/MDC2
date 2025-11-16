@@ -5,6 +5,8 @@
 
 #include <G4_OutputManager_Pileup_pp.C>
 #include <G4_Production.C>
+#include <G4_RunSettings.C>
+#include <SaveGitTags.C>
 
 #include <g4main/Fun4AllDstPileupInputManager.h>
 #include <g4main/PHG4VertexSelection.h>
@@ -36,7 +38,8 @@ R__LOAD_LIBRARY(libfun4allutils.so)
     const string &outdir = ".",
     const string &jettrigger = "NONE",
     const int pileup = 3000000,
-    const string &cdbtag = "MDC2_ana.412")
+    const string &cdbtag = "MDC2",
+    const std::string &gitcommit = "none")
 {
   gSystem->Load("libg4dst.so");
   // server
@@ -45,11 +48,24 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
   auto rc = recoConsts::instance();
 
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
+
+  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
+  int runnumber = runseg.first;
+  int segment = runseg.second;
+  RunSettings(runnumber);
   Enable::CDB = true;
   // tag
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP",runnumber);
 
   FlagHandler *flag = new FlagHandler();
   se->registerSubsystem(flag);
@@ -59,9 +75,6 @@ R__LOAD_LIBRARY(libfun4allutils.so)
   Enable::DSTOUT = true;
   DstOut::OutputDir = outdir;
 
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
-  int runnumber = runseg.first;
-  int segment = abs(runseg.second);
   if (Enable::PRODUCTION)
   {
     PRODUCTION::SaveOutputDir = DstOut::OutputDir;

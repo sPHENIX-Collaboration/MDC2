@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use strict;
 use warnings;
@@ -14,11 +14,12 @@ my $memory;
 my $outevents = 0;
 my $overwrite;
 my $runnumber;
+my $outrunnumber;
 my $shared;
 my $test;
 my $pileup;
 my $verbosity = 0;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "overwrite"=> \$overwrite, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "outrunnumber"=>\$outrunnumber, "overwrite"=> \$overwrite, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"Jet40\", \"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\", \"Detroit\" production>\n";
@@ -37,9 +38,9 @@ my $isbad = 0;
 
 my $hostname = `hostname`;
 chomp $hostname;
-if ($hostname !~ /phnxsub/)
+if ($hostname !~ /sphnxprod/)
 {
-    print "submit only from phnxsub hosts\n";
+    print "submit only from sphnxprod hosts\n";
     $isbad = 1;
 }
 if (! defined $pileup)
@@ -140,9 +141,13 @@ while (my @res = $getfiles->fetchrow_array())
 	my $runnumber = int($2);
 	my $segment = int($3);
 	my $foundall = 1;
+	if (! defined $outrunnumber)
+	{
+	    $outrunnumber = $runnumber;
+	}
 	foreach my $type (sort keys %outfiletype)
 	{
-	    my $outfilename = sprintf("%s/%s_pythia8_%s-%010d-%06d.root",$outdir,$type,$jettrigger,$runnumber,$segment);
+	    my $outfilename = sprintf("%s/%s_pythia8_%s-%010d-%06d.root",$outdir,$type,$jettrigger,$outrunnumber,$segment);
 #	    print "checking for $outfilename\n";
 	    if (! -f  $outfilename)
 	    {

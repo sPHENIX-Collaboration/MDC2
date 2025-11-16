@@ -12,19 +12,18 @@ echo running: $this_script $*
 
 anabuild=${6}
 
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
+source /opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
 
 cdbtag=MDC2_$anabuild
-
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
-  cd $_CONDOR_SCRATCH_DIR # redundant but in case someone screw this up and we fill the home disk
-  getinputfiles.pl $2
-  if [ $? -ne 0 ]
-  then
-    echo error from getinputfiles.pl $2, exiting
-    exit -1
-  fi
+    cd $_CONDOR_SCRATCH_DIR # redundant but in case someone screw this up and we fill the home disk
+    perl getinputfiles.pl -dd $2
+    if [ $? -ne 0 ]
+    then
+	echo error from getinputfiles.pl -dd $2, exiting
+	exit -1
+    fi
 else
     echo condor scratch NOT set
     exit -1
