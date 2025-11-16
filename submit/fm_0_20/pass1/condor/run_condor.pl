@@ -7,7 +7,7 @@ use File::Path;
 use File::Basename;
 
 my $test;
-my $memory = sprintf("14000MB");
+my $memory = sprintf("16000MB");
 my $overwrite;
 
 GetOptions("memory:s"=>\$memory, "overwrite"=>\$overwrite, "test"=>\$test);

@@ -39,7 +39,7 @@ if (! defined $runremlist)
     }
     else
     {
-	$cmd = sprintf("find %s/ -name '*.log' |",$logdir);
+	$cmd = sprintf("find %s/ -name '*.condor' |",$logdir);
     }
 
     if (-f $runremlist)

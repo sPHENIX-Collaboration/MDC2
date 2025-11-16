@@ -11,16 +11,18 @@ use DBI;
 my $build;
 my $incremental;
 my $outevents = 0;
+my $overwrite;
 my $runnumber;
 my $shared;
 my $test;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "overwrite" => \$overwrite, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
+    print "--overwrite : overwrite existing job files\n";
     print "--run: <runnumber>\n";
     print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
@@ -100,6 +102,10 @@ while (my @res = $getfiles->fetchrow_array())
 	if (defined $test)
 	{
 	    $tstflag="--test";
+	}
+	if (defined $overwrite)
+	{
+	    $tstflag= sprintf("%s --overwrite", $tstflag)
 	}
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $outfilename, $outdir, $build, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";

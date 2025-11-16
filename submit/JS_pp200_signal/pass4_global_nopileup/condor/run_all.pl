@@ -13,11 +13,9 @@ my $incremental;
 my $memory;
 my $outevents = 0;
 my $overwrite;
-my $phenix;
 my $runnumber;
-my $shared;
 my $test;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "overwrite"=>\$overwrite, "phenix" => \$phenix, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "overwrite"=>\$overwrite, "run:i" =>\$runnumber, "test"=>\$test);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", <\"Jet30\", <\"Jet40\", \"PhotonJet\, \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\", \"Detroit\" production>\n";
@@ -27,7 +25,6 @@ if ($#ARGV < 1)
     print "--memory : memory requirement with unit (MB)\n";
     print "--overwrite : overwrite eisting output\n";
     print "--run: <runnumber>\n";
-    print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
@@ -36,9 +33,9 @@ my $isbad = 0;
 
 my $hostname = `hostname`;
 chomp $hostname;
-if ($hostname !~ /phnxsub/ && $hostname !~ /sphnxprod/)
+if ($hostname !~ /sphnxprod/)
 {
-    print "submit only from phnxsub or sphnxprod hosts\n";
+    print "submit only from sphnxprod hosts\n";
     $isbad = 1;
 }
 if (! defined $runnumber)
@@ -181,14 +178,6 @@ $chkfile->finish();
 $dbh->disconnect;
 
 my $jobfile = sprintf("condor.job");
-if (defined $shared)
-{
- $jobfile = sprintf("condor.job.shared");
-}
-if (defined $phenix)
-{
- $jobfile = sprintf("condor.job.phenix");
-}
 if (! -f $jobfile)
 {
     print "could not find $jobfile\n";

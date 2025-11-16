@@ -8,13 +8,15 @@ use File::Basename;
 
 my $test;
 my $memory = sprintf("1000MB");
-GetOptions("memory:s"=>\$memory, "test"=>\$test);
+my $overwrite;
+GetOptions("memory:s"=>\$memory, "overwrite"=>\$overwrite, "test"=>\$test);
 if ($#ARGV < 7)
 {
     print "usage: run_condor.pl <events> <jettrigger> <truth infile> <outfile> <outdir> <build> <runnumber> <sequence>\n";
     print "options:\n";
-    print "-memory: memory requirement\n";
-    print "-test: testmode - no condor submission\n";
+    print "--memory: memory requirement\n";
+    print "--overwrite : overwrite existing jobfiles\n";
+    print "--test: testmode - no condor submission\n";
     exit(-2);
 }
 
@@ -49,7 +51,7 @@ if (! -d $condorlogdir)
   mkpath($condorlogdir);
 }
 my $jobfile = sprintf("%s/condor%s.job",$logdir,$suffix);
-if (-f $jobfile)
+if (-f $jobfile && ! defined $overwrite)
 {
     print "jobfile $jobfile exists, possible overlapping names\n";
     exit(1);

@@ -7,7 +7,7 @@ use File::Path;
 use File::Basename;
 
 my $test;
-my $memory = sprintf("2000MB");
+my $memory = sprintf("5000MB");
 GetOptions("memory:s"=>\$memory, "test"=>\$test);
 
 if ($#ARGV < 8)
@@ -73,10 +73,6 @@ print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
 print F "Initialdir  	= $rundir\n";
 print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
-#print F "accounting_group = group_sphenix.prod\n";
-print F "accounting_group = group_sphenix.mdc2\n";
-print F "accounting_group_user = sphnxpro\n";
-print F "Requirements = (CPU_Type == \"mdc2\")\n";
 print F "request_memory = $memory\n";
 print F "batch_name = \"$batchname\"\n";
 print F "Priority = $baseprio\n";

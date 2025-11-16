@@ -12,11 +12,12 @@ my $build;
 my $incremental;
 my $memory;
 my $outevents = 0;
+my $overwrite;
 my $runnumber;
 my $shared;
 my $test;
 my $verbosity = 0;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "overwrite" => \$overwrite, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\">, <\"Jet30\">, <\"MB\">  production>\n";
@@ -24,6 +25,7 @@ if ($#ARGV < 1)
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
     print "--memory : memory requirement with unit (MB)\n";
+    print "--overwrite : overwrite existing job files\n";
     print "--run: <runnumber>\n";
     print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
@@ -116,6 +118,14 @@ while (my @res = $getfiles->fetchrow_array())
         {
             $tstflag="--test";
         }
+	if (defined $memory)
+	{
+	    $tstflag = sprintf("%s --memory %s",$tstflag, $memory)
+	}
+	if (defined $overwrite)
+	{
+	    $tstflag= sprintf("%s --overwrite", $tstflag)
+	}
         my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $outfilename, $outdir, $build, $runnumber, $segment, $tstflag);
         print "cmd: $subcmd\n";
         system($subcmd);

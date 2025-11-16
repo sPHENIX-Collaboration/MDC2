@@ -2,6 +2,7 @@
 
 #include <G4_Global.C>
 #include <G4_Production.C>
+#include <SaveGitTags.C>
 
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
@@ -9,6 +10,7 @@
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
+#include <fun4all/Fun4AllUtils.h>
 #include <fun4all/SubsysReco.h>
 
 #include <phool/PHRandomSeed.h>
@@ -20,14 +22,20 @@ R__LOAD_LIBRARY(libfun4all.so)
 //________________________________________________________________________________________________
 int Fun4All_G4_Global(
     const int nEvents = 0,
-    const std::string &inputFile1 = "DST_TRACKS_pythia8_Jet30-0000000011-00001.root",
-    const std::string &inputFile2 = "DST_MBD_EPD_pythia8_Jet30-0000000011-00001.root",
-    const std::string &outputFile = "DST_GLOBAL_pythia8_Jet30-0000000011-00001.root",
+    const std::string &inputFile1 = "DST_TRACKS_pythia8_Jet30-0000000028-00000.root",
+    const std::string &inputFile2 = "DST_MBD_EPD_pythia8_Jet30-0000000028-00000.root",
+    const std::string &outputFile = "DST_GLOBAL_pythia8_Jet30-0000000028-00000.root",
     const std::string &outdir = ".",
-    const string &cdbtag = "MDC2_ana.398")
+    const string &cdbtag = "MDC2")
 {
   gSystem->Load("libg4dst.so");
   recoConsts *rc = recoConsts::instance();
+
+  SaveGitTags(); // save the git tags from rebuild.info as rc string flags
+
+  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile1);
+  int runnumber = runseg.first;
+  int segment = abs(runseg.second);
 
   //===============
   // conditions DB flags
@@ -36,7 +44,7 @@ int Fun4All_G4_Global(
   // tag
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP", runnumber);
   CDBInterface::instance()->Verbosity(1);
 
   // set up production relatedstuff

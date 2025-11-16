@@ -118,6 +118,10 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $tstflag="--test";
 	}
+        elsif (defined $overwrite)
+	{
+	    $tstflag = sprintf("%s --overwrite",$tstflag);
+	}
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %d %d %s %s", $outevents, $jettrigger, $lfn, $outfilename, $outdir, $build, $runnumber, $segment, $fm, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use strict;
 use warnings;
@@ -9,7 +9,7 @@ use File::Basename;
 my $memory = sprintf("12200MB");
 my $overwrite;
 my $test;
-GetOptions("memory:s"=>\$memory, "test"=>\$test, "overwrite"=> \$overwrite);
+GetOptions("memory:s"=>\$memory, "overwrite"=> \$overwrite, "test"=>\$test);
 if ($#ARGV < 8)
 {
     print "usage: run_condor.pl <events> <jettrigger> <trk infile> <truth infile> <outdir> <build> <runnumber> <sequence> <fm range>\n";
@@ -46,7 +46,7 @@ if (! -d $logdir)
 {
   mkpath($logdir);
 }
-my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass3trk_embed/%s/run%d/%s",$fm,$runnumber,$jettrigger);
+my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass3trk_embed_nopileup/%s/run%d/%s",$fm,$runnumber,$jettrigger);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);

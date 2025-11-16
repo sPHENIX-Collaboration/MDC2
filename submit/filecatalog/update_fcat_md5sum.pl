@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use strict;
 use warnings;
@@ -51,7 +51,7 @@ else
     }
     else
     {
-	$getfiles = $dbh->prepare("select lfn,full_file_path from files where (md5 is null or md5 = '0') and full_file_path like '$dcachedir/%'");
+	$getfiles = $dbh->prepare("select lfn,full_file_path from files where (md5 is null or md5 = '0' or md5 = 'ffffffffffffffffffffffffffffffff') and full_file_path like '$dcachedir/%'");
     }
 }
 

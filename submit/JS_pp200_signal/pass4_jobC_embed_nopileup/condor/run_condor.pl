@@ -6,7 +6,7 @@ use Getopt::Long;
 use File::Path;
 use File::Basename;
 
-my $memory = sprintf("2000MB");
+my $memory = sprintf("6000MB");
 my $overwrite;
 my $test;
 

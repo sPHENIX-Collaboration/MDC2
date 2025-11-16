@@ -46,7 +46,7 @@ if (! -d $logdir)
   mkpath($logdir);
 }
 my $batchname = sprintf("%s %s",basename($executable),$jettrigger);
-my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass5_global_embed/%s/run%d/%s",$fm,$runnumber,$jettrigger);
+my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass4_global_embed/%s/run%d/%s",$fm,$runnumber,$jettrigger);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);

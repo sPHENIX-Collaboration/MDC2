@@ -6,12 +6,12 @@ if [ $# -eq 0 ]
 fi
 echo $1
 variable=$1
-run=19
+run=30
 runnumber=$(printf "%010d" $run)
 fm=0_20fm
-withhijing=${fm}_50kHz_bkg_0_20fm
+withhijing=${fm}
 #exit 0
-condor_q | grep ' H ' | grep run_pass3trk_embed_js.sh | grep ${withhijing} | grep ${variable} > bla
+condor_q | grep ' H ' | grep run_pass3trk_embed_nopileup_js.sh | grep ${withhijing} | grep ${variable} > bla
 
 [ -s bla ] ||  exit 1
 

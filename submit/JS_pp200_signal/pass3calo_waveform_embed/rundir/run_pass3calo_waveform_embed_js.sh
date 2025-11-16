@@ -63,7 +63,7 @@ filename=timing
 echo running root.exe -q -b Fun4All_G4_Waveform.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\"\)
 root.exe -q -b  Fun4All_G4_Waveform.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\"\)
 
-timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/js_pp200_signal/pass3calo_waveform_embed/timing.run${9}/${8}
+timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/js_pp200_signal/pass3calo_waveform_embed/timing.run${8}
 
 [ ! -d $timedirname ] &&  mkdir -p $timedirname
 

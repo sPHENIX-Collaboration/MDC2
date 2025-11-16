@@ -9,14 +9,14 @@ use File::Basename;
 my $test;
 my $overwrite;
 my $memory = sprintf("2000MB");
-GetOptions("overwrite" => \$overwrite, "test"=>\$test);
+GetOptions("memory:s"=>\$memory, "overwrite" => \$overwrite, "test"=>\$test);
 if ($#ARGV < 13)
 {
     print "usage: run_condor.pl <events> <jettrigger> <infile> <calo outfile>  <calo outdir> <global outfile> <global outdir>  <trk outdir> <build> <runnumber> <sequence> <enable_calo> <enable_mbd> <enable_trk>\n";
     print "options:\n";
-    print "-memory: memory requirement\n";
-    print "-overwrite: overwrite existing job files\n";
-    print "-test: testmode - no condor submission\n";
+    print "--memory: memory requirement\n";
+    print "--overwrite: overwrite existing job files\n";
+    print "--test: testmode - no condor submission\n";
     exit(-2);
 }
 
