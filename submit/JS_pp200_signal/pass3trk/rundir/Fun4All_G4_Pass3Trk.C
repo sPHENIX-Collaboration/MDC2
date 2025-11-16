@@ -15,6 +15,7 @@
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
+#include <fun4all/Fun4AllRunNodeInputManager.h>
 #include <fun4all/Fun4AllServer.h>
 #include <fun4all/Fun4AllUtils.h>
 
@@ -27,8 +28,8 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_Pass3Trk(
     const int nEvents = 1,
-    const string &inputFile0 = "DST_TRKR_G4HIT_pythia8_Jet30_1000kHz-0000000028-00000.root",
-    const string &inputFile1 = "DST_TRUTH_G4HIT_pythia8_Jet30_1000kHz-0000000028-00000.root",
+    const string &inputFile0 = "DST_TRKR_G4HIT_pythia8_Jet30_1000kHz-0000000028-000000.root",
+    const string &inputFile1 = "DST_TRUTH_G4HIT_pythia8_Jet30_1000kHz-0000000028-000000.root",
     const string &outdir = ".",
     const string &jettrigger = "Jet30",
     const string &cdbtag = "MDC2")
@@ -54,6 +55,7 @@ int Fun4All_G4_Pass3Trk(
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile0);
   int runnumber = runseg.first;
   int segment = abs(runseg.second);
+  rc->set_IntFlag("RUNNUMBER",runnumber);
 
   Enable::CDB = true;
   // tag
