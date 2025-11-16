@@ -9,15 +9,17 @@ sub condorcheck;
 
 my $submittopdir = "/sphenix/u/sphnxpro/MDC2/submit";
 
-my $tagfile = sprintf("%s/autopilot_sphnxprod02.run",$submittopdir);
+my $hostname = `hostname -s`;
+chomp $hostname;
+my $tagfile = sprintf("%s/autopilot_%s.run",$submittopdir,$hostname);
 if (-f $tagfile)
 {
     exit 0;
 }
 my $tagfiletouch = sprintf("touch %s",$tagfile);
 system($tagfiletouch);
-my $nsubmit = 10000;
-my $nsafejobs = 50000;
+my $nsubmit = 20000;
+my $nsafejobs = 200000;
 
 my %submitdir = (
 #     "cosmic/pass2_nopileup/condor" => (""),
@@ -30,7 +32,10 @@ my %submitdir = (
 #    "fm_0_20/pass4_jobC/condor" => (""),
 #    "fm_0_20/pass5_global/condor" => (""),
 #    "fm_0_20/pass5_truthreco/condor" => (""),
-#    "fm_0_20/pass2_nopileup/condor" => (""),
+#
+
+#    "fm_0_20/pass3_global_nopileup/condor" => ("-build ana.513 --run 33"),
+#    "fm_0_20/pass2_nopileup/condor" => ("--run 33 --build ana.513 --disable_trk"),
 #    "fm_0_20/pass3_job0_nopileup/condor" => (""),
 #    "fm_0_20/pass3_jobA_nopileup/condor" => (""),
 #    "fm_0_20/pass3_jobC_nopileup/condor" => (""),
@@ -84,9 +89,9 @@ my %submitdir = (
 #    "Herwig/pass3_jobC_nopileup/condor" => ("--build ana.455 allruns"),
 #    "Herwig/pass3_jobA_nopileup/condor" => ("--build ana.455 allruns"),
 #    "Herwig/pass3_job0_nopileup/condor" => ("--build ana.455 allruns"),
-    "Herwig/pass3_global_nopileup/condor" => ("--build ana.490 allruns"),
-    "Herwig/pass3jet_nopileup/condor" => ("--build ana.490 allruns"),
-    "Herwig/pass2_nopileup/condor" => ("--build ana.490 --disable_trk allruns"),
+#    "Herwig/pass3_global_nopileup/condor" => ("--build ana.502 --run 28"),
+#    "Herwig/pass3jet_nopileup/condor" => ("--build ana.502 --run 28"),
+#    "Herwig/pass2_nopileup/condor" => ("--build ana.502 --disable_trk --run 28"),
 
 #     "HF_pp200_signal/pass2/condor" => (""),
 #     "HF_pp200_signal/pass3trk/condor" => (""),
@@ -143,10 +148,23 @@ my %submitdir = (
 #    "JS_pp200_signal/pass3_jobC_nopileup/condor" => (""),
 #    "JS_pp200_signal/pass4_global_nopileup/condor" => (""),
 #    "JS_pp200_signal/pass4_truthreco_nopileup/condor" => (""),
-#    "JS_pp200_signal/pass3_global_nopileup/condor" => ("--build ana.490 allruns"),
-#    "JS_pp200_signal/pass3jet_nopileup/condor" => ("--build ana.490 allruns"),
-#    "JS_pp200_signal/pass2_nopileup/condor" => ("--build ana.490 --disable_trk allruns"),
+#    "JS_pp200_signal/pass3_global_nopileup/condor" => ("--build ana.501 --run 28"),
+#    "JS_pp200_signal/pass3jet_nopileup/condor" => ("--build ana.501 --run 28"),
+#    "JS_pp200_signal/pass2_nopileup/condor" => ("--build ana.501 --disable_trk --run 28"),
 
+
+#    "JS_pp200_signal/pass4_global_embed_nopileup/condor" => ("--build ana.501 --run 30"),
+#    "JS_pp200_signal/pass3calo_embed_nopileup/condor" => ("--build ana.501 --run 30"),
+#    "JS_pp200_signal/pass3jet_embed_nopileup/condor" => ("--build ana.501 --run 30"),
+#    "JS_pp200_signal/pass3_mbdepd_embed_nopileup/condor" => ("--build ana.501 --run 30"),
+#    "JS_pp200_signal/pass2_embed_nopileup/condor" => ("--build ana.501 --run 30"),
+
+
+    "JS_pp200_signal/pass5_global_embed_nopileup/condor" => ("--build ana.515 --run 30"),
+    "JS_pp200_signal/pass4_jobC_embed_nopileup/condor" => ("--build ana.515 --run 30"),
+    "JS_pp200_signal/pass4_jobA_embed_nopileup/condor" => ("--build ana.515 --run 30"),
+    "JS_pp200_signal/pass4_job0_embed_nopileup/condor" => ("--build ana.515 --run 30"),
+    "JS_pp200_signal/pass3trk_embed_nopileup/condor" => ("--build ana.515 --run 30"),
 
 #    "JS_pp200_signal/pass2_embed/condor" => (""),
 #    "JS_pp200_signal/pass3calo_embed/condor" => (""),
@@ -186,10 +204,12 @@ my @jettriggerspau = ("Jet10", "Jet20");
 my @herwigtriggers = ("MB", "Jet10", "Jet30");
 #my @jettriggers2 = ("Jet10", "Jet30", "Jet40", "PhotonJet");
 #my @jettriggers2 = ("Jet10", "Jet30", "PhotonJet");
-my @jettriggers = ("Jet10", "Jet15", "Jet50");
+my @jettriggers = ("Jet10", "Jet30");
+#my @jettriggers = ("Jet5", "Jet10", "Jet15", "Jet20", "Jet30", "Jet50", "Jet70", "Detroit", "PhotonJet5", "PhotonJet10", "PhotonJet20");
 #my @singleparticles = {"gamma 10000 10000"};
 my @pileups = ("300kHz", "700kHz", "1100kHz");
-my @runs = ("28", "29");
+my @runs = ("28", "30");
+my @hijingruns = ("31", "32", "33");
 foreach my $subdir ( keys %submitdir)
 {
     if ($subdir eq "last")

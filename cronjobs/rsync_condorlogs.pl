@@ -32,6 +32,7 @@ push(@passes,"pass2_10kHz");
 push(@passes,"pass2_25kHz");
 push(@passes,"pass2_50kHz_0_20fm");
 push(@passes,"pass2_embed");
+push(@passes,"pass2_embed_nopileup");
 push(@passes,"pass2_embed_pau");
 push(@passes,"pass2_pi0_embed");
 push(@passes,"pass2_nopileup");
@@ -44,29 +45,38 @@ push(@passes,"pass3calo");
 push(@passes,"pass3calo_waveform");
 push(@passes,"pass3calo_50kHz_0_20fm");
 push(@passes,"pass3calo_embed");
+push(@passes,"pass3calo_embed_nopileup");
 push(@passes,"pass3calo_embed_pau");
+push(@passes,"pass3calo_embed_nopileup");
 push(@passes,"pass3distort");
 push(@passes,"pass3global");
 push(@passes,"pass3global_embed");
 push(@passes,"pass3global_embed_pau");
+push(@passes,"pass3jet_embed");
+push(@passes,"pass3jet_embed_nopileup");
 push(@passes,"pass3jet_nopileup");
 push(@passes,"pass3_job0_nopileup");
 push(@passes,"pass3_jobA_nopileup");
 push(@passes,"pass3_jobC_nopileup");
+push(@passes,"pass3_mbdepd_embed_nopileup");
 push(@passes,"pass3trk");
 push(@passes,"pass3trk_test");
 push(@passes,"pass3trk_embed");
+push(@passes,"pass3trk_embed_nopileup");
 push(@passes,"pass3trk_embed_pau");
 push(@passes,"pass3trk_1MHz");
 push(@passes,"pass3trk_10kHz");
 push(@passes,"pass3trk_25kHz");
 push(@passes,"pass3trk_50kHz_0_20fm");
 push(@passes,"pass4_global_nopileup");
+push(@passes,"pass4_global_embed_nopileup");
 push(@passes,"pass4_job0");
 push(@passes,"pass4_jobA");
 push(@passes,"pass4_job0_embed");
+push(@passes,"pass4_job0_embed_nopileup");
 push(@passes,"pass4_job0_embed_pau");
 push(@passes,"pass4_jobA_embed");
+push(@passes,"pass4_jobA_embed_nopileup");
 push(@passes,"pass4_jobA_embed_pau");
 push(@passes,"pass4_jobC_embed");
 push(@passes,"pass4_jobC_embed_pau");
@@ -88,12 +98,27 @@ push(@passes,"pass5_truthreco_embed");
 push(@passes,"newtracking");
 push(@passes,"pass5compress");
 push(@passes,"pass5trk");
+push(@passes,"run2auaucalocalib");
+push(@passes,"run2auaueventcombine");
+push(@passes,"run2ppcalocalib");
+push(@passes,"run2ppeventcombine");
+push(@passes,"run2ppjetskimmer");
+push(@passes,"run2ppwaveformfitting");
+push(@passes,"run3auaucalocalib");
+push(@passes,"run3auaueventcombine");
+push(@passes,"run3auauwaveformfitting");
+push(@passes,"run3cosmicseventcombine");
 push(@passes,"striptruth");
 push(@passes,"waveformfitting");
 
 
 foreach my $fm (sort @fmrange)
 {
+    if ($fm eq "rawdata")
+    {
+	$submitdir = "/sphenix/u/sphnxpro/MDC2";
+    }
+    
     foreach my $pass (sort @passes)
     {
 	$condorlogs{sprintf("/tmp/%s/%s",$fm,$pass)} = sprintf("%s/%s/%s/condor/log",$submitdir,$fm,$pass);
