@@ -62,6 +62,7 @@ void CreateDstOutput(int runnumber, int segment, const string &jettrigger, const
 
 void AddCommonNodes(Fun4AllOutputManager *out)
 {
+  out->StripCompositeNode("RECO_TRACKING_GEOMETRY");
   out->AddNode("Sync");
   out->AddNode("EventHeader");
   return;
