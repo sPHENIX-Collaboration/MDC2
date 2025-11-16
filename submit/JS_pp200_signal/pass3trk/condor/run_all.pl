@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use strict;
 use warnings;
@@ -35,9 +35,9 @@ my $isbad = 0;
 
 my $hostname = `hostname`;
 chomp $hostname;
-if ($hostname !~ /phnxsub/)
+if ($hostname !~ /sphnxprod/)
 {
-    print "submit only from phnxsub hosts\n";
+    print "submit only from sphnxprod hosts\n";
     $isbad = 1;
 }
 if (! defined $pileup)

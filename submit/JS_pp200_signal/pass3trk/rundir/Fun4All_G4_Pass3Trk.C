@@ -27,11 +27,11 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_Pass3Trk(
     const int nEvents = 1,
-    const string &inputFile0 = "DST_TRKR_G4HIT_pythia8_Jet10_2MHz-0000000015-00000.root",
-    const string &inputFile1 = "DST_TRUTH_G4HIT_pythia8_Jet10_2MHz-0000000015-00000.root",
+    const string &inputFile0 = "DST_TRKR_G4HIT_pythia8_Jet30_1000kHz-0000000028-00000.root",
+    const string &inputFile1 = "DST_TRUTH_G4HIT_pythia8_Jet30_1000kHz-0000000028-00000.root",
     const string &outdir = ".",
-    const string &jettrigger = "Jet10",
-    const string &cdbtag = "MDC2_ana.412")
+    const string &jettrigger = "Jet30",
+    const string &cdbtag = "MDC2")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -50,11 +50,16 @@ int Fun4All_G4_Pass3Trk(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
+
+  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile0);
+  int runnumber = runseg.first;
+  int segment = abs(runseg.second);
+
   Enable::CDB = true;
   // tag
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP",runnumber);
 
   //===============
   // Input options
@@ -91,9 +96,6 @@ int Fun4All_G4_Pass3Trk(
   Enable::DSTOUT_COMPRESS = false;
   DstOut::OutputDir = outdir;
 
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile0);
-  int runnumber = runseg.first;
-  int segment = abs(runseg.second);
   if (Enable::PRODUCTION)
   {
     PRODUCTION::SaveOutputDir = DstOut::OutputDir;
@@ -148,6 +150,11 @@ int Fun4All_G4_Pass3Trk(
   //--------------
   // Set up Input Managers
   //--------------
+  std::string geofile = CDBInterface::instance()->getUrl("Tracking_Geometry");
+
+  Fun4AllRunNodeInputManager *ingeo = new Fun4AllRunNodeInputManager("GeoIn");
+  ingeo->AddFile(geofile);
+  se->registerInputManager(ingeo);
 
   InputManagers();
 

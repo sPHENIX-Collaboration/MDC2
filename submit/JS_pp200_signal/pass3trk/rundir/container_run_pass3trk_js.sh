@@ -14,7 +14,7 @@ echo running: $this_script $*
 
 anabuild=${6}
 
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
+source /opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
 
 cdbtag=MDC2_$anabuild
 
@@ -23,11 +23,11 @@ then
     cd $_CONDOR_SCRATCH_DIR
     echo $2 > inputfiles.list
     echo $3 >> inputfiles.list
-    getinputfiles.pl  --filelist inputfiles.list
+    perl getinputfiles.pl -dd --filelist inputfiles.list
     if [ $? -ne 0 ]
     then
         cat inputfiles.list
-        echo error from getinputfiles.pl  --filelist inputfiles.list, exiting
+        echo error from getinputfiles.pl -dd  --filelist inputfiles.list, exiting
         exit -1
     fi
 else
