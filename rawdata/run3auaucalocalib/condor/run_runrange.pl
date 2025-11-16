@@ -88,7 +88,7 @@ while (my @runs = $getruns->fetchrow_array())
 	$qaoutfilename = sprintf("HIST_CALOQA_run3%s_new_newcdbtag_v008-%08d-%05d.root",$runtype,$runnumber,$segment);
 	$calib_ep_outfilename = sprintf("CALIB_EVENTPLANE_run3%s_new_newcdbtag_v008-%08d-%05d.root",$runtype,$runnumber,$segment);
     }
-    $chkfile->execute($outfilename);
+    $chkfile->execute($qaoutfilename);
     if ($chkfile->rows > 0)
     {
 	if ($verbosity > 0)

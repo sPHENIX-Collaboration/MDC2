@@ -129,14 +129,14 @@ void Fun4All_Year2_Calib(int nEvents = 100,
   In->AddFile(fname);
   se->registerInputManager(In);
 
-  Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfile);
-  out->StripNode("TOWERS_CEMC");
-  out->StripNode("TOWERS_HCALIN");
-  out->StripNode("TOWERS_HCALOUT");
-  out->StripNode("TOWERS_ZDC");
-  out->StripNode("TOWERS_SEPD");
-  out->StripNode("MBDPackets");
-  se->registerOutputManager(out);
+  // Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfile);
+  // out->StripNode("TOWERS_CEMC");
+  // out->StripNode("TOWERS_HCALIN");
+  // out->StripNode("TOWERS_HCALOUT");
+  // out->StripNode("TOWERS_ZDC");
+  // out->StripNode("TOWERS_SEPD");
+  // out->StripNode("MBDPackets");
+  // se->registerOutputManager(out);
   if (segment == 0)
   {
 //    se->skip(2); // event combining sometimes messes up first 2 events, skip them for 0 segment

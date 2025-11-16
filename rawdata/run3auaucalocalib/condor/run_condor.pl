@@ -24,7 +24,7 @@ else
 }
 my $localdir=`pwd`;
 chomp $localdir;
-my $baseprio = 91;
+my $baseprio = 60;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run3auau_calocalib.sh",$rundir);
 my $nevents = $ARGV[0];

@@ -7,8 +7,8 @@ use Getopt::Long;
 use DBI;
 # first physics run in run2pp: 47289
 # last physics run (from prod): 53880
-my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production2/run2pp/physics/jetskimmer/ana509_2024p022_v001");
-my $qaoutdir = sprintf("/sphenix/data/data02/sphnxpro/production2/run2pp/physics/jetskimmer/ana509_2024p022_v001");
+my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production2/run2pp/physics/jetskimmer/ana518_2024p024_v001");
+my $qaoutdir = sprintf("/sphenix/data/data02/sphnxpro/production2/run2pp/physics/jetskimmer/ana518_2024p024_v001");
 my $events = 0;
 my $incremental;
 my $killexist;
@@ -67,9 +67,9 @@ while (my @runs = $getruns->fetchrow_array())
     my $runnumber=$runs[0];
     my $segment = $runs[1];
     my $lfn = $runs[2];
-    my $outfilename1 = sprintf("DST_JETCALO_run2pp_ana509_2024p022_v001-%08d-%05d.root",$runnumber,$segment);
-    my $outfilename2 = sprintf("DST_Jet_run2pp_ana509_2024p022_v001-%08d-%05d.root",$runnumber,$segment);
-    my $qaoutfilename = sprintf("HIST_JETQA_run2pp_ana509_2024p022_v001-%08d-%05d.root",$runnumber,$segment);
+    my $outfilename1 = sprintf("DST_JETCALO_run2pp_ana518_2024p024_v001-%08d-%05d.root",$runnumber,$segment);
+    my $outfilename2 = sprintf("DST_Jet_run2pp_ana518_2024p024_v001-%08d-%05d.root",$runnumber,$segment);
+    my $qaoutfilename = sprintf("HIST_JETQA_run2pp_ana518_2024p024_v001-%08d-%05d.root",$runnumber,$segment);
     $chkfile->execute($outfilename1);
     if ($chkfile->rows > 0)
     {

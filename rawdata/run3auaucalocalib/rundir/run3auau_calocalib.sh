@@ -50,7 +50,7 @@ echo arg10 \(calib ep outdir\): ${10}
 
 runnumber=$(printf "%010d" $2)
 
-getinputfiles.pl -dd $4
+perl getinputfiles.pl -dd $4
 if [ $? -ne 0 ]
 then
     echo error from getinputfiles.pl  $4, exiting
@@ -62,14 +62,13 @@ root.exe -q -b Fun4All_Year2_Calib.C\($1,\"$4\",\"$5\",\"$7\",\"$9\"\)
 ls -l
 if [ -f $5 ]
 then
-    copyscript.pl $5 -dd -mv -outdir $6
+    perl copyscript.pl $5 -dd -mv -outdir $6
 else
     echo could not find $5
-    exit 1
 fi
 if [ -f $7 ]
 then
-    copyscript.pl $7 -dd -mv -outdir $8
+    perl copyscript.pl $7 -dd -mv -outdir $8
 else
     echo could not find $7
 fi

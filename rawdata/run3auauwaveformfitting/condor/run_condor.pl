@@ -24,7 +24,7 @@ else
 }
 my $localdir=`pwd`;
 chomp $localdir;
-my $baseprio = 91;
+my $baseprio = 40;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run3auau_waveformfitting.sh",$rundir);
 my $nevents = $ARGV[0];

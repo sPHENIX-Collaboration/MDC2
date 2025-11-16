@@ -48,6 +48,10 @@ while (my @res = $getfiles->fetchrow_array())
     print "found $res[0]\n";
     if ($res[0] =~ /DST_TRIGGERED_EVENT/ && ($res[0] =~ /run3beam_ana516_nocdbtag_v001/ || $res[0] =~ /run3auau_ana516_nocdbtag_v001/))
     {
+	if ($res[0] =~ /DST_TRIGGERED_EVENT_MOD/)
+	{
+	    next;
+	}
 	print F "$res[0]\n";
     }
 }

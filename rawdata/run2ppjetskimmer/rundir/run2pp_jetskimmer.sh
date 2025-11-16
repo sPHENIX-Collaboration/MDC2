@@ -8,7 +8,7 @@ this_script=`readlink -f $this_script`
 this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n ana.509
+source /opt/sphenix/core/bin/sphenix_setup.sh -n ana.518
 
 hostname
 
@@ -59,19 +59,19 @@ root.exe -q -b Fun4All_JetSkimmedProductionYear2.C\($1,\"$4\",\"$5\",\"$6\",\"$8
 ls -l
 if [ -f $5 ]
 then
-    copyscript.pl $5 -dd -mv -outdir $7
+    perl copyscript.pl $5 -dd -mv -outdir $7
 else
     echo could not find $5
 fi
 if [ -f $6 ]
 then
-    copyscript.pl $6 -dd -mv -outdir $7
+    perl copyscript.pl $6 -dd -mv -outdir $7
 else
     echo could not find $6
 fi
 if [ -f $8 ]
 then
-    copyscript.pl $8 -dd -mv -outdir $9
+    perl copyscript.pl $8 -dd -mv -outdir $9
 else
     echo could not find $9
 fi
