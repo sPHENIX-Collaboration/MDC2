@@ -64,6 +64,9 @@ filename=timing
 echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\"\)
 root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\"\)
 
+#get a file listing
+#ls -l
+
 timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/js_pp200_signal/pass3trk/timing.run${7}/${5}
 
 [ ! -d $timedirname ] &&  mkdir -p $timedirname

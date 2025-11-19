@@ -73,6 +73,7 @@ void DstOutput_move()
       {
 	mvcmd = "cp " + *iter + " " + PRODUCTION::SaveOutputDir;
       }
+      std::cout << "copy command: " << mvcmd << std::endl;
       gSystem->Exec(mvcmd.c_str());
     }
   }

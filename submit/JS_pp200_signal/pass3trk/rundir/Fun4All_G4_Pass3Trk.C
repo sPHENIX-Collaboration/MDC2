@@ -193,13 +193,13 @@ int Fun4All_G4_Pass3Trk(
   CDBInterface::instance()->Print(); // print used DB files
   se->End();
   se->PrintTimer();
-  std::cout << "All done" << std::endl;
   if (Enable::PRODUCTION)
   {
     DstOutput_move();
   }
 
   delete se;
+  std::cout << "All done" << std::endl;
   gSystem->Exit(0);
   return 0;
 }

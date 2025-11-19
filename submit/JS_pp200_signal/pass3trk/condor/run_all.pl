@@ -17,12 +17,13 @@ my $shared;
 my $test;
 my $pileup;
 my $verbosity = 0;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
+GetOptions("build:s" => \$build, "events:i"=>\$outevents, "increment"=>\$incremental, "memory:s"=>\$memory, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"Jet40\", \"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\", \"Detroit\" production>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
+    print "--events: number of events\n";
     print "--increment : submit jobs while processing running\n";
     print "--pileup : collision rate (with unit, kHz, MHz)\n";
     print "--shared : submit jobs to shared pool\n";
