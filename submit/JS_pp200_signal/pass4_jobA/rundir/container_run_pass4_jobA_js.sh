@@ -41,6 +41,7 @@ fi
 # $6: build
 # $7: run number
 # $8: sequence
+# $9: mdc2 git commit id
 
 echo 'here comes your environment'
 printenv
@@ -51,13 +52,14 @@ echo arg4 \(output dir\): $4
 echo arg5 \(jettrigger\): $5
 echo arg6 \(build\): $6
 echo arg7 \(runnumber\): $7
+echo arg9 \(git commit id\): $9
 echo arg8 \(sequence\): $8
 
 runnumber=$(printf "%010d" $7)
 sequence=$(printf "%06d" $8)
 
-echo running root.exe -q -b Fun4All_G4_sPHENIX_jobA.C\($1,0,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
-root.exe -q -b  Fun4All_G4_sPHENIX_jobA.C\($1,0,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
+echo running root.exe -q -b Fun4All_G4_sPHENIX_jobA.C\($1,0,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"$9\"\)
+root.exe -q -b  Fun4All_G4_sPHENIX_jobA.C\($1,0,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"$9\"\)
 
 filename=timing
 
