@@ -17,7 +17,7 @@ my $shared;
 my $test;
 my $pileup;
 my $verbosity = 0;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
+GetOptions("build:s" => \$build, "events:i"=>\$outevents, "increment"=>\$incremental, "memory:s"=>\$memory, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"Jet40\", \"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\", \"Detroit\" production>\n";

@@ -158,12 +158,12 @@ int Fun4All_G4_sPHENIX_jobA(
   CDBInterface::instance()->Print();
   se->End();
   se->PrintTimer();
-  std::cout << "All done" << std::endl;
   delete se;
   if (Enable::PRODUCTION)
   {
     Production_MoveOutput();
   }
+  std::cout << "All done" << std::endl;
   gSystem->Exit(0);
   return 0;
 }
