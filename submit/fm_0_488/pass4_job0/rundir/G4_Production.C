@@ -50,7 +50,7 @@ void Production_MoveOutput()
     string mvcmd;
     if (scriptexists)
     {
-      mvcmd = copyscript + " -outdir " + PRODUCTION::SaveOutputDir + " " + fulloutfile;
+      mvcmd = "perl " + copyscript + " -outdir " + PRODUCTION::SaveOutputDir + " " + fulloutfile;
     }
     else
     {
