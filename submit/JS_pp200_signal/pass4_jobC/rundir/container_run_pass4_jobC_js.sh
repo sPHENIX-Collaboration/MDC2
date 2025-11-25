@@ -13,7 +13,7 @@ echo running: $this_script $*
 
 anabuild=${7}
 
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
+source /opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
 
 cdbtag=MDC2_$anabuild
 
@@ -22,11 +22,11 @@ then
     cd $_CONDOR_SCRATCH_DIR
     echo $3 > inputfiles.list
     echo $4 >> inputfiles.list
-    getinputfiles.pl --filelist inputfiles.list
+    perl getinputfiles.pl --dd --filelist inputfiles.list
     if [ $? -ne 0 ]
     then
         cat inputfiles.list
-	echo error from getinputfiles.pl --filelist inputfiles.list, exiting
+	echo error from perl getinputfiles.pl --filelist inputfiles.list, exiting
 	exit -1
     fi
 else
@@ -45,6 +45,7 @@ fi
 # $7: build
 # $8: run number
 # $9: sequence
+# $10: mdc2 git commit id
 
 echo 'here comes your environment'
 printenv
@@ -57,6 +58,7 @@ echo arg6 \(output dir\): $6
 echo arg7 \(build\): $7
 echo arg8 \(runnumber\): $8
 echo arg9 \(sequence\): $9
+echo arg10 \(git commitid\): ${10}
 echo cdbtag: $cdbtag
 
 runnumber=$(printf "%010d" $8)
@@ -64,8 +66,8 @@ sequence=$(printf "%06d" $9)
 
 filename=timing
 
-echo running root.exe -q -b Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$3\",\"$4\",\"$5\",\"$6\",\"$cdbtag\"\)
-root.exe -q -b  Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$3\",\"$4\",\"$5\",\"$6\",\"$cdbtag\"\)
+echo running root.exe -q -b Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$3\",\"$4\",\"$5\",\"$6\",\"$cdbtag\",\"${10}\"\)
+root.exe -q -b  Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$3\",\"$4\",\"$5\",\"$6\",\"$cdbtag\",\"${10}\"\)
 
 timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/js_pp200_signal/pass4_jobC/timing.run${$8}/${2}
 

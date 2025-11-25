@@ -2,6 +2,7 @@
 
 #include <G4_Magnet.C>
 #include <G4_Production.C>
+#include <SaveGitTags.C>
 #include <Trkr_RecoInit.C>
 #include <Trkr_Reco.C>
 
@@ -14,6 +15,7 @@
 #include <fun4all/Fun4AllServer.h>
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
+#include <fun4all/Fun4AllUtils.h>
 
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
@@ -31,7 +33,8 @@ int Fun4All_G4_sPHENIX_jobC(
   const std::string &inputFile2 = "DST_CALO_CLUSTER_pythia8_Jet10_300kHz-0000000022-000000.root",
   const std::string &outputFile = "DST_TRACKS_pythia8_Jet10_300kHz-0000000022-000000.root",
   const std::string &outdir = ".",
-  const string &cdbtag = "MDC2_ana.418")
+  const string &cdbtag = "MDC2",
+  const std::string &gitcommit = "none")
 {
 
   // print inputs
@@ -42,6 +45,17 @@ int Fun4All_G4_sPHENIX_jobC(
   std::cout << "Fun4All_G4_sPHENIX_jobC - outputFile: " << outputFile << std::endl;
 
   recoConsts *rc = recoConsts::instance();
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
+  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
+  int runnumber = runseg.first;
+  int segment = runseg.second;
 
   //===============
   // conditions DB flags
@@ -50,7 +64,7 @@ int Fun4All_G4_sPHENIX_jobC(
   // tag
   rc->set_StringFlag("CDB_GLOBALTAG",cdbtag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP",runnumber);
 
   // set up production relatedstuff
   Enable::PRODUCTION = true;
@@ -141,12 +155,12 @@ int Fun4All_G4_sPHENIX_jobC(
   CDBInterface::instance()->Print(); // print used DB files
   se->End();
   se->PrintTimer();
-  std::cout << "All done" << std::endl;
   delete se;
   if (Enable::PRODUCTION)
   {
     Production_MoveOutput();
   }
+  std::cout << "All done" << std::endl;
   gSystem->Exit(0);
   return 0;
 }
