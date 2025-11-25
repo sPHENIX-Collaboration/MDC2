@@ -23,6 +23,7 @@ if ($#ARGV < 1)
     print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"Jet40\", \"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\", \"Detroit\" production>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
+    print "--events: <number of events, default = 0>\n";
     print "--increment : submit jobs while processing running\n";
     print "--memory : memory requirement with unit (MB)\n";
     print "--pileup : collision rate (with unit, kHz, MHz)\n";

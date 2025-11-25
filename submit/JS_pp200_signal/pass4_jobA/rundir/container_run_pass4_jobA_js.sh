@@ -20,7 +20,7 @@ cdbtag=MDC2_$anabuild
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
     cd $_CONDOR_SCRATCH_DIR
-    perl getinputfiles.pl $2
+    perl getinputfiles.pl --dd  $2
     if [ $? -ne 0 ]
     then
 	echo error from perl getinputfiles.pl $2, exiting
@@ -52,8 +52,9 @@ echo arg4 \(output dir\): $4
 echo arg5 \(jettrigger\): $5
 echo arg6 \(build\): $6
 echo arg7 \(runnumber\): $7
-echo arg9 \(git commit id\): $9
 echo arg8 \(sequence\): $8
+echo arg9 \(git commit id\): $9
+echo cdbtag: $cdbtag
 
 runnumber=$(printf "%010d" $7)
 sequence=$(printf "%06d" $8)
