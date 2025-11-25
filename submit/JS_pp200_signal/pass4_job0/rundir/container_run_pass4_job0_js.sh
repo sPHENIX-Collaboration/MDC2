@@ -62,7 +62,7 @@ sequence=$(printf "%06d" $8)
 filename=timing
 
 echo running root.exe -q -b Fun4All_G4_sPHENIX_job0.C\($1,0,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"$9\"\)
-root.exe -q -b  Fun4All_G4_sPHENIX_job0.C\($1,0,\"$2\",\"$3\",\"$4\",\"$cdbtag\,\"$9\"\)
+root.exe -q -b  Fun4All_G4_sPHENIX_job0.C\($1,0,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"$9\"\)
 
 timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/js_pp200_signal/pass4_job0/timing.run${7}/${5}
 
