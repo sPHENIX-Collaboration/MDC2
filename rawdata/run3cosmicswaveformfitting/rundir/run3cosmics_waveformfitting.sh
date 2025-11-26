@@ -61,19 +61,19 @@ root.exe -q -b Fun4All_New_HCalCosmics.C\($1,\"files.list\",\"$4\",\"$6\",\"$7\"
 ls -l
 if [ -f $4 ]
 then
-    copyscript.pl $4 -dd -mv -outdir $5
+    perl copyscript.pl $4 -dd -mv -outdir $5
 else
     echo could not find $4
 fi
 if [ -f $6 ]
 then
-    copyscript.pl $6 -dd -mv -outdir $8
+    perl copyscript.pl $6 -dd -mv -outdir $8
 else
     echo could not find $6
 fi
 if [ -f $7 ]
 then
-    copyscript.pl $7 -dd -mv -outdir $8
+    perl copyscript.pl $7 -dd -mv -outdir $8
 else
     echo could not find $7
 fi
