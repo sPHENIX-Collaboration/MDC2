@@ -153,10 +153,10 @@ void Fun4All_JetSkimmedProductionYear2(int nEvents=1000,
   JetDSTSkimmer *jetDSTSkimmer = new JetDSTSkimmer();
   std::map<std::string, float> jetNodePts;
   jetNodePts["AntiKt_unsubtracted_r02"] = 6.6;
-  jetNodePts["AntiKt_unsubtracted_r03"] = 7.3;
-  jetNodePts["AntiKt_unsubtracted_r04"] = 7.6;
-  jetNodePts["AntiKt_unsubtracted_r05"] = 7.9;
-  jetNodePts["AntiKt_unsubtracted_r06"] = 8.0;
+  jetNodePts["AntiKt_unsubtracted_r03"] = 7.0;
+  jetNodePts["AntiKt_unsubtracted_r04"] = 7.0;
+  jetNodePts["AntiKt_unsubtracted_r05"] = 7.4;
+  jetNodePts["AntiKt_unsubtracted_r06"] = 7.5;
   jetNodePts["AntiKt_unsubtracted_r07"] = 11.0;
   jetNodePts["AntiKt_unsubtracted_r08"] = 12.0;
   jetDSTSkimmer->SetJetNodeThresholds(jetNodePts);
