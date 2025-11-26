@@ -74,7 +74,7 @@ void Fun4All_New_Prdf_Combiner(int nEvents = 0,
   out->SplitLevel(0);
   out->UseFileRule();
   out->SetNEvents(100000);
-  out->SetClosingScript("copyscript.pl");
+  out->SetClosingScript("./copyscript.pl");
   out->SetClosingScriptArgs(" -dd -mv -outdir " + outdir);
   se->registerOutputManager(out);
   if (nEvents < 0)
