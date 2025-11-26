@@ -73,7 +73,6 @@ print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
 print F "Initialdir  	= $rundir\n";
 print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
-#print F "accounting_group = group_sphenix.prod\n";
 print F "request_memory = $memory\n";
 print F "batch_name = \"$batchname\"\n";
 print F "Priority = $baseprio\n";
