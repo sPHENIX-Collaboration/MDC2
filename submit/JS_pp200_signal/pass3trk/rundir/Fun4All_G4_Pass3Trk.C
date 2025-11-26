@@ -7,6 +7,7 @@
 #include <G4_OutputManager_Pass3Trk.C>
 #include <G4_Production.C>
 #include <G4_TrkrSimulation.C>
+#include <SaveGitTags.C>
 
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
@@ -36,6 +37,8 @@ int Fun4All_G4_Pass3Trk(
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
+
+  SaveGitTags();
 
   //Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
   PHRandomSeed::Verbosity(1);

@@ -11,7 +11,13 @@
 #include <G4_HcalOut_ref.C>
 #include <G4_Input.C>
 #include <G4_Production.C>
+#include <G4_RunSettings.C>
+#include <SaveGitTags.C>
 
+#include <ffamodules/CDBInterface.h>
+#include <ffamodules/FlagHandler.h>
+
+#include <fun4allutils/TimerStats.h>
 
 #include <caloreco/CaloGeomMapping.h>
 #include <caloreco/CaloTowerBuilder.h>
@@ -27,11 +33,6 @@
 #include <fun4all/Fun4AllServer.h>
 #include <fun4all/Fun4AllUtils.h>
 
-#include <ffamodules/CDBInterface.h>
-#include <ffamodules/FlagHandler.h>
-
-#include <fun4allutils/TimerStats.h>
-
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
 
@@ -43,12 +44,12 @@ R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4allutils.so)
 
 void Fun4All_G4_Calo(
-    const int nEvents = 1,
-    const string &inputFile0 = "DST_CALO_G4HIT_pythia8_Jet10_300kHz-0000000022-000000.root",
-    const string &outputFile = "DST_CALO_CLUSTER_pythia8_Jet10_300kHz-0000000022-000000.root",
-    const string &outdir = ".",
-    const string &cdbtag = "MDC2")
-
+  const int nEvents = 1,
+  const string &inputFile0 = "DST_CALO_G4HIT_pythia8_Jet10_300kHz-0000000022-000000.root",
+  const string &outputFile = "DST_CALO_CLUSTER_pythia8_Jet10_300kHz-0000000022-000000.root",
+  const string &outdir = ".",
+  const string &cdbtag = "MDC2",
+  const std::string &gitcommit = "none")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);  // set it to 1 if you want event printouts
@@ -69,33 +70,27 @@ void Fun4All_G4_Calo(
   // int seedValue = 491258969;
   // rc->set_IntFlag("RANDOMSEED", seedValue);
 
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
+  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile0);
+  int runnumber = runseg.first;
+  int segment = runseg.second;
+
   //===============
   // conditions DB flags
   //===============
   Enable::CDB = true;
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
-  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP", runnumber);
   CDBInterface::instance()->Verbosity(1);
 
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
-  int runnumber = runseg.first;
-
-  switch (runnumber)
-  {
-  case 21:  // zero beam xing angle
-    Input::BEAM_CONFIGURATION = Input::pp_ZEROANGLE;
-    break;
-  case 22:  // 1.5 mrad beam xing angle
-    Input::BEAM_CONFIGURATION = Input::pp_COLLISION;
-    break;
-  case 25:  // 1.5 mrad beam xing angle
-    Input::BEAM_CONFIGURATION = Input::AA_COLLISION;
-    break;
-  default:
-    cout << "runnnumber " << runnumber << " not implemented" << endl;
-    gSystem->Exit(1);
-    break;
-  }
+  RunSettings(runnumber);
 
   //===============
   // Input options
@@ -205,11 +200,6 @@ void Fun4All_G4_Calo(
     out->AddNode("TOWERINFO_CALIB_CEMC");
     out->AddNode("WAVEFORM_CEMC");
     out->AddNode("TOWERS_CEMC");
-
-    // leave the topo cluster here in case we run this during pass3
-    out->AddNode("TOPOCLUSTER_ALLCALO");
-    out->AddNode("TOPOCLUSTER_EMCAL");
-    out->AddNode("TOPOCLUSTER_HCAL");
     se->registerOutputManager(out);
   }
 
@@ -219,7 +209,7 @@ void Fun4All_G4_Calo(
   // if we use a negative number of events we go back to the command line here
   if (nEvents < 0)
   {
-    return 0;
+    return;
   }
   se->run(nEvents);
 
@@ -230,12 +220,12 @@ void Fun4All_G4_Calo(
   CDBInterface::instance()->Print();  // print used DB files
   se->End();
   se->PrintTimer();
-  std::cout << "All done" << std::endl;
   delete se;
   if (Enable::PRODUCTION)
   {
     Production_MoveOutput();
   }
+  std::cout << "All done" << std::endl;
   gSystem->Exit(0);
 }
 

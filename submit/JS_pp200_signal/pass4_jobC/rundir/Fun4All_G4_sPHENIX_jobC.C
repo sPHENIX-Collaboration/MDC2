@@ -53,7 +53,7 @@ int Fun4All_G4_sPHENIX_jobC(
   {
     SaveGitTags();
   }
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
+  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile1);
   int runnumber = runseg.first;
   int segment = runseg.second;
 

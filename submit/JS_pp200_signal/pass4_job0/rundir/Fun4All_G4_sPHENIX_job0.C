@@ -32,7 +32,7 @@ int Fun4All_G4_sPHENIX_job0(
   const std::string &outputFile = "DST_TRKR_CLUSTER_pythia8_Jet30_1000kHz-0000000028-000000.root",
   const string &outdir = ".",
   const string &cdbtag = "MDC2",
-    const std::string &gitcommit = "none")
+  const std::string &gitcommit = "none")
 {
 
   // print inputs
