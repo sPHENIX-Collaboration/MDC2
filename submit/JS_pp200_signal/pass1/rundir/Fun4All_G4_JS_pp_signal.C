@@ -3,14 +3,14 @@
 
 #include <GlobalVariables.C>
 
-#include "G4Setup_sPHENIX.C"
 #include <G4_Global.C>
 #include <G4_Input.C>
 #include <G4_Mbd.C>
 #include <G4_Production.C>
-#include <G4_TrkrSimulation.C>
 #include <G4_RunSettings.C>
+#include <G4_TrkrSimulation.C>
 #include <SaveGitTags.C>
+#include "G4Setup_sPHENIX.C"
 
 #include <phpythia8/PHPy8JetTrigger.h>
 #include <phpythia8/PHPy8ParticleTrigger.h>
@@ -64,7 +64,7 @@ int Fun4All_G4_JS_pp_signal(
   //  rc->set_IntFlag("RANDOMSEED", 12345);
   // int seedValue = 491258969;
   // rc->set_IntFlag("RANDOMSEED", seedValue);
-  SaveGitTags(); // save the git tags from rebuild.info as rc string flags
+  SaveGitTags();  // save the git tags from rebuild.info as rc string flags
 
   TRACKING::pp_mode = true;
   TRACKING::pp_extended_readout_time = 90000;
@@ -87,7 +87,6 @@ int Fun4All_G4_JS_pp_signal(
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP", runnumber);
-
 
   //===============
   // Input options
@@ -136,9 +135,9 @@ int Fun4All_G4_JS_pp_signal(
   {
     pythia8_config_file += "phpythia8_70GeV_JS_MDC2.cfg";
   }
-  else if (jettrigger == "Detroit" || jettrigger=="Jet5")
+  else if (jettrigger == "Detroit" || jettrigger == "Jet5")
   {
-    pythia8_config_file =  std::string(getenv("CALIBRATIONROOT")) + "/Generators/phpythia8_detroit_minBias.cfg";
+    pythia8_config_file = std::string(getenv("CALIBRATIONROOT")) + "/Generators/phpythia8_detroit_minBias.cfg";
   }
   else
   {
@@ -159,27 +158,27 @@ int Fun4All_G4_JS_pp_signal(
     if (jettrigger.find("PhotonJet") != std::string::npos)
     {
       PHPy8ParticleTrigger *p8_photon_jet_trigger = new PHPy8ParticleTrigger();
-      p8_photon_jet_trigger->SetStableParticleOnly(false); // process unstable particles that include quarks
+      p8_photon_jet_trigger->SetStableParticleOnly(false);  // process unstable particles that include quarks
       p8_photon_jet_trigger->AddParticles(22);
-      p8_photon_jet_trigger->SetEtaHighLow(1.5, -1.5); // sample a rapidity range higher than the sPHENIX tracking pseudorapidity
-      std::vector<int> partentsId{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,-22,-21,-20,-19,-18,-17,-16,-15,-14,-13,-12,-11,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1};
+      p8_photon_jet_trigger->SetEtaHighLow(1.5, -1.5);  // sample a rapidity range higher than the sPHENIX tracking pseudorapidity
+      std::vector<int> partentsId{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, -22, -21, -20, -19, -18, -17, -16, -15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1};
       p8_photon_jet_trigger->AddParents(partentsId);
       if (jettrigger == "PhotonJet5")
       {
-	p8_photon_jet_trigger->SetPtLow(5);
+        p8_photon_jet_trigger->SetPtLow(5);
       }
       else if (jettrigger == "PhotonJet10")
       {
-	p8_photon_jet_trigger->SetPtLow(10);
+        p8_photon_jet_trigger->SetPtLow(10);
       }
       else if (jettrigger == "PhotonJet20")
       {
-	p8_photon_jet_trigger->SetPtLow(20);
+        p8_photon_jet_trigger->SetPtLow(20);
       }
       else
       {
-	std::cout << "invalid jettrigger: " << jettrigger << std::endl;
-	gSystem->Exit(1);
+        std::cout << "invalid jettrigger: " << jettrigger << std::endl;
+        gSystem->Exit(1);
       }
       INPUTGENERATOR::Pythia8->register_trigger(p8_photon_jet_trigger);
       INPUTGENERATOR::Pythia8->set_trigger_OR();
@@ -189,43 +188,43 @@ int Fun4All_G4_JS_pp_signal(
       PHPy8JetTrigger *p8_js_signal_trigger = new PHPy8JetTrigger();
       p8_js_signal_trigger->SetEtaHighLow(1.5, -1.5);  // Set eta acceptance for particles into the jet between +/- 1.5
       p8_js_signal_trigger->SetJetR(0.4);              // Set the radius for the trigger jet
-      
+
       if (jettrigger == "Jet5")
       {
-	p8_js_signal_trigger->SetMinJetPt(5);  // require a 5 GeV minimum pT jet in the event
+        p8_js_signal_trigger->SetMinJetPt(5);  // require a 5 GeV minimum pT jet in the event
       }
       else if (jettrigger == "Jet10")
       {
-	p8_js_signal_trigger->SetMinJetPt(10);  // require a 10 GeV minimum pT jet in the event
+        p8_js_signal_trigger->SetMinJetPt(10);  // require a 10 GeV minimum pT jet in the event
       }
       else if (jettrigger == "Jet15")
       {
-	p8_js_signal_trigger->SetMinJetPt(15);  // require a 15 GeV minimum pT jet in the event
+        p8_js_signal_trigger->SetMinJetPt(15);  // require a 15 GeV minimum pT jet in the event
       }
       else if (jettrigger == "Jet20")
       {
-	p8_js_signal_trigger->SetMinJetPt(20);  // require a 20 GeV minimum pT jet in the event
+        p8_js_signal_trigger->SetMinJetPt(20);  // require a 20 GeV minimum pT jet in the event
       }
       else if (jettrigger == "Jet30")
       {
-	p8_js_signal_trigger->SetMinJetPt(30);  // require a 30 GeV minimum pT jet in the event
+        p8_js_signal_trigger->SetMinJetPt(30);  // require a 30 GeV minimum pT jet in the event
       }
       else if (jettrigger == "Jet40")
       {
-	p8_js_signal_trigger->SetMinJetPt(40);  // require a 30 GeV minimum pT jet in the event
+        p8_js_signal_trigger->SetMinJetPt(40);  // require a 30 GeV minimum pT jet in the event
       }
       else if (jettrigger == "Jet50")
       {
-	p8_js_signal_trigger->SetMinJetPt(50);  // require a 30 GeV minimum pT jet in the event
+        p8_js_signal_trigger->SetMinJetPt(50);  // require a 30 GeV minimum pT jet in the event
       }
       else if (jettrigger == "Jet70")
       {
-  p8_js_signal_trigger->SetMinJetPt(70);  // require a 70 GeV minimum pT jet in the event
+        p8_js_signal_trigger->SetMinJetPt(70);  // require a 70 GeV minimum pT jet in the event
       }
       else
       {
-	std::cout << "invalid jettrigger: " << jettrigger << std::endl;
-	gSystem->Exit(1);
+        std::cout << "invalid jettrigger: " << jettrigger << std::endl;
+        gSystem->Exit(1);
       }
       INPUTGENERATOR::Pythia8->register_trigger(p8_js_signal_trigger);
       INPUTGENERATOR::Pythia8->set_trigger_AND();
@@ -310,7 +309,7 @@ int Fun4All_G4_JS_pp_signal(
 
   //! forward flux return plug door. Out of acceptance and off by default.
   Enable::PLUGDOOR = true;
-  //Enable::PLUGDOOR_BLACKHOLE = true;
+  // Enable::PLUGDOOR_BLACKHOLE = true;
 
   // new settings using Enable namespace in GlobalVariables.C
   Enable::BLACKHOLE = true;
