@@ -3,7 +3,7 @@
 
 #include <GlobalVariables.C>
 
-#include <G4Setup_sPHENIX.C>
+#include "G4Setup_sPHENIX.C"
 #include <G4_Global.C>
 #include <G4_Input.C>
 #include <G4_Mbd.C>
@@ -31,20 +31,17 @@
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
 
-#include <stdlib.h>
-
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_JS_pp_signal(
     const int nEvents = 1,
-    const string &jettrigger = "Jet30",  // or "PhotonJet"
-    const string &outputFile = "G4Hits_pythia8_Jet30-0000028-000000.root",
-    const string &embed_input_file = "https://www.phenix.bnl.gov/WWW/publish/phnxbld/sPHENIX/files/sPHENIX_G4Hits_sHijing_9-11fm_00000_00010.root",
+    const std::string &jettrigger = "Jet30",  // or "PhotonJet"
+    const std::string &outputFile = "G4Hits_pythia8_Jet30-0000029-000000.root",
     const int skip = 0,
-    const string &outdir = ".",
-    const string &cdbtag = "MDC2")
+    const std::string &outdir = ".",
+    const std::string &cdbtag = "MDC2")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -72,7 +69,7 @@ int Fun4All_G4_JS_pp_signal(
   TRACKING::pp_mode = true;
   TRACKING::pp_extended_readout_time = 90000;
 
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
+  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
   int runnumber = runseg.first;
   int segment = runseg.second;
   if (runnumber != 0)
@@ -106,7 +103,7 @@ int Fun4All_G4_JS_pp_signal(
   // Initialize the selected Input/Event generation
   //-----------------
   // This creates the input generator(s)
-  string pythia8_config_file = string(getenv("CALIBRATIONROOT")) + "/Generators/JetStructure_TG/";
+  std::string pythia8_config_file = std::string(getenv("CALIBRATIONROOT")) + "/Generators/JetStructure_TG/";
   if (jettrigger == "PhotonJet")
   {
     pythia8_config_file += "phpythia8_JS_GJ_MDC2.cfg";
@@ -115,15 +112,7 @@ int Fun4All_G4_JS_pp_signal(
   {
     pythia8_config_file += "phpythia8_5GeV_JS_MDC2.cfg";
   }
-  else if (jettrigger == "PhotonJet10")
-  {
-    pythia8_config_file += "phpythia8_10GeV_JS_MDC2.cfg";
-  }
-  else if (jettrigger == "PhotonJet20")
-  {
-    pythia8_config_file += "phpythia8_20GeV_JS_MDC2.cfg";
-  }
-  else if (jettrigger == "Jet10")
+  else if (jettrigger == "Jet10" || jettrigger == "PhotonJet10")
   {
     pythia8_config_file += "phpythia8_10GeV_JS_MDC2.cfg";
   }
@@ -131,7 +120,7 @@ int Fun4All_G4_JS_pp_signal(
   {
     pythia8_config_file += "phpythia8_15GeV_JS_MDC2.cfg";
   }
-  else if (jettrigger == "Jet20")
+  else if (jettrigger == "Jet20" || jettrigger == "PhotonJet20")
   {
     pythia8_config_file += "phpythia8_20GeV_JS_MDC2.cfg";
   }
@@ -149,7 +138,7 @@ int Fun4All_G4_JS_pp_signal(
   }
   else if (jettrigger == "Detroit" || jettrigger=="Jet5")
   {
-    pythia8_config_file =  string(getenv("CALIBRATIONROOT")) + "/Generators/phpythia8_detroit_minBias.cfg";
+    pythia8_config_file =  std::string(getenv("CALIBRATIONROOT")) + "/Generators/phpythia8_detroit_minBias.cfg";
   }
   else
   {
@@ -167,7 +156,7 @@ int Fun4All_G4_JS_pp_signal(
 
   if (Input::PYTHIA8)
   {
-    if (jettrigger.find("PhotonJet") != string::npos)
+    if (jettrigger.find("PhotonJet") != std::string::npos)
     {
       PHPy8ParticleTrigger *p8_photon_jet_trigger = new PHPy8ParticleTrigger();
       p8_photon_jet_trigger->SetStableParticleOnly(false); // process unstable particles that include quarks
@@ -189,13 +178,13 @@ int Fun4All_G4_JS_pp_signal(
       }
       else
       {
-	cout << "invalid jettrigger: " << jettrigger << endl;
+	std::cout << "invalid jettrigger: " << jettrigger << std::endl;
 	gSystem->Exit(1);
       }
       INPUTGENERATOR::Pythia8->register_trigger(p8_photon_jet_trigger);
       INPUTGENERATOR::Pythia8->set_trigger_OR();
     }
-    else if (jettrigger.find("Jet") != string::npos)
+    else if (jettrigger.find("Jet") != std::string::npos)
     {
       PHPy8JetTrigger *p8_js_signal_trigger = new PHPy8JetTrigger();
       p8_js_signal_trigger->SetEtaHighLow(1.5, -1.5);  // Set eta acceptance for particles into the jet between +/- 1.5
@@ -235,7 +224,7 @@ int Fun4All_G4_JS_pp_signal(
       }
       else
       {
-	cout << "invalid jettrigger: " << jettrigger << endl;
+	std::cout << "invalid jettrigger: " << jettrigger << std::endl;
 	gSystem->Exit(1);
       }
       INPUTGENERATOR::Pythia8->register_trigger(p8_js_signal_trigger);
@@ -243,11 +232,11 @@ int Fun4All_G4_JS_pp_signal(
     }
     else if (jettrigger == "Detroit")
     {
-      cout << "using detroit - no cuts" << std::endl;
+      std::cout << "using detroit - no cuts" << std::endl;
     }
     else
     {
-      cout << "Invalid jettrigger for cuts " << jettrigger << endl;
+      std::cout << "Invalid jettrigger for cuts " << jettrigger << std::endl;
       gSystem->Exit(1);
     }
     Input::ApplysPHENIXBeamParameter(INPUTGENERATOR::Pythia8);
@@ -359,7 +348,7 @@ int Fun4All_G4_JS_pp_signal(
   }
   if (Enable::DSTOUT)
   {
-    string FullOutFile = DstOut::OutputFile;
+    std::string FullOutFile = DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     out->StripCompositeNode("RECO_TRACKING_GEOMETRY");
     se->registerOutputManager(out);
@@ -375,8 +364,8 @@ int Fun4All_G4_JS_pp_signal(
   // if we run the particle generator and use 0 it'll run forever
   if (nEvents == 0 && !Input::HEPMC && !Input::READHITS)
   {
-    cout << "using 0 for number of events is a bad idea when using particle generators" << endl;
-    cout << "it will run forever, so I just return without running anything" << endl;
+    std::cout << "using 0 for number of events is a bad idea when using particle generators" << std::endl;
+    std::cout << "it will run forever, so I just return without running anything" << std::endl;
     return 0;
   }
 
