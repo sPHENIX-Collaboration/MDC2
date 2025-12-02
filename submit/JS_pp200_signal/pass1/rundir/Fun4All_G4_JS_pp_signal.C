@@ -3,6 +3,8 @@
 
 #include <GlobalVariables.C>
 
+#include <G4Setup_sPHENIX.C>
+
 #include <G4_Global.C>
 #include <G4_Input.C>
 #include <G4_Mbd.C>
@@ -10,7 +12,6 @@
 #include <G4_RunSettings.C>
 #include <G4_TrkrSimulation.C>
 #include <SaveGitTags.C>
-#include "G4Setup_sPHENIX.C"
 
 #include <phpythia8/PHPy8JetTrigger.h>
 #include <phpythia8/PHPy8ParticleTrigger.h>
@@ -39,9 +40,9 @@ int Fun4All_G4_JS_pp_signal(
     const int nEvents = 1,
     const std::string &jettrigger = "Jet30",  // or "PhotonJet"
     const std::string &outputFile = "G4Hits_pythia8_Jet30-0000029-000000.root",
-    const int skip = 0,
     const std::string &outdir = ".",
-    const std::string &cdbtag = "MDC2")
+    const std::string &cdbtag = "MDC2",
+    const std::string &gitcommit = "none")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -65,7 +66,10 @@ int Fun4All_G4_JS_pp_signal(
   // int seedValue = 491258969;
   // rc->set_IntFlag("RANDOMSEED", seedValue);
   SaveGitTags();  // save the git tags from rebuild.info as rc string flags
-
+  if (gitcommit != "none")
+  {
+      rc->set_StringFlag("MDC2_GITID", gitcommit);
+  }
   TRACKING::pp_mode = true;
   TRACKING::pp_extended_readout_time = 90000;
 
@@ -368,7 +372,6 @@ int Fun4All_G4_JS_pp_signal(
     return 0;
   }
 
-  se->skip(skip);
   se->run(nEvents);
 
   //-----
