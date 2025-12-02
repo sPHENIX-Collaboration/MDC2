@@ -9,7 +9,6 @@ PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)
 request_memory = 2048MB
 Priority = $(baseprio)
 job_lease_duration = 3600
-Rank = -SlotID
 batch_name = $(batchname)
 request_xferslots = 3
 Queue executable, nevents, runnumber, daqhost, outdir, errfile, outfile, condorlogfile, rundir, baseprio, batchname from condor.list
