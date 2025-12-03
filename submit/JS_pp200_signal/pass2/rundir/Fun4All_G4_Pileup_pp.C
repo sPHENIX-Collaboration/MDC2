@@ -3,7 +3,7 @@
 
 #include <GlobalVariables.C>
 
-#include <G4_OutputManager_Pileup_pp.C>
+#include "G4_OutputManager_Pileup_pp.C"
 #include <G4_Production.C>
 #include <G4_RunSettings.C>
 #include <SaveGitTags.C>
@@ -33,20 +33,20 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 //________________________________________________________________________________________________
   int Fun4All_G4_Pileup_pp(
     const int nEvents = 0,
-    const string &inputFile = "G4Hits_pythia8_PhotonJet5-0000000022-000000.root",
-    const string &backgroundList = "pileupbkgppmb.list",
-    const string &outdir = ".",
-    const string &jettrigger = "NONE",
+    const std::string &inputFile = "G4Hits_pythia8_PhotonJet5-0000000022-000000.root",
+    const std::string &backgroundList = "pileupbkgppmb.list",
+    const std::string &outdir = ".",
+    const std::string &jettrigger = "NONE",
     const int pileup = 3000000,
-    const string &cdbtag = "MDC2",
+    const std::string &cdbtag = "MDC2",
     const std::string &gitcommit = "none")
 {
   gSystem->Load("libg4dst.so");
   // server
-  auto se = Fun4AllServer::instance();
+  auto *se = Fun4AllServer::instance();
   se->Verbosity(1);
 
-  auto rc = recoConsts::instance();
+  auto *rc = recoConsts::instance();
 
   if (gitcommit != "none")
   {
@@ -57,7 +57,7 @@ R__LOAD_LIBRARY(libfun4allutils.so)
     SaveGitTags();
   }
 
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
+  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
   int runnumber = runseg.first;
   int segment = runseg.second;
   RunSettings(runnumber);
@@ -82,7 +82,7 @@ R__LOAD_LIBRARY(libfun4allutils.so)
   }
 
   // signal input manager
-  auto in = new Fun4AllDstInputManager("DST_signal");
+  auto *in = new Fun4AllDstInputManager("DST_signal");
 //  in->registerSubsystem(new PHG4VertexSelection);
 
   //--------------
@@ -97,7 +97,7 @@ R__LOAD_LIBRARY(libfun4allutils.so)
   se->registerInputManager(in);
 
   // background input manager
-  auto inpile = new Fun4AllDstPileupInputManager("DST_background");
+  auto *inpile = new Fun4AllDstPileupInputManager("DST_background");
   inpile->setCollisionRate(pileup);
   double low_time_window = -105.5 / (8.0 / 1000.0); // tpc integration window start
   double high_time_window = -low_time_window + 50000; // 50us

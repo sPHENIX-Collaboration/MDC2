@@ -39,6 +39,7 @@ fi
 # $7: pileup (in kHz)
 # $8: run number
 # $9: sequence
+# $10: git commit id
 
 echo 'here comes your environment'
 printenv
@@ -51,6 +52,7 @@ echo arg6 \(build\): $6
 echo arg7 \(pileup\): $7
 echo arg8 \(runnumber\): $8
 echo arg9 \(sequence\): $9
+echo arg10 \(git commit id\): ${10}
 echo cdbtag: $cdbtag
 
 runnumber=$(printf "%010d" $8)
@@ -58,8 +60,8 @@ sequence=$(printf "%06d" $9)
 
 filename=timing
 
-echo running root.exe -q -b Fun4All_G4_Pileup_pp.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",$7,\"$cdbtag\"\)
-root.exe -q -b  Fun4All_G4_Pileup_pp.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",$7,\"$cdbtag\"\)
+echo running root.exe -q -b Fun4All_G4_Pileup_pp.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",$7,\"$cdbtag\",\"${10}\"\)
+root.exe -q -b  Fun4All_G4_Pileup_pp.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",$7,\"$cdbtag\",\"${10}\"\)
 
 timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/js_pp200_signal/pass2/timing.run${8}/${5}
 
