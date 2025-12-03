@@ -65,11 +65,15 @@ int Fun4All_G4_JS_pp_signal(
   //  rc->set_IntFlag("RANDOMSEED", 12345);
   // int seedValue = 491258969;
   // rc->set_IntFlag("RANDOMSEED", seedValue);
-  SaveGitTags();  // save the git tags from rebuild.info as rc string flags
   if (gitcommit != "none")
   {
-      rc->set_StringFlag("MDC2_GITID", gitcommit);
+    SaveGitTags(gitcommit);
   }
+  else
+  {
+    SaveGitTags();
+  }
+
   TRACKING::pp_mode = true;
   TRACKING::pp_extended_readout_time = 90000;
 
