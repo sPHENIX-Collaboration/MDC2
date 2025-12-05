@@ -3,8 +3,8 @@
 
 #include <GlobalVariables.C>
 
+#include "G4_OutputManager_Pass3Trk.C"
 #include <G4_Input.C>
-#include <G4_OutputManager_Pass3Trk.C>
 #include <G4_Production.C>
 #include <G4_TrkrSimulation.C>
 #include <SaveGitTags.C>
@@ -29,16 +29,24 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_Pass3Trk(
     const int nEvents = 1,
-    const string &inputFile0 = "DST_TRKR_G4HIT_pythia8_Jet30_1000kHz-0000000028-000000.root",
-    const string &inputFile1 = "DST_TRUTH_G4HIT_pythia8_Jet30_1000kHz-0000000028-000000.root",
-    const string &outdir = ".",
-    const string &jettrigger = "Jet30",
-    const string &cdbtag = "MDC2")
+    const std::string &inputFile0 = "DST_TRKR_G4HIT_pythia8_Jet30_1000kHz-0000000028-000000.root",
+    const std::string &inputFile1 = "DST_TRUTH_G4HIT_pythia8_Jet30_1000kHz-0000000028-000000.root",
+    const std::string &outdir = ".",
+    const std::string &jettrigger = "Jet30",
+    const std::string &cdbtag = "MDC2",
+    const std::string &gitcommit = "none")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
 
-  SaveGitTags();
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
 
   //Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
   PHRandomSeed::Verbosity(1);
@@ -55,7 +63,7 @@ int Fun4All_G4_Pass3Trk(
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
 
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile0);
+  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile0);
   int runnumber = runseg.first;
   int segment = abs(runseg.second);
   rc->set_IntFlag("RUNNUMBER",runnumber);
@@ -181,8 +189,8 @@ int Fun4All_G4_Pass3Trk(
   // if we run the particle generator and use 0 it'll run forever
   if (nEvents == 0 && !Input::HEPMC && !Input::READHITS)
   {
-    cout << "using 0 for number of events is a bad idea when using particle generators" << endl;
-    cout << "it will run forever, so I just return without running anything" << endl;
+    std::cout << "using 0 for number of events is a bad idea when using particle generators" << std::endl;
+    std::cout << "it will run forever, so I just return without running anything" << std::endl;
     return 0;
   }
 

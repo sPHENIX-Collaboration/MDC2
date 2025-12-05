@@ -43,6 +43,7 @@ fi
 # $6: build
 # $7: run number
 # $8: sequence
+# $9: git commit id
 
 echo 'here comes your environment'
 printenv
@@ -54,6 +55,7 @@ echo arg5 \(jettrigger\): $5
 echo arg6 \(build\): $6
 echo arg7 \(runnumber\): $7
 echo arg8 \(sequence\): $8
+echo arg9 \(git commit id\): $9
 echo cdbtag: $cdbtag
 
 runnumber=$(printf "%010d" $7)
@@ -61,8 +63,8 @@ sequence=$(printf "%06d" $8)
 
 filename=timing
 
-echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\"\)
-root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\"\)
+echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\",\"$9\"\)
+root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\",\"$9\"\)
 
 #get a file listing
 #ls -l

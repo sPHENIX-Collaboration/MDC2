@@ -3,22 +3,19 @@
 
 #include <GlobalVariables.C>
 
-#include <G4_Bbc.C>
+#include <G4_BeamLine.C>
 #include <G4_BlackHole.C>
 #include <G4_CEmc_Albedo.C>
 #include <G4_CEmc_Spacal.C>
 #include <G4_EPD.C>
 #include <G4_HcalIn_ref.C>
 #include <G4_HcalOut_ref.C>
-#include <G4_BeamLine.C>
-#include <G4_Intt.C>
 #include <G4_Magnet.C>
-#include <G4_Micromegas.C>
-#include <G4_Mvtx.C>
+#include <G4_Mbd.C>
 #include <G4_PSTOF.C>
 #include <G4_Pipe.C>
 #include <G4_PlugDoor.C>
-#include <G4_TPC.C>
+#include <G4_TrkrSimulation.C>
 #include <G4_User.C>
 #include <G4_World.C>
 #include <G4_ZDC.C>
@@ -37,6 +34,8 @@
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
 
+#include <sstream>
+
 R__LOAD_LIBRARY(libg4decayer.so)
 R__LOAD_LIBRARY(libg4detectors.so)
 
@@ -45,8 +44,8 @@ void G4Init()
   // Check on invalid combinations
   if (Enable::CEMC && Enable::CEMCALBEDO)
   {
-      cout << "Enable::CEMCALBEDO and Enable::CEMC cannot be set simultanously" << endl;
-      gSystem->Exit(1);
+    std::cout << "Enable::CEMCALBEDO and Enable::CEMC cannot be set simultanously" << std::endl;
+    gSystem->Exit(1);
   }
   // load detector/material macros and execute Init() function
 
@@ -55,12 +54,12 @@ void G4Init()
   if (Enable::INTT) InttInit();
   if (Enable::TPC) TPCInit();
   if (Enable::MICROMEGAS) MicromegasInit();
-  if (Enable::BBC) BbcInit();
+  if (Enable::MBD) MbdInit();
   if (Enable::CEMCALBEDO) CEmcAlbedoInit();
   if (Enable::CEMC) CEmcInit();
   if (Enable::HCALIN) HCalInnerInit();
   if (Enable::MAGNET) MagnetInit();
-  MagnetFieldInit(); // We want the field - even if the magnet volume is disabled
+  MagnetFieldInit();  // We want the field - even if the magnet volume is disabled
   if (Enable::HCALOUT) HCalOuterInit();
   if (Enable::PLUGDOOR) PlugDoorInit();
   if (Enable::EPD) EPDInit();
@@ -87,18 +86,22 @@ int G4Setup()
   PHG4Reco *g4Reco = new PHG4Reco();
   g4Reco->set_rapidity_coverage(1.1);  // according to drawings
   WorldInit(g4Reco);
+  // PYTHIA 6
   if (G4P6DECAYER::decayType != EDecayType::kAll)
   {
     g4Reco->set_force_decay(G4P6DECAYER::decayType);
   }
+  // EvtGen
+  g4Reco->CustomizeEvtGenDecay(EVTGENDECAYER::DecayFile);
 
   double fieldstrength;
-  istringstream stringline(G4MAGNET::magfield);
+  std::istringstream stringline(G4MAGNET::magfield);
   stringline >> fieldstrength;
   if (stringline.fail())
   {  // conversion to double fails -> we have a string
 
-    if (G4MAGNET::magfield.find("sphenix3dbigmapxyz") != string::npos)
+    if (G4MAGNET::magfield.find("sphenix3dbigmapxyz") != std::string::npos ||
+        G4MAGNET::magfield.find(".root") == std::string::npos)
     {
       g4Reco->set_field_map(G4MAGNET::magfield, PHFieldConfig::Field3DCartesian);
     }
@@ -109,12 +112,13 @@ int G4Setup()
   }
   else
   {
-    g4Reco->set_field(fieldstrength);  // use const soleniodal field
+    g4Reco->set_field(fieldstrength);                  // use const soleniodal field
+    G4MAGNET::magfield_tracking = G4MAGNET::magfield;  // set tracking fieldmap to value
   }
   g4Reco->set_field_rescale(G4MAGNET::magfield_rescale);
 
-// the radius is an older protection against overlaps, it is not
-// clear how well this works nowadays but it doesn't hurt either
+  // the radius is an older protection against overlaps, it is not
+  // clear how well this works nowadays but it doesn't hurt either
   double radius = 0.;
 
   if (Enable::PIPE) radius = Pipe(g4Reco, radius);
@@ -122,7 +126,7 @@ int G4Setup()
   if (Enable::INTT) radius = Intt(g4Reco, radius);
   if (Enable::TPC) radius = TPC(g4Reco, radius);
   if (Enable::MICROMEGAS) Micromegas(g4Reco);
-  if (Enable::BBC) Bbc(g4Reco);
+  if (Enable::MBD) Mbd(g4Reco);
   if (Enable::CEMCALBEDO) CEmcAlbedo(g4Reco);
   if (Enable::CEMC) radius = CEmc(g4Reco, radius, 8);
   if (Enable::HCALIN) radius = HCalInner(g4Reco, radius, 4);
@@ -141,7 +145,6 @@ int G4Setup()
   }
   if (Enable::USER) UserDetector(g4Reco);
 
-
   //----------------------------------------
   // BLACKHOLE
 
@@ -157,7 +160,7 @@ int G4Setup()
   return 0;
 }
 
-void ShowerCompress(int verbosity = 0)
+void ShowerCompress(int /*verbosity*/ = 0)
 {
   Fun4AllServer *se = Fun4AllServer::instance();
 
