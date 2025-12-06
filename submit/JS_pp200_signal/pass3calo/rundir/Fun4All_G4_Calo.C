@@ -163,7 +163,6 @@ void Fun4All_G4_Calo(
   randGen.SetSeed(seed);
   // a int from 0 to 3259
   int sequence = randGen.Integer(3260);
-  // pad the name
 
   std::string pedestalname = std::format("pedestal-54256-{:05}.root",sequence);
 

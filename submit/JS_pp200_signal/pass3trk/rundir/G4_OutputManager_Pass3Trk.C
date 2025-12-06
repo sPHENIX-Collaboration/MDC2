@@ -23,7 +23,7 @@ void CreateDstOutput(int runnumber, int segment, const std::string &jettrigger)
 {
   auto *se = Fun4AllServer::instance();
 
-std::string segrun = std::format("{}-{:010}-{:06}",jettrigger,runnumber,segment);
+  std::string segrun = std::format("{}-{:010}-{:06}",jettrigger,runnumber,segment);
   std::string FullOutFile = "DST_TRUTH_pythia8_" + segrun + ".root";;
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("TRUTHOUT", FullOutFile);
   AddCommonNodes(out);
