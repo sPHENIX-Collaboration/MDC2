@@ -60,7 +60,7 @@ echo cdbtag: $cdbtag
 runnumber=$(printf "%010d" $7)
 sequence=$(printf "%06d" $8)
 
-echo running root.exe -q -b Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\"\,\"$9\")
+echo running root.exe -q -b Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\"\,\"$9\"\)
 root.exe -q -b  Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\",\"$9\"\)
 
 echo "script done"
