@@ -36,6 +36,10 @@
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
 
+#include <TRandom3.h>
+
+#include <format>
+
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libg4centrality.so)
 R__LOAD_LIBRARY(libCaloWaveformSim.so)
@@ -45,10 +49,10 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 void Fun4All_G4_Calo(
   const int nEvents = 1,
-  const string &inputFile0 = "DST_CALO_G4HIT_pythia8_Jet10_300kHz-0000000022-000000.root",
-  const string &outputFile = "DST_CALO_CLUSTER_pythia8_Jet10_300kHz-0000000022-000000.root",
-  const string &outdir = ".",
-  const string &cdbtag = "MDC2",
+  const std::string &inputFile0 = "DST_CALO_G4HIT_pythia8_Jet10_300kHz-0000000022-000000.root",
+  const std::string &outputFile = "DST_CALO_CLUSTER_pythia8_Jet10_300kHz-0000000022-000000.root",
+  const std::string &outdir = ".",
+  const std::string &cdbtag = "MDC2",
   const std::string &gitcommit = "none")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
@@ -80,7 +84,7 @@ void Fun4All_G4_Calo(
   }
   std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile0);
   int runnumber = runseg.first;
-  int segment = runseg.second;
+  //  int segment = runseg.second;
 
   //===============
   // conditions DB flags
@@ -160,10 +164,8 @@ void Fun4All_G4_Calo(
   // a int from 0 to 3259
   int sequence = randGen.Integer(3260);
   // pad the name
-  std::ostringstream opedname;
-  opedname << "pedestal-54256-0" << std::setw(4) << std::setfill('0') << sequence << ".root";
 
-  std::string pedestalname = opedname.str();
+  std::string pedestalname = std::format("pedestal-54256-{:05}.root",sequence);
 
   Fun4AllInputManager *hitsin = new Fun4AllNoSyncDstInputManager("DST2");
   hitsin->AddFile(pedestalname);
@@ -177,7 +179,7 @@ void Fun4All_G4_Calo(
 
   if (Enable::DSTOUT)
   {
-    string FullOutFile = DstOut::OutputFile;
+    std::string FullOutFile = DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     out->AddNode("Sync");
     out->AddNode("EventHeader");
