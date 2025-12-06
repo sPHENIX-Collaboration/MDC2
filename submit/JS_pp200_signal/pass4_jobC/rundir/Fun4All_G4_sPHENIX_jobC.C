@@ -33,7 +33,7 @@ int Fun4All_G4_sPHENIX_jobC(
   const std::string &inputFile2 = "DST_CALO_CLUSTER_pythia8_Jet10_300kHz-0000000022-000000.root",
   const std::string &outputFile = "DST_TRACKS_pythia8_Jet10_300kHz-0000000022-000000.root",
   const std::string &outdir = ".",
-  const string &cdbtag = "MDC2",
+  const std::string &cdbtag = "MDC2",
   const std::string &gitcommit = "none")
 {
 
@@ -53,9 +53,9 @@ int Fun4All_G4_sPHENIX_jobC(
   {
     SaveGitTags();
   }
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile1);
+  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile1);
   int runnumber = runseg.first;
-  int segment = runseg.second;
+  // int segment = runseg.second;
 
   //===============
   // conditions DB flags
@@ -89,14 +89,14 @@ int Fun4All_G4_sPHENIX_jobC(
   /* distortion corrections */
   G4TPC::ENABLE_STATIC_CORRECTIONS = false;
   G4TPC::ENABLE_AVERAGE_CORRECTIONS = false;
-  G4TPC::static_correction_filename = string(getenv("CALIBRATIONROOT")) + "/distortion_maps/distortion_corrections_empty.root";
-  G4TPC::average_correction_filename = string(getenv("CALIBRATIONROOT")) + "/distortion_maps/distortion_corrections_empty.root";
+  G4TPC::static_correction_filename = std::string(getenv("CALIBRATIONROOT")) + "/distortion_maps/distortion_corrections_empty.root";
+  G4TPC::average_correction_filename = std::string(getenv("CALIBRATIONROOT")) + "/distortion_maps/distortion_corrections_empty.root";
   
   // tracking configuration
   G4TRACKING::use_full_truth_track_seeding = false;
 
   // server
-  auto se = Fun4AllServer::instance();
+  auto *se = Fun4AllServer::instance();
   se->Verbosity(1);
 
   // make sure to printout random seeds for reproducibility
@@ -120,7 +120,7 @@ int Fun4All_G4_sPHENIX_jobC(
   se->registerSubsystem(ts);
 
   // input manager
-  auto in = new Fun4AllDstInputManager("DSTin1");
+  auto *in = new Fun4AllDstInputManager("DSTin1");
   in->fileopen(inputFile1);
   se->registerInputManager(in);
   in = new Fun4AllDstInputManager("DSTin2");
@@ -132,7 +132,7 @@ int Fun4All_G4_sPHENIX_jobC(
     Production_CreateOutputDir();
   }
   // output manager
-  auto out = new Fun4AllDstOutputManager("DSTOUT", outputFile);
+  auto *out = new Fun4AllDstOutputManager("DSTOUT", outputFile);
   /* 
    * in principle one would not need to store the clusters and cluster crossing node, as they are already in the output from Job0
    */
