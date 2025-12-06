@@ -130,12 +130,12 @@ my %submitdir = (
 #     "HF_pp200_signal/pass4_global_nopileup/condor" => (""),
 #     "HF_pp200_signal/pass4_truthreco_nopileup/condor" => (""),
 
-#    "JS_pp200_signal/pass2/condor" => (""),
-#    "JS_pp200_signal/pass3calo/condor" => (""),
-#    "JS_pp200_signal/pass3trk/condor" => (""),
-#    "JS_pp200_signal/pass3_bbcepd/condor" => (""),
-#    "JS_pp200_signal/pass4jet/condor" => (""),
-#    "JS_pp200_signal/pass4_job0/condor" => (""),
+    "JS_pp200_signal/pass2/condor" => ("pileup --run 29 --build ana.522"),
+    "JS_pp200_signal/pass3calo/condor" => ("pileup --run 29 --build ana.522"),
+    "JS_pp200_signal/pass3trk/condor" => ("pileup --run 29 --build ana.522"),
+    "JS_pp200_signal/pass3_mbdepd/condor" => ("pileup --run 29 --build ana.522"),
+    "JS_pp200_signal/pass4jet/condor" => ("pileup --run 29 --build ana.522"),
+    "JS_pp200_signal/pass4_job0/condor" => ("pileup --run 29 --build ana.522"),
 #    "JS_pp200_signal/pass4_jobA/condor" => (""),
 #    "JS_pp200_signal/pass4_jobC/condor" => (""),
 #    "JS_pp200_signal/pass5_global/condor" => (""),
@@ -160,11 +160,11 @@ my %submitdir = (
 #    "JS_pp200_signal/pass2_embed_nopileup/condor" => ("--build ana.501 --run 30"),
 
 
-    "JS_pp200_signal/pass5_global_embed_nopileup/condor" => ("--build ana.515 --run 30"),
-    "JS_pp200_signal/pass4_jobC_embed_nopileup/condor" => ("--build ana.515 --run 30"),
-    "JS_pp200_signal/pass4_jobA_embed_nopileup/condor" => ("--build ana.515 --run 30"),
-    "JS_pp200_signal/pass4_job0_embed_nopileup/condor" => ("--build ana.515 --run 30"),
-    "JS_pp200_signal/pass3trk_embed_nopileup/condor" => ("--build ana.515 --run 30"),
+#    "JS_pp200_signal/pass5_global_embed_nopileup/condor" => ("--build ana.515 --run 30"),
+#    "JS_pp200_signal/pass4_jobC_embed_nopileup/condor" => ("--build ana.515 --run 30"),
+#    "JS_pp200_signal/pass4_jobA_embed_nopileup/condor" => ("--build ana.515 --run 30"),
+#    "JS_pp200_signal/pass4_job0_embed_nopileup/condor" => ("--build ana.515 --run 30"),
+#    "JS_pp200_signal/pass3trk_embed_nopileup/condor" => ("--build ana.515 --run 30"),
 
 #    "JS_pp200_signal/pass2_embed/condor" => (""),
 #    "JS_pp200_signal/pass3calo_embed/condor" => (""),
@@ -204,10 +204,10 @@ my @jettriggerspau = ("Jet10", "Jet20");
 my @herwigtriggers = ("MB", "Jet10", "Jet30");
 #my @jettriggers2 = ("Jet10", "Jet30", "Jet40", "PhotonJet");
 #my @jettriggers2 = ("Jet10", "Jet30", "PhotonJet");
-my @jettriggers = ("Jet10", "Jet30");
+my @jettriggers = ("Jet30");
 #my @jettriggers = ("Jet5", "Jet10", "Jet15", "Jet20", "Jet30", "Jet50", "Jet70", "Detroit", "PhotonJet5", "PhotonJet10", "PhotonJet20");
 #my @singleparticles = {"gamma 10000 10000"};
-my @pileups = ("300kHz", "700kHz", "1100kHz");
+my @pileups = ("1000kHz");
 my @runs = ("28", "30");
 my @hijingruns = ("31", "32", "33");
 foreach my $subdir ( keys %submitdir)
