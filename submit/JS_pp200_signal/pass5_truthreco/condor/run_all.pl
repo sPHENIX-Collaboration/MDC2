@@ -26,6 +26,7 @@ if ($#ARGV < 1)
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
     print "--memory : memory requirement with unit (MB)\n";
+    print "--overwrite : overwrite exiting jobfiles\n";
     print "--pileup : collision rate (with unit, kHz, MHz)\n";
     print "--run: <runnumber>\n";
     print "--shared : submit jobs to shared pool\n";
@@ -38,9 +39,9 @@ my $isbad = 0;
 
 my $hostname = `hostname`;
 chomp $hostname;
-if ($hostname !~ /phnxsub/)
+if ($hostname !~ /sphnxprod/)
 {
-    print "submit only from phnxsub hosts\n";
+    print "submit only from sphnxprod hosts\n";
     $isbad = 1;
 }
 if (! defined $pileup)
@@ -187,13 +188,13 @@ foreach my $segment (sort keys %trackhash)
 	{
 	    $tstflag="--test";
 	}
-        elsif (defined $overwrite)
-	{
-	    $tstflag="--overwrite";
-	}
 	if (defined $memory)
 	{
 	    $tstflag=sprintf("%s %s",$tstflag,$memory);
+	}
+        if (defined $overwrite)
+	{
+	    $tstflag= sprintf("%s --overwrite",$tstflag);
 	}
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $g4hithash{sprintf("%06d",$segment)}, $clusterhash{sprintf("%06d",$segment)}, $trackhash{sprintf("%06d",$segment)}, $truthhash{sprintf("%06d",$segment)}, $outfilename, $outdir, $build, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
