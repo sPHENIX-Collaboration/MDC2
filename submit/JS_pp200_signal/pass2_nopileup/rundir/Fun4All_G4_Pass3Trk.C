@@ -25,7 +25,7 @@
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
 
-int Fun4All_G4_Pass3Trk(
+void Fun4All_G4_Pass3Trk(
   const int nEvents = 0,
   const std::string &inputFile0 = "G4Hits_pythia8_Jet30-0000000028-000000.root",
   const std::string &outdir = ".",
@@ -121,11 +121,13 @@ int Fun4All_G4_Pass3Trk(
 
   // Global options (enabled for all enables subsystems - if implemented)
   //  Enable::VERBOSITY = 1;
+// set pp tracking mode
+  TRACKING::pp_mode = true;
+  TRACKING::pp_extended_readout_time = 50000; // 50 us, needed by electron drift and hit reco modules
 
   // central tracking
   Enable::MVTX = true;
   Enable::MVTX_CELL = Enable::MVTX && true;
-  Enable::MVTX_APPLYMISALIGNMENT = true;
 
   Enable::INTT = true;
   Enable::INTT_CELL = Enable::INTT && true;
@@ -155,6 +157,12 @@ int Fun4All_G4_Pass3Trk(
   // Set up Input Managers
   //--------------
 
+  std::string geofile = CDBInterface::instance()->getUrl("Tracking_Geometry");
+
+  Fun4AllRunNodeInputManager *ingeo = new Fun4AllRunNodeInputManager("GeoIn");
+  ingeo->AddFile(geofile);
+  se->registerInputManager(ingeo);
+
   InputManagers();
 
   if (Enable::PRODUCTION)
@@ -166,14 +174,7 @@ int Fun4All_G4_Pass3Trk(
   // if we use a negative number of events we go back to the command line here
   if (nEvents < 0)
   {
-    return 0;
-  }
-  // if we run the particle generator and use 0 it'll run forever
-  if (nEvents == 0 && !Input::HEPMC && !Input::READHITS)
-  {
-    std::cout << "using 0 for number of events is a bad idea when using particle generators" << std::endl;
-    std::cout << "it will run forever, so I just return without running anything" << std::endl;
-    return 0;
+    return;
   }
 
   se->run(nEvents);
@@ -193,6 +194,5 @@ int Fun4All_G4_Pass3Trk(
 
   delete se;
   gSystem->Exit(0);
-  return 0;
 }
 #endif
