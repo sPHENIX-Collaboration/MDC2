@@ -9,7 +9,9 @@ use File::Basename;
 my $test;
 my $memory = sprintf("2048MB");
 my $overwrite;
+
 GetOptions("memory:s"=>\$memory, "overwrite"=>\$overwrite, "test"=>\$test);
+
 if ($#ARGV < 8)
 {
     print "usage: run_condor.pl <events> <seeds infile> <mbdepd infile> <jettrigger> <outfile> <outdir> <build> <runnumber> <sequence>\n";
