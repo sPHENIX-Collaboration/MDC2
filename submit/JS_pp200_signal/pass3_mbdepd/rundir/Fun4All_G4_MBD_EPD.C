@@ -7,6 +7,7 @@
 #include <G4_EPD.C>
 #include <G4_Input.C>
 #include <G4_Production.C>
+#include <SaveGitTags.C>
 
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
@@ -14,6 +15,7 @@
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
+#include <fun4all/Fun4AllUtils.h>
 
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
@@ -23,11 +25,12 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_MBD_EPD(
     const int nEvents = 1,
-    const string &inputFile1 = "DST_BBC_G4HIT_pythia8_Jet10_3MHz-0000000008-00000.root",
-    const string &inputFile2 = "DST_TRUTH_G4HIT_pythia8_Jet10_3MHz-0000000008-00000.root",
-    const string &outputFile = "DST_MBD_EPD_pythia8_Jet10_3MHz-0000000008-00000.root",
-    const string &outdir = ".",
-  const string &cdbtag = "MDC2_ana.418")
+    const std::string &inputFile1 = "DST_BBC_G4HIT_pythia8_Jet30_1000kHz-0000000029-000000.root",
+    const std::string &inputFile2 = "DST_TRUTH_G4HIT_pythia8_Jet30_1000kHz-0000000029-000000.root",
+    const std::string &outputFile = "DST_MBD_EPD_pythia8_Jet30_1000kHz-0000000029-000000.root",
+    const std::string &outdir = ".",
+    const std::string &cdbtag = "MDC2",
+  const std::string &gitcommit = "none")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -46,9 +49,20 @@ int Fun4All_G4_MBD_EPD(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
   Enable::CDB = true;
+  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile1);
+  int runnumber = runseg.first;
+
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
-  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP", runnumber);
 
   //===============
   // Input options
@@ -114,7 +128,7 @@ int Fun4All_G4_MBD_EPD(
 
   if (Enable::DSTOUT)
   {
-    string FullOutFile = DstOut::OutputFile;
+    std::string FullOutFile = DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     out->AddNode("Sync");
     out->AddNode("EventHeader");
@@ -129,13 +143,6 @@ int Fun4All_G4_MBD_EPD(
   // if we use a negative number of events we go back to the command line here
   if (nEvents < 0)
   {
-    return 0;
-  }
-  // if we run the particle generator and use 0 it'll run forever
-  if (nEvents == 0 && !Input::HEPMC && !Input::READHITS)
-  {
-    cout << "using 0 for number of events is a bad idea when using particle generators" << endl;
-    cout << "it will run forever, so I just return without running anything" << endl;
     return 0;
   }
 
