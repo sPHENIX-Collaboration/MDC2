@@ -13,17 +13,17 @@ echo running: $this_script $*
 
 anabuild=${6}
 
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
+source /opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
 
 cdbtag=MDC2_$anabuild
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
     cd $_CONDOR_SCRATCH_DIR
-    getinputfiles.pl $2
+    perl getinputfiles.pl --dd $2
     if [ $? -ne 0 ]
     then
-	echo error from getinputfiles.pl $2, exiting
+	echo error from perl getinputfiles.pl --dd $2, exiting
 	exit -1
     fi
 else
@@ -40,6 +40,7 @@ fi
 # $6: build
 # $7: runnumber
 # $8: sequence
+# $9: git commit id
 
 echo 'here comes your environment'
 printenv
@@ -51,13 +52,14 @@ echo arg5 \(jettrigger\): $5
 echo arg6 \(build\): $6
 echo arg7 \(runnumber\): $7
 echo arg8 \(sequence\): $8
+echo arg9 \(git commit id\): $9
 echo cdbtag: $cdbtag
 
 runnumber=$(printf "%010d" $7)
 sequence=$(printf "%06d" $8)
 
-echo running root.exe -q -b Fun4All_G4_Jets.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
-root.exe -q -b  Fun4All_G4_Jets.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
+echo running root.exe -q -b Fun4All_G4_Jets.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"$9\"\)
+root.exe -q -b  Fun4All_G4_Jets.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"$9\"\)
 
 timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/js_pp200_signal/pass4jet/timing.run${7}/${5}
 

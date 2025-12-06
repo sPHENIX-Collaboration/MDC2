@@ -8,6 +8,7 @@
 #include <G4_HIJetReco.C>
 #include <G4_Jets.C>
 #include <G4_Production.C>
+#include <SaveGitTags.C>
 
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
@@ -19,6 +20,7 @@
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
+#include <fun4all/Fun4AllUtils.h>
 
 #include <phool/recoConsts.h>
 
@@ -27,11 +29,12 @@ R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libfun4allutils.so)
 
 void Fun4All_G4_Jets(
-    const int nEvents = 0,
-    const string &inputFile = "DST_TRUTH_pythia8_Jet30_3MHz-0000000008-00000.root",
-    const string &outputFile = "DST_TRUTH_JETS_pythia8_Jet30_3MHz-0000000008-00000.root",
-    const string &outdir = ".",
-    const string &cdbtag = "MDC2_ana.418")
+  const int nEvents = 0,
+  const std::string &inputFile = "DST_TRUTH_pythia8_Jet30_1000kHz-0000000029-000000.root",
+  const std::string &outputFile = "DST_TRUTH_JETS_pythia8_Jet30_1000kHz-0000000029-000000.root",
+  const std::string &outdir = ".",
+  const std::string &cdbtag = "MDC2",
+  const std::string &gitcommit = "none")
 {
 // this convenience library knows all our i/o objects so you don't
 // have to figure out what is in each dst type 
@@ -40,13 +43,23 @@ void Fun4All_G4_Jets(
   se->Verbosity(1); // set it to 1 if you want event printouts
 
   recoConsts *rc = recoConsts::instance();
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
 
   //===============
   // conditions DB flags
   //===============
+  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
+  int runnumber = runseg.first;
   Enable::CDB = true;
   rc->set_StringFlag("CDB_GLOBALTAG",cdbtag);
-  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP",runnumber);
 
   Fun4AllInputManager *in = new Fun4AllDstInputManager("DSTTRUTH");
   in->fileopen(inputFile);
@@ -95,7 +108,7 @@ void Fun4All_G4_Jets(
   }
   if (Enable::DSTOUT)
   {
-    string FullOutFile = DstOut::OutputFile;
+    std::string FullOutFile = DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     out->AddNode("Sync");
     out->AddNode("EventHeader");

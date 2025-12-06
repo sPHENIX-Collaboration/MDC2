@@ -49,8 +49,8 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 void Fun4All_G4_Calo(
   const int nEvents = 1,
-  const std::string &inputFile0 = "DST_CALO_G4HIT_pythia8_Jet10_300kHz-0000000022-000000.root",
-  const std::string &outputFile = "DST_CALO_CLUSTER_pythia8_Jet10_300kHz-0000000022-000000.root",
+  const std::string &inputFile0 = "DST_CALO_G4HIT_pythia8_Jet30_1000kHz-0000000029-000000.root",
+  const std::string &outputFile = "DST_CALO_CLUSTER_pythia8_Jet30_1000kHz-0000000029-000000.root",
   const std::string &outdir = ".",
   const std::string &cdbtag = "MDC2",
   const std::string &gitcommit = "none")
