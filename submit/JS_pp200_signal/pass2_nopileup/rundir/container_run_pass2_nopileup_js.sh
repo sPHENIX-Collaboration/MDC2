@@ -26,10 +26,10 @@ source /opt/sphenix/core/bin/sphenix_setup.sh -n
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
     cd $_CONDOR_SCRATCH_DIR
-    getinputfiles.pl $2
+    perl getinputfiles.pl --dd $2
     if [ $? -ne 0 ]
     then
-	echo error from getinputfiles.pl $2, exiting
+	echo error from perl getinputfiles.pl --dd $2, exiting
 	exit -1
     fi
 else
@@ -51,6 +51,7 @@ fi
 # $12: enable calo
 # $13: enable mbd
 # $14: enable trk
+# $15: mdc2 git commit id
 
 echo 'here comes your environment'
 printenv
@@ -68,6 +69,7 @@ echo arg11 \(sequence\): ${11}
 echo arg12 \(enable calo\): ${12}
 echo arg13 \(enable mbd\): ${13}
 echo arg14 \(enable trk\): ${14}
+echo arg15 \(git commit id\): ${15}
 echo cdbtag : ${cdbtag}
 
 runnumber=$(printf "%010d" ${10})
@@ -82,8 +84,8 @@ then
     cdbtag=MDC2_$ana_calo
     printenv
 
-    echo running root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
-    root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
+    echo running root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"${15}\"\)
+    root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"${15}\"\)
 fi
 
 #---------------------------------------------------------------
@@ -95,8 +97,8 @@ then
     cdbtag=MDC2_$ana_mbdepd
     printenv
 
-    echo running root.exe -q -b Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$5\",\"$6\",\"$cdbtag\"\)
-    root.exe -q -b  Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$5\",\"$6\",\"$cdbtag\"\)
+    echo running root.exe -q -b Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$5\",\"$6\",\"$cdbtag\",\"${15}\"\)
+    root.exe -q -b  Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$5\",\"$6\",\"$cdbtag\",\"${15}\"\)
 fi
 
 #---------------------------------------------------------------
@@ -108,8 +110,8 @@ then
     cdbtag=MDC2_$ana_pass3trk
     printenv
 
-    echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$8\",\"$cdbtag\"\)
-    root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$8\",\"$cdbtag\"\)
+    echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$8\",\"$cdbtag\",\"${15}\"\)
+    root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$8\",\"$cdbtag\",\"${15}\"\)
 fi
 
 echo "script done"
