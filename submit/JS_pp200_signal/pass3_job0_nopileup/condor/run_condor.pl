@@ -15,9 +15,9 @@ if ($#ARGV < 7)
 {
     print "usage: run_condor.pl <events> <jettrigger> <trk clusters> <outfile> <outdir> <build> <runnumber> <sequence>\n";
     print "options:\n";
-    print "-memory: memory requirement\n";
+    print "--memory: memory requirement\n";
     print "--overwrite: overwrite existing job files\n";
-    print "-test: testmode - no condor submission\n";
+    print "--test: testmode - no condor submission\n";
     exit(-2);
 }
 

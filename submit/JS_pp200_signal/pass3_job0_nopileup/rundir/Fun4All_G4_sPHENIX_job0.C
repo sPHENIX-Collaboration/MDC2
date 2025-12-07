@@ -29,8 +29,9 @@ int Fun4All_G4_sPHENIX_job0(
     const int nSkipEvents = 0,
     const std::string &inputFile = "DST_TRKR_HIT_pythia8_Jet30-0000000028-000000.root",
     const std::string &outputFile = "DST_TRKR_CLUSTER_pythia8_Jet30-0000000028-000000.root",
-    const string &outdir = ".",
-    const string &cdbtag = "MDC2")
+    const std::string &outdir = ".",
+    const std::string &cdbtag = "MDC2",
+    const std::string &gitcommit = "none")
 {
   // print inputs
   std::cout << "Fun4All_G4_sPHENIX_job0 - nEvents: " << nEvents << std::endl;
@@ -40,11 +41,18 @@ int Fun4All_G4_sPHENIX_job0(
 
   recoConsts *rc = recoConsts::instance();
 
-  SaveGitTags(); // save the git tags from rebuild.info as rc string flags
-
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
+  // save all git tags from build and submission
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
+  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
   int runnumber = runseg.first;
-  int segment = abs(runseg.second);
+  // int segment = abs(runseg.second);
 
   //===============
   // conditions DB flags
@@ -80,7 +88,7 @@ int Fun4All_G4_sPHENIX_job0(
   G4TRACKING::init_acts_magfield = false;
 
   // server
-  auto se = Fun4AllServer::instance();
+  auto *se = Fun4AllServer::instance();
   se->Verbosity(1);
 
   // make sure to printout random seeds for reproducibility
@@ -106,7 +114,7 @@ int Fun4All_G4_sPHENIX_job0(
   se->registerSubsystem(ts);
 
   // input manager
-  auto in = new Fun4AllDstInputManager("DSTin");
+  auto *in = new Fun4AllDstInputManager("DSTin");
   in->fileopen(inputFile);
   se->registerInputManager(in);
 
@@ -117,8 +125,8 @@ int Fun4All_G4_sPHENIX_job0(
 
   // output manager
   /* all the nodes from DST and RUN are saved to the output */
-  string FullOutFile = DstOut::OutputFile;
-  auto out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
+  std::string FullOutFile = DstOut::OutputFile;
+  auto *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
   out->AddNode("Sync");
   out->AddNode("EventHeader");
   out->AddNode("TRKR_CLUSTER");

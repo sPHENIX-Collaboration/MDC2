@@ -17,7 +17,7 @@ my $runnumber;
 my $shared;
 my $test;
 my $verbosity = 0;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "overwrite"=> \$overwrite, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet15\", \"Jet20\", \"Jet30\", \"Jet40\", \"Jet50\", \"Jet70\", \"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\" or \"Detroit\" production>\n";
@@ -128,13 +128,13 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $tstflag="--test";
 	}
-	if (defined $overwrite)
-	{
-	    $tstflag= sprintf("%s --overwrite", $tstflag)
-	}
 	if (defined $memory)
 	{
 	    $tstflag=sprintf("%s --memory %s",$memory);
+	}
+	if (defined $overwrite)
+	{
+	    $tstflag= sprintf("%s --overwrite", $tstflag)
 	}
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $outfilename, $outdir, $build, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
