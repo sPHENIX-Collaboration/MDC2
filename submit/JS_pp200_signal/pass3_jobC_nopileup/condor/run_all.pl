@@ -12,11 +12,12 @@ my $build;
 my $incremental;
 my $memory;
 my $outevents = 0;
+my $overwrite;
 my $runnumber;
 my $shared;
 my $test;
 my $verbosity = 0;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory,  "overwrite"=> \$overwrite, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet10\", <\"Jet30\", <\"Jet40\", \"PhotonJet\, \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\", \"Detroit\" production>\n";
@@ -145,6 +146,10 @@ foreach my $segment (sort keys %trkhash)
 	if (defined $memory)
 	{
 	    $tstflag = sprintf("%s %s",$tstflag,$memory);
+	}
+        if (defined $overwrite)
+	{
+	    $tstflag= sprintf("%s --overwrite",$tstflag);
 	}
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $lfn, $clusterhash{sprintf("%06d",$segment)}, $outfilename, $outdir, $build, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";

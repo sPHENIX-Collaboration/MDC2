@@ -23,11 +23,11 @@ then
     cd $_CONDOR_SCRATCH_DIR
     echo $2 > inputfiles.list
     echo $3 >> inputfiles.list
-    getinputfiles.pl --filelist inputfiles.list
+    perl getinputfiles.pl --dd --filelist inputfiles.list
     if [ $? -ne 0 ]
     then
         cat inputfiles.list
-	echo error from getinputfiles.pl --filelist inputfiles.list, exiting
+	echo error from perl getinputfiles.pl --dd --filelist inputfiles.list, exiting
 	exit -1
     fi
 else
@@ -46,6 +46,7 @@ fi
 # $7: build
 # $8: run number
 # $9: sequence
+# $10: mdc2 git commit id
 
 echo 'here comes your environment'
 printenv
@@ -58,12 +59,13 @@ echo arg6 \(jet trigger\): $6
 echo arg7 \(build\): $7
 echo arg8 \(runnumber\): $8
 echo arg9 \(sequence\): $9
+echo arg10 \(git commit id\): ${10}
 echo cdbtag: $cdbtag
 
 runnumber=$(printf "%010d" $8)
 sequence=$(printf "%06d" $9)
 
-echo running root.exe -q -b Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\"\)
-root.exe -q -b  Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\"\)
+echo running root.exe -q -b Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\",\"${10}\"\)
+root.exe -q -b  Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\",\"${10}\"\)
 
 echo "script done"
