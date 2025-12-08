@@ -26,11 +26,12 @@ R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 
 void Fun4All_G4_Jets(
-    const int nEvents = 0,
-    const string &inputFile = "DST_TRUTH_pythia8_Jet10-0000000021-000000.root",
-    const string &outputFile = "DST_TRUTH_JETS_pythia8_Jet10-0000000021-000000.root",
-    const string &outdir = ".",
-    const string &cdbtag = "MDC2")
+  const int nEvents = 0,
+  const std::string &inputFile = "DST_TRUTH_pythia8_Jet10-0000000021-000000.root",
+  const std::string &outputFile = "DST_TRUTH_JETS_pythia8_Jet10-0000000021-000000.root",
+  const std::string &outdir = ".",
+  const std::string &cdbtag = "MDC2",
+  const std::string &gitcommit = "none")
 {
   // this convenience library knows all our i/o objects so you don't
   // have to figure out what is in each dst type
@@ -41,12 +42,19 @@ void Fun4All_G4_Jets(
   recoConsts *rc = recoConsts::instance();
 
 // save all git tags from build
-  SaveGitTags();
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
 
   //===============
   // conditions DB flags
   //===============
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
+  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
   int runnumber = runseg.first;
   Enable::CDB = true;
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
@@ -91,7 +99,7 @@ void Fun4All_G4_Jets(
   }
   if (Enable::DSTOUT)
   {
-    string FullOutFile = DstOut::OutputFile;
+    std::string FullOutFile = DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     out->AddNode("Sync");
     out->AddNode("EventHeader");

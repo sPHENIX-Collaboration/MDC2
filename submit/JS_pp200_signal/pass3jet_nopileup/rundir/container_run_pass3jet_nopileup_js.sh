@@ -20,10 +20,10 @@ cdbtag=MDC2_$anabuild
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
     cd $_CONDOR_SCRATCH_DIR
-    getinputfiles.pl $2
+    perl getinputfiles.pl --dd $2
     if [ $? -ne 0 ]
     then
-	echo error from getinputfiles.pl $2, exiting
+	echo error from perl getinputfiles.pl --dd $2, exiting
 	exit -1
     fi
 else
@@ -40,6 +40,7 @@ fi
 # $5: build
 # $6: runnumber
 # $7: sequence
+# $8: mdc2 git commit id
 
 echo 'here comes your environment'
 printenv
@@ -50,8 +51,9 @@ echo arg4 \(output dir\): $4
 echo arg5 \(build\): $5
 echo arg6 \(runnumber\): $6
 echo arg7 \(sequence\): $7
+echo arg8 \(git commit id\): $8
 echo cdbtag: $cdbtag
 
-echo running root.exe -q -b Fun4All_G4_Jets.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
-root.exe -q -b  Fun4All_G4_Jets.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
+echo running root.exe -q -b Fun4All_G4_Jets.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"$8\"\)
+root.exe -q -b  Fun4All_G4_Jets.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\"$8\"\)
 echo "script done"
