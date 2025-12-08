@@ -6,14 +6,17 @@ use Getopt::Long;
 use File::Path;
 use File::Basename;
 
-my $test;
-my $overwrite;
 my $memory = sprintf("3000MB");
+my $overwrite;
+my $test;
+
 GetOptions("memory:s"=>\$memory, "overwrite"=>\$overwrite, "test"=>\$test);
+
 if ($#ARGV < 10)
 {
     print "usage: run_condor.pl <events> <jettrigger> <trkr g4hit file> <trkr cluster file> <tracks file> <truth file> <outfile> <outdir> <build> <runnumber> <sequence>\n";
     print "options:\n";
+    print "--memory: memory requirement\n";
     print "--overwrite : overwrite existing jobfiles\n";
     print "--test: testmode - no condor submission\n";
     exit(-2);

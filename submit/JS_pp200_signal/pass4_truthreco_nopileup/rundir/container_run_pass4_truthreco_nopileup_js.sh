@@ -24,11 +24,11 @@ then
     echo $3 >> inputfiles.list
     echo $4 >> inputfiles.list
     echo $5 >> inputfiles.list
-    getinputfiles.pl --filelist inputfiles.list
+    perl getinputfiles.pl --dd --filelist inputfiles.list
     if [ $? -ne 0 ]
     then
         cat inputfiles.list
-	echo error from getinputfiles.pl --filelist inputfiles.list, exiting
+	echo error from perl getinputfiles.pl --dd --filelist inputfiles.list, exiting
 	exit -1
     fi
 else
@@ -47,6 +47,7 @@ fi
 # $8: build
 # $9: run number
 # $10: sequence
+# $11: mdc2 git commit id
 
 echo 'here comes your environment'
 printenv
@@ -60,12 +61,13 @@ echo arg7 \(output dir\): $7
 echo arg8 \(build\): $8
 echo arg9 \(runnumber\): $9
 echo arg10 \(sequence\): ${10}
+echo arg11 \(git commit id\): ${11}
 echo cdbtag: $cdbtag
 
 runnumber=$(printf "%010d" $9)
 sequence=$(printf "%06d" ${10})
 
-echo running root.exe -q -b Fun4All_TruthReco.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"$cdbtag\"\)
-root.exe -q -b  Fun4All_TruthReco.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"$cdbtag\"\)
+echo running root.exe -q -b Fun4All_TruthReco.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"$cdbtag\",\"${11}\"\)
+root.exe -q -b  Fun4All_TruthReco.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"$cdbtag\",\"${11}\"\)
 
 echo "script done"
