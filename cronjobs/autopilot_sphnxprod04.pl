@@ -136,10 +136,10 @@ my %submitdir = (
     "JS_pp200_signal/pass3_mbdepd/condor" => ("pileup --run 29 --build ana.522"),
     "JS_pp200_signal/pass4jet/condor" => ("pileup --run 29 --build ana.522"),
     "JS_pp200_signal/pass4_job0/condor" => ("pileup --run 29 --build ana.522"),
-#    "JS_pp200_signal/pass4_jobA/condor" => (""),
-#    "JS_pp200_signal/pass4_jobC/condor" => (""),
-#    "JS_pp200_signal/pass5_global/condor" => (""),
-#    "JS_pp200_signal/pass5_truthreco/condor" => (""),
+    "JS_pp200_signal/pass4_jobA/condor" => ("pileup --run 29 --build ana.522"),
+    "JS_pp200_signal/pass4_jobC/condor" => ("pileup --run 29 --build ana.522"),
+    "JS_pp200_signal/pass5_global/condor" => ("pileup --run 29 --build ana.522"),
+    "JS_pp200_signal/pass5_truthreco/condor" => ("pileup --run 29 --build ana.522"),
 
 
 #    "JS_pp200_signal/pass3jet_nopileup/condor" => (""),

@@ -142,15 +142,14 @@ my %submitdir = (
 #    "JS_pp200_signal/pass5_truthreco/condor" => (""),
 
 
-#    "JS_pp200_signal/pass3jet_nopileup/condor" => (""),
-#    "JS_pp200_signal/pass3_job0_nopileup/condor" => (""),
-#    "JS_pp200_signal/pass3_jobA_nopileup/condor" => (""),
-#    "JS_pp200_signal/pass3_jobC_nopileup/condor" => (""),
-#    "JS_pp200_signal/pass4_global_nopileup/condor" => (""),
-#    "JS_pp200_signal/pass4_truthreco_nopileup/condor" => (""),
+    "JS_pp200_signal/pass3jet_nopileup/condor" => ("--build ana.522 --run 29"),
+    "JS_pp200_signal/pass3_job0_nopileup/condor" => ("--build ana.522 --run 29"),
+    "JS_pp200_signal/pass3_jobA_nopileup/condor" => ("--build ana.522 --run 29"),
+    "JS_pp200_signal/pass3_jobC_nopileup/condor" => ("--build ana.522 --run 29"),
+    "JS_pp200_signal/pass4_global_nopileup/condor" => ("--build ana.522 --run 29"),
+    "JS_pp200_signal/pass4_truthreco_nopileup/condor" => ("--build ana.522 --run 29"),
 #    "JS_pp200_signal/pass3_global_nopileup/condor" => ("--build ana.501 --run 28"),
-#    "JS_pp200_signal/pass3jet_nopileup/condor" => ("--build ana.501 --run 28"),
-#    "JS_pp200_signal/pass2_nopileup/condor" => ("--build ana.501 --disable_trk --run 28"),
+    "JS_pp200_signal/pass2_nopileup/condor" => ("--build ana.522 --run 29"),
 
 
 #    "JS_pp200_signal/pass4_global_embed_nopileup/condor" => ("--build ana.501 --run 30"),

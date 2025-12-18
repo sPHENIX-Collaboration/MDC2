@@ -20,10 +20,10 @@ cdbtag=MDC2_$anabuild
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
     cd $_CONDOR_SCRATCH_DIR
-    getinputfiles.pl $2
+    perl getinputfiles.pl --dd $2
     if [ $? -ne 0 ]
     then
-	echo error from getinputfiles.pl $2, exiting
+	echo error from perl getinputfiles.pl --dd $2, exiting
 	exit -1
     fi
 else
