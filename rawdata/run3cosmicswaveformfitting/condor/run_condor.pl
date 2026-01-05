@@ -42,7 +42,7 @@ if (! -d $logdir)
 {
 mkpath($logdir);
 }
-my $condorlogdir = sprintf("/tmp/rawdata/waveformfitting");
+my $condorlogdir = sprintf("/tmp/rawdata/run3cosmicswaveformfitting");
 if (! -d $condorlogdir)
 {
 mkpath($condorlogdir);

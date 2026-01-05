@@ -65,7 +65,7 @@ print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
 print F "Initialdir  	= $rundir\n";
 print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
-print F "request_memory = 2048MB\n";
+print F "request_memory = 4000MB\n";
 print F "Priority = $baseprio\n";
 print F "Rank = -SlotID\n";
 print F "batch_name = \"$batchname\"\n";
