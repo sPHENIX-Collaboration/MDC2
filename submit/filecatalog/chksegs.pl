@@ -293,7 +293,7 @@ elsif ($system == 12)
 	}
 	else
 	{
-	    $systemstring = sprintf("%s_%s",$systemstring_g4hits,$pileup);
+	    $systemstring = sprintf("%s",$systemstring_g4hits);
 	}
     }
     else
