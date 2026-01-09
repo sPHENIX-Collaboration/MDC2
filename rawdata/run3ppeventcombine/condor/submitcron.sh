@@ -3,5 +3,5 @@
 echo $$ > submitrunning
 source  /opt/sphenix/core/bin/sphenix_setup.sh -n
 echo running on `hostname` > run_runrange.log
-perl run_runrange.pl 79100 81000 --inc &>> run_runrange.log
+perl run_runrange.pl 80500 85000 --inc &>> run_runrange.log
 rm submitrunning

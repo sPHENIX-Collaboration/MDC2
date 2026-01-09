@@ -48,9 +48,9 @@ if (-f $condorlistfile)
 }
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
-my $getruns = $dbh->prepare("select runnumber,segment,filename from datasets where runnumber >= $min_runnumber and runnumber <= $max_runnumber and filename like 'DST_TRIGGERED_EVENT_seb18_run3pp_ana516_nocdbtag_v001-%' order by runnumber,segment");
+my $getruns = $dbh->prepare("select runnumber,segment,filename from datasets where runnumber >= $min_runnumber and runnumber <= $max_runnumber and (filename like 'DST_TRIGGERED_EVENT_seb18_run3pp_ana527_nocdbtag_v001-%' or filename like 'DST_TRIGGERED_EVENT_seb18_run3pp_ana516_nocdbtag_v001-%') order by runnumber,segment");
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
-my $checkallsegs = $dbh->prepare("select filename from datasets where runnumber=? and segment=? and filename like ?");
+my $checkallsegs = $dbh->prepare("select filename from datasets where runnumber=? and segment=? and (filename like ? or filename like ?)");
 my $nsubmit = 0;
 $getruns->execute();
 my %dircreated = ();
@@ -59,13 +59,15 @@ while (my @runs = $getruns->fetchrow_array())
     my $runnumber=$runs[0];
     my $segment = $runs[1];
     my $runtype = "physics";
-    my $typelike = sprintf("DST_TRIGGERED_EVENT_\%%_run3pp_ana516_nocdbtag_v001-\%%");
+    my $typelike = sprintf("DST_TRIGGERED_EVENT_\%%_run3pp_ana527_nocdbtag_v001-\%%");
     if ($runs[2] =~ /beam/)
     {
 	$runtype = "beam";
-        $typelike = sprintf("DST_TRIGGERED_EVENT_\%%_run3beam_ana516_nocdbtag_v001-\%%");
+        $typelike = sprintf("DST_TRIGGERED_EVENT_\%%_run3beam_ana527_nocdbtag_v001-\%%");
     }
-    $checkallsegs->execute($runnumber,$segment,$typelike);
+    my $type2like = $typelike;
+    $type2like =~ s/ana527/ana516/;
+    $checkallsegs->execute($runnumber,$segment,$typelike,$type2like);
     my $nfiles = $checkallsegs->rows;
 #    print "found $nfiles\n";
 #    while (my @res1 = $checkallsegs->fetchrow_array())
