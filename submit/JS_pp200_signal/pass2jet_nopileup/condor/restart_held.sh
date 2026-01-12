@@ -11,7 +11,7 @@ run=28
 runnumber=$(printf "%010d" $run)
 
 #exit 0
-condor_q | grep ' H ' | grep run_pass3jet_nopileup_js.sh | grep ${variable} > bla
+condor_q | grep ' H ' | grep run_pass2jet_nopileup_js.sh | grep ${variable} > bla
 
 [ -s bla ] ||  exit 1
 
