@@ -14,7 +14,8 @@ my $overwrite;
 my $runnumber;
 my $startsegment;
 my $test;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "overwrite"=> \$overwrite, "run:i" =>\$runnumber, "startsegment:i" => \$startsegment, "test"=>\$test);
+my $verbosity;
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "overwrite"=> \$overwrite, "run:i" =>\$runnumber, "startsegment:i" => \$startsegment, "test"=>\$test, "verbosity" => \$verbosity);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
@@ -70,8 +71,8 @@ $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
 my $hijing_runnumber = 1;
-my $hijing_dir = sprintf("/sphenix/lustre01/sphnxpro/mdc2/sHijing_HepMC/data");
-my $events = 200; # for running with plugdoor
+my $hijing_dir = sprintf("/sphenix/lustre01/sphnxpro/mdc2/sHijing_HepMC/OO");
+my $events = 500; # for running with plugdoor
 #$events = 200;
 #$events = 100; # for ftfp_bert_hp
 my $evtsperfile = 100000;
@@ -95,13 +96,12 @@ my $nsubmit = 0;
 my $lastsegment=getlastsegment();
 OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
 {
-    my $hijingdatfile = sprintf("%s/sHijing_OO_200GeV_0_15fm-%010d-%05d.dat",$hijing_dir,$hijing_runnumber, $segment);
+    my $hijingdatfile = sprintf("%s/sHijing_OO_0_15fm-%010d-%05d.dat",$hijing_dir,$hijing_runnumber, $segment);
     if (! -f $hijingdatfile)
     {
 	print "could not locate $hijingdatfile\n";
 	next;
     }
-#    print "hijing: $hijingdatfile\n";
     my $sequence = $segment*$evtsperfile/$events;
     for (my $n=0; $n<$nmax; $n+=$events)
     {
@@ -148,10 +148,13 @@ OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
 		last OUTER;
 	    }
 	}
-#	else
-#	{
-#	    print "$outfile exists\n";
-#	}
+	else
+	{
+	    if (defined $verbosity)
+	    {
+		print "$outfile exists\n";
+	    }
+	}
         $sequence++;
     }
 }
@@ -176,7 +179,7 @@ sub getlastsegment()
     my @files = ();
     foreach my $f (@tmpfiles)
     {
-	if ($f =~ /OO_200GeV_0_15fm/)
+	if ($f =~ /OO_0_15fm/)
 	{
 	    push(@files,$f);
 	}
