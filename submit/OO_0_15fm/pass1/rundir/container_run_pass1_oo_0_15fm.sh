@@ -51,7 +51,7 @@ filename=timing
 echo running root.exe -q -b Fun4All_G4_Pass1.C\($1,\"$2\",\"$3\",$4,\"$5\",\"$cdbtag\",\"$9\"\)
  root.exe -q -b  Fun4All_G4_Pass1.C\($1,\"$2\",\"$3\",$4,\"$5\",\"$cdbtag\",\"$9\"\)
 
-timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/shijing_hepmc/fm_0_20/pass1/timing.run${7}
+timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/shijing_hepmc/OO_0_15fm/pass1/timing.run${7}
 
 [ ! -d $timedirname ] && mkdir -p $timedirname
 

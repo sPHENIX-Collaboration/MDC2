@@ -33,8 +33,8 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_Pass1(
     const int nEvents = 1,
-    const string &inputFile = "/sphenix/lustre01/sphnxpro/mdc2/sHijing_HepMC/data/sHijing_0_20fm-0000000001-00000.dat",
-    const string &outputFile = "G4Hits_sHijing_0_20fm-0000000026-000000.root",
+    const string &inputFile = "/sphenix/lustre01/sphnxpro/mdc2/sHijing_HepMC/OO/sHijing_OO_0_15fm-0000000001-00000.dat",
+    const string &outputFile = "G4Hits_sHijing_OO_0_15fm-0000000030-000000.root",
     const int skip = 0,
     const string &outdir = ".",
     const string &cdbtag = "MDC2",
@@ -48,15 +48,7 @@ int Fun4All_G4_Pass1(
 
   // just if we set some flags somewhere in this macro
   recoConsts *rc = recoConsts::instance();
-  // save all git tags from build
-  if (gitcommit != "none")
-  {
-    SaveGitTags(gitcommit);
-  }
-  else
-  {
-    SaveGitTags();
-  }
+
   // By default every random number generator uses
   // PHRandomSeed() which reads /dev/urandom to get its seed
   // if the RANDOMSEED flag is set its value is taken as seed
@@ -67,6 +59,18 @@ int Fun4All_G4_Pass1(
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
 
+  // save all git tags from build
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
+// set tracking to extended readout and pp mode (planned for OO)
+  TRACKING::pp_mode = true;
+  TRACKING::pp_extended_readout_time = 90000;
   // this extracts the runnumber and segment from the output filename
   // and sets this so the server can pick it up
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
@@ -99,13 +103,8 @@ int Fun4All_G4_Pass1(
   Input::HEPMC = true;
 
   INPUTHEPMC::filename = inputFile;
-  INPUTHEPMC::FLOW = true;
-  //  INPUTHEPMC::FLOW_VERBOSITY = 3;
   INPUTHEPMC::FERMIMOTION = true;
   INPUTHEPMC::HIJINGFLIP = true;
-  // Event pile up simulation with collision rate in Hz MB collisions.
-  // Input::PILEUPRATE = 100e3;
-  // Enable this is emulating the nominal pp/pA/AA collision vertex distribution
 
   //-----------------
   // Initialize the selected Input/Event generation
@@ -122,13 +121,6 @@ int Fun4All_G4_Pass1(
   {
     //! apply sPHENIX nominal beam parameter with 2mrad crossing as defined in sPH-TRG-2020-001
     Input::ApplysPHENIXBeamParameter(INPUTMANAGER::HepMCInputManager);
-    if (Input::PILEUPRATE > 0)
-    {
-      // Copy vertex settings from foreground hepmc input
-      INPUTMANAGER::HepMCPileupInputManager->CopyHelperSettings(INPUTMANAGER::HepMCInputManager);
-      // and then modify the ones you want to be different
-      // INPUTMANAGER::HepMCPileupInputManager->set_vertex_distribution_width(100e-4,100e-4,8,0);
-    }
   }
   // register all input generators with Fun4All
   InputRegister();
