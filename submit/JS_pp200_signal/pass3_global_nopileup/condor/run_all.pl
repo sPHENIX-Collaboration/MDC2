@@ -20,7 +20,7 @@ my $test;
 GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "overwrite"=>\$overwrite, "phenix" => \$phenix, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet5\">, \"Jet10\">, <\"Jet15\">,  <\"Jet30\">, <\"Jet40\">, <\"Jet50\">, <\"Jet70\">, \"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\" or \"Detroit\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet5\">, \"Jet10\">, <\"Jet15\">,  <\"Jet30\">, <\"Jet40\">, <\"Jet50\">, <\"Jet60\">, <\"Jet70\">, \"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\" or \"Detroit\" production>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
@@ -72,6 +72,7 @@ if ($jettrigger  ne "Jet5" &&
     $jettrigger  ne "Jet30" &&
     $jettrigger  ne "Jet40" &&
     $jettrigger  ne "Jet50" &&
+    $jettrigger  ne "Jet60" &&
     $jettrigger  ne "Jet70" &&
     $jettrigger  ne "PhotonJet" &&
     $jettrigger  ne "PhotonJet5" &&
@@ -79,7 +80,7 @@ if ($jettrigger  ne "Jet5" &&
     $jettrigger  ne "PhotonJet20" &&
     $jettrigger  ne "Detroit")
 {
-    print "second argument has to be Jet5, Jet10, Jet15, Jet20, Jet30, Jet40, Jet50, Jet70, PhotonJet, PhotonJet5, PhotonJet10, PhotonJet20 or Detroit\n";
+    print "second argument has to be Jet5, Jet10, Jet15, Jet20, Jet30, Jet40, Jet50, Jet60, Jet70, PhotonJet, PhotonJet5, PhotonJet10, PhotonJet20 or Detroit\n";
     exit(1);
 }
 
