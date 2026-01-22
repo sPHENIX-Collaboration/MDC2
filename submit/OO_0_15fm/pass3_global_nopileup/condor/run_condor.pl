@@ -14,9 +14,9 @@ if ($#ARGV < 6)
 {
     print "usage: run_condor.pl <events> <bbcepd infile> <outfile> <outdir> <build> <runnumber> <sequence>\n";
     print "options:\n";
-    print "-memory: memory requirement\n";
+    print "--memory: memory requirement\n";
     print "--overwrite: overwrite existing job files\n";
-    print "-test: testmode - no condor submission\n";
+    print "--test: testmode - no condor submission\n";
     exit(-2);
 }
 
@@ -24,7 +24,7 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 57;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_pass3_global_nopileup_fm_0_20.sh",$rundir);
+my $executable = sprintf("%s/run_pass3_global_nopileup_oo_0_15fm.sh",$rundir);
 my $nevents = $ARGV[0];
 my $infile = $ARGV[1];
 my $dstoutfile = $ARGV[2];
@@ -44,7 +44,7 @@ if (! -d $logdir)
 {
   mkpath($logdir);
 }
-my $condorlogdir = sprintf("/tmp/fm_0_20/pass3_global_nopileup/run%d",$runnumber);
+my $condorlogdir = sprintf("/tmp/OO_0_15fm/pass3_global_nopileup/run%d",$runnumber);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);

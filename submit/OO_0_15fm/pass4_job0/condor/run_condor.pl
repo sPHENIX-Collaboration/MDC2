@@ -7,13 +7,14 @@ use File::Path;
 use File::Basename;
 
 my $test;
-my $memory = sprintf("8000MB");
+my $memory = sprintf("4000MB");
 my $overwrite;
+
 GetOptions("memory:s"=>\$memory, "overwrite"=>\$overwrite, "test"=>\$test);
 
 if ($#ARGV < 7)
 {
-    print "usage: run_condor.pl <events> <pileup> <trk infile> <truth infile> <outdir> <build> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <jettrigger> <infile> <outfile> <outdir> <build> <runnumber> <sequence>\n";
     print "options:\n";
     print "--memory: memory requirement\n";
     print "--overwrite : overwrite existing jobfiles\n";
@@ -23,13 +24,13 @@ if ($#ARGV < 7)
 
 my $localdir=`pwd`;
 chomp $localdir;
-my $baseprio = 53;
+my $baseprio = 54;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_pass3trk_oo.sh",$rundir);
+my $executable = sprintf("%s/run_pass4_job0_oo.sh",$rundir);
 my $nevents = $ARGV[0];
 my $pileup = $ARGV[1];
-my $infile0 = $ARGV[2];
-my $infile1 = $ARGV[3];
+my $infile = $ARGV[2];
+my $dstoutfile = $ARGV[3];
 my $dstoutdir = $ARGV[4];
 my $build = $ARGV[5];
 my $runnumber = $ARGV[6];
@@ -46,7 +47,7 @@ if (! -d $logdir)
 {
   mkpath($logdir);
 }
-my $condorlogdir = sprintf("/tmp/OO_0_15fm/pass3trk/run%d/%s",$runnumber,$pileup);
+my $condorlogdir = sprintf("/tmp/OO_0_15fm/pass4_job0/run%d/%s",$runnumber,$pileup);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);
@@ -68,7 +69,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $infile0 $infile1 $dstoutdir $pileup $build $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $infile $dstoutfile $dstoutdir $pileup $build $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -90,5 +91,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile0, $infile1, $dstoutdir, $pileup, $build, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio, $memory $batchname\n";
+print F "$executable, $nevents, $infile, $dstoutfile, $dstoutdir, $pileup, $build, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio, $memory $batchname\n";
 close(F);

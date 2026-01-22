@@ -18,19 +18,20 @@ my $shared;
 my $test;
 my $pileup;
 my $verbosity = 0;
-GetOptions("build:s" => \$build, "events:i"=>\$outevents, "increment"=>\$incremental, "memory:s"=>\$memory, "overwrite"=> \$overwrite, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "overwrite"=> \$overwrite, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
 if ($#ARGV < 0)
 {
-    print "usage: run_all.pl <number of jobs>  production>\n";
+    print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
-    print "--events: number of events\n";
     print "--increment : submit jobs while processing running\n";
+    print "--memory : memory requirement with unit (MB)\n";
     print "--overwrite : overwrite exiting jobfiles\n";
     print "--pileup : collision rate (with unit, kHz, MHz)\n";
+    print "--run: <runnumber>\n";
     print "--shared : submit jobs to shared pool\n";
     print "--test : dryrun - create jobfiles\n";
-    print "--verbosity <level>: verbosity level\n";
+    print "--verbosity: <level>\n";
     exit(1);
 }
 
@@ -89,78 +90,24 @@ if (! -d $outdir)
   mkpath($outdir);
 }
 
-my %outfiletype = ();
-$outfiletype{"DST_TRKR_HIT"} = 1;
-$outfiletype{"DST_TRUTH"} = 1;
-
-my %trkhash = ();
-my %truthhash = ();
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like 'DST_TRKR_G4HIT_sHijing_OO_0_15fm_$pileupstring-%' and runnumber = $runnumber order by segment") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_HIT' and filename like 'DST_TRKR_HIT_sHijing_OO_0_15fm_$pileupstring-%' and runnumber = $runnumber order by segment") || die $DBI::errstr;
+#print "select filename,segment from datasets where dsttype = 'DST_TRKR_HIT' and filename like 'DST_TRKR_HIT_sHijing_OO_0_15fm_$pileupstring-%' and runnumber = $runnumber order by segment\n";
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
-my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH_G4HIT' and filename like 'DST_TRUTH_G4HIT_sHijing_OO_0_15fm_$pileupstring-%' and runnumber = $runnumber");
-if ($verbosity > 0)
-{
-  print "select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like 'DST_TRKR_G4HIT_sHijing_OO_0_15fm_$pileupstring-%' and runnumber = $runnumber order by segment\n";
-  print "select filename,segment from datasets where dsttype = 'DST_TRUTH_G4HIT' and filename like 'DST_TRUTH_G4HIT_sHijing_OO_0_15fm_$pileupstring-%' and runnumber = $runnumber\n";
-}
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
-my $ncal = $getfiles->rows;
 while (my @res = $getfiles->fetchrow_array())
 {
-    $trkhash{sprintf("%06d",$res[1])} = $res[0];
-}
-$getfiles->finish();
-$gettruthfiles->execute() || die $DBI::errstr;
-my $ntruth = $gettruthfiles->rows;
-while (my @res = $gettruthfiles->fetchrow_array())
-{
-    $truthhash{sprintf("%06d",$res[1])} = $res[0];
-}
-$gettruthfiles->finish();
-if ($verbosity > 0)
-{
-  print "input files, tracks: $ncal, truth: $ntruth\n";
-}
-foreach my $segment (sort { $a <=> $b } keys %trkhash)
-{
-    if (! exists $truthhash{$segment})
-    {
-	next;
-    }
-
-    my $lfn = $trkhash{$segment};
-    if ($verbosity > 1)
-    {
-	print "found $lfn\n";
-    }
+    my $lfn = $res[0];
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-        my $foundall = 1;
-	foreach my $type (sort keys %outfiletype)
-	{
-            my $lfn =  sprintf("%s_sHijing_OO_0_15fm_%s-%010d-%06d.root",$type,$pileupstring,$runnumber,$segment);
-	    $chkfile->execute($lfn);
-	    if ($chkfile->rows > 0)
-	    {
-		next;
-	    }
-	    else
-	    {
-		$foundall = 0;
-		if ($verbosity > 0)
-		{
-		    print "did not find $lfn\n";
-		}
-		last;
-	    }
-	}
-	if ($foundall == 1)
+	my $outfilename = sprintf("DST_TRKR_CLUSTER_sHijing_OO_0_15fm_%s-%010d-%06d.root",$pileupstring,$runnumber,$segment);
+	$chkfile->execute($outfilename);
+	if ($chkfile->rows > 0)
 	{
 	    next;
 	}
@@ -177,7 +124,7 @@ foreach my $segment (sort { $a <=> $b } keys %trkhash)
 	{
 	    $tstflag= sprintf("%s --overwrite",$tstflag);
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %d %d %s", $outevents, $pileup, $lfn, $truthhash{sprintf("%06d",$segment)}, $outdir, $build, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %d %d %s", $outevents, $pileup, $lfn, $outfilename, $outdir, $build, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
@@ -193,14 +140,14 @@ foreach my $segment (sort { $a <=> $b } keys %trkhash)
 	{
 	    $nsubmit++;
 	}
-	if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit > 20000)
+	if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit >= 20000)
 	{
-	    print "maximum number of submissions $nsubmit reached, exiting\n";
+	    print "maximum number of submissions $nsubmit reached, submitting\n";
 	    last;
 	}
     }
 }
-
+$getfiles->finish();
 $chkfile->finish();
 $dbh->disconnect;
 

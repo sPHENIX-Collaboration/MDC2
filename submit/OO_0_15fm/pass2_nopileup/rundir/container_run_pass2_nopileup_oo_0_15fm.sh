@@ -27,10 +27,10 @@ source /opt/sphenix/core/bin/sphenix_setup.sh -n
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
     cd $_CONDOR_SCRATCH_DIR
-    getinputfiles.pl $2
+    perl getinputfiles.pl $2
     if [ $? -ne 0 ]
     then
-	echo error from getinputfiles.pl $2, exiting
+	echo error from perl getinputfiles.pl $2, exiting
 	exit -1
     fi
 else

@@ -176,7 +176,7 @@ while (my @res = $getfiles->fetchrow_array())
 	my $currsegment = $segment;
 # the number of files can be large - there is no overhead, 
 # we only open new files when the old file is exhausted
-	while ($bkgsegments <= 99)
+	while ($bkgsegments <= 40)
 	{
 	    $currsegment++; # so we don't mix identical segments (use seg 1,2,3 for seg 0)
 	    if ($currsegment > $lastsegment)
