@@ -108,9 +108,13 @@ my $nmbd = $getfiles->rows;
 
 while (my @res = $getfiles->fetchrow_array())
 {
-   $mbdhash{sprintf("%06d",$res[1])} = $res[0];
+    $mbdhash{sprintf("%06d",$res[1])} = $res[0];
 }
 $getfiles->finish();
+if ($verbosity > 1)
+{
+    print "found $nmbd MBD G4HIT files\n";
+}
 
 $gettruthfiles->execute() || die $DBI::errstr;
 my $ntruth = $gettruthfiles->rows;
@@ -119,11 +123,19 @@ while (my @res = $gettruthfiles->fetchrow_array())
     $truthhash{sprintf("%06d",$res[1])} = $res[0];
 }
 $gettruthfiles->finish();
+if ($verbosity > 1)
+{
+    print "found $ntruth TRUTH G4HIT files\n";
+}
 
 foreach my $segment (sort { $a <=> $b } keys %mbdhash)
 {
     if (! exists $truthhash{$segment})
     {
+	if ($verbosity > 1)
+	{
+	    print "segment $segment missing in truth hash\n";
+	}
 	next;
     }
 
