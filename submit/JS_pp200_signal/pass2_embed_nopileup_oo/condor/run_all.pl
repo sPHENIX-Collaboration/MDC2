@@ -16,7 +16,7 @@ my $overwrite;
 my $runnumber;
 my $startsegment = 0;
 my $test;
-GetOptions("build:s" => \$build, "fm:s" =>\$fm, "increment"=>\$incremental, "overwrite"=> \$overwrite, "run:i" =>\$runnumber, "startsegment:i" => \$startsegment, "test"=>\$test);
+GetOptions("build:s" => \$build, "events:i"=> \$outevents, "fm:s" =>\$fm, "increment"=>\$incremental, "overwrite"=> \$overwrite, "run:i" =>\$runnumber, "startsegment:i" => \$startsegment, "test"=>\$test);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Jet5\">, <\"Jet10\">, <\"Jet15\">, <\"Jet20\">, <\"Jet30\">, <\"Jet40\">, <\"Jet50\">, <\"Jet60\">, <\"Jet70\">, <\"PhotonJet\">, <\"PhotonJet5\">, <\"PhotonJet10\">, <\"PhotonJet20\">, <\"Detroit\"> production>\n";

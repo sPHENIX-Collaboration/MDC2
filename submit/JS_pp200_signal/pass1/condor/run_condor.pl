@@ -25,7 +25,7 @@ else
 }
 my $localdir=`pwd`;
 chomp $localdir;
-my $baseprio = 51;
+my $baseprio = 2;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_pass1_js.sh",$rundir);
 my $nevents = $ARGV[0];

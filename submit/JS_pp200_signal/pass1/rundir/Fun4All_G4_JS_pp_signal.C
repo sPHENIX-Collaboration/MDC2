@@ -135,6 +135,10 @@ int Fun4All_G4_JS_pp_signal(
   {
     pythia8_config_file += "phpythia8_30GeV_JS_MDC2.cfg";
   }
+  else if (jettrigger == "Jet40")
+  {
+    pythia8_config_file += "phpythia8_40GeV_JS_MDC2.cfg";
+  }
   else if (jettrigger == "Jet50")
   {
     pythia8_config_file += "phpythia8_50GeV_JS_MDC2.cfg";
