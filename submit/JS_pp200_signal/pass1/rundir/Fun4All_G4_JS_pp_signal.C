@@ -160,7 +160,7 @@ int Fun4All_G4_JS_pp_signal(
     std::cout << "Invalid jet trigger " << jettrigger << std::endl;
     gSystem->Exit(1);
   }
-  PYTHIA8::config_file = pythia8_config_file;
+  PYTHIA8::config_file[0] = pythia8_config_file;
 
   InputInit();
 
@@ -196,8 +196,8 @@ int Fun4All_G4_JS_pp_signal(
         std::cout << "invalid jettrigger: " << jettrigger << std::endl;
         gSystem->Exit(1);
       }
-      INPUTGENERATOR::Pythia8->register_trigger(p8_photon_jet_trigger);
-      INPUTGENERATOR::Pythia8->set_trigger_OR();
+      INPUTGENERATOR::Pythia8[0]->register_trigger(p8_photon_jet_trigger);
+      INPUTGENERATOR::Pythia8[0]->set_trigger_OR();
     }
     else if (jettrigger.find("Jet") != std::string::npos)
     {
@@ -246,8 +246,8 @@ int Fun4All_G4_JS_pp_signal(
         std::cout << "invalid jettrigger: " << jettrigger << std::endl;
         gSystem->Exit(1);
       }
-      INPUTGENERATOR::Pythia8->register_trigger(p8_js_signal_trigger);
-      INPUTGENERATOR::Pythia8->set_trigger_AND();
+      INPUTGENERATOR::Pythia8[0]->register_trigger(p8_js_signal_trigger);
+      INPUTGENERATOR::Pythia8[0]->set_trigger_AND();
     }
     else if (jettrigger == "Detroit")
     {

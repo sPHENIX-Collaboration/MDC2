@@ -5,8 +5,9 @@ Output  	= $(outfile)
 Error 		= $(errfile)
 Log  		= $(condorlogfile)
 Initialdir  	=  $(rundir)
-PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)
 request_memory = $(memory)
+retry_request_memory_increase = RequestMemory * 1.5
+retry_request_memory_max = 10000MB
 Priority = $(baseprio)
 job_lease_duration = 3600
 batch_name = $(batchname)
