@@ -7,7 +7,7 @@ use Getopt::Long;
 use DBI;
 # first physics run in run3oo: 53881
 # last physics run (from prod): 56000
-my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production2/run3oo/physics/ana533_nocdbtag_v001");
+my $outdir = sprintf("/sphenix/lustre01/sphnxpro/production2/run3oo/physics/ana536_nocdbtag_v001");
 my $test;
 my $incremental;
 my $killexist;

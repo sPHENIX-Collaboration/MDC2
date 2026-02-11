@@ -8,7 +8,7 @@ this_script=`readlink -f $this_script`
 this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 
-source /opt/sphenix/core/bin/sphenix_setup.sh -n ana.533
+source /opt/sphenix/core/bin/sphenix_setup.sh -n ana.536
 
 hostname
 
@@ -43,7 +43,7 @@ runnumber=$(printf "%010d" $2)
 
 perl CreateListFiles.pl $2 $3
 ls -l
-echo running root.exe -q -b Fun4All_New_Prdf_Combiner.C\($1,\"$3\",\"$4\"\)
-root.exe -q -b Fun4All_New_Prdf_Combiner.C\($1,\"$3\",\"$4\"\)
+echo running root.exe -q -b Fun4All_Prdf_Combiner.C\($1,\"$3\",\"\",\"$4\"\)
+root.exe -q -b Fun4All_Prdf_Combiner.C\($1,\"$3\",\"\",\"$4\"\)
 
 echo "script done"

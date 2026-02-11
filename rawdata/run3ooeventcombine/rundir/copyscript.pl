@@ -208,7 +208,7 @@ my $splitstring = "_run3oo_";
 my @sp1 = split(/$splitstring/,$lfn);
 if (! defined $test)
 {
-    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries,$firstevent,$lastevent,'ana533_nocdbtag_v001');
+    $insertdataset->execute($lfn,$runnumber,$segment,$size,$sp1[0],$entries,$firstevent,$lastevent,'ana536_nocdbtag_v001');
 }
 else
 {
