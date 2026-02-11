@@ -85,6 +85,7 @@ void Fun4All_Prdf_Combiner(int nEvents = 0,
   {
     return;
   }
+  se->run(nEvents);
   se->End();
   delete se;
   std::cout << "all done" << std::endl;
