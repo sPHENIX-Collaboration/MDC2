@@ -72,7 +72,7 @@ my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::er
 
 my $hijing_runnumber = 1;
 my $hijing_dir = sprintf("/sphenix/lustre01/sphnxpro/mdc2/sHijing_HepMC/OO");
-my $events = 500; # for running with plugdoor
+my $events = 1000; # for running with plugdoor
 #$events = 200;
 #$events = 100; # for ftfp_bert_hp
 my $evtsperfile = 100000;
