@@ -24,7 +24,7 @@ my $test;
 GetOptions("build:s" => \$build, "disable_calo" => \$disable_calo, "disable_mbd" => \$disable_mbd, "disable_trk" => \$disable_trk, "increment"=>\$incremental, "overwrite" => \$overwrite, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet5\", <\"Jet10\", \"Jet15\", \"Jet20\", \"Jet30\", \"Jet40\", \"Jet50\", \"Jet60\", \"Jet70\", \"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\" or \"Detroit\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet5\", <\"Jet10\" <\"Jet12\", \"Jet15\", \"Jet20\", \"Jet30\", \"Jet40\", \"Jet50\", \"Jet60\", \"Jet70\", \"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\" or \"Detroit\" production>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--disable_calo: disable cal reconstruction\n";
@@ -74,6 +74,7 @@ my $maxsubmit = $ARGV[0];
 my $jettrigger = $ARGV[1];
 if ($jettrigger  ne "Jet5" &&
     $jettrigger  ne "Jet10" &&
+    $jettrigger  ne "Jet12" &&
     $jettrigger  ne "Jet15" &&
     $jettrigger  ne "Jet20" &&
     $jettrigger  ne "Jet30" &&
@@ -130,10 +131,10 @@ if (! defined $disable_trk)
     $outfiletype{"DST_TRKR_HIT"} = $outdir[2];
     $outfiletype{"DST_TRUTH"} = $outdir[2];
 }
-foreach my $type (sort keys %outfiletype)
-{
-    print "type $type, dir: $outfiletype{$type}\n";
-} 
+#foreach my $type (sort keys %outfiletype)
+#{
+#    print "type $type, dir: $outfiletype{$type}\n";
+#}
 #die;
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
