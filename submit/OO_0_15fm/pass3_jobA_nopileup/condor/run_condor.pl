@@ -71,7 +71,6 @@ print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
 print F "Initialdir  	= $rundir\n";
-print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
 print F "PeriodicHold    = (NumJobStarts>=1 && JobStatus == 1 && !(ON_EVICT_CHECK_RequestMemory_REQUIREMENTS))\n";
 print F "retry_request_memory_increase = RequestMemory + 2000\n";
 print F "retry_request_memory_max = 10000MB\n";

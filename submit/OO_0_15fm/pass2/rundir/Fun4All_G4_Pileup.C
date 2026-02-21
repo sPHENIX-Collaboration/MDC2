@@ -111,7 +111,7 @@ R__LOAD_LIBRARY(libfun4allutils.so)
   inpile->setDetectorActiveCrossings("BH_1",1);
   // open file
   inpile->AddListFile(backgroundList);
-  inpile->Verbosity(3);
+  inpile->Verbosity(1);
   se->registerInputManager(inpile);
 
   // output manager
