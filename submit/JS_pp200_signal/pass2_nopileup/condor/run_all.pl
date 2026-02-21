@@ -19,6 +19,7 @@ my $disable_trk;
 my $enable_calo = 0;
 my $enable_mbd = 0;
 my $enable_trk = 0;
+my $memory = "4000MB";
 my $shared;
 my $test;
 GetOptions("build:s" => \$build, "disable_calo" => \$disable_calo, "disable_mbd" => \$disable_mbd, "disable_trk" => \$disable_trk, "increment"=>\$incremental, "overwrite" => \$overwrite, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
@@ -130,6 +131,14 @@ if (! defined $disable_trk)
     $enable_trk = 1;
     $outfiletype{"DST_TRKR_HIT"} = $outdir[2];
     $outfiletype{"DST_TRUTH"} = $outdir[2];
+    $memory = sprintf("3000MB");
+}
+else
+{
+    if ($jettrigger eq "Detroit")
+    {
+	$memory = sprintf("1000MB");
+    }
 }
 #foreach my $type (sort keys %outfiletype)
 #{
@@ -177,9 +186,13 @@ while (my @res = $getfiles->fetchrow_array())
 	}
 	if (defined $overwrite)
 	{
-	    $tstflag= sprintf("%s --overwrite", $tstflag)
+	    $tstflag= sprintf("%s --overwrite", $tstflag);
 	}
-
+	if (defined $memory)
+	{
+	    $tstflag= sprintf("%s --memory %s", $tstflag,$memory);
+	}
+	    
 	my $calooutfilename = sprintf("DST_CALO_CLUSTER_pythia8_%s-%010d-%06d.root",$jettrigger,$runnumber,$segment);
 	my $globaloutfilename = sprintf("DST_MBD_EPD_pythia8_%s-%010d-%06d.root",$jettrigger,$runnumber,$segment);
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %s %s %d %d %d %d %d %s", $outevents, $jettrigger, $lfn, $calooutfilename, $outdir[0], $globaloutfilename, $outdir[1], $outdir[2], $build, $runnumber, $segment, $enable_calo, $enable_mbd, $enable_trk, $tstflag);
