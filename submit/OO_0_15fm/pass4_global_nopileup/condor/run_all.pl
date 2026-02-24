@@ -116,7 +116,7 @@ foreach my $segment (sort keys %trkhash)
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_GLOBAL__sHijing_OO_0_15fm-%010d-%06d.root",$runnumber,$segment);
+	my $outfilename = sprintf("DST_GLOBAL_sHijing_OO_0_15fm-%010d-%06d.root",$runnumber,$segment);
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
