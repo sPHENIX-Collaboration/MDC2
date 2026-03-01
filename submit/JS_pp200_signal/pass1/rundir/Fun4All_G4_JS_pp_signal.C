@@ -165,7 +165,7 @@ int Fun4All_G4_JS_pp_signal(
   //--------------
   // can only be set after InputInit() is called
 
-  if (Input::PYTHIA8 || Input::PYTHIA8_double_interaction)
+  if (Input::PYTHIA8)
   {
     if (jettrigger.find("PhotonJet") != std::string::npos)
     {
@@ -263,10 +263,6 @@ int Fun4All_G4_JS_pp_signal(
       gSystem->Exit(1);
     }
     Input::ApplysPHENIXBeamParameter(INPUTGENERATOR::Pythia8);
-    if(Input::PYTHIA8_double_interaction)
-      {
-	Input::ApplysPHENIXBeamParameter(INPUTGENERATOR::Pythia8_mb);
-      }
   }
 
   // register all input generators with Fun4All
