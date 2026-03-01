@@ -134,7 +134,11 @@ while (my @res = $getfiles->fetchrow_array())
 	foreach my $type (sort keys %outfiletype)
 	{
 	    my $outfilename = sprintf("%s/%s_sHijing_OO_0_15fm_%s-%010d-%06d.root",$outdir,$type,$pileupstring,$outrunnumber,$segment);
-#	    print "checking for $outfilename\n";
+
+	    if ($verbosity > 1)
+	    {
+		print "checking for $outfilename\n";
+	    }
 	    if (! -f  $outfilename)
 	    {
 		my $outlfn = basename($outfilename);

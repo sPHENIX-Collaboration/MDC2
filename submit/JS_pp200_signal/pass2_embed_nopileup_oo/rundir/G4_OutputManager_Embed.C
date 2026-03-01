@@ -19,7 +19,7 @@ void AddCommonNodes(Fun4AllOutputManager *out);
 void CreateDstOutput(int runnumber, int segment, const string &jettrigger, const string &fmrange)
 {
   auto se = Fun4AllServer::instance();
-  string embedinto = "_sHijing_" + fmrange;
+  string embedinto = "_sHijing_OO_" + fmrange;
   char segrun[100];
   snprintf(segrun,100,"%s-%010d-%06d",embedinto.c_str(),runnumber,segment);
   string FullOutFile = "DST_BBC_G4HIT_pythia8_" + jettrigger + string(segrun) + ".root";;

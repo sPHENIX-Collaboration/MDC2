@@ -7,7 +7,7 @@ use File::Path;
 use File::Basename;
 
 my $test;
-my $memory = sprintf("7500MB");
+my $memory = sprintf("6000MB");
 
 GetOptions("memory:s" => \$memory, "test"=>\$test);
 if ($#ARGV < 6)
@@ -25,7 +25,7 @@ else
 }
 my $localdir=`pwd`;
 chomp $localdir;
-my $baseprio = 51;
+my $baseprio = 2;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_pass1_js.sh",$rundir);
 my $nevents = $ARGV[0];
@@ -74,7 +74,7 @@ print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
 print F "Initialdir  	= $rundir\n";
-print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
+print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1 && !(ON_EVICT_CHECK_RequestMemory_REQUIREMENTS))\n";
 print F "request_memory = $memory\n";
 print F "Priority = $baseprio\n";
 print F "batch_name = \"$batchname\"\n";

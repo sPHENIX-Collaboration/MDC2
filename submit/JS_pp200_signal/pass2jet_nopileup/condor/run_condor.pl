@@ -6,7 +6,7 @@ use Getopt::Long;
 use File::Path;
 use File::Basename;
 
-my $memory = sprintf("1000MB");
+my $memory = sprintf("500MB");
 my $overwrite;
 my $test;
 
@@ -80,8 +80,10 @@ print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
 print F "Initialdir  	= $rundir\n";
-print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
+print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1 && !(ON_EVICT_CHECK_RequestMemory_REQUIREMENTS))\n";
 print F "request_memory = $memory\n";
+print F "retry_request_memory_increase = RequestMemory + 1000\n";
+print F "retry_request_memory_max = 10000MB\n";
 print F "batch_name = \"$batchname\"\n";
 print F "Priority = $baseprio\n";
 #print F "concurrency_limits = PHENIX_2000\n";

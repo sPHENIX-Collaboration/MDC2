@@ -19,12 +19,13 @@ my $disable_trk;
 my $enable_calo = 0;
 my $enable_mbd = 0;
 my $enable_trk = 0;
+my $memory = "4000MB";
 my $shared;
 my $test;
 GetOptions("build:s" => \$build, "disable_calo" => \$disable_calo, "disable_mbd" => \$disable_mbd, "disable_trk" => \$disable_trk, "increment"=>\$incremental, "overwrite" => \$overwrite, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet5\", <\"Jet10\", \"Jet15\", \"Jet20\", \"Jet30\", \"Jet40\", \"Jet50\", \"Jet60\", \"Jet70\", \"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\" or \"Detroit\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet5\", <\"Jet10\" <\"Jet12\", \"Jet15\", \"Jet20\", \"Jet30\", \"Jet40\", \"Jet50\", \"Jet60\", \"Jet70\", \"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\" or \"Detroit\" production>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--disable_calo: disable cal reconstruction\n";
@@ -74,6 +75,7 @@ my $maxsubmit = $ARGV[0];
 my $jettrigger = $ARGV[1];
 if ($jettrigger  ne "Jet5" &&
     $jettrigger  ne "Jet10" &&
+    $jettrigger  ne "Jet12" &&
     $jettrigger  ne "Jet15" &&
     $jettrigger  ne "Jet20" &&
     $jettrigger  ne "Jet30" &&
@@ -129,11 +131,19 @@ if (! defined $disable_trk)
     $enable_trk = 1;
     $outfiletype{"DST_TRKR_HIT"} = $outdir[2];
     $outfiletype{"DST_TRUTH"} = $outdir[2];
+    $memory = sprintf("3000MB");
 }
-foreach my $type (sort keys %outfiletype)
+else
 {
-    print "type $type, dir: $outfiletype{$type}\n";
-} 
+    if ($jettrigger eq "Detroit")
+    {
+	$memory = sprintf("1000MB");
+    }
+}
+#foreach my $type (sort keys %outfiletype)
+#{
+#    print "type $type, dir: $outfiletype{$type}\n";
+#}
 #die;
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
@@ -176,9 +186,13 @@ while (my @res = $getfiles->fetchrow_array())
 	}
 	if (defined $overwrite)
 	{
-	    $tstflag= sprintf("%s --overwrite", $tstflag)
+	    $tstflag= sprintf("%s --overwrite", $tstflag);
 	}
-
+	if (defined $memory)
+	{
+	    $tstflag= sprintf("%s --memory %s", $tstflag,$memory);
+	}
+	    
 	my $calooutfilename = sprintf("DST_CALO_CLUSTER_pythia8_%s-%010d-%06d.root",$jettrigger,$runnumber,$segment);
 	my $globaloutfilename = sprintf("DST_MBD_EPD_pythia8_%s-%010d-%06d.root",$jettrigger,$runnumber,$segment);
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %s %s %d %d %d %d %d %s", $outevents, $jettrigger, $lfn, $calooutfilename, $outdir[0], $globaloutfilename, $outdir[1], $outdir[2], $build, $runnumber, $segment, $enable_calo, $enable_mbd, $enable_trk, $tstflag);

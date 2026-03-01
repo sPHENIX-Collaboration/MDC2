@@ -76,6 +76,19 @@ runnumber=$(printf "%010d" ${10})
 sequence=$(printf "%06d" ${11})
 
 #---------------------------------------------------------------
+# pass3 tracking
+if [ ${run_trk} -gt 0 ]
+then
+    source /opt/sphenix/core/bin/sphenix_setup.sh -n $ana_pass3trk
+    echo 'here comes your environment for Fun4All_G4_Pass3Trk.C'
+    cdbtag=MDC2_$ana_pass3trk
+    printenv
+
+    echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$8\",\"$cdbtag\",\"${15}\"\)
+    root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$8\",\"$cdbtag\",\"${15}\"\)
+fi
+
+#---------------------------------------------------------------
 # Calorimeter Reconstruction
 if [ ${run_calo} -gt 0 ]
 then
@@ -99,19 +112,6 @@ then
 
     echo running root.exe -q -b Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$5\",\"$6\",\"$cdbtag\",\"${15}\"\)
     root.exe -q -b  Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$5\",\"$6\",\"$cdbtag\",\"${15}\"\)
-fi
-
-#---------------------------------------------------------------
-# pass3 tracking
-if [ ${run_trk} -gt 0 ]
-then
-    source /opt/sphenix/core/bin/sphenix_setup.sh -n $ana_pass3trk
-    echo 'here comes your environment for Fun4All_G4_Pass3Trk.C'
-    cdbtag=MDC2_$ana_pass3trk
-    printenv
-
-    echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$8\",\"$cdbtag\",\"${15}\"\)
-    root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$8\",\"$cdbtag\",\"${15}\"\)
 fi
 
 echo "script done"
