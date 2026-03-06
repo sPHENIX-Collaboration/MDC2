@@ -37,7 +37,8 @@ int Fun4All_G4_Pass1_herwig(
     const string &outputFile = "G4Hits_herwig_mb-0000000021-000000.root",
     const int skip = 0,
     const string &outdir = ".",
-    const string &cdbtag = "MDC2")
+    const string &cdbtag = "MDC2",
+  const std::string &gitcommit = "none")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(0);
@@ -56,7 +57,14 @@ int Fun4All_G4_Pass1_herwig(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
-  SaveGitTags(); // save the git tags from rebuild.info as rc string flags
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
 
   // this extracts the runnumber and segment from the output filename
   // and sets this so the server can pick it up

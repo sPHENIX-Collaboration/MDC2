@@ -18,15 +18,6 @@ source /opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
 
 cdbtag=MDC2_$anabuild
 
-if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
-then
-    cd $_CONDOR_SCRATCH_DIR
-    rsync -av $this_dir/* .
-else
-   echo condor scratch NOT set
-   exit -1
-fi
-
 # arguments 
 # $1: number of events
 # $2: hepmc input file
@@ -37,6 +28,7 @@ fi
 # $7: jet trigger
 # $8: runnumber
 # $9: sequence
+# $10: mdc2 git commit id
 
 echo 'here comes your environment'
 printenv
@@ -49,6 +41,7 @@ echo arg6 \(build\): $6
 echo arg7 \(jet trigger\): $7
 echo arg8 \(runnumber\): $8
 echo arg9 \(sequence\): $9
+echo arg10 \(git commit id\): ${10}
 echo cdbtag: $cdbtag
 
 runnumber=$(printf "%010d" $8)
@@ -56,10 +49,10 @@ sequence=$(printf "%06d" $9)
 
 filename=timing
 
-echo running root.exe -q -b Fun4All_G4_Pass1_herwig.C\($1,\"$2\",\"$3\",$4,\"$5\",\"$cdbtag\"\)
- root.exe -q -b  Fun4All_G4_Pass1_herwig.C\($1,\"$2\",\"$3\",$4,\"$5\",\"$cdbtag\"\)
+echo running root.exe -q -b Fun4All_G4_Pass1_herwig.C\($1,\"$2\",\"$3\",$4,\"$5\",\"$cdbtag\",\"${10}\"\)
+ root.exe -q -b  Fun4All_G4_Pass1_herwig.C\($1,\"$2\",\"$3\",$4,\"$5\",\"$cdbtag\",\"${10}\"\)
 
-timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/herwig/pass1/timing.run${8}/${7}
+timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/Herwig/pass1/timing.run${8}/${7}
 
 [ ! -d $timedirname ] && mkdir -p $timedirname
 

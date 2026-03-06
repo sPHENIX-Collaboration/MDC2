@@ -76,17 +76,12 @@ print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
 print F "Initialdir  	= $rundir\n";
-print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
-print F "accounting_group = group_sphenix.mdc2\n";
-print F "accounting_group_user = sphnxpro\n";
-print F "Requirements = (CPU_Type == \"mdc2\")\n";
-# FTFP_BERT
+print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1 && !(ON_EVICT_CHECK_RequestMemory_REQUIREMENTS))\n";
 print F "request_memory = $memory\n";
+print F "retry_request_memory_increase = RequestMemory + 2000\n";
+print F "retry_request_memory_max = 10000MB\n";
 print F "Priority = $baseprio\n";
 print F "batch_name = \"$batchname\"\n";
-#FTFP_BERT_HP
-#print F "request_memory = 12288MB\n";
-#print F "Priority 	= 30\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);
