@@ -36,6 +36,8 @@
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
 
+#include <format>
+
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libg4centrality.so)
 R__LOAD_LIBRARY(libCaloWaveformSim.so)
@@ -44,12 +46,12 @@ R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4allutils.so)
 
 void Fun4All_G4_Calo(
-    const int nEvents = 1,
-    const string &inputFile0 = "G4Hits_Herwig_MB-0000000022-000000.root",
-    const string &outputFile = "DST_CALO_CLUSTER_Herwig_MB-0000000022-000000.root",
-    const string &outdir = ".",
-    const string &cdbtag = "MDC2")
-
+  const int nEvents = 1,
+  const string &inputFile0 = "G4Hits_Herwig_MB-0000000022-000000.root",
+  const string &outputFile = "DST_CALO_CLUSTER_Herwig_MB-0000000022-000000.root",
+  const string &outdir = ".",
+  const string &cdbtag = "MDC2",
+  const std::string &gitcommit = "none")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);  // set it to 1 if you want event printouts
@@ -70,7 +72,14 @@ void Fun4All_G4_Calo(
   // int seedValue = 491258969;
   // rc->set_IntFlag("RANDOMSEED", seedValue);
 
-  SaveGitTags(); // save the git tags from rebuild.info as rc string flags
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
 
   //===============
   // conditions DB flags
@@ -153,11 +162,8 @@ void Fun4All_G4_Calo(
   randGen.SetSeed(seed);
   // a int from 0 to 3259
   int sequence = randGen.Integer(3260);
-  // pad the name
-  std::ostringstream opedname;
-  opedname << "pedestal-54256-0" << std::setw(4) << std::setfill('0') << sequence << ".root";
 
-  std::string pedestalname = opedname.str();
+  std::string pedestalname = std::format("pedestal-54256-{:05}.root",sequence);
 
   Fun4AllInputManager *hitsin = new Fun4AllNoSyncDstInputManager("DST2");
   hitsin->AddFile(pedestalname);

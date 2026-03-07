@@ -25,11 +25,12 @@ R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libffamodules.so)
 
 int Fun4All_G4_Pass3Trk(
-    const int nEvents = 0,
-    const string &inputFile0 = "G4Hits_Herwig_MB-0000000022-000000.root",
-    const string &outdir = ".",
-    const string &jettrigger = "MB",
-    const string &cdbtag = "MDC2")
+  const int nEvents = 0,
+  const string &inputFile0 = "G4Hits_Herwig_MB-0000000022-000000.root",
+  const string &outdir = ".",
+  const string &jettrigger = "MB",
+  const string &cdbtag = "MDC2",
+  const std::string &gitcommit = "none")
 {
   // set pp tracking mode
   //  TRACKING::pp_mode = true;
@@ -52,7 +53,14 @@ int Fun4All_G4_Pass3Trk(
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
 
-  SaveGitTags(); // save the git tags from rebuild.info as rc string flags
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
 
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile0);
   int runnumber = runseg.first;

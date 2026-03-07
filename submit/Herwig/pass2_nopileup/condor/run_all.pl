@@ -24,7 +24,7 @@ my $test;
 GetOptions("build:s" => \$build, "disable_calo" => \$disable_calo, "disable_mbd" => \$disable_mbd, "disable_trk" => \$disable_trk, "increment"=>\$incremental, "overwrite" => \$overwrite, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet10\", \"Jet30\", \"MB\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet5\", \"Jet12\", \"Jet20\", \"Jet30\", \"Jet40\", \"Jet50\", \"MB\" production>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--disable_calo: disable cal reconstruction\n";
@@ -72,11 +72,15 @@ if ($isbad > 0)
 
 my $maxsubmit = $ARGV[0];
 my $jettrigger = $ARGV[1];
-if ($jettrigger  ne "Jet10" &&
+if ($jettrigger  ne "Jet5" &&
+    $jettrigger  ne "Jet12" &&
+    $jettrigger  ne "Jet20" &&
     $jettrigger  ne "Jet30" &&
+    $jettrigger  ne "Jet40" &&
+    $jettrigger  ne "Jet50" &&
     $jettrigger  ne "MB")
 {
-    print "second argument has to be Jet10, Jet30 or MB\n";
+    print "second argument has to be Jet5, Jet12, Jet20, Jet30, Jet40, Jet50 or MB\n";
     exit(1);
 }
 
@@ -126,7 +130,7 @@ foreach my $type (sort keys %outfiletype)
 #die;
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like 'G4Hits_Herwig_$jettriggerWithUnderScore%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like 'G4Hits_Herwig_$jettriggerWithUnderScore%' and runnumber = $runnumber order by segment") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;

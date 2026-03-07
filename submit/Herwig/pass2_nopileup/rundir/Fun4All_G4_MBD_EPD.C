@@ -25,11 +25,12 @@ R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 
 void Fun4All_G4_MBD_EPD(
-    const int nEvents = 1,
-    const string &inputFile = "G4Hits_Herwig_MB-0000000022-000000.root",
-    const string &outputFile = "DST_MBD_EPD_Herwig_MB-0000000022-000000.root",
-    const string &outdir = ".",
-    const string &cdbtag = "MDC2")
+  const int nEvents = 1,
+  const string &inputFile = "G4Hits_Herwig_MB-0000000022-000000.root",
+  const string &outputFile = "DST_MBD_EPD_Herwig_MB-0000000022-000000.root",
+  const string &outdir = ".",
+  const string &cdbtag = "MDC2",
+  const std::string &gitcommit = "none")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -49,7 +50,14 @@ void Fun4All_G4_MBD_EPD(
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
 
-  SaveGitTags(); // save the git tags from rebuild.info as rc string flags
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
 
   //===============
   // conditions DB flags
