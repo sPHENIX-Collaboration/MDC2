@@ -215,8 +215,8 @@ int Fun4All_G4_Embed(
 	cout << "invalid jettrigger: " << jettrigger << endl;
 	gSystem->Exit(1);
       }
-      INPUTGENERATOR::Pythia8->register_trigger(p8_photon_jet_trigger);
-      INPUTGENERATOR::Pythia8->set_trigger_OR();
+      INPUTGENERATOR::Pythia8[0]->register_trigger(p8_photon_jet_trigger);
+      INPUTGENERATOR::Pythia8[0]->set_trigger_OR();
     }
     else if (jettrigger.find("Jet") != string::npos)
     {
