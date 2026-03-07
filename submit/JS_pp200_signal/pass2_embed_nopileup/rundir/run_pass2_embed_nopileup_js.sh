@@ -31,11 +31,11 @@ then
     cd $_CONDOR_SCRATCH_DIR
     rsync -av $this_dir/* .
     echo $2 > inputfiles.list
-    getinputfiles.pl  -dd --filelist inputfiles.list
+    perl getinputfiles.pl  -dd --filelist inputfiles.list
     if [ $? -ne 0 ]
     then
         cat inputfiles.list
-	echo error from getinputfiles.pl  --filelist inputfiles.list, exiting
+	echo error from perl getinputfiles.pl  --filelist inputfiles.list, exiting
 	exit -1
     fi
 else

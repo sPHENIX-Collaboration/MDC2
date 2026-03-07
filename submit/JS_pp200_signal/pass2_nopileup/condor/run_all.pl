@@ -19,7 +19,7 @@ my $disable_trk;
 my $enable_calo = 0;
 my $enable_mbd = 0;
 my $enable_trk = 0;
-my $memory = "4000MB";
+my $memory = "3000MB";
 my $shared;
 my $test;
 GetOptions("build:s" => \$build, "disable_calo" => \$disable_calo, "disable_mbd" => \$disable_mbd, "disable_trk" => \$disable_trk, "increment"=>\$incremental, "overwrite" => \$overwrite, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
@@ -131,7 +131,7 @@ if (! defined $disable_trk)
     $enable_trk = 1;
     $outfiletype{"DST_TRKR_HIT"} = $outdir[2];
     $outfiletype{"DST_TRUTH"} = $outdir[2];
-    $memory = sprintf("3000MB");
+    $memory = sprintf("4000MB");
 }
 else
 {
