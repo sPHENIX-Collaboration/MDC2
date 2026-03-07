@@ -7,7 +7,7 @@ use File::Path;
 use File::Basename;
 
 my $test;
-my $memory = sprintf("16000MB");
+my $memory = sprintf("12000MB");
 my $overwrite;
 
 GetOptions("memory:s"=>\$memory, "overwrite"=>\$overwrite, "test"=>\$test);
@@ -76,14 +76,12 @@ print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
 print F "Initialdir  	= $rundir\n";
-print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
-# FTFP_BERT
+print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1 && !(ON_EVICT_CHECK_RequestMemory_REQUIREMENTS))\n";
 print F "request_memory = $memory\n";
+print F "retry_request_memory_increase = RequestMemory + 2000\n";
+print F "retry_request_memory_max = 20000MB\n";
 print F "Priority = $baseprio\n";
 print F "batch_name = \"$batchname\"\n";
-#FTFP_BERT_HP
-#print F "request_memory = 12288MB\n";
-#print F "Priority 	= 30\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);
