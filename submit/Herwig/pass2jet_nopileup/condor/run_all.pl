@@ -20,7 +20,7 @@ my $verbosity = 0;
 GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "overwrite" => \$overwrite, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet10\">, <\"Jet30\">, <\"MB\">  production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet5\", \"Jet12\", \"Jet20\", \"Jet30\", \"Jet40\", \"Jet50\", \"MB\" production>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
@@ -66,11 +66,15 @@ if ($isbad > 0)
 
 my $maxsubmit = $ARGV[0];
 my $jettrigger = $ARGV[1];
-if ($jettrigger  ne "Jet10" &&
+if ($jettrigger  ne "Jet5" &&
+    $jettrigger  ne "Jet12" &&
+    $jettrigger  ne "Jet20" &&
     $jettrigger  ne "Jet30" &&
+    $jettrigger  ne "Jet40" &&
+    $jettrigger  ne "Jet50" &&
     $jettrigger  ne "MB")
 {
-    print "second argument has to be Jet10, Jet30, Jet40 or MB\n";
+    print "second argument has to be Jet5, Jet12, Jet20, Jet30, Jet40, Jet50 or MB\n";
     exit(1);
 }
 

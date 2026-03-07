@@ -26,11 +26,12 @@ R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 
 void Fun4All_G4_Jets(
-    const int nEvents = 0,
-    const string &inputFile = "G4Hits_Herwig_Jet10-0000000021-000000.root",
-    const string &outputFile = "DST_TRUTH_JET_Herwig_Jet10-0000000021-000000.root",
-    const string &outdir = ".",
-    const string &cdbtag = "MDC2")
+  const int nEvents = 0,
+  const string &inputFile = "G4Hits_Herwig_Jet10-0000000021-000000.root",
+  const string &outputFile = "DST_TRUTH_JET_Herwig_Jet10-0000000021-000000.root",
+  const string &outdir = ".",
+  const string &cdbtag = "MDC2",
+  const std::string &gitcommit = "none")
 {
   // this convenience library knows all our i/o objects so you don't
   // have to figure out what is in each dst type
@@ -41,7 +42,14 @@ void Fun4All_G4_Jets(
   recoConsts *rc = recoConsts::instance();
 
 // save all git tags from build
-  SaveGitTags();
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
 
   //===============
   // conditions DB flags

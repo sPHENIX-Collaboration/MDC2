@@ -24,7 +24,7 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 54;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_pass3jet_nopileup_herwig.sh",$rundir);
+my $executable = sprintf("%s/run_pass2jet_nopileup_herwig.sh",$rundir);
 my $nevents = $ARGV[0];
 my $jettrigger = $ARGV[1];
 my $infile = $ARGV[2];
@@ -45,7 +45,7 @@ if (! -d $logdir)
 {
   mkpath($logdir);
 }
-my $condorlogdir = sprintf("/tmp/Herwig/pass3jet_nopileup/run%d/%s",$runnumber,$jettrigger);
+my $condorlogdir = sprintf("/tmp/Herwig/pass2jet_nopileup/run%d/%s",$runnumber,$jettrigger);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);
@@ -72,11 +72,12 @@ print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
 print F "Initialdir  	= $rundir\n";
-print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
+print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1 && !(ON_EVICT_CHECK_RequestMemory_REQUIREMENTS))\n";
 print F "request_memory = $memory\n";
+print F "retry_request_memory_increase = RequestMemory + 2000\n";
+print F "retry_request_memory_max = 10000MB\n";
 print F "batch_name = \"$batchname\"\n";
 print F "Priority = $baseprio\n";
-#print F "concurrency_limits = PHENIX_2000\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);
