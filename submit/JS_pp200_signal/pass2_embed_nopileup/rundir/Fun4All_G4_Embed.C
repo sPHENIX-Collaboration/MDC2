@@ -136,29 +136,13 @@ int Fun4All_G4_Embed(
     }
     else if (jettrigger == "PhotonJet5")
     {
-      pythia8_config_file += "phpythia8_JS_GJ_ptHat5_MDC2.cfg";
+      pythia8_config_file += "phpythia8_5GeV_JS_MDC2.cfg";
     }
     else if (jettrigger == "PhotonJet10")
     {
-      pythia8_config_file += "phpythia8_JS_GJ_ptHat10_MDC2.cfg";
-    }
-    else if (jettrigger == "PhotonJet20")
-    {
-      pythia8_config_file += "phpythia8_JS_GJ_ptHat20_MDC2.cfg";
-    }
-    else if (jettrigger == "Jet5")
-    {
-      pythia8_config_file += "phpythia8_5GeV_JS_MDC2.cfg";
-    }
-    else if (jettrigger == "Jet10")
-    {
       pythia8_config_file += "phpythia8_10GeV_JS_MDC2.cfg";
     }
-    else if (jettrigger == "Jet15")
-    {
-      pythia8_config_file += "phpythia8_15GeV_JS_MDC2.cfg";
-    }
-    else if (jettrigger == "Jet20")
+    else if (jettrigger == "Jet20" || jettrigger == "PhotonJet20")
     {
       pythia8_config_file += "phpythia8_20GeV_JS_MDC2.cfg";
     }
@@ -166,22 +150,34 @@ int Fun4All_G4_Embed(
     {
       pythia8_config_file += "phpythia8_30GeV_JS_MDC2.cfg";
     }
+    else if (jettrigger == "Jet40")
+    {
+      pythia8_config_file += "phpythia8_40GeV_JS_MDC2.cfg";
+    }
     else if (jettrigger == "Jet50")
     {
       pythia8_config_file += "phpythia8_50GeV_JS_MDC2.cfg";
     }
-    else if (jettrigger == "Detroit")
+    else if (jettrigger == "Jet60")
     {
-      pythia8_config_file =  string(getenv("CALIBRATIONROOT")) + "/Generators/phpythia8_detroit_minBias.cfg";
+      pythia8_config_file += "phpythia8_60GeV_JS_MDC2.cfg";
+    }
+    else if (jettrigger == "Jet70")
+    {
+      pythia8_config_file += "phpythia8_70GeV_JS_MDC2.cfg";
+    }
+    else if (jettrigger == "Detroit" || jettrigger == "Jet5" || jettrigger == "Jet10" || jettrigger == "Jet12" || jettrigger == "Jet15")
+    {
+      pythia8_config_file = std::string(getenv("CALIBRATIONROOT")) + "/Generators/phpythia8_detroit_minBias.cfg";
     }
     else
     {
-      cout << "invalid jettrigger: " << jettrigger << endl;
+      std::cout << "Invalid jet trigger " << jettrigger << std::endl;
       gSystem->Exit(1);
     }
-    PYTHIA8::config_file = pythia8_config_file;
+    PYTHIA8::config_file[0] = pythia8_config_file;
   }
-
+  
   //-----------------
   // Initialize the selected Input/Event generation
   //-----------------
@@ -236,6 +232,10 @@ int Fun4All_G4_Embed(
       {
 	p8_js_signal_trigger->SetMinJetPt(10);  // require a 10 GeV minimum pT jet in the event
       }
+     else if (jettrigger == "Jet12")
+      {
+        p8_js_signal_trigger->SetMinJetPt(12);  // require a 12 GeV minimum pT jet in the event
+      }
       else if (jettrigger == "Jet15")
       {
 	p8_js_signal_trigger->SetMinJetPt(15);  // require a 15 GeV minimum pT jet in the event
@@ -256,13 +256,21 @@ int Fun4All_G4_Embed(
       {
 	p8_js_signal_trigger->SetMinJetPt(50);  // require a 30 GeV minimum pT jet in the event
       }
+      else if (jettrigger == "Jet60")
+      {
+        p8_js_signal_trigger->SetMinJetPt(60);  // require a 70 GeV minimum pT jet in the event
+      }
+      else if (jettrigger == "Jet70")
+      {
+        p8_js_signal_trigger->SetMinJetPt(70);  // require a 70 GeV minimum pT jet in the event
+      }
       else
       {
 	cout << "invalid jettrigger: " << jettrigger << endl;
 	gSystem->Exit(1);
       }
-      INPUTGENERATOR::Pythia8->register_trigger(p8_js_signal_trigger);
-      INPUTGENERATOR::Pythia8->set_trigger_AND();
+      INPUTGENERATOR::Pythia8[0]->register_trigger(p8_js_signal_trigger);
+      INPUTGENERATOR::Pythia8[0]->set_trigger_AND();
     }
     else if (jettrigger == "Detroit")
     {
