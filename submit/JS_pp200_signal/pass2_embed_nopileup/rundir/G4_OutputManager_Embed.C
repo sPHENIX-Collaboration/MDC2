@@ -86,11 +86,11 @@ void DstOutput_move()
       string mvcmd;
       if (scriptexists)
       {
-        mvcmd = copyscript + " -outdir " + PRODUCTION::SaveOutputDir + " " + *iter;
+        mvcmd = std::format("perl {} -dd -outdir {} {}",copyscript, PRODUCTION::SaveOutputDir, *iter);
       }
       else
       {
-	mvcmd = "cp " + *iter + " " + PRODUCTION::SaveOutputDir;
+	mvcmd = std::format("cp {} {}", *iter, PRODUCTION::SaveOutputDir);
       }
       gSystem->Exec(mvcmd.c_str());
     }

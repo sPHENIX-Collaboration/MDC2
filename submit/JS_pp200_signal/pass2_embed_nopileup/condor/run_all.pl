@@ -108,6 +108,7 @@ my $nsubmit = 0;
 
 my %trkhash = ();
 my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'G4Hits' and filename like 'G4Hits_$embedfilelike%' and runnumber = $runnumber and segment >= $startsegment order by segment") || die $DBI::errstr;
+#print "select filename,segment from datasets where dsttype = 'G4Hits' and filename like 'G4Hits_$embedfilelike%' and runnumber = $runnumber and segment >= $startsegment order by segment\n";
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 $getfiles->execute() || die $DBI::errstr;
 my $ncal = $getfiles->rows;
@@ -126,6 +127,7 @@ while (my @res = $getfiles->fetchrow_array())
 	    $chkfile->execute($lfn);
 	    if ($chkfile->rows > 0)
 	    {
+#		print "found $lfn\n";
 		next;
 	    }
 	    else
