@@ -23,10 +23,10 @@ then
     echo begin copy input files
     date +%s
     rsync -av $this_dir/* .
-    getinputfiles.pl $2
+    perl getinputfiles.pl -dd $2
     if [ $? -ne 0 ]
     then
-	echo error from getinputfiles.pl $2, exiting
+	echo error from perl getinputfiles.pl -dd $2, exiting
 	exit -1
     fi
     echo end copy input files
