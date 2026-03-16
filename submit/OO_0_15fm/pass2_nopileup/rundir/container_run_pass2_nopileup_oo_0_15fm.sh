@@ -75,6 +75,29 @@ echo arg14 \(git commit id\): ${14}
 timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/shijing_hepmc/fm_0_20/pass2_nopileup/timing.run${9}
 
 #---------------------------------------------------------------
+# pass3 tracking
+
+if [ ${run_trk} -gt 0 ]
+then
+    source /opt/sphenix/core/bin/sphenix_setup.sh -n $ana_pass3trk
+    cdbtag=MDC2_${ana_pass3trk}
+    echo 'here comes your environment for Fun4All_G4_Pass3Trk.C'
+    printenv
+    echo cdbtag: $cdbtag
+
+    filename=timing_pass3trk
+
+    echo running root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$cdbtag\",\"${14}\"\)
+    root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$cdbtag\",\"${14}\"\)
+    [ ! -d $timedirname ] && mkdir -p $timedirname
+
+    rootfilename=${timedirname}/${filename}-${runnumber}-${sequence}.root
+
+    [ -f jobtime.root ] && cp -v jobtime.root $rootfilename
+
+fi
+
+#---------------------------------------------------------------
 # Calorimeter Reconstruction
 
 if [ ${run_calo} -gt 0 ]
@@ -116,29 +139,6 @@ then
     echo root.exe -q -b Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$5\",\"$6\",\"$cdbtag\",\"${14}\"\)
     root.exe -q -b  Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$5\",\"$6\",\"$cdbtag\",\"${14}\"\)
 
-    [ ! -d $timedirname ] && mkdir -p $timedirname
-
-    rootfilename=${timedirname}/${filename}-${runnumber}-${sequence}.root
-
-    [ -f jobtime.root ] && cp -v jobtime.root $rootfilename
-
-fi
-
-#---------------------------------------------------------------
-# pass3 tracking
-
-if [ ${run_trk} -gt 0 ]
-then
-    source /opt/sphenix/core/bin/sphenix_setup.sh -n $ana_pass3trk
-    cdbtag=MDC2_${ana_pass3trk}
-    echo 'here comes your environment for Fun4All_G4_Pass3Trk.C'
-    printenv
-    echo cdbtag: $cdbtag
-
-    filename=timing_pass3trk
-
-    echo running root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$cdbtag\",\"${14}\"\)
-    root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$cdbtag\",\"${14}\"\)
     [ ! -d $timedirname ] && mkdir -p $timedirname
 
     rootfilename=${timedirname}/${filename}-${runnumber}-${sequence}.root
