@@ -1,0 +1,415 @@
+#ifndef MACRO_FUN4ALLG4JS2PYTHIA_C
+#define MACRO_FUN4ALLG4JS2PYTHIA_C
+
+#include <GlobalVariables.C>
+
+#include <G4Setup_sPHENIX.C>
+
+#include <G4_Global.C>
+#include <G4_Input.C>
+#include <G4_Mbd.C>
+#include <G4_Production.C>
+#include <G4_RunSettings.C>
+#include <G4_TrkrSimulation.C>
+#include <SaveGitTags.C>
+
+#include <phpythia8/PHPy8JetTrigger.h>
+#include <phpythia8/PHPy8ParticleTrigger.h>
+
+#include <ffamodules/CDBInterface.h>
+#include <ffamodules/FlagHandler.h>
+#include <ffamodules/HeadReco.h>
+#include <ffamodules/SyncReco.h>
+
+#include <fun4allutils/TimerStats.h>
+
+#include <fun4all/Fun4AllDstOutputManager.h>
+#include <fun4all/Fun4AllOutputManager.h>
+#include <fun4all/Fun4AllServer.h>
+#include <fun4all/Fun4AllSyncManager.h>
+#include <fun4all/Fun4AllUtils.h>
+
+#include <phool/PHRandomSeed.h>
+#include <phool/recoConsts.h>
+
+R__LOAD_LIBRARY(libfun4all.so)
+R__LOAD_LIBRARY(libffamodules.so)
+R__LOAD_LIBRARY(libfun4allutils.so)
+
+int Fun4All_G4_JS_pp_2pythia(
+    const int nEvents = 1,
+    const std::string &jettrigger = "Jet30",  // or "PhotonJet"
+    const std::string &outputFile = "G4Hits_pythia8_Jet30_pythia8_Detroit-0000028-000000.root",
+    const std::string &outdir = ".",
+    const std::string &cdbtag = "MDC2",
+    const std::string &gitcommit = "none")
+{
+  Fun4AllServer *se = Fun4AllServer::instance();
+  se->Verbosity(1);
+
+  CDBInterface::instance()->Verbosity(1);
+
+  // Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
+  PHRandomSeed::Verbosity(1);
+
+  // just if we set some flags somewhere in this macro
+  recoConsts *rc = recoConsts::instance();
+  // By default every random number generator uses
+  // PHRandomSeed() which reads /dev/urandom to get its seed
+  // if the RANDOMSEED flag is set its value is taken as seed
+  // You can either set this to a random value using PHRandomSeed()
+  // which will make all seeds identical (not sure what the point of
+  // this would be:
+  //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
+  // or set it to a fixed value so you can debug your code
+  //  rc->set_IntFlag("RANDOMSEED", 12345);
+  // int seedValue = 491258969;
+  // rc->set_IntFlag("RANDOMSEED", seedValue);
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
+
+  TRACKING::pp_mode = true;
+  TRACKING::pp_extended_readout_time = 90000;
+
+  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
+  int runnumber = runseg.first;
+  int segment = runseg.second;
+  if (runnumber != 0)
+  {
+    rc->set_IntFlag("RUNNUMBER", runnumber);
+    Fun4AllSyncManager *syncman = se->getSyncManager();
+    syncman->SegmentNumber(segment);
+  }
+
+  //===============
+  // conditions DB flags
+  //===============
+  Enable::CDB = true;
+  // global tag
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
+  // 64 bit timestamp
+  rc->set_uint64Flag("TIMESTAMP", runnumber);
+
+  //===============
+  // Input options
+  //===============
+  // verbosity setting (applies to all input managers)
+  Input::VERBOSITY = 0;
+
+  RunSettings(runnumber);
+
+  
+
+  Input::PYTHIA8 = true;
+  Input::PYTHIA8_NUMBER = 2;
+//  Input::PYTHIA8_VERBOSITY = 10;
+  //-----------------
+  // Initialize the selected Input/Event generation
+  //-----------------
+  // This creates the input generator(s)
+  std::string pythia8_config_file = std::string(getenv("CALIBRATIONROOT")) + "/Generators/JetStructure_TG/";
+  if (jettrigger == "PhotonJet")
+  {
+    pythia8_config_file += "phpythia8_JS_GJ_MDC2.cfg";
+  }
+  else if (jettrigger == "PhotonJet5")
+  {
+    pythia8_config_file += "phpythia8_5GeV_JS_MDC2.cfg";
+  }
+  else if (jettrigger == "PhotonJet10")
+  {
+    pythia8_config_file += "phpythia8_10GeV_JS_MDC2.cfg";
+  }
+  else if (jettrigger == "Jet20" || jettrigger == "PhotonJet20")
+  {
+    pythia8_config_file += "phpythia8_20GeV_JS_MDC2.cfg";
+  }
+  else if (jettrigger == "Jet30")
+  {
+    pythia8_config_file += "phpythia8_30GeV_JS_MDC2.cfg";
+  }
+  else if (jettrigger == "Jet40")
+  {
+    pythia8_config_file += "phpythia8_40GeV_JS_MDC2.cfg";
+  }
+  else if (jettrigger == "Jet50")
+  {
+    pythia8_config_file += "phpythia8_50GeV_JS_MDC2.cfg";
+  }
+  else if (jettrigger == "Jet60")
+  {
+    pythia8_config_file += "phpythia8_60GeV_JS_MDC2.cfg";
+  }
+  else if (jettrigger == "Jet70")
+  {
+    pythia8_config_file += "phpythia8_70GeV_JS_MDC2.cfg";
+  }
+  else if (jettrigger == "Detroit" || jettrigger == "Jet5" || jettrigger == "Jet10" || jettrigger == "Jet12" || jettrigger == "Jet15")
+  {
+    pythia8_config_file = std::string(getenv("CALIBRATIONROOT")) + "/Generators/phpythia8_detroit_minBias.cfg";
+  }
+  else
+  {
+    std::cout << "Invalid jet trigger " << jettrigger << std::endl;
+    gSystem->Exit(1);
+  }
+  // the first generator is the MB (Detroit) event
+  PYTHIA8::config_file[0] = std::string(getenv("CALIBRATIONROOT")) + "/Generators/phpythia8_detroit_minBias.cfg";
+  PYTHIA8::config_file[1] = pythia8_config_file;
+  InputInit();
+
+  //--------------
+  // Set generator specific options
+  //--------------
+  // can only be set after InputInit() is called
+
+  if (Input::PYTHIA8)
+  {
+    if (jettrigger.find("PhotonJet") != std::string::npos)
+    {
+      PHPy8ParticleTrigger *p8_photon_jet_trigger = new PHPy8ParticleTrigger();
+      p8_photon_jet_trigger->SetStableParticleOnly(false);  // process unstable particles that include quarks
+      p8_photon_jet_trigger->AddParticles(22);
+      p8_photon_jet_trigger->SetEtaHighLow(1.5, -1.5);  // sample a rapidity range higher than the sPHENIX tracking pseudorapidity
+      std::vector<int> partentsId{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, -22, -21, -20, -19, -18, -17, -16, -15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1};
+      p8_photon_jet_trigger->AddParents(partentsId);
+      if (jettrigger == "PhotonJet5")
+      {
+        p8_photon_jet_trigger->SetPtLow(5);
+      }
+      else if (jettrigger == "PhotonJet10")
+      {
+        p8_photon_jet_trigger->SetPtLow(10);
+      }
+      else if (jettrigger == "PhotonJet20")
+      {
+        p8_photon_jet_trigger->SetPtLow(20);
+      }
+      else
+      {
+        std::cout << "invalid jettrigger: " << jettrigger << std::endl;
+        gSystem->Exit(1);
+      }
+      std::cout << "registering trigger" << std::endl;
+      INPUTGENERATOR::Pythia8[1]->register_trigger(p8_photon_jet_trigger);
+      INPUTGENERATOR::Pythia8[1]->set_trigger_OR();
+      std::cout << "after register trigger" << std::endl;
+    }
+    else if (jettrigger.find("Jet") != std::string::npos)
+    {
+      PHPy8JetTrigger *p8_js_signal_trigger = new PHPy8JetTrigger();
+      p8_js_signal_trigger->SetEtaHighLow(1.5, -1.5);  // Set eta acceptance for particles into the jet between +/- 1.5
+      p8_js_signal_trigger->SetJetR(0.4);              // Set the radius for the trigger jet
+
+      if (jettrigger == "Jet5")
+      {
+        p8_js_signal_trigger->SetMinJetPt(5);  // require a 5 GeV minimum pT jet in the event
+      }
+      else if (jettrigger == "Jet10")
+      {
+        p8_js_signal_trigger->SetMinJetPt(10);  // require a 10 GeV minimum pT jet in the event
+      }
+      else if (jettrigger == "Jet12")
+      {
+        p8_js_signal_trigger->SetMinJetPt(12);  // require a 12 GeV minimum pT jet in the event
+      }
+      else if (jettrigger == "Jet15")
+      {
+        p8_js_signal_trigger->SetMinJetPt(15);  // require a 15 GeV minimum pT jet in the event
+      }
+      else if (jettrigger == "Jet20")
+      {
+        p8_js_signal_trigger->SetMinJetPt(20);  // require a 20 GeV minimum pT jet in the event
+      }
+      else if (jettrigger == "Jet30")
+      {
+        p8_js_signal_trigger->SetMinJetPt(30);  // require a 30 GeV minimum pT jet in the event
+      }
+      else if (jettrigger == "Jet40")
+      {
+        p8_js_signal_trigger->SetMinJetPt(40);  // require a 40 GeV minimum pT jet in the event
+      }
+      else if (jettrigger == "Jet50")
+      {
+        p8_js_signal_trigger->SetMinJetPt(50);  // require a 50 GeV minimum pT jet in the event
+      }
+      else if (jettrigger == "Jet60")
+      {
+        p8_js_signal_trigger->SetMinJetPt(60);  // require a 70 GeV minimum pT jet in the event
+      }
+      else if (jettrigger == "Jet70")
+      {
+        p8_js_signal_trigger->SetMinJetPt(70);  // require a 70 GeV minimum pT jet in the event
+      }
+      else
+      {
+        std::cout << "invalid jettrigger: " << jettrigger << std::endl;
+        gSystem->Exit(1);
+      }
+      INPUTGENERATOR::Pythia8[1]->register_trigger(p8_js_signal_trigger);
+      INPUTGENERATOR::Pythia8[1]->set_trigger_AND();
+    }
+    else if (jettrigger == "Detroit")
+    {
+      std::cout << "using detroit - no cuts" << std::endl;
+    }
+    else
+    {
+      std::cout << "Invalid jettrigger for cuts " << jettrigger << std::endl;
+      gSystem->Exit(1);
+    }
+    Input::ApplysPHENIXBeamParameter(INPUTGENERATOR::Pythia8);
+  }
+
+  // register all input generators with Fun4All
+  InputRegister();
+
+  SyncReco *sync = new SyncReco();
+  se->registerSubsystem(sync);
+
+  HeadReco *head = new HeadReco();
+  se->registerSubsystem(head);
+
+  FlagHandler *flag = new FlagHandler();
+  se->registerSubsystem(flag);
+
+  // set up production relatedstuff
+  Enable::PRODUCTION = true;
+
+  //======================
+  // Write the DST
+  //======================
+
+  Enable::DSTOUT = true;
+  Enable::DSTOUT_COMPRESS = false;
+  DstOut::OutputDir = outdir;
+  DstOut::OutputFile = outputFile;
+
+  // Option to convert DST to human command readable TTree for quick poke around the outputs
+  //   Enable::DSTREADER = true;
+
+  //======================
+  // What to run
+  //======================
+
+  // Global options (enabled for all enables subsystems - if implemented)
+  //  Enable::ABSORBER = true;
+  //  Enable::OVERLAPCHECK = true;
+  //  Enable::VERBOSITY = 1;
+
+  Enable::MBD = true;
+  //  Enable::MBDFAKE = true;  // Smeared vtx and t0, use if you don't want real MBD in simulation
+
+  Enable::PIPE = true;
+  //  Enable::PIPE_ABSORBER = true;
+
+  // central tracking
+  Enable::MVTX = true;
+
+  Enable::INTT = true;
+
+  Enable::TPC = true;
+
+  Enable::MICROMEGAS = true;
+
+  //  cemc electronics + thin layer of W-epoxy to get albedo from cemc
+  //  into the tracking, cannot run together with CEMC
+  //  Enable::CEMCALBEDO = true;
+
+  Enable::CEMC = true;
+
+  Enable::HCALIN = true;
+
+  Enable::MAGNET = true;
+  //  Enable::MAGNET_ABSORBER = false;
+
+  Enable::HCALOUT = true;
+
+  Enable::EPD = true;
+
+  //! forward flux return plug door. Out of acceptance and off by default.
+  Enable::PLUGDOOR = true;
+  // Enable::PLUGDOOR_BLACKHOLE = true;
+
+  // new settings using Enable namespace in GlobalVariables.C
+  Enable::BLACKHOLE = true;
+  Enable::BLACKHOLE_FORWARD_SAVEHITS = false;  // disable forward/backward hits
+  // Enable::BLACKHOLE_SAVEHITS = false; // turn off saving of bh hits
+  // BlackHoleGeometry::visible = true;
+
+  // Initialize the selected subsystems
+  G4Init();
+
+  //---------------------
+  // GEANT4 Detector description
+  //---------------------
+  if (!Input::READHITS)
+  {
+    G4Setup();
+  }
+
+  //--------------
+  // Timing module is last to register
+  //--------------
+  TimerStats *ts = new TimerStats();
+  ts->OutFileName("jobtime.root");
+  se->registerSubsystem(ts);
+
+  //--------------
+  // Set up Input Managers
+  //--------------
+
+  InputManagers();
+
+  if (Enable::PRODUCTION)
+  {
+    Production_CreateOutputDir();
+  }
+  if (Enable::DSTOUT)
+  {
+    std::string FullOutFile = DstOut::OutputFile;
+    Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
+    out->StripCompositeNode("RECO_TRACKING_GEOMETRY");
+    se->registerOutputManager(out);
+  }
+  //-----------------
+  // Event processing
+  //-----------------
+  // if we use a negative number of events we go back to the command line here
+  if (nEvents < 0)
+  {
+    return 0;
+  }
+  // if we run the particle generator and use 0 it'll run forever
+  if (nEvents == 0 && !Input::HEPMC && !Input::READHITS)
+  {
+    std::cout << "using 0 for number of events is a bad idea when using particle generators" << std::endl;
+    std::cout << "it will run forever, so I just return without running anything" << std::endl;
+    return 0;
+  }
+
+  se->run(nEvents);
+
+  //-----
+  // Exit
+  //-----
+
+  CDBInterface::instance()->Print();  // print used DB files
+  se->End();
+  std::cout << "All done" << std::endl;
+  delete se;
+  if (Enable::PRODUCTION)
+  {
+    Production_MoveOutput();
+  }
+
+  gSystem->Exit(0);
+  return 0;
+}
+#endif
