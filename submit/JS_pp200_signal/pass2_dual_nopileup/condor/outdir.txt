@@ -1,0 +1,3 @@
+/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal_dual/nopileup/calocluster
+/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal_dual/nopileup/mbdepd
+/sphenix/lustre01/sphnxpro/mdc2/js_pp200_signal_dual/nopileup/trkrhit
