@@ -14,7 +14,7 @@ if ($#ARGV < 0 && !defined $runremlist)
     print "usage: plot_memory.pl <condor logdir>\n";
     print "-cnt : max number of condor logs to analyze\n";
     print "-f : analyze previous listfile\n";
-    print "-type: part of filename to grep for (default all logs in condor dir\n";
+    print "-type: part of filename to grep for (default all logs in condor dir\n)";
     exit(1);
 }
 
@@ -39,7 +39,7 @@ if (! defined $runremlist)
     }
     else
     {
-	$cmd = sprintf("find %s/ -name '*.condor' |",$logdir);
+	$cmd = sprintf("find %s/ -name 'condor*.log' |",$logdir);
     }
 
     if (-f $runremlist)
@@ -54,12 +54,24 @@ if (! defined $runremlist)
     {
 	print "file: $file";
 	chomp $file;
-	my $fcmd = sprintf("cat %s | grep 'Memory (MB)' | awk '{print \$4}' | ",$file);
+	my $fcmd = sprintf("tac %s | grep 'Memory (MB)' | awk '{print \$4}' | ",$file);
 	open(F1,$fcmd);
+	my $localcount = 0;
 	while (my $remline = <F1>)
 	{
+	    if ($localcount > 0)
+	    {
+		last;
+	    }
+	    $localcount++;
 	    $cnt++;
-	    print F2 "$remline";
+	    chomp $remline;
+	    print F2 "$remline\n";
+#	    print "$remline $file\n";
+#	    if ($remline > 9000)
+#	    {
+#		die;
+#	    }
 	}
 	close(F1);
 	if (defined $count &&  $cnt >= $count)

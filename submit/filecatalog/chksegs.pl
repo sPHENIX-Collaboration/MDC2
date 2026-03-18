@@ -15,15 +15,16 @@ my $embed;
 my $nobkgpileup;
 my $mom;
 my $particle;
+my $printsegmentsonly;
 my $ptmin;
 my $ptmax;
 my $file_exist_check;
 my $fm = "0_20fm";
 my $pileup;
 my $magnet;
-GetOptions("embed:s" => \$embed, "exist" => \$file_exist_check, "fm:s" =>\$fm, "magnet:s" => \$magnet, "nobkgpileup" => \$nobkgpileup, "pileup:s" => \$pileup, "run:i"=>\$runnumber, "type:i"=>\$system, "verbosity" => \$verbosity, "nopileup" => \$nopileup);
+GetOptions("embed:s" => \$embed, "exist" => \$file_exist_check, "fm:s" =>\$fm, "magnet:s" => \$magnet, "nobkgpileup" => \$nobkgpileup, "pileup:s" => \$pileup, "printsegmentsonly" => \$printsegmentsonly, "run:i"=>\$runnumber, "type:i"=>\$system, "verbosity" => \$verbosity, "nopileup" => \$nopileup);
 
-if ($system < 1 || $system > 35)
+if ($system < 1 || $system > 45)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
@@ -61,6 +62,16 @@ if ($system < 1 || $system > 35)
     print "   33 : JS pythia8 Jet >50GeV\n";
     print "   34 : JS pythia8 Jet >70GeV\n";
     print "   35 : JS pythia8 Jet >5GeV\n";
+    print "   36 : Hijing OO\n";
+    print "   37 : JS pythia8 Jet >60GeV\n";
+    print "   38 : JS pythia8 Jet >12GeV\n";
+    print "   39 : Herwig Jet ptmin = 5 GeV\n";
+    print "   40 : Herwig Jet ptmin = 12 GeV\n";
+    print "   41 : Herwig Jet ptmin = 20 GeV\n";
+    print "   42 : Herwig Jet ptmin = 40 GeV\n";
+    print "   43 : Herwig Jet ptmin = 50 GeV\n";
+    print "   44 : JS pythia8 Jet >12GeV + Detroit\n";
+    print "   45 : JS pythia8 PhotonJet >10GeV + Detroit\n";
     exit(0);
 }
 
@@ -1097,6 +1108,434 @@ elsif ($system == 35)
 #    $systemstring = "DST_HF_BOTTOM_pythia8-";
 #    $gpfsdir = "HF_pp200_signal";
 }
+elsif ($system == 36)
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "sHijing_OO_0_15fm";
+    if (! defined $nopileup)
+    {
+	$systemstring = sprintf("%s_270kHz_bkg_0_15fm",$systemstring_g4hits);
+    }
+    else
+    {
+	$systemstring = sprintf("%s-",$systemstring_g4hits);
+    }
+    $notlike{$systemstring} = ["pythia8" ,"single", "special"];
+}
+elsif ($system == 37)
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "pythia8_Jet60";
+    if (! defined $nopileup)
+    {
+	    if (defined $embed)
+	    {
+		if ($embed eq "auau")
+		{
+		    $systemstring = sprintf("%s_sHijing_%s%s",$systemstring_g4hits,$fm,$AuAu_bkgpileup);
+		}
+		elsif ($embed eq "pau")
+		{
+		    $systemstring = sprintf("%s_sHijing_pAu_0_10fm%s",$systemstring_g4hits,$pAu_bkgpileup);
+		}
+		else
+		{
+		    print "bad embed val: $embed, valid values auau, pau\n";
+		    exit(0);
+		}
+	    }
+	    else
+	    {
+		$systemstring = sprintf("%s_%s",$systemstring_g4hits,$pileup);
+	    }
+    }
+    else
+    {
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
+    }
+    $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
+    $gpfsdir = "js_pp200_signal";
+#    $systemstring = "DST_HF_BOTTOM_pythia8-";
+#    $gpfsdir = "HF_pp200_signal";
+}
+elsif ($system == 38)
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "pythia8_Jet12";
+    if (! defined $nopileup)
+    {
+	    if (defined $embed)
+	    {
+		if ($embed eq "auau")
+		{
+		    $systemstring = sprintf("%s_sHijing_%s%s",$systemstring_g4hits,$fm,$AuAu_bkgpileup);
+		}
+		elsif ($embed eq "pau")
+		{
+		    $systemstring = sprintf("%s_sHijing_pAu_0_10fm%s",$systemstring_g4hits,$pAu_bkgpileup);
+		}
+		else
+		{
+		    print "bad embed val: $embed, valid values auau, pau\n";
+		    exit(0);
+		}
+	    }
+	    else
+	    {
+		$systemstring = sprintf("%s_%s",$systemstring_g4hits,$pileup);
+	    }
+    }
+    else
+    {
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
+    }
+    $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
+    $gpfsdir = "js_pp200_signal";
+#    $systemstring = "DST_HF_BOTTOM_pythia8-";
+#    $gpfsdir = "HF_pp200_signal";
+}
+elsif ($system == 39)
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "Herwig_Jet5";
+    if (! defined $nopileup)
+    {
+	    if (defined $embed)
+	    {
+		if ($embed eq "auau")
+		{
+		    $systemstring = sprintf("%s_sHijing_%s_50kHz_bkg_0_20fm",$systemstring_g4hits,$fm);
+		}
+		elsif ($embed eq "pau")
+		{
+		    $systemstring = sprintf("%s_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm",$systemstring_g4hits);
+		}
+		else
+		{
+		    print "bad embed val: $embed, valid values auau, pau\n";
+		    exit(0);
+		}
+	    }
+	    else
+	    {
+		$systemstring = sprintf("%s_%s",$systemstring_g4hits,$pileup);
+	    }
+    }
+    else
+    {
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
+    }
+    $systemstring_g4hits = sprintf("%s",$systemstring_g4hits);
+    $gpfsdir = "herwig";
+#    $systemstring = "DST_HF_BOTTOM_pythia8-";
+#    $gpfsdir = "HF_pp200_signal";
+}
+elsif ($system == 40)
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "Herwig_Jet12";
+    if (! defined $nopileup)
+    {
+	    if (defined $embed)
+	    {
+		if ($embed eq "auau")
+		{
+		    $systemstring = sprintf("%s_sHijing_%s_50kHz_bkg_0_20fm",$systemstring_g4hits,$fm);
+		}
+		elsif ($embed eq "pau")
+		{
+		    $systemstring = sprintf("%s_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm",$systemstring_g4hits);
+		}
+		else
+		{
+		    print "bad embed val: $embed, valid values auau, pau\n";
+		    exit(0);
+		}
+	    }
+	    else
+	    {
+		$systemstring = sprintf("%s_%s",$systemstring_g4hits,$pileup);
+	    }
+    }
+    else
+    {
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
+    }
+    $systemstring_g4hits = sprintf("%s",$systemstring_g4hits);
+    $gpfsdir = "herwig";
+#    $systemstring = "DST_HF_BOTTOM_pythia8-";
+#    $gpfsdir = "HF_pp200_signal";
+}
+elsif ($system == 41)
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "Herwig_Jet20";
+    if (! defined $nopileup)
+    {
+	    if (defined $embed)
+	    {
+		if ($embed eq "auau")
+		{
+		    $systemstring = sprintf("%s_sHijing_%s_50kHz_bkg_0_20fm",$systemstring_g4hits,$fm);
+		}
+		elsif ($embed eq "pau")
+		{
+		    $systemstring = sprintf("%s_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm",$systemstring_g4hits);
+		}
+		else
+		{
+		    print "bad embed val: $embed, valid values auau, pau\n";
+		    exit(0);
+		}
+	    }
+	    else
+	    {
+		$systemstring = sprintf("%s_%s",$systemstring_g4hits,$pileup);
+	    }
+    }
+    else
+    {
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
+    }
+    $systemstring_g4hits = sprintf("%s",$systemstring_g4hits);
+    $gpfsdir = "herwig";
+#    $systemstring = "DST_HF_BOTTOM_pythia8-";
+#    $gpfsdir = "HF_pp200_signal";
+}
+elsif ($system == 42)
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "Herwig_Jet40";
+    if (! defined $nopileup)
+    {
+	    if (defined $embed)
+	    {
+		if ($embed eq "auau")
+		{
+		    $systemstring = sprintf("%s_sHijing_%s_50kHz_bkg_0_20fm",$systemstring_g4hits,$fm);
+		}
+		elsif ($embed eq "pau")
+		{
+		    $systemstring = sprintf("%s_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm",$systemstring_g4hits);
+		}
+		else
+		{
+		    print "bad embed val: $embed, valid values auau, pau\n";
+		    exit(0);
+		}
+	    }
+	    else
+	    {
+		$systemstring = sprintf("%s_%s",$systemstring_g4hits,$pileup);
+	    }
+    }
+    else
+    {
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
+    }
+    $systemstring_g4hits = sprintf("%s",$systemstring_g4hits);
+    $gpfsdir = "herwig";
+#    $systemstring = "DST_HF_BOTTOM_pythia8-";
+#    $gpfsdir = "HF_pp200_signal";
+}
+elsif ($system == 43)
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "Herwig_Jet50";
+    if (! defined $nopileup)
+    {
+	    if (defined $embed)
+	    {
+		if ($embed eq "auau")
+		{
+		    $systemstring = sprintf("%s_sHijing_%s_50kHz_bkg_0_20fm",$systemstring_g4hits,$fm);
+		}
+		elsif ($embed eq "pau")
+		{
+		    $systemstring = sprintf("%s_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm",$systemstring_g4hits);
+		}
+		else
+		{
+		    print "bad embed val: $embed, valid values auau, pau\n";
+		    exit(0);
+		}
+	    }
+	    else
+	    {
+		$systemstring = sprintf("%s_%s",$systemstring_g4hits,$pileup);
+	    }
+    }
+    else
+    {
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
+    }
+    $systemstring_g4hits = sprintf("%s",$systemstring_g4hits);
+    $gpfsdir = "herwig";
+#    $systemstring = "DST_HF_BOTTOM_pythia8-";
+#    $gpfsdir = "HF_pp200_signal";
+}
+elsif ($system == 44)
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "pythia8_Jet12_pythia8_Detroit";
+    if (! defined $nopileup)
+    {
+	    if (defined $embed)
+	    {
+		if ($embed eq "auau")
+		{
+		    $systemstring = sprintf("%s_sHijing_%s_50kHz_bkg_0_20fm",$systemstring_g4hits,$fm);
+		}
+		elsif ($embed eq "pau")
+		{
+		    $systemstring = sprintf("%s_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm",$systemstring_g4hits);
+		}
+		else
+		{
+		    print "bad embed val: $embed, valid values auau, pau\n";
+		    exit(0);
+		}
+	    }
+	    else
+	    {
+		$systemstring = sprintf("%s_%s",$systemstring_g4hits,$pileup);
+	    }
+    }
+    else
+    {
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
+    }
+    $systemstring_g4hits = sprintf("%s",$systemstring_g4hits);
+    $gpfsdir = "js_pp200_signal_dual";
+#    $systemstring = "DST_HF_BOTTOM_pythia8-";
+#    $gpfsdir = "HF_pp200_signal";
+}
+elsif ($system == 45)
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "pythia8_PhotonJet10_pythia8_Detroit";
+    if (! defined $nopileup)
+    {
+	    if (defined $embed)
+	    {
+		if ($embed eq "auau")
+		{
+		    $systemstring = sprintf("%s_sHijing_%s_50kHz_bkg_0_20fm",$systemstring_g4hits,$fm);
+		}
+		elsif ($embed eq "pau")
+		{
+		    $systemstring = sprintf("%s_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm",$systemstring_g4hits);
+		}
+		else
+		{
+		    print "bad embed val: $embed, valid values auau, pau\n";
+		    exit(0);
+		}
+	    }
+	    else
+	    {
+		$systemstring = sprintf("%s_%s",$systemstring_g4hits,$pileup);
+	    }
+    }
+    else
+    {
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
+    }
+    $systemstring_g4hits = sprintf("%s",$systemstring_g4hits);
+    $gpfsdir = "js_pp200_signal_dual";
+#    $systemstring = "DST_HF_BOTTOM_pythia8-";
+#    $gpfsdir = "HF_pp200_signal";
+}
 else
 {
     die "bad type $system\n";
@@ -1213,6 +1652,10 @@ while (my @res = $getsegments->fetchrow_array())
 }
 my $nsegs_gpfs = keys %seglist;
 print "number of segments processed:  $nsegs_gpfs\n";
+if (defined $printsegmentsonly)
+{
+    exit(0);
+}
 my $typeWithUnderscore = sprintf("%s",$type);
 foreach my $dcdir (keys  %toplustredir)
 {
