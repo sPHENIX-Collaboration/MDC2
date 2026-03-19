@@ -76,9 +76,11 @@ void DstOutput_move()
     return;
   }
   string copyscript = "copyscript.pl";
-  ifstream f(copyscript);
+  std::ifstream f(copyscript);
   bool scriptexists = f.good();
   f.close();
+  std::ofstream flist("copyscript.sh");
+  bool copyscriptexists = flist.good();
   if (Enable::DSTOUT)
   {
     for (auto iter = OUTPUTMANAGER::outfiles.begin(); iter != OUTPUTMANAGER::outfiles.end(); ++iter)
@@ -92,9 +94,17 @@ void DstOutput_move()
       {
 	mvcmd = "cp " + *iter + " " + PRODUCTION::SaveOutputDir;
       }
-      gSystem->Exec(mvcmd.c_str());
+      if (copyscriptexists)
+      {
+	flist << mvcmd << std::endl;
+      }
+      else
+      {
+        gSystem->Exec(mvcmd.c_str());
+      }
     }
   }
+  flist.close();
 }
 
 #endif
