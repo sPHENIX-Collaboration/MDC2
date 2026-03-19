@@ -70,4 +70,7 @@ sequence=$(printf "%06d" $7)
 echo running root.exe -q -b Fun4All_G4_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$8\",\"$cdbtag\",\"$this_gitcommitid\"\)
 root.exe -q -b  Fun4All_G4_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$8\",\"$cdbtag\",\"$this_gitcommitid\"\)
 
+[[ -f copyscript.sh ]] && sh copyscript.sh
+
+
 echo "script done"
