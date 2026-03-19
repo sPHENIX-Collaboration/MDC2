@@ -34,10 +34,10 @@ R__LOAD_LIBRARY(libffamodules.so)
 
 int Fun4All_G4_Embed(
     const int nEvents = 1,
-    const string &embed_input_file = "G4Hits_sHijing_0_20fm-0000000030-00000.root",
+    const string &embed_input_file = "G4Hits_sHijing_OO_0_15fm-0000000035-000000.root",
     const string &outdir = ".",
-    const string &jettrigger = "Jet30",
-    const string &fmrange = "0_20fm",
+    const string &jettrigger = "Jet5",
+    const string &fmrange = "0_15fm",
     const string &cdbtag = "MDC2",
     const std::string &gitcommit = "none")
 {
