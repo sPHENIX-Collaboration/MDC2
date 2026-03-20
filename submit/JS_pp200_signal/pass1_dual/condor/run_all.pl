@@ -151,7 +151,8 @@ OUTER: for (my $isub = 0; $isub < $maxsubmit; $isub++)
     }
     else
     {
-	print "output file already exists\n";
+	print "output file $fulloutfile already exists\n";
+#	die;
 	$njob++;
     }
 }

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 use strict;
 use warnings;
@@ -34,8 +34,8 @@ my %submitdir = (
 #    "fm_0_20/pass5_truthreco/condor" => (""),
 #
 
-#    "fm_0_20/pass3_global_nopileup/condor" => ("-build ana.513 --run 33"),
-#    "fm_0_20/pass2_nopileup/condor" => ("--run 33 --build ana.513 --disable_trk"),
+    "fm_0_20/pass3_global_nopileup/condor" => ("--run 36 --build ana.539"),
+    "fm_0_20/pass2_nopileup/condor" => ("--run 36 --build ana.539 --disable_trk"),
 #    "fm_0_20/pass3_job0_nopileup/condor" => (""),
 #    "fm_0_20/pass3_jobA_nopileup/condor" => (""),
 #    "fm_0_20/pass3_jobC_nopileup/condor" => (""),
@@ -89,9 +89,9 @@ my %submitdir = (
 #    "Herwig/pass3_jobC_nopileup/condor" => ("--build ana.455 allruns"),
 #    "Herwig/pass3_jobA_nopileup/condor" => ("--build ana.455 allruns"),
 #    "Herwig/pass3_job0_nopileup/condor" => ("--build ana.455 allruns"),
-#    "Herwig/pass3_global_nopileup/condor" => ("--build ana.502 --run 28"),
-#    "Herwig/pass3jet_nopileup/condor" => ("--build ana.502 --run 28"),
-#    "Herwig/pass2_nopileup/condor" => ("--build ana.502 --disable_trk --run 28"),
+    "Herwig/pass3_global_nopileup/condor" => ("--build ana.536 --run 28"),
+    "Herwig/pass2jet_nopileup/condor" => ("--build ana.536 --run 28"),
+    "Herwig/pass2_nopileup/condor" => ("--build ana.536 --disable_trk --run 28"),
 
 #     "HF_pp200_signal/pass2/condor" => (""),
 #     "HF_pp200_signal/pass3trk/condor" => (""),
@@ -130,35 +130,33 @@ my %submitdir = (
 #     "HF_pp200_signal/pass4_global_nopileup/condor" => (""),
 #     "HF_pp200_signal/pass4_truthreco_nopileup/condor" => (""),
 
-    "JS_pp200_signal/pass2/condor" => ("pileup --run 29 --build ana.522"),
-    "JS_pp200_signal/pass3calo/condor" => ("pileup --run 29 --build ana.522"),
-    "JS_pp200_signal/pass3trk/condor" => ("pileup --run 29 --build ana.522"),
-    "JS_pp200_signal/pass3_mbdepd/condor" => ("pileup --run 29 --build ana.522"),
-    "JS_pp200_signal/pass4jet/condor" => ("pileup --run 29 --build ana.522"),
-    "JS_pp200_signal/pass4_job0/condor" => ("pileup --run 29 --build ana.522"),
-    "JS_pp200_signal/pass4_jobA/condor" => ("pileup --run 29 --build ana.522"),
-    "JS_pp200_signal/pass4_jobC/condor" => ("pileup --run 29 --build ana.522"),
-    "JS_pp200_signal/pass5_global/condor" => ("pileup --run 29 --build ana.522"),
-    "JS_pp200_signal/pass5_truthreco/condor" => ("pileup --run 29 --build ana.522"),
+#    "JS_pp200_signal/pass2/condor" => ("pileup --run 29 --build ana.522"),
+#    "JS_pp200_signal/pass3calo/condor" => ("pileup --run 29 --build ana.522"),
+#    "JS_pp200_signal/pass3trk/condor" => ("pileup --run 29 --build ana.522"),
+#    "JS_pp200_signal/pass3_mbdepd/condor" => ("pileup --run 29 --build ana.522"),
+#    "JS_pp200_signal/pass4jet/condor" => ("pileup --run 29 --build ana.522"),
+#    "JS_pp200_signal/pass4_job0/condor" => ("pileup --run 29 --build ana.522"),
+#    "JS_pp200_signal/pass4_jobA/condor" => ("pileup --run 29 --build ana.522"),
+#    "JS_pp200_signal/pass4_jobC/condor" => ("pileup --run 29 --build ana.522"),
+#    "JS_pp200_signal/pass5_global/condor" => ("pileup --run 29 --build ana.522"),
+#    "JS_pp200_signal/pass5_truthreco/condor" => ("pileup --run 29 --build ana.522"),
 
 
-#    "JS_pp200_signal/pass3jet_nopileup/condor" => (""),
-#    "JS_pp200_signal/pass3_job0_nopileup/condor" => (""),
-#    "JS_pp200_signal/pass3_jobA_nopileup/condor" => (""),
-#    "JS_pp200_signal/pass3_jobC_nopileup/condor" => (""),
-#    "JS_pp200_signal/pass4_global_nopileup/condor" => (""),
-#    "JS_pp200_signal/pass4_truthreco_nopileup/condor" => (""),
-#    "JS_pp200_signal/pass3_global_nopileup/condor" => ("--build ana.501 --run 28"),
-#    "JS_pp200_signal/pass3jet_nopileup/condor" => ("--build ana.501 --run 28"),
-#    "JS_pp200_signal/pass2_nopileup/condor" => ("--build ana.501 --disable_trk --run 28"),
+# JS no pileup:
+#    "JS_pp200_signal/pass3_job0_nopileup/condor" => ("--build ana.536 --run 29"),
+#    "JS_pp200_signal/pass3_jobA_nopileup/condor" => ("--build ana.536 --run 29"),
+#    "JS_pp200_signal/pass3_jobC_nopileup/condor" => ("--build ana.536 --run 29"),
+#    "JS_pp200_signal/pass4_global_nopileup/condor" => ("--build ana.536 --run 29"),
+#    "JS_pp200_signal/pass4_truthreco_nopileup/condor" => ("--build ana.536 --run 29"),
+#    "JS_pp200_signal/pass3_global_nopileup/condor" => ("--build ana.536 --run 28"),
+#    "JS_pp200_signal/pass2jet_nopileup/condor" => ("--build ana.536 --run 28"),
+#    "JS_pp200_signal/pass2_nopileup/condor" => ("--build ana.536 --run 28 --disable_trk"),
+#    "JS_pp200_signal/pass2_nopileup/condor" => ("--build ana.536 --run 29"),
 
-
-#    "JS_pp200_signal/pass4_global_embed_nopileup/condor" => ("--build ana.501 --run 30"),
-#    "JS_pp200_signal/pass3calo_embed_nopileup/condor" => ("--build ana.501 --run 30"),
-#    "JS_pp200_signal/pass3jet_embed_nopileup/condor" => ("--build ana.501 --run 30"),
-#    "JS_pp200_signal/pass3_mbdepd_embed_nopileup/condor" => ("--build ana.501 --run 30"),
-#    "JS_pp200_signal/pass2_embed_nopileup/condor" => ("--build ana.501 --run 30"),
-
+# dual collisions
+    "JS_pp200_signal/pass2_dual_nopileup/condor" => ("--build ana.541 --run 28 --disable_trk"),
+    "JS_pp200_signal/pass2jet_dual_nopileup/condor" => ("--build ana.541 --run 28"),
+    "JS_pp200_signal/pass3_global_dual_nopileup/condor" => ("--build ana.541 --run 28"),
 
 #    "JS_pp200_signal/pass5_global_embed_nopileup/condor" => ("--build ana.515 --run 30"),
 #    "JS_pp200_signal/pass4_jobC_embed_nopileup/condor" => ("--build ana.515 --run 30"),
@@ -187,6 +185,26 @@ my %submitdir = (
 #    "JS_pp200_signal/pass4_jobA_embed_pau/condor" => (""),
 #    "JS_pp200_signal/pass4_jobC_embed_pau/condor" => (""),
 
+    # OO without pileup
+#    "OO_0_15fm/pass3_global_nopileup/condor" => ("-build ana.513 --run 33"),
+    "OO_0_15fm/pass2_nopileup/condor" => ("--run 37 --build ana.541"),
+#    "OO_0_15fm/pass3_job0_nopileup/condor" => ("--run 37 --build ana.541"),
+#    "OO_0_15fm/pass3_jobA_nopileup/condor" => (""),
+#    "OO_0_15fm/pass3_jobC_nopileup/condor" => (""),
+#    "OO_0_15fm/pass4_global_nopileup/condor" => (""),
+#    "OO_0_15fm/pass4_truthreco_nopileup/condor" => (""),
+
+    # OO with pileup
+#    "OO_0_15fm/pass2/condor" => ("--build ana.533 --run 34 0 --pileup 220kHz"),
+#    "OO_0_15fm/pass3trk/condor" => ("--build ana.533 --run 34 0 --pileup 220kHz"),
+#    "OO_0_15fm/pass3calo/condor" => ("--build ana.533 --run 34 0 --pileup 220kHz"),
+#    "OO_0_15fm/pass3_mbdepd/condor" => ("--build ana.533 --run 34 0 --pileup 220kHz"),
+#    "OO_0_15fm/pass4_job0/condor" => ("--build ana.533 --run 34 0 --pileup 220kHz"),
+#    "OO_0_15fm/pass4_jobA/condor" => ("--build ana.533 --run 34 0 --pileup 220kHz"),
+#    "OO_0_15fm/pass4_jobC/condor" => ("--build ana.533 --run 34 0 --pileup 220kHz"),
+#    "OO_0_15fm/pass5_global/condor" => ("--build ana.533 --run 34 0 --pileup 220kHz"),
+#    "OO_0_15fm/pass5_truthreco/condor" => ("--build ana.533 --run 34 0 --pileup 220kHz"),
+
 #    "single_particle/pass3calo_embed/condor" => (""),
 #    "single_particle/pass3trk_embed/condor" => (""),
 #    "single_particle/pass4_job0_embed/condor" => (""),
@@ -201,11 +219,12 @@ my @cosmics = ("on", "off");
 #my @quarkfilters = ("CharmD0piKJet5", "CharmD0piKJet12");
 my @quarkfilters = ("Charm");
 my @jettriggerspau = ("Jet10", "Jet20");
-my @herwigtriggers = ("MB", "Jet10", "Jet30");
+my @herwigtriggers = ("MB", "Jet5", "Jet20", "Jet30", "Jet40");
+#my @herwigtriggers = ("MB", "Jet5", "Jet12", "Jet20", "Jet30",  "Jet40", "Jet50");
 #my @jettriggers2 = ("Jet10", "Jet30", "Jet40", "PhotonJet");
 #my @jettriggers2 = ("Jet10", "Jet30", "PhotonJet");
-my @jettriggers = ("Jet30");
-#my @jettriggers = ("Jet5", "Jet10", "Jet15", "Jet20", "Jet30", "Jet50", "Jet70", "Detroit", "PhotonJet5", "PhotonJet10", "PhotonJet20");
+my @jettriggers = ("Jet12", "PhotonJet10");
+#my @jettriggers = ("Jet5", "Jet10", "Jet12", "Jet15", "Jet20", "Jet30", "Jet40", "Jet50", "Jet60", "Detroit", "PhotonJet5", "PhotonJet10", "PhotonJet20");
 #my @singleparticles = {"gamma 10000 10000"};
 my @pileups = ("1000kHz");
 my @runs = ("28", "30");
@@ -335,6 +354,13 @@ foreach my $subdir ( keys %submitdir)
             condorcheck();
 	    print "executing $submitcmd in $newdir\n";
 	    system($submitcmd);
+    }
+    elsif ($newdir =~ /OO_0_15fm/)
+    {
+	my $submitcmd = sprintf("perl run_all.pl %d -inc %s",$nsubmit,$submitargs);
+        condorcheck();
+	print "executing $submitcmd in $newdir\n";
+	system($submitcmd);
     }
     else
     {

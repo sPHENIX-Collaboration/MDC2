@@ -99,7 +99,7 @@ void Fun4All_Year2_Fitting(int nEvents = 100,
   
   Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfile);
   out->StripCompositeNode("Packets");
-  out->AddEventSelector("SKIMMER");
+  //out->AddEventSelector("SKIMMER");
   se->registerOutputManager(out);
   // se->Print();
   if (nEvents < 0)
