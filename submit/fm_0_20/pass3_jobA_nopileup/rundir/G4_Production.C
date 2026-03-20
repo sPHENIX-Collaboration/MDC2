@@ -49,6 +49,8 @@ void Production_MoveOutput()
     std::ifstream f(copyscript);
     bool scriptexists = f.good();
     f.close();
+    std::ofstream flist("copyscript.sh");
+    bool copyscriptexists = flist.good();
     std::string fulloutfile = DstOut::OutputFile;
     std::string mvcmd;
     if (scriptexists)
@@ -60,7 +62,15 @@ void Production_MoveOutput()
       mvcmd = "mv " + fulloutfile + " " + PRODUCTION::SaveOutputDir;
     }
     std::cout << "mvcmd: " << mvcmd << std::endl;
-    gSystem->Exec(mvcmd.c_str());
+    if (copyscriptexists)
+    {
+      flist << mvcmd << std::endl;
+    }
+    else
+    {
+      gSystem->Exec(mvcmd.c_str());
+    }
+    flist.close();
   }
 }
 #endif
