@@ -86,6 +86,8 @@ then
 
     echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$8\",\"$cdbtag\",\"${15}\"\)
     root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$8\",\"$cdbtag\",\"${15}\"\)
+    [[ -f copyscript.sh ]] && sh copyscript.sh
+
 fi
 
 #---------------------------------------------------------------
@@ -99,6 +101,8 @@ then
 
     echo running root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"${15}\"\)
     root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"${15}\"\)
+    [[ -f copyscript.sh ]] && sh copyscript.sh
+
 fi
 
 #---------------------------------------------------------------
@@ -112,6 +116,8 @@ then
 
     echo running root.exe -q -b Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$5\",\"$6\",\"$cdbtag\",\"${15}\"\)
     root.exe -q -b  Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$5\",\"$6\",\"$cdbtag\",\"${15}\"\)
+    [[ -f copyscript.sh ]] && sh copyscript.sh
+
 fi
 
 echo "script done"

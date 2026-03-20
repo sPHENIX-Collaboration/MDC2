@@ -23,11 +23,11 @@ then
     rsync -av $this_dir/* .
     echo $2 > inputfiles.list
     echo $3 >> inputfiles.list
-    getinputfiles.pl  --filelist inputfiles.list
+    perl getinputfiles.pl -dd --filelist inputfiles.list
     if [ $? -ne 0 ]
     then
         cat inputfiles.list
-        echo error from getinputfiles.pl  --filelist inputfiles.list, exiting
+        echo error from perl getinputfiles.pl -dd  --filelist inputfiles.list, exiting
         exit -1
     fi
 else
@@ -64,6 +64,8 @@ sequence=$(printf "%06d" $8)
 
 echo running root.exe -q -b Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$9\",\"$cdbtag\"\)
 root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$9\",\"$cdbtag\"\)
+
+[[ -f copyscript.sh ]] && sh copyscript.sh
 
 filename=timing
 

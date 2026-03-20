@@ -69,6 +69,8 @@ filename=timing
 echo running root.exe -q -b Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$3\",\"$4\",\"$5\",\"$6\",\"$cdbtag\",\"${10}\"\)
 root.exe -q -b  Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$3\",\"$4\",\"$5\",\"$6\",\"$cdbtag\",\"${10}\"\)
 
+[[ -f copyscript.sh ]] && sh copyscript.sh
+
 timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/js_pp200_signal/pass4_jobC/timing.run${$8}/${2}
 
 [ ! -d $timedirname ] && mkdir -p $timedirname

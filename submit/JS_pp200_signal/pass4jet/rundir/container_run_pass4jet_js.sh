@@ -61,6 +61,8 @@ sequence=$(printf "%06d" $8)
 echo running root.exe -q -b Fun4All_G4_Jets.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"$9\"\)
 root.exe -q -b  Fun4All_G4_Jets.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"$9\"\)
 
+[[ -f copyscript.sh ]] && sh copyscript.sh
+
 timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/js_pp200_signal/pass4jet/timing.run${7}/${5}
 
 [ ! -d $timedirname ] && mkdir -p $timedirname

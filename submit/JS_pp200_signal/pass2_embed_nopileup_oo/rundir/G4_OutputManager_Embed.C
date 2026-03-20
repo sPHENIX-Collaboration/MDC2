@@ -70,19 +70,19 @@ void AddCommonNodes(Fun4AllOutputManager *out)
 
 void DstOutput_move()
 {
-  if (PRODUCTION::SaveOutputDir == ".")
-  {
-    cout << "not copying files to themselves" << endl;
-    return;
-  }
-  string copyscript = "copyscript.pl";
-  std::ifstream f(copyscript);
-  bool scriptexists = f.good();
-  f.close();
-  std::ofstream flist("copyscript.sh");
-  bool copyscriptexists = flist.good();
   if (Enable::DSTOUT)
   {
+    if (PRODUCTION::SaveOutputDir == ".")
+    {
+      cout << "not copying files to themselves" << endl;
+      return;
+    }
+    string copyscript = "copyscript.pl";
+    std::ifstream f(copyscript);
+    bool scriptexists = f.good();
+    f.close();
+    std::ofstream flist("copyscript.sh");
+    bool copyscriptexists = flist.good();
     for (auto iter = OUTPUTMANAGER::outfiles.begin(); iter != OUTPUTMANAGER::outfiles.end(); ++iter)
     {
       string mvcmd;
@@ -103,8 +103,8 @@ void DstOutput_move()
         gSystem->Exec(mvcmd.c_str());
       }
     }
+    flist.close();
   }
-  flist.close();
 }
 
 #endif

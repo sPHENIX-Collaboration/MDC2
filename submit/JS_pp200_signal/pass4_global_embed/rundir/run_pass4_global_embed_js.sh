@@ -23,11 +23,11 @@ then
     cd $_CONDOR_SCRATCH_DIR
     rsync -av $this_dir/* .
     echo $2 > inputfiles.list
-    getinputfiles.pl --filelist inputfiles.list
+    perl getinputfiles.pl -dd --filelist inputfiles.list
     if [ $? -ne 0 ]
     then
         cat inputfiles.list
-	echo error from getinputfiles.pl --filelist inputfiles.list, exiting
+	echo error from perl getinputfiles.pl -dd --filelist inputfiles.list, exiting
 	exit -1
     fi
 else
@@ -61,5 +61,7 @@ sequence=$(printf "%06d" $7)
 
 echo running root.exe -q -b Fun4All_G4_Global.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
 root.exe -q -b  Fun4All_G4_Global.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
+
+[[ -f copyscript.sh ]] && sh copyscript.sh
 
 echo "script done"

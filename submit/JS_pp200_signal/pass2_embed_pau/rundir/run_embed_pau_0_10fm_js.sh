@@ -11,7 +11,7 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n ana.378
+source /opt/sphenix/core/bin/sphenix_setup.sh -n ana.378
 
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
@@ -22,11 +22,11 @@ then
     echo $3 >> inputfiles.list
     echo $4 >> inputfiles.list
     echo $5 >> inputfiles.list
-    getinputfiles.pl  --filelist inputfiles.list
+    perl getinputfiles.pl -dd --filelist inputfiles.list
     if [ $? -ne 0 ]
     then
         cat inputfiles.list
-	echo error from getinputfiles.pl  --filelist inputfiles.list, exiting
+	echo error from per getinputfiles.pl -dd --filelist inputfiles.list, exiting
 	exit -1
     fi
 else
@@ -61,5 +61,7 @@ sequence=$(printf "%05d" ${10})
 
 echo running root.exe -q -b Fun4All_G4_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\"\)
 root.exe -q -b  Fun4All_G4_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\"\)
+
+[[ -f copyscript.sh ]] && sh copyscript.sh
 
 echo "script done"

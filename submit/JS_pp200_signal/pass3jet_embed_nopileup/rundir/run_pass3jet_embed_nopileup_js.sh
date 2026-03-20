@@ -62,4 +62,7 @@ sequence=$(printf "%06d" $8)
 
 echo running root.exe -q -b Fun4All_G4_Jets.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
 root.exe -q -b  Fun4All_G4_Jets.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
+
+[[ -f copyscript.sh ]] && sh copyscript.sh
+
 echo "script done"

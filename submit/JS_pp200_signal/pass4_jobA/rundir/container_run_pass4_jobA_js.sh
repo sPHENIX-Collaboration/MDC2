@@ -62,6 +62,8 @@ sequence=$(printf "%06d" $8)
 echo running root.exe -q -b Fun4All_G4_sPHENIX_jobA.C\($1,0,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"$9\"\)
 root.exe -q -b  Fun4All_G4_sPHENIX_jobA.C\($1,0,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"$9\"\)
 
+[[ -f copyscript.sh ]] && sh copyscript.sh
+
 #ls -l
 
 filename=timing

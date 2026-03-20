@@ -64,4 +64,6 @@ sequence=$(printf "%05d" $9)
 echo running root.exe -q -b Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\"\)
 root.exe -q -b  Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\"\)
 
+[[ -f copyscript.sh ]] && sh copyscript.sh
+
 echo "script done"

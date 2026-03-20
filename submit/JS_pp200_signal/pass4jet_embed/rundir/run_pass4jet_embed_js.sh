@@ -13,7 +13,7 @@ echo running: $this_script $*
 
 anabuild=${6}
 
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
+source /opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
 
 cdbtag=MDC2_$anabuild
 
@@ -23,10 +23,10 @@ then
     echo begin copy input files
     date +%s
     rsync -av $this_dir/* .
-    getinputfiles.pl $2
+    perl getinputfiles.pl -dd $2
     if [ $? -ne 0 ]
     then
-	echo error from getinputfiles.pl $2, exiting
+	echo error from perl getinputfiles.pl -dd $2, exiting
 	exit -1
     fi
     echo end copy input files
@@ -62,4 +62,7 @@ sequence=$(printf "%06d" $8)
 
 echo running root.exe -q -b Fun4All_G4_Jets.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
 root.exe -q -b  Fun4All_G4_Jets.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\"\)
+
+[[ -f copyscript.sh ]] && sh copyscript.sh
+
 echo "script done"

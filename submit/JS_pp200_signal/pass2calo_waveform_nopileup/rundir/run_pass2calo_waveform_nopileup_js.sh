@@ -13,7 +13,7 @@ echo running: $this_script $*
 
 anabuild=ana.433
 
-source /cvmfs/sphenix.sdcc.bnl.gov/gcc-12.1.0/opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
+source /opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
 
 cdbtag=MDC2_$anabuild
 
@@ -60,6 +60,9 @@ filename=timing
 
 echo running root.exe -q -b Fun4All_G4_Waveform.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\"\)
 root.exe -q -b  Fun4All_G4_Waveform.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\"\)
+
+
+[[ -f copyscript.sh ]] && sh copyscript.sh
 
 timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/js_pp200_signal/pass2calo_waveform_nopileup/timing.run${7}/${6}
 

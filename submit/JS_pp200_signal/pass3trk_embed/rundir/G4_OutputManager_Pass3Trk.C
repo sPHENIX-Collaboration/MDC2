@@ -55,35 +55,40 @@ void AddCommonNodes(Fun4AllOutputManager *out)
 
 void DstOutput_move()
 {
-  string copyscript = "copyscript.pl";
-  ifstream f(copyscript);
-  bool scriptexists = f.good();
-  f.close();
   if (Enable::DSTOUT)
   {
-    // if run locally it will try to copy output file to itself wiping it out
     if (PRODUCTION::SaveOutputDir == ".")
     {
+      cout << "not copying files to themselves" << endl;
       return;
     }
-    for (auto iter = OUTPUTMANAGER::outfiles.begin();
-         iter != OUTPUTMANAGER::outfiles.end(); ++iter)
+    string copyscript = "copyscript.pl";
+    std::ifstream f(copyscript);
+    bool scriptexists = f.good();
+    f.close();
+    std::ofstream flist("copyscript.sh");
+    bool copyscriptexists = flist.good();
+    for (auto iter = OUTPUTMANAGER::outfiles.begin(); iter != OUTPUTMANAGER::outfiles.end(); ++iter)
     {
-      //   string mvcmd = "mv " + *iter + " " + PRODUCTION::SaveOutputDir;
       string mvcmd;
       if (scriptexists)
       {
-        //        mvcmd = copyscript + " -outdir " + PRODUCTION::SaveOutputDir +
-        // " " + *iter + " --test";
-        mvcmd =
-            copyscript + " -outdir " + PRODUCTION::SaveOutputDir + " " + *iter;
+        mvcmd = "perl " + copyscript + " -outdir " + PRODUCTION::SaveOutputDir + " " + *iter;
       }
       else
       {
-        mvcmd = "cp " + *iter + " " + PRODUCTION::SaveOutputDir;
+	mvcmd = "cp " + *iter + " " + PRODUCTION::SaveOutputDir;
       }
-      gSystem->Exec(mvcmd.c_str());
+      if (copyscriptexists)
+      {
+	flist << mvcmd << std::endl;
+      }
+      else
+      {
+        gSystem->Exec(mvcmd.c_str());
+      }
     }
+    flist.close();
   }
 }
 

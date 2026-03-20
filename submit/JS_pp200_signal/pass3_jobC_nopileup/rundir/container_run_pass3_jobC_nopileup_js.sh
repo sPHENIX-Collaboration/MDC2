@@ -68,4 +68,6 @@ sequence=$(printf "%06d" $9)
 echo running root.exe -q -b Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\",\"${10}\"\)
 root.exe -q -b  Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\",\"${10}\"\)
 
+[[ -f copyscript.sh ]] && sh copyscript.sh
+
 echo "script done"
