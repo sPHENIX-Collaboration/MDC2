@@ -20,7 +20,7 @@ my $verbosity = 0;
 GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "overwrite" => \$overwrite, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet5\", \"Jet12\", \"Jet20\", \"Jet30\", \"Jet40\", \"Jet50\", \"MB\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet5\", \"Jet12\", \"Jet20\", \"Jet30\", \"Jet40\", \"Jet50\", \"MB\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\" production>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
@@ -72,11 +72,12 @@ if ($jettrigger  ne "Jet5" &&
     $jettrigger  ne "Jet30" &&
     $jettrigger  ne "Jet40" &&
     $jettrigger  ne "Jet50" &&
-    $jettrigger  ne "MB")
-{
-    print "second argument has to be Jet5, Jet12, Jet20, Jet30, Jet40, Jet50 or MB\n";
-    exit(1);
-}
+if ($jettrigger  ne "Jet5" &&
+    $jettrigger  ne "Jet12" &&
+    $jettrigger  ne "Jet20" &&
+    $jettrigger  ne "Jet30" &&
+    $jettrigger  ne "Jet40" &&
+    $jettrigger  ne "Jet50" &&
 
 my $condorlistfile =  sprintf("condor.list");
 if (-f $condorlistfile)

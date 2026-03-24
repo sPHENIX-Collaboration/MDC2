@@ -24,7 +24,7 @@ my $test;
 GetOptions("build:s" => \$build, "disable_calo" => \$disable_calo, "disable_mbd" => \$disable_mbd, "disable_trk" => \$disable_trk, "increment"=>\$incremental, "overwrite" => \$overwrite, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet5\", \"Jet12\", \"Jet20\", \"Jet30\", \"Jet40\", \"Jet50\", \"MB\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet5\", \"Jet12\", \"Jet20\", \"Jet30\", \"Jet40\", \"Jet50\", \"MB\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\" production>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--disable_calo: disable cal reconstruction\n";
@@ -78,9 +78,12 @@ if ($jettrigger  ne "Jet5" &&
     $jettrigger  ne "Jet30" &&
     $jettrigger  ne "Jet40" &&
     $jettrigger  ne "Jet50" &&
-    $jettrigger  ne "MB")
+    $jettrigger  ne "MB" &&
+    $jettrigger  ne "PhotonJet5" &&
+    $jettrigger  ne "PhotonJet10" &&
+    $jettrigger  ne "PhotonJet20")
 {
-    print "second argument has to be Jet5, Jet12, Jet20, Jet30, Jet40, Jet50 or MB\n";
+    print "second argument has to be Jet5, Jet12, Jet20, Jet30, Jet40, Jet50, MB, PhotonJet5, PhotonJet10 or PhotonJet20\n";
     exit(1);
 }
 
