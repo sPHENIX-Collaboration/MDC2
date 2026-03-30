@@ -641,7 +641,7 @@ elsif ($system == 25) # detroit
 	}
 	else
 	{
-	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	    $systemstring = sprintf("%s",$systemstring_g4hits);
 	}
     }
     $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
@@ -740,6 +740,10 @@ elsif ($system == 27)
     }
     $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
     $gpfsdir = "js_pp200_signal";
+    if (defined $double)
+    {
+	$gpfsdir = "js_pp200_signal_dual";
+    }
 #    $systemstring = "DST_HF_BOTTOM_pythia8-";
 #    $gpfsdir = "HF_pp200_signal";
 }
@@ -1218,6 +1222,10 @@ elsif ($system == 38)
     }
     $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
     $gpfsdir = "js_pp200_signal";
+    if (defined $double)
+    {
+	$gpfsdir = "js_pp200_signal_dual";
+    }
 #    $systemstring = "DST_HF_BOTTOM_pythia8-";
 #    $gpfsdir = "HF_pp200_signal";
 }
@@ -1486,9 +1494,17 @@ if (exists $notlike{$systemstring})
 	$conds = sprintf("%s and filename not like  \'\%%%s%\%\'",$conds,$item);
     }
 }
+if (! defined $double)
+{
+    $conds = sprintf("%s and filename not like \'\%%pythia8_%\%_pythia8_%\%\'",$conds);
+}
 $conds = sprintf("%s order by dsttype",$conds);
 my $sqlcmd = sprintf("select distinct(dsttype) from datasets where %s", $conds);
-#print "$sqlcmd\n";
+if (defined $verbosity)
+{
+    print "select dsttype:\n";
+    print "$sqlcmd\n";
+}
 my $getdsttypes = $dbh->prepare($sqlcmd);
 my %toplustredir = ();
 #$toplustredir{sprintf("/pnfs/rcf.bnl.gov/sphenix/disk/MDC2/%s",$gpfsdir)} = 1;
@@ -1525,10 +1541,15 @@ if (exists $notlike{$systemstring})
     {
 	$conds = sprintf("%s and filename not like  \'\%%%s%\%\'",$conds,$item);
     }
+ }
+if (! defined $double)
+{
+    $conds = sprintf("%s and filename not like \'\%%pythia8_%\%_pythia8_%\%\'",$conds);
 }
 $conds = sprintf("select segment,filename from datasets where %s order by segment",$conds);
 if (defined $verbosity)
-    {
+{
+    print "select segment,filename:\n";
         print "$conds\n";
     }
 my $getsegments = $dbh->prepare($conds)|| die $DBI::errstr;
@@ -1541,7 +1562,12 @@ if (exists $notlike{$systemstring})
     {
 	$conds = sprintf("%s and filename not like  \'\%%%s%\%\'",$conds,$item);
     }
+ }
+if (!defined $double)
+{
+    $conds = sprintf("%s and filename not like \'\%%pythia8_%\%_pythia8_%\%\'",$conds);
 }
+
 $conds = sprintf("select max(segment) from datasets where %s",$conds);
 
 my $getlastseg = $dbh->prepare($conds)|| die $DBI::errstr;
