@@ -70,7 +70,7 @@ void Fun4All_G4_Jets(
 
   JetReco *truthjetreco = new JetReco("TRUTHJETRECO");
   TruthJetInput *tji = new TruthJetInput(Jet::PARTICLE);
-  tji->add_embedding_flag(2);  // (1) for pythia simulations, (2) for pythia embedding into hijing
+  tji->add_embedding_flag(2);  // (1) for pythia simulations, (2) for pythia embedding into hijing and double pythia8 interactions
   truthjetreco->add_input(tji);
   truthjetreco->add_algo(new FastJetAlgo(Jet::ANTIKT, 0.2), "AntiKt_Truth_r02");
   truthjetreco->add_algo(new FastJetAlgo(Jet::ANTIKT, 0.3), "AntiKt_Truth_r03");
