@@ -738,7 +738,7 @@ elsif ($system == 27)
 	    $systemstring = sprintf("%s-",$systemstring_g4hits);
 	}
     }
-    $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
+    $systemstring_g4hits = sprintf("%s",$systemstring_g4hits);
     $gpfsdir = "js_pp200_signal";
     if (defined $double)
     {
@@ -1220,7 +1220,7 @@ elsif ($system == 38)
 	    $systemstring = sprintf("%s-",$systemstring_g4hits);
 	}
     }
-    $systemstring_g4hits = sprintf("%s-",$systemstring_g4hits);
+    $systemstring_g4hits = sprintf("%s",$systemstring_g4hits);
     $gpfsdir = "js_pp200_signal";
     if (defined $double)
     {
