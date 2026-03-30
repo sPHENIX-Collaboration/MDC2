@@ -7,21 +7,21 @@ use File::Basename;
 use Getopt::Long;
 use DBI;
 
-my $system = 0;
-my $verbosity;
-my $nopileup;
-my $runnumber = 7;
 my $embed;
-my $nobkgpileup;
+my $file_exist_check;
+my $fm = "0_20fm";
+my $magnet;
 my $mom;
+my $nobkgpileup;
+my $nopileup;
 my $particle;
+my $pileup;
 my $printsegmentsonly;
 my $ptmin;
 my $ptmax;
-my $file_exist_check;
-my $fm = "0_20fm";
-my $pileup;
-my $magnet;
+my $runnumber = 7;
+my $system = 0;
+my $verbosity;
 GetOptions("embed:s" => \$embed, "exist" => \$file_exist_check, "fm:s" =>\$fm, "magnet:s" => \$magnet, "nobkgpileup" => \$nobkgpileup, "pileup:s" => \$pileup, "printsegmentsonly" => \$printsegmentsonly, "run:i"=>\$runnumber, "type:i"=>\$system, "verbosity" => \$verbosity, "nopileup" => \$nopileup);
 
 if ($system < 1 || $system > 45)
