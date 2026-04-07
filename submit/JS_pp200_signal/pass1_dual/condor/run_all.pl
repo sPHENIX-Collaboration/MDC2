@@ -122,6 +122,7 @@ OUTER: for (my $isub = 0; $isub < $maxsubmit; $isub++)
     }
     if (! -f $fulloutfile)
     {
+	print "cannot find $fulloutfile\n";
 	my $tstflag="";
 	if (defined $test)
 	{

@@ -8,8 +8,9 @@ use File::Basename;
 
 my $test;
 my $memory = sprintf("6000MB");
+my $overwrite;
 
-GetOptions("memory:s" => \$memory, "test"=>\$test);
+GetOptions("memory:s" => \$memory, "overwrite"=> \$overwrite, "test"=>\$test);
 if ($#ARGV < 6)
 {
     print "num args: $#ARGV\n";
@@ -55,8 +56,15 @@ if (! -d $condorlogdir)
 my $jobfile = sprintf("%s/condor_%s-%s.job",$logdir,$jettrigger,$suffix);
 if (-f $jobfile)
 {
+    if (defined $overwrite)
+    {
+	print "overwriting $jobfile\n";
+    }
+    else
+    {
     print "jobfile $jobfile exists, possible overlapping names\n";
     exit(1);
+    }
 }
 my $condorlogfile = sprintf("%s/condor_%s-%s.log",$condorlogdir,$jettrigger,$suffix);
 if (-f $condorlogfile)

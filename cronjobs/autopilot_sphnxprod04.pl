@@ -34,8 +34,8 @@ my %submitdir = (
 #    "fm_0_20/pass5_truthreco/condor" => (""),
 #
 
-    "fm_0_20/pass3_global_nopileup/condor" => ("--run 36 --build ana.539"),
-    "fm_0_20/pass2_nopileup/condor" => ("--run 36 --build ana.539 --disable_trk"),
+#    "fm_0_20/pass3_global_nopileup/condor" => ("--run 36 --build ana.539"),
+#    "fm_0_20/pass2_nopileup/condor" => ("--run 36 --build ana.539 --disable_trk"),
 #    "fm_0_20/pass3_job0_nopileup/condor" => (""),
 #    "fm_0_20/pass3_jobA_nopileup/condor" => (""),
 #    "fm_0_20/pass3_jobC_nopileup/condor" => (""),
@@ -154,9 +154,9 @@ my %submitdir = (
 #    "JS_pp200_signal/pass2_nopileup/condor" => ("--build ana.536 --run 29"),
 
 # dual collisions
-    "JS_pp200_signal/pass2_dual_nopileup/condor" => ("--build ana.541 --run 28 --disable_trk"),
-    "JS_pp200_signal/pass2jet_dual_nopileup/condor" => ("--build ana.541 --run 28"),
-    "JS_pp200_signal/pass3_global_dual_nopileup/condor" => ("--build ana.541 --run 28"),
+#    "JS_pp200_signal/pass2_dual_nopileup/condor" => ("--build ana.541 --run 28 --disable_trk"),
+#    "JS_pp200_signal/pass2jet_dual_nopileup/condor" => ("--build ana.541 --run 28"),
+#    "JS_pp200_signal/pass3_global_dual_nopileup/condor" => ("--build ana.541 --run 28"),
 
 #    "JS_pp200_signal/pass5_global_embed_nopileup/condor" => ("--build ana.515 --run 30"),
 #    "JS_pp200_signal/pass4_jobC_embed_nopileup/condor" => ("--build ana.515 --run 30"),
@@ -164,6 +164,7 @@ my %submitdir = (
 #    "JS_pp200_signal/pass4_job0_embed_nopileup/condor" => ("--build ana.515 --run 30"),
 #    "JS_pp200_signal/pass3trk_embed_nopileup/condor" => ("--build ana.515 --run 30"),
 
+# JS embed in auau
 #    "JS_pp200_signal/pass2_embed/condor" => (""),
 #    "JS_pp200_signal/pass3calo_embed/condor" => (""),
 #    "JS_pp200_signal/pass3calo_nozero_embed/condor" => ("--fm 0_488fm"),
@@ -176,18 +177,16 @@ my %submitdir = (
 #    "JS_pp200_signal/pass5_global_embed/condor" => (""),
 #    "JS_pp200_signal/pass5_truthreco_embed/condor" => ("")
 
-#     "JS_pp200_signal/pass2_embed_pau/condor" => (""),
-#     "JS_pp200_signal/pass3calo_embed_pau/condor" => (""),
-#     "JS_pp200_signal/pass3_bbcepd_embed_pau/condor" => (""),
-#     "JS_pp200_signal/pass3trk_embed_pau/condor" => (""),
-#    "JS_pp200_signal/pass4jet_embed_pau/condor" => (""),
-#    "JS_pp200_signal/pass4_job0_embed_pau/condor" => (""),
-#    "JS_pp200_signal/pass4_jobA_embed_pau/condor" => (""),
-#    "JS_pp200_signal/pass4_jobC_embed_pau/condor" => (""),
+# JS embed in OO
+#    "JS_pp200_signal/pass2_embed_nopileup_oo/condor" => (""),
+     "JS_pp200_signal/pass3calo_embed_nopileup_oo/condor" => ("--build ana.541 --run 35"),
+     "JS_pp200_signal/pass3jet_embed_nopileup_oo/condor" => ("--build ana.541 --run 35"),
+     "JS_pp200_signal/pass3_mbdepd_embed_nopileup_oo/condor" => ("--build ana.541 --run 35"),
+     "JS_pp200_signal/pass4_global_embed_nopileup_oo/condor" => ("--build ana.541 --run 35"),
 
-    # OO without pileup
+# OO without pileup
 #    "OO_0_15fm/pass3_global_nopileup/condor" => ("-build ana.513 --run 33"),
-    "OO_0_15fm/pass2_nopileup/condor" => ("--run 37 --build ana.541"),
+#    "OO_0_15fm/pass2_nopileup/condor" => ("--run 37 --build ana.541"),
 #    "OO_0_15fm/pass3_job0_nopileup/condor" => ("--run 37 --build ana.541"),
 #    "OO_0_15fm/pass3_jobA_nopileup/condor" => (""),
 #    "OO_0_15fm/pass3_jobC_nopileup/condor" => (""),
@@ -219,11 +218,12 @@ my @cosmics = ("on", "off");
 #my @quarkfilters = ("CharmD0piKJet5", "CharmD0piKJet12");
 my @quarkfilters = ("Charm");
 my @jettriggerspau = ("Jet10", "Jet20");
-my @herwigtriggers = ("MB", "Jet5", "Jet20", "Jet30", "Jet40");
+my @herwigtriggers = ("MB", "Jet5", "Jet12", "Jet20", "Jet30", "Jet40", "Jet50", "PhotonJet5", "PhotonJet10", "PhotonJet20");
+#my @herwigtriggers = ("MB", "Jet5", "Jet20", "Jet30", "Jet40", "PhotonJet5", "PhotonJet10", "PhotonJet20");
 #my @herwigtriggers = ("MB", "Jet5", "Jet12", "Jet20", "Jet30",  "Jet40", "Jet50");
 #my @jettriggers2 = ("Jet10", "Jet30", "Jet40", "PhotonJet");
 #my @jettriggers2 = ("Jet10", "Jet30", "PhotonJet");
-my @jettriggers = ("Jet12", "PhotonJet10");
+my @jettriggers = ("Jet5", "Jet12", "Jet20", "Jet30", "Jet40", "Jet50", "PhotonJet5", "PhotonJet10", "PhotonJet20");
 #my @jettriggers = ("Jet5", "Jet10", "Jet12", "Jet15", "Jet20", "Jet30", "Jet40", "Jet50", "Jet60", "Detroit", "PhotonJet5", "PhotonJet10", "PhotonJet20");
 #my @singleparticles = {"gamma 10000 10000"};
 my @pileups = ("1000kHz");

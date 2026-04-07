@@ -126,10 +126,10 @@ if (! defined $disable_trk)
     $outfiletype{"DST_TRKR_HIT"} = $outdir[2];
     $outfiletype{"DST_TRUTH"} = $outdir[2];
 }
-foreach my $type (sort keys %outfiletype)
-{
-    print "type $type, dir: $outfiletype{$type}\n";
-} 
+#foreach my $type (sort keys %outfiletype)
+#{
+#    print "type $type, dir: $outfiletype{$type}\n";
+#} 
 #die;
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here

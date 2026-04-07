@@ -115,8 +115,18 @@ OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
     my $herwigdatfile = sprintf("%s/%s/%s_filtered-%06d.hepmc",$herwig_dir,$filetype,$filetype,$segment);
     if (! -f $herwigdatfile)
     {
-	print "could not locate $herwigdatfile\n";
-	next;
+	my $oldherwigfile1 = $herwigdatfile;
+	$herwigdatfile = sprintf("%s.gz",$herwigdatfile);
+	if (! -f $herwigdatfile)
+	{
+	    my $oldherwigfile2 = $herwigdatfile;
+	    $herwigdatfile = sprintf("%s.bz2",$herwigdatfile);
+	    if (! -f $herwigdatfile)
+	    {
+		print "could not locate $oldherwigfile1, $oldherwigfile2 or $herwigdatfile\n";
+		next;
+	    }
+	}
     }
 #    print "herwig: $herwigdatfile\n";
     my $sequence = $segment*$evtsperfile/$events;
