@@ -79,7 +79,7 @@ if ($jettrigger  ne "Jet5" &&
     $jettrigger  ne "PhotonJet20" &&
     $jettrigger  ne "Detroit")
 {
-    print "second argument has to be Jet5, Jet8, Jet10, Jet12, Jet15, Jet20, Jet30, Jet40, Jet50, Jet60, Jet70, PhotonJet, PhotonJet5, PhotonJet10, PhotonJet20 or Detroit\n";
+    print "second argument has to be Jet5, Jet8, Jet10, Jet12, Jet15, Jet20, Jet30, Jet40, Jet50, Jet60, Jet70, Jet80, PhotonJet, PhotonJet5, PhotonJet10, PhotonJet20 or Detroit\n";
     exit(1);
 }
 
