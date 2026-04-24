@@ -15,7 +15,7 @@ my $test;
 GetOptions("build:s" => \$build, "events:i"=> \$events, "increment"=>\$incremental, "killexist" => \$killexist, "run:i" =>\$runnumber, "startsegment:i" => \$startsegment, "test"=>\$test);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet5\", \"Jet8\", \"Jet10\", \"Jet12\", \"Jet15\", \"Jet20\", \"Jet30\", \"Jet40\", \"Jet50\", \"Jet60\", \"Jet70\",\"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\", \"Detroit\" production>\n";
+    print "usage: run_all.pl <number of jobs> <\"Jet5\", \"Jet8\", \"Jet10\", \"Jet12\", \"Jet15\", \"Jet20\", \"Jet30\", \"Jet40\", \"Jet50\", \"Jet60\", \"Jet70\", \"Jet80\",\"PhotonJet\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\", \"Detroit\" production>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
@@ -72,6 +72,7 @@ if ($jettrigger  ne "Jet5" &&
     $jettrigger  ne "Jet50" &&
     $jettrigger  ne "Jet60" &&
     $jettrigger  ne "Jet70" &&
+    $jettrigger  ne "Jet80" &&
     $jettrigger  ne "PhotonJet" &&
     $jettrigger  ne "PhotonJet5" &&
     $jettrigger  ne "PhotonJet10" &&

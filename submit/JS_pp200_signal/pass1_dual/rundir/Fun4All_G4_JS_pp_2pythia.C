@@ -150,6 +150,10 @@ int Fun4All_G4_JS_pp_2pythia(
   {
     pythia8_config_file += "phpythia8_70GeV_JS_MDC2.cfg";
   }
+  else if (jettrigger == "Jet80")
+  {
+    pythia8_config_file += "phpythia8_80GeV_JS_MDC2.cfg";
+  }
   else if (jettrigger == "Detroit" || jettrigger == "Jet5" || jettrigger == "Jet8" || jettrigger == "Jet10" || jettrigger == "Jet12" || jettrigger == "Jet15")
   {
     pythia8_config_file = std::string(getenv("CALIBRATIONROOT")) + "/Generators/phpythia8_detroit_minBias.cfg";
@@ -245,11 +249,15 @@ int Fun4All_G4_JS_pp_2pythia(
       }
       else if (jettrigger == "Jet60")
       {
-        p8_js_signal_trigger->SetMinJetPt(60);  // require a 70 GeV minimum pT jet in the event
+        p8_js_signal_trigger->SetMinJetPt(60);  // require a 60 GeV minimum pT jet in the event
       }
       else if (jettrigger == "Jet70")
       {
         p8_js_signal_trigger->SetMinJetPt(70);  // require a 70 GeV minimum pT jet in the event
+      }
+      else if (jettrigger == "Jet80")
+      {
+        p8_js_signal_trigger->SetMinJetPt(80);  // require a 80 GeV minimum pT jet in the event
       }
       else
       {
