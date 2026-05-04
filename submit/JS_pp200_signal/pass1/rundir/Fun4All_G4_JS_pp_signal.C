@@ -37,7 +37,7 @@ R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_JS_pp_signal(
-    const int nEvents = 100,
+    const int nEvents = 1,
     const std::string &jettrigger = "Jet30",  // or "PhotonJet"
     const std::string &outputFile = "G4Hits_pythia8_Jet30-0000029-000000.root",
     const std::string &outdir = ".",
