@@ -151,7 +151,7 @@ int Fun4All_G4_JS_pp_signal(
   {
     pythia8_config_file += "phpythia8_80GeV_JS_MDC2.cfg";
   }
-  else if (jettrigger == "Detroit" || jettrigger == "Jet5" || jettrigger == "Jet8" || jettrigger == "Jet10" || jettrigger == "Jet12" || jettrigger == "Jet15")
+  else if (jettrigger == "Detroit" || jettrigger == "Jet5" || jettrigger == "Jet8" || jettrigger == "Jet10" || jettrigger == "Jet12" || jettrigger == "Jet15" || jettrigger == "Pi03" || jettrigger == "Pi08" || jettrigger == "Eta3" || jettrigger == "Eta8")
   {
     pythia8_config_file = std::string(getenv("CALIBRATIONROOT")) + "/Generators/phpythia8_detroit_minBias.cfg";
   }
@@ -264,6 +264,50 @@ int Fun4All_G4_JS_pp_signal(
     else if (jettrigger == "Detroit")
     {
       std::cout << "using detroit - no cuts" << std::endl;
+    }
+    else if (jettrigger.find("Pi0") != std::string::npos)
+    {
+      PHPy8ParticleTrigger *p8_photon_jet_trigger = new PHPy8ParticleTrigger();
+      p8_photon_jet_trigger->SetStableParticleOnly(true);  // process unstable particles that include quarks
+      p8_photon_jet_trigger->AddParticles(111);
+      p8_photon_jet_trigger->SetEtaHighLow(1.5, -1.5);  // sample a rapidity range higher than the sPHENIX tracking pseudorapidity
+      if (jettrigger == "Pi03")
+      {
+        p8_photon_jet_trigger->SetPtLow(3);
+      }
+      else if (jettrigger == "Pi08")
+      {
+        p8_photon_jet_trigger->SetPtLow(8);
+      }
+      else
+      {
+        std::cout << "invalid jettrigger: " << jettrigger << std::endl;
+        gSystem->Exit(1);
+      }
+      INPUTGENERATOR::Pythia8[0]->register_trigger(p8_photon_jet_trigger);
+      INPUTGENERATOR::Pythia8[0]->set_trigger_OR();
+    }
+    else if (jettrigger.find("Eta") != std::string::npos)
+    {
+      PHPy8ParticleTrigger *p8_photon_jet_trigger = new PHPy8ParticleTrigger();
+      p8_photon_jet_trigger->SetStableParticleOnly(true);  // process unstable particles that include quarks
+      p8_photon_jet_trigger->AddParticles(221);
+      p8_photon_jet_trigger->SetEtaHighLow(1.5, -1.5);  // sample a rapidity range higher than the sPHENIX tracking pseudorapidity
+      if (jettrigger == "Eta3")
+      {
+        p8_photon_jet_trigger->SetPtLow(3);
+      }
+      else if (jettrigger == "Eta8")
+      {
+        p8_photon_jet_trigger->SetPtLow(8);
+      }
+      else
+      {
+        std::cout << "invalid jettrigger: " << jettrigger << std::endl;
+        gSystem->Exit(1);
+      }
+      INPUTGENERATOR::Pythia8[0]->register_trigger(p8_photon_jet_trigger);
+      INPUTGENERATOR::Pythia8[0]->set_trigger_OR();
     }
     else
     {
