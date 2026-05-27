@@ -99,8 +99,13 @@ OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
     my $hijingdatfile = sprintf("%s/sHijing_OO_0_15fm-%010d-%05d.dat",$hijing_dir,$hijing_runnumber, $segment);
     if (! -f $hijingdatfile)
     {
-	print "could not locate $hijingdatfile\n";
-	next;
+	my $oldhijingdatfile = $hijingdatfile;
+	$hijingdatfile = sprintf("%s.gz",$hijingdatfile);
+	if (! -f $hijingdatfile)
+	{
+	    print "could not locate $oldhijingdatfile or $hijingdatfile\n";
+	    next;
+	}
     }
     my $sequence = $segment*$evtsperfile/$events;
     for (my $n=0; $n<$nmax; $n+=$events)
