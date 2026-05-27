@@ -17,15 +17,15 @@ push(@fmrange,"Herwig");
 push(@fmrange,"HF_pp200_signal");
 push(@fmrange,"JS_pp200_signal");
 push(@fmrange,"OO_0_15fm");
-push(@fmrange,"pAu_0_10fm");
+#push(@fmrange,"pAu_0_10fm");
 push(@fmrange,"pythia8_pp_mb");
-push(@fmrange,"rawdata");
-push(@fmrange,"single_particle/geantino");
+#push(@fmrange,"rawdata");
+#push(@fmrange,"single_particle/geantino");
 
 my @passes = ();
-push(@passes,"caloreco");
-push(@passes,"eventcombine");
-push(@passes,"job0");
+#push(@passes,"caloreco");
+#push(@passes,"eventcombine");
+#push(@passes,"job0");
 push(@passes,"pass1");
 push(@passes,"pass1_dual");
 push(@passes,"pass2");
@@ -109,32 +109,32 @@ push(@passes,"pass5_truthreco_embed");
 push(@passes,"newtracking");
 push(@passes,"pass5compress");
 push(@passes,"pass5trk");
-push(@passes,"run2auaucalocalib");
-push(@passes,"run2auaueventcombine");
-push(@passes,"run2ppcalocalib");
-push(@passes,"run2ppeventcombine");
-push(@passes,"run2ppjetskimmer");
-push(@passes,"run2ppwaveformfitting");
-push(@passes,"run3auaucalocalib");
-push(@passes,"run3auaueventcombine");
-push(@passes,"run3auauwaveformfitting");
-push(@passes,"run3ppcalocalib");
-push(@passes,"run3ppeventcombine");
-push(@passes,"run3ppwaveformfitting");
-push(@passes,"run3auaucalocalib");
-push(@passes,"run3ooeventcombine");
-push(@passes,"run3oowaveformfitting");
-push(@passes,"run3cosmicseventcombine");
-push(@passes,"striptruth");
-push(@passes,"waveformfitting");
+#push(@passes,"run2auaucalocalib");
+#push(@passes,"run2auaueventcombine");
+#push(@passes,"run2ppcalocalib");
+#push(@passes,"run2ppeventcombine");
+#push(@passes,"run2ppjetskimmer");
+#push(@passes,"run2ppwaveformfitting");
+#push(@passes,"run3auaucalocalib");
+#push(@passes,"run3auaueventcombine");
+#push(@passes,"run3auauwaveformfitting");
+#push(@passes,"run3ppcalocalib");
+#push(@passes,"run3ppeventcombine");
+#push(@passes,"run3ppwaveformfitting");
+#push(@passes,"run3auaucalocalib");
+#push(@passes,"run3ooeventcombine");
+#push(@passes,"run3oowaveformfitting");
+#push(@passes,"run3cosmicseventcombine");
+#push(@passes,"striptruth");
+#push(@passes,"waveformfitting");
 
 
 foreach my $fm (sort @fmrange)
 {
-    if ($fm eq "rawdata")
-    {
-	$submitdir = "/sphenix/u/sphnxpro/MDC2";
-    }
+#    if ($fm eq "rawdata")
+#    {
+#	$submitdir = "/sphenix/u/sphnxpro/MDC2";
+#    }
     
     foreach my $pass (sort @passes)
     {
@@ -165,6 +165,11 @@ sub dir_is_empty
 {
     my $dirname = $_[0];
     my $iret = 0;
+    if (! -d $dirname)
+    {
+	print "$dirname is not a directory, check this!!!!\n";
+	return $iret;
+    }
     opendir my $dir, $dirname or die $!;
     if( grep ! /^\.\.?$/, readdir $dir )
     {
