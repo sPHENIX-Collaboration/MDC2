@@ -25,7 +25,7 @@ my $system = 0;
 my $verbosity;
 GetOptions("double"=>\$double, "embed:s" => \$embed, "exist" => \$file_exist_check, "fm:s" =>\$fm, "magnet:s" => \$magnet, "nobkgpileup" => \$nobkgpileup, "pileup:s" => \$pileup, "printsegmentsonly" => \$printsegmentsonly, "run:i"=>\$runnumber, "type:i"=>\$system, "verbosity" => \$verbosity, "nopileup" => \$nopileup);
 
-if ($system < 1 || $system > 43)
+if ($system < 1 || $system > 47)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
@@ -71,6 +71,10 @@ if ($system < 1 || $system > 43)
     print "   41 : Herwig Jet ptmin = 20 GeV\n";
     print "   42 : Herwig Jet ptmin = 40 GeV\n";
     print "   43 : Herwig Jet ptmin = 50 GeV\n";
+    print "   44 : JS pythia8 Jet >8GeV\n";
+    print "   45 : JS pythia8 Jet >80GeV\n";
+    print "   46 : JS pythia8 Detroit, eta > 3GeV\n";
+    print "   47 : JS pythia8 Detroit, eta > 8GeV\n";
     exit(0);
 }
 
@@ -237,6 +241,10 @@ elsif ($system == 11)
 {
     $g4hits_exist = 1;
     $systemstring_g4hits = "pythia8_Jet30";
+    if (defined $double)
+    {
+	$systemstring_g4hits = sprintf("%s_pythia8_Detroit",$systemstring_g4hits);
+    }
     if (! defined $nopileup)
     {
 	    if (defined $embed)
@@ -283,6 +291,10 @@ elsif ($system == 12)
 {
     $g4hits_exist = 1;
     $systemstring_g4hits = "pythia8_Jet10";
+    if (defined $double)
+    {
+	$systemstring_g4hits = sprintf("%s_pythia8_Detroit",$systemstring_g4hits);
+    }
     if (! defined $nopileup)
     {
 	if (defined $embed)
@@ -454,6 +466,10 @@ elsif ($system == 19)
 {
     $g4hits_exist = 1;
     $systemstring_g4hits = "pythia8_Jet40";
+    if (defined $double)
+    {
+	$systemstring_g4hits = sprintf("%s_pythia8_Detroit",$systemstring_g4hits);
+    }
     if (! defined $nopileup)
     {
 	    if (defined $embed)
@@ -502,6 +518,10 @@ elsif ($system == 21)
 {
     $g4hits_exist = 1;
     $systemstring_g4hits = "pythia8_Jet20";
+    if (defined $double)
+    {
+	$systemstring_g4hits = sprintf("%s_pythia8_Detroit",$systemstring_g4hits);
+    }
     if (! defined $nopileup)
     {
 	    if (defined $embed)
@@ -604,6 +624,10 @@ elsif ($system == 25) # detroit
 {
     $g4hits_exist = 1;
     $systemstring_g4hits = "pythia8_Detroit";
+    if (defined $double)
+    {
+	$systemstring_g4hits = sprintf("%s_pythia8_Detroit",$systemstring_g4hits);
+    }
     if (! defined $nopileup)
     {
 	    if (defined $embed)
@@ -651,6 +675,10 @@ elsif ($system == 26)
 {
     $g4hits_exist = 1;
     $systemstring_g4hits = "pythia8_PhotonJet5";
+    if (defined $double)
+    {
+	$systemstring_g4hits = sprintf("%s_pythia8_Detroit",$systemstring_g4hits);
+    }
     if (! defined $nopileup)
     {
 	    if (defined $embed)
@@ -740,17 +768,17 @@ elsif ($system == 27)
     }
     $systemstring_g4hits = sprintf("%s",$systemstring_g4hits);
     $gpfsdir = "js_pp200_signal";
-    if (defined $double)
-    {
-	$gpfsdir = "js_pp200_signal_dual";
-    }
-#    $systemstring = "DST_HF_BOTTOM_pythia8-";
+ #    $systemstring = "DST_HF_BOTTOM_pythia8-";
 #    $gpfsdir = "HF_pp200_signal";
 }
 elsif ($system == 28)
 {
     $g4hits_exist = 1;
     $systemstring_g4hits = "pythia8_PhotonJet20";
+    if (defined $double)
+    {
+	$systemstring_g4hits = sprintf("%s_pythia8_Detroit",$systemstring_g4hits);
+    }
     if (! defined $nopileup)
     {
 	    if (defined $embed)
@@ -935,6 +963,10 @@ elsif ($system == 32)
 {
     $g4hits_exist = 1;
     $systemstring_g4hits = "pythia8_Jet15";
+    if (defined $double)
+    {
+	$systemstring_g4hits = sprintf("%s_pythia8_Detroit",$systemstring_g4hits);
+    }
     if (! defined $nopileup)
     {
 	    if (defined $embed)
@@ -981,6 +1013,10 @@ elsif ($system == 33)
 {
     $g4hits_exist = 1;
     $systemstring_g4hits = "pythia8_Jet50";
+    if (defined $double)
+    {
+	$systemstring_g4hits = sprintf("%s_pythia8_Detroit",$systemstring_g4hits);
+    }
     if (! defined $nopileup)
     {
 	    if (defined $embed)
@@ -1027,6 +1063,10 @@ elsif ($system == 34)
 {
     $g4hits_exist = 1;
     $systemstring_g4hits = "pythia8_Jet70";
+    if (defined $double)
+    {
+	$systemstring_g4hits = sprintf("%s_pythia8_Detroit",$systemstring_g4hits);
+    }
     if (! defined $nopileup)
     {
 	    if (defined $embed)
@@ -1073,6 +1113,10 @@ elsif ($system == 35)
 {
     $g4hits_exist = 1;
     $systemstring_g4hits = "pythia8_Jet5";
+    if (defined $double)
+    {
+	$systemstring_g4hits = sprintf("%s_pythia8_Detroit",$systemstring_g4hits);
+    }
     if (! defined $nopileup)
     {
 	    if (defined $embed)
@@ -1133,6 +1177,10 @@ elsif ($system == 37)
 {
     $g4hits_exist = 1;
     $systemstring_g4hits = "pythia8_Jet60";
+    if (defined $double)
+    {
+	$systemstring_g4hits = sprintf("%s_pythia8_Detroit",$systemstring_g4hits);
+    }
     if (! defined $nopileup)
     {
 	    if (defined $embed)
@@ -1222,10 +1270,6 @@ elsif ($system == 38)
     }
     $systemstring_g4hits = sprintf("%s",$systemstring_g4hits);
     $gpfsdir = "js_pp200_signal";
-    if (defined $double)
-    {
-	$gpfsdir = "js_pp200_signal_dual";
-    }
 #    $systemstring = "DST_HF_BOTTOM_pythia8-";
 #    $gpfsdir = "HF_pp200_signal";
 }
@@ -1459,9 +1503,213 @@ elsif ($system == 43)
 #    $systemstring = "DST_HF_BOTTOM_pythia8-";
 #    $gpfsdir = "HF_pp200_signal";
 }
+elsif ($system == 44)
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "pythia8_Jet8";
+    if (defined $double)
+    {
+	$systemstring_g4hits = sprintf("%s_pythia8_Detroit",$systemstring_g4hits);
+    }
+    if (! defined $nopileup)
+    {
+	    if (defined $embed)
+	    {
+		if ($embed eq "auau")
+		{
+		    $systemstring = sprintf("%s_sHijing_%s%s",$systemstring_g4hits,$fm,$AuAu_bkgpileup);
+		}
+		elsif ($embed eq "pau")
+		{
+		    $systemstring = sprintf("%s_sHijing_pAu_0_10fm%s",$systemstring_g4hits,$pAu_bkgpileup);
+		}
+		else
+		{
+		    print "bad embed val: $embed, valid values auau, pau\n";
+		    exit(0);
+		}
+	    }
+	    else
+	    {
+		$systemstring = sprintf("%s_%s",$systemstring_g4hits,$pileup);
+	    }
+    }
+    else
+    {
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
+    }
+    $systemstring_g4hits = sprintf("%s",$systemstring_g4hits);
+    $gpfsdir = "js_pp200_signal";
+#    $systemstring = "DST_HF_BOTTOM_pythia8-";
+#    $gpfsdir = "HF_pp200_signal";
+}
+elsif ($system == 45)
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "pythia8_Jet80";
+    if (defined $double)
+    {
+	$systemstring_g4hits = sprintf("%s_pythia8_Detroit",$systemstring_g4hits);
+    }
+    if (! defined $nopileup)
+    {
+	    if (defined $embed)
+	    {
+		if ($embed eq "auau")
+		{
+		    $systemstring = sprintf("%s_sHijing_%s%s",$systemstring_g4hits,$fm,$AuAu_bkgpileup);
+		}
+		elsif ($embed eq "pau")
+		{
+		    $systemstring = sprintf("%s_sHijing_pAu_0_10fm%s",$systemstring_g4hits,$pAu_bkgpileup);
+		}
+		else
+		{
+		    print "bad embed val: $embed, valid values auau, pau\n";
+		    exit(0);
+		}
+	    }
+	    else
+	    {
+		$systemstring = sprintf("%s_%s",$systemstring_g4hits,$pileup);
+	    }
+    }
+    else
+    {
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
+    }
+    $systemstring_g4hits = sprintf("%s",$systemstring_g4hits);
+    $gpfsdir = "js_pp200_signal";
+#    $systemstring = "DST_HF_BOTTOM_pythia8-";
+#    $gpfsdir = "HF_pp200_signal";
+}
+elsif ($system == 46)
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "pythia8_Eta3";
+    if (defined $double)
+    {
+	$systemstring_g4hits = sprintf("%s_pythia8_Detroit",$systemstring_g4hits);
+    }
+    if (! defined $nopileup)
+    {
+	    if (defined $embed)
+	    {
+		if ($embed eq "auau")
+		{
+		    $systemstring = sprintf("%s_sHijing_%s%s",$systemstring_g4hits,$fm,$AuAu_bkgpileup);
+		}
+		elsif ($embed eq "pau")
+		{
+		    $systemstring = sprintf("%s_sHijing_pAu_0_10fm%s",$systemstring_g4hits,$pAu_bkgpileup);
+		}
+		else
+		{
+		    print "bad embed val: $embed, valid values auau, pau\n";
+		    exit(0);
+		}
+	    }
+	    else
+	    {
+		$systemstring = sprintf("%s_%s",$systemstring_g4hits,$pileup);
+	    }
+    }
+    else
+    {
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
+    }
+    $systemstring_g4hits = sprintf("%s",$systemstring_g4hits);
+    $gpfsdir = "js_pp200_signal";
+#    $systemstring = "DST_HF_BOTTOM_pythia8-";
+#    $gpfsdir = "HF_pp200_signal";
+}
+elsif ($system == 47)
+{
+    $g4hits_exist = 1;
+    $systemstring_g4hits = "pythia8_Eta8";
+    if (defined $double)
+    {
+	$systemstring_g4hits = sprintf("%s_pythia8_Detroit",$systemstring_g4hits);
+    }
+    if (! defined $nopileup)
+    {
+	    if (defined $embed)
+	    {
+		if ($embed eq "auau")
+		{
+		    $systemstring = sprintf("%s_sHijing_%s%s",$systemstring_g4hits,$fm,$AuAu_bkgpileup);
+		}
+		elsif ($embed eq "pau")
+		{
+		    $systemstring = sprintf("%s_sHijing_pAu_0_10fm%s",$systemstring_g4hits,$pAu_bkgpileup);
+		}
+		else
+		{
+		    print "bad embed val: $embed, valid values auau, pau\n";
+		    exit(0);
+		}
+	    }
+	    else
+	    {
+		$systemstring = sprintf("%s_%s",$systemstring_g4hits,$pileup);
+	    }
+    }
+    else
+    {
+	if (defined $embed)
+	{
+	    if ($embed eq "auau")
+	    {
+		$systemstring = sprintf("%s_sHijing_%s",$systemstring_g4hits,$fm);
+	    }
+	}
+	else
+	{
+	    $systemstring = sprintf("%s-",$systemstring_g4hits);
+	}
+    }
+    $systemstring_g4hits = sprintf("%s",$systemstring_g4hits);
+    $gpfsdir = "js_pp200_signal";
+#    $systemstring = "DST_HF_BOTTOM_pythia8-";
+#    $gpfsdir = "HF_pp200_signal";
+}
 else
 {
     die "bad type $system\n";
+}
+if (defined $double)
+{
+    $gpfsdir = sprintf("%s_dual",$gpfsdir);
 }
 
 open(F,">missing.files");
@@ -1603,6 +1851,7 @@ foreach my $dcdir (keys  %toplustredir)
 #    if ($type eq "DST_TRUTH" || $type eq "G4Hits")
     {
 	$typeWithUnderscore = sprintf("%s_%s-%010d",$type,$systemstring,$runnumber);
+	$typeWithUnderscore =~ s/--/-/g; # that is a patch - we sometimes have 2 dashes
 #        print "type: $type\n";
 #        print "systemstring: $systemstring\n";
 #        print "typeWithUnderscore: $typeWithUnderscore\n";

@@ -13,6 +13,7 @@ my $topdir = "/sphenix/u/sphnxpro/MDC2/submit";
 
 my $kill;
 my $system = 0;
+my $double;
 my $dsttype = "none";
 my $runnumber = 7;
 my $fm = "0_20fm";
@@ -27,7 +28,7 @@ my $particle;
 my $pileup;
 my $magnet;
 my $dual;
-GetOptions("dsttype:s"=>\$dsttype, "embed:s"=>\$embed, "fm:s" =>\$fm, "kill"=>\$kill, "magnet:s" => \$magnet, "nobkgpileup" => \$nobkgpileup, "nopileup"=>\$nopileup, "pileup:s" => \$pileup, "runnumber:i" => \$runnumber, "type:i"=>\$system, "verbose" => \$verbose);
+GetOptions("double"=>\$double, "dsttype:s"=>\$dsttype, "embed:s"=>\$embed, "fm:s" =>\$fm, "kill"=>\$kill, "magnet:s" => \$magnet, "nobkgpileup" => \$nobkgpileup, "nopileup"=>\$nopileup, "pileup:s" => \$pileup, "runnumber:i" => \$runnumber, "type:i"=>\$system, "verbose" => \$verbose);
 
 #if (! defined $pileup)
 #{
@@ -195,8 +196,10 @@ if ($#ARGV < 0)
     print "   41 : Herwig Jet ptmin = 20 GeV\n";
     print "   42 : Herwig Jet ptmin = 40 GeV\n";
     print "   43 : Herwig Jet ptmin = 50 GeV\n";
-    print "   44 : JS pythia8 Jet >12GeV + Detroit\n";
-    print "   45 : JS pythia8 PhotonJet >10GeV + Detroit\n";
+    print "   44 : JS pythia8 Jet >8GeV\n";
+    print "   45 : JS pythia8 Jet >80GeV\n";
+    print "   46 : JS pythia8 Detroit, eta > 3GeV\n";
+    print "   47 : JS pythia8 Detroit, eta > 8GeV\n";
     print "-dsttype:\n";
     foreach my $tp (sort keys %daughters)
     {
@@ -216,7 +219,7 @@ if( ! exists $daughters{$dsttype})
     }
     exit(0);
 }
-if ($system < 1 || $system > 45)
+if ($system < 1 || $system > 47)
 {
     print "use -type, valid values:\n";
     print "-type : production type\n";
@@ -262,8 +265,10 @@ if ($system < 1 || $system > 45)
     print "   41 : Herwig Jet ptmin = 20 GeV\n";
     print "   42 : Herwig Jet ptmin = 40 GeV\n";
     print "   43 : Herwig Jet ptmin = 50 GeV\n";
-    print "   44 : JS pythia8 Jet >12GeV + Detroit\n";
-    print "   45 : JS pythia8 PhotonJet >10GeV + Detroit\n";
+    print "   44 : JS pythia8 Jet >8GeV\n";
+    print "   45 : JS pythia8 Jet >80GeV\n";
+    print "   46 : JS pythia8 Detroit, eta > 3GeV\n";
+    print "   47 : JS pythia8 Detroit, eta > 8GeV\n";
     exit(0);
 }
 
@@ -1079,8 +1084,13 @@ elsif ($system == 37)
 }
 elsif ($system == 38)
 {
-    $specialsystemstring{"G4Hits"} = "pythia8_Jet12-";
+    $specialsystemstring{"G4Hits"} = "pythia8_Jet12";
     $systemstring = "pythia8_Jet12_";
+    if (defined $double)
+    {
+	$specialsystemstring{"G4Hits"} = sprintf("%s_pythia8_Detroit",$specialsystemstring{"G4Hits"});
+	$systemstring = sprintf("%s_pythia8_Detroit_",$systemstring);
+    }
     $topdir = sprintf("%s/JS_pp200_signal",$topdir);
     if (defined $nopileup)
     {
@@ -1105,6 +1115,7 @@ elsif ($system == 38)
 	}
     }
     $specialcondorfileadd{"G4Hits"} = "Jet12";
+    $specialsystemstring{"G4Hits"} = sprintf("%s-",$specialsystemstring{"G4Hits"});
 }
 elsif ($system == 39)
 {
@@ -1310,6 +1321,64 @@ elsif ($system == 45)
 	}
     }
     $specialcondorfileadd{"G4Hits"} = "PhotonJet10";
+}
+elsif ($system == 46)
+{
+    $specialsystemstring{"G4Hits"} = "pythia8_Eta3-";
+    $systemstring = "pythia8_Eta3_";
+    $topdir = sprintf("%s/JS_pp200_signal",$topdir);
+    if (defined $nopileup)
+    {
+	$condorfileadd = sprintf("Eta3");
+        $systemstring = "pythia8_Eta3";
+    }
+    else
+    {
+      $condorfileadd = sprintf("PhotonJet10_%s",$pileup);
+    }
+    if (defined $embed)
+    {
+	$condorfileadd = sprintf("Eta3");
+        $systemstring = "pythia8_Eta3";
+	if ($embed eq "pau")
+	{
+	    $pileupstring = "_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm";
+	}
+	else
+	{
+	    $pileupstring = sprintf("_sHijing_%s%s",$fm,$AuAu_bkgpileup);
+	}
+    }
+    $specialcondorfileadd{"G4Hits"} = "Eta3";
+}
+elsif ($system == 47)
+{
+    $specialsystemstring{"G4Hits"} = "pythia8_Eta8-";
+    $systemstring = "pythia8_Eta8_";
+    $topdir = sprintf("%s/JS_pp200_signal",$topdir);
+    if (defined $nopileup)
+    {
+	$condorfileadd = sprintf("Eta8");
+        $systemstring = "pythia8_Eta8";
+    }
+    else
+    {
+      $condorfileadd = sprintf("Eta8_%s",$pileup);
+    }
+    if (defined $embed)
+    {
+	$condorfileadd = sprintf("Eta8");
+        $systemstring = "pythia8_Eta8";
+	if ($embed eq "pau")
+	{
+	    $pileupstring = "_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm";
+	}
+	else
+	{
+	    $pileupstring = sprintf("_sHijing_%s%s",$fm,$AuAu_bkgpileup);
+	}
+    }
+    $specialcondorfileadd{"G4Hits"} = "Eta8";
 }
 else
 {
