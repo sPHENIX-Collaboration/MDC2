@@ -10,12 +10,13 @@ sub getlastsegment;
 
 my $build;
 my $incremental;
+my $events = 1000; # for running with plugdoor
 my $overwrite;
 my $runnumber;
 my $startsegment;
 my $test;
 my $verbosity;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "overwrite"=> \$overwrite, "run:i" =>\$runnumber, "startsegment:i" => \$startsegment, "test"=>\$test, "verbosity" => \$verbosity);
+GetOptions("build:s" => \$build, "events:i" => \$events, "increment"=>\$incremental, "overwrite"=> \$overwrite, "run:i" =>\$runnumber, "startsegment:i" => \$startsegment, "test"=>\$test, "verbosity" => \$verbosity);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
@@ -72,9 +73,6 @@ my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::er
 
 my $hijing_runnumber = 1;
 my $hijing_dir = sprintf("/sphenix/lustre01/sphnxpro/mdc2/sHijing_HepMC/OO");
-my $events = 1000; # for running with plugdoor
-#$events = 200;
-#$events = 100; # for ftfp_bert_hp
 my $evtsperfile = 100000;
 my $nmax = $evtsperfile;
 
