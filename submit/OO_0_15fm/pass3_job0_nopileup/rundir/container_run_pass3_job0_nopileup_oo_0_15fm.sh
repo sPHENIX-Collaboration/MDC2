@@ -54,8 +54,8 @@ echo arg7 \(sequence\): $7
 echo arg8 \(git commit id\): $8
 echo cdbtag: $cdbtag
 
-runnumber=$(printf "%010d" $7)
-sequence=$(printf "%06d" $8)
+runnumber=$(printf "%010d" $6)
+sequence=$(printf "%06d" $7)
 
 echo running root.exe -q -b Fun4All_G4_sPHENIX_job0.C\($1,0,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"$8\"\)
 root.exe -q -b  Fun4All_G4_sPHENIX_job0.C\($1,0,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"$8\"\)
