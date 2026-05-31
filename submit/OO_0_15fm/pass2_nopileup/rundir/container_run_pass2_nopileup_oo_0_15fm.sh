@@ -89,6 +89,9 @@ then
 
     echo running root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$cdbtag\",\"${14}\"\)
     root.exe -q -b  Fun4All_G4_Pass3Trk.C\($1,\"$2\",\"$7\",\"$cdbtag\",\"${14}\"\)
+
+    [[ -f copyscript.sh ]] && sh copyscript.sh
+
     [ ! -d $timedirname ] && mkdir -p $timedirname
 
     rootfilename=${timedirname}/${filename}-${runnumber}-${sequence}.root
@@ -115,6 +118,8 @@ then
     echo running calo root.exe -q -b Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"${14}\"\)
     root.exe -q -b  Fun4All_G4_Calo.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"${14}\"\)
 
+    [[ -f copyscript.sh ]] && sh copyscript.sh
+
     [ ! -d $timedirname ] && mkdir -p $timedirname
 
     rootfilename=${timedirname}/${filename}-${runnumber}-${sequence}.root
@@ -138,6 +143,8 @@ then
 
     echo root.exe -q -b Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$5\",\"$6\",\"$cdbtag\",\"${14}\"\)
     root.exe -q -b  Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$5\",\"$6\",\"$cdbtag\",\"${14}\"\)
+
+    [[ -f copyscript.sh ]] && sh copyscript.sh
 
     [ ! -d $timedirname ] && mkdir -p $timedirname
 
