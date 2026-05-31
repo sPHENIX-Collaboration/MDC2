@@ -61,7 +61,8 @@ filename=timing
 echo running root.exe -q -b Fun4All_G4_Pileup.C\($1,\"$2\",\"$3\",\"$4\",$6,\"$cdbtag\",\"${9}\"\)
 root.exe -q -b  Fun4All_G4_Pileup.C\($1,\"$2\",\"$3\",\"$4\",$6,\"$cdbtag\",\"${9}\"\)
 
-timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/js_pp200_signal/pass2/timing.run${7}/$6
+[[ -f copyscript.sh ]] && sh copyscript.sh
+    timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/js_pp200_signal/pass2/timing.run${7}/$6
 
 [ ! -d $timedirname ] &&  mkdir -p $timedirname
 

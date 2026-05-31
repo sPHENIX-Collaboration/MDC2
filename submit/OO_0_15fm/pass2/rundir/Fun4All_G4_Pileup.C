@@ -3,7 +3,7 @@
 
 #include <GlobalVariables.C>
 
-#include "G4_OutputManager_Pileup.C"
+#include <G4_OutputManager_Pileup.C>
 #include <G4_Production.C>
 #include <G4_RunSettings.C>
 #include <SaveGitTags.C>
