@@ -11,8 +11,8 @@
 #include <g4main/Fun4AllDstPileupInputManager.h>
 #include <g4main/PHG4VertexSelection.h>
 
-#include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
+#include <ffamodules/FlagHandler.h>
 
 #include <fun4allutils/TimerStats.h>
 
@@ -33,7 +33,7 @@ R__LOAD_LIBRARY(libg4testbench.so)
 R__LOAD_LIBRARY(libfun4allutils.so)
 
 //________________________________________________________________________________________________
-  int Fun4All_G4_Pileup(
+int Fun4All_G4_Pileup(
     const int nEvents = 0,
     const std::string &inputFile = "G4Hits_sHijing_OO_0_15fm-0000000030-000000.root",
     const std::string &backgroundList = "pileupbkgppmb.list",
@@ -57,7 +57,7 @@ R__LOAD_LIBRARY(libfun4allutils.so)
   {
     SaveGitTags();
   }
-  std::string pileupstring = std::format("{}kHz_bkg_0_15fm",pileup/1000);
+  std::string pileupstring = std::format("{}kHz_bkg_0_15fm", pileup / 1000);
   std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
   int runnumber = runseg.first;
   int segment = runseg.second;
@@ -66,7 +66,7 @@ R__LOAD_LIBRARY(libfun4allutils.so)
   // tag
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP",runnumber);
+  rc->set_uint64Flag("TIMESTAMP", runnumber);
 
   FlagHandler *flag = new FlagHandler();
   se->registerSubsystem(flag);
@@ -79,12 +79,12 @@ R__LOAD_LIBRARY(libfun4allutils.so)
   if (Enable::PRODUCTION)
   {
     PRODUCTION::SaveOutputDir = DstOut::OutputDir;
-//    Production_CreateOutputDir();
+    //    Production_CreateOutputDir();
   }
 
   // signal input manager
   auto *in = new Fun4AllDstInputManager("DST_signal");
-//  in->registerSubsystem(new PHG4VertexSelection);
+  //  in->registerSubsystem(new PHG4VertexSelection);
 
   //--------------
   // Timing module is last to register
@@ -100,15 +100,15 @@ R__LOAD_LIBRARY(libfun4allutils.so)
   // background input manager
   auto *inpile = new Fun4AllDstPileupInputManager("DST_background");
   inpile->setCollisionRate(pileup);
-  double low_time_window = -105.5 / (8.0 / 1000.0); // tpc integration window start
-  double high_time_window = -low_time_window + 50000; // 50us
+  double low_time_window = -105.5 / (8.0 / 1000.0);    // tpc integration window start
+  double high_time_window = -low_time_window + 50000;  // 50us
   inpile->setPileupTimeWindow(low_time_window, high_time_window);
-  inpile->setDetectorActiveCrossings("BBC",1);
-  inpile->setDetectorActiveCrossings("HCALIN",1);
-  inpile->setDetectorActiveCrossings("HCALOUT",1);
-  inpile->setDetectorActiveCrossings("EPD",1);
-  inpile->setDetectorActiveCrossings("CEMC",1);
-  inpile->setDetectorActiveCrossings("BH_1",1);
+  inpile->setDetectorActiveCrossings("BBC", 1);
+  inpile->setDetectorActiveCrossings("HCALIN", 1);
+  inpile->setDetectorActiveCrossings("HCALOUT", 1);
+  inpile->setDetectorActiveCrossings("EPD", 1);
+  inpile->setDetectorActiveCrossings("CEMC", 1);
+  inpile->setDetectorActiveCrossings("BH_1", 1);
   // open file
   inpile->AddListFile(backgroundList);
   inpile->Verbosity(1);

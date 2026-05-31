@@ -23,7 +23,7 @@ void CreateDstOutput(int runnumber, int segment, const std::string &pileupstring
 {
   auto *se = Fun4AllServer::instance();
 
-  std::string segrun = std::format("{}-{:010}-{:06}",pileupstring,runnumber,segment);
+  std::string segrun = std::format("{}-{:010}-{:06}", pileupstring, runnumber, segment);
   std::string FullOutFile = "DST_BBC_G4HIT_sHijing_OO_0_15fm_" + segrun + ".root";
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("BBCOUT", FullOutFile);
   AddCommonNodes(out);
@@ -59,7 +59,6 @@ void CreateDstOutput(int runnumber, int segment, const std::string &pileupstring
   out->AddNode("PHHepMCGenEventMap");
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
-
 }
 
 void AddCommonNodes(Fun4AllOutputManager *out)
@@ -87,25 +86,25 @@ void DstOutput_move()
     bool copyscriptexists = flist.good();
     for (const auto &outfile : OUTPUTMANAGER::outfiles)
     {
-//   std::string mvcmd = "mv " + *iter + " " + PRODUCTION::SaveOutputDir;
+      //   std::string mvcmd = "mv " + *iter + " " + PRODUCTION::SaveOutputDir;
       std::string mvcmd;
       if (scriptexists)
       {
-//        mvcmd = copyscript + " -outdir " + PRODUCTION::SaveOutputDir + " " + *iter + " --test";
-        mvcmd = std::format("perl {} -dd -outdir {} {}",copyscript, PRODUCTION::SaveOutputDir, outfile);
+        //        mvcmd = copyscript + " -outdir " + PRODUCTION::SaveOutputDir + " " + *iter + " --test";
+        mvcmd = std::format("perl {} -dd -outdir {} {}", copyscript, PRODUCTION::SaveOutputDir, outfile);
       }
       else
       {
-	mvcmd = std::format("mv {} {}", outfile, PRODUCTION::SaveOutputDir);
+        mvcmd = std::format("mv {} {}", outfile, PRODUCTION::SaveOutputDir);
       }
       std::cout << "move command: " << mvcmd << std::endl;
       if (copyscriptexists)
       {
-	flist << mvcmd << std::endl;
+        flist << mvcmd << std::endl;
       }
       else
       {
-	gSystem->Exec(mvcmd.c_str());
+        gSystem->Exec(mvcmd.c_str());
       }
       flist.close();
     }
