@@ -7,9 +7,9 @@
 
 // for directory check
 #include <dirent.h>
+#include <sys/types.h>
 #include <fstream>
 #include <iostream>
-#include <sys/types.h>
 
 namespace Enable
 {
@@ -24,7 +24,7 @@ namespace PRODUCTION
 void Production_CreateOutputDir()
 {
   PRODUCTION::SaveOutputDir = DstOut::OutputDir;
-// check if directory already exists, mkdirs can hang up the system if we have gazillions of them
+  // check if directory already exists, mkdirs can hang up the system if we have gazillions of them
   DIR *dr;
   dr = opendir(DstOut::OutputDir.c_str());
   if (dr)
