@@ -23,7 +23,7 @@ void CreateDstOutput(int runnumber, int segment)
 {
   auto *se = Fun4AllServer::instance();
 
-  std::string segrun = std::format("-{:010}-{:06}",runnumber, segment);
+  std::string segrun = std::format("-{:010}-{:06}", runnumber, segment);
   std::string FullOutFile = "DST_TRUTH_sHijing_OO_0_15fm" + segrun + ".root";
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("TRUTHOUT", FullOutFile);
   AddCommonNodes(out);
@@ -71,20 +71,20 @@ void DstOutput_move()
       if (scriptexists)
       {
         //        mvcmd = copyscript + " -outdir " + PRODUCTION::SaveOutputDir + " " + *iter + " --test";
-        mvcmd = std::format("perl {} -dd -outdir {} {}",copyscript, PRODUCTION::SaveOutputDir, outfile);
+        mvcmd = std::format("perl {} -dd -outdir {} {}", copyscript, PRODUCTION::SaveOutputDir, outfile);
       }
       else
       {
-	mvcmd = std::format("mv {} {}", outfile, PRODUCTION::SaveOutputDir);
+        mvcmd = std::format("mv {} {}", outfile, PRODUCTION::SaveOutputDir);
       }
       std::cout << "mvcmd: " << mvcmd << std::endl;
       if (copyscriptexists)
       {
-	flist << mvcmd << std::endl;
+        flist << mvcmd << std::endl;
       }
       else
       {
-	gSystem->Exec(mvcmd.c_str());
+        gSystem->Exec(mvcmd.c_str());
       }
       flist.close();
     }
