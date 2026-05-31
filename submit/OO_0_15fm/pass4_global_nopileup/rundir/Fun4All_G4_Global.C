@@ -21,13 +21,13 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 //________________________________________________________________________________________________
 int Fun4All_G4_Global(
-  const int nEvents = 0,
-  const std::string &inputFile1 = "DST_TRACKS_pythia8_Jet30-0000000028-00000.root",
-  const std::string &inputFile2 = "DST_MBD_EPD_pythia8_Jet30-0000000028-00000.root",
-  const std::string &outputFile = "DST_GLOBAL_pythia8_Jet30-0000000028-00000.root",
-  const std::string &outdir = ".",
-  const std::string &cdbtag = "MDC2",
-  const std::string &gitcommit = "none")
+    const int nEvents = 0,
+    const std::string &inputFile1 = "DST_TRACKS_pythia8_Jet30-0000000028-00000.root",
+    const std::string &inputFile2 = "DST_MBD_EPD_pythia8_Jet30-0000000028-00000.root",
+    const std::string &outputFile = "DST_GLOBAL_pythia8_Jet30-0000000028-00000.root",
+    const std::string &outdir = ".",
+    const std::string &cdbtag = "MDC2",
+    const std::string &gitcommit = "none")
 {
   gSystem->Load("libg4dst.so");
   recoConsts *rc = recoConsts::instance();
