@@ -86,6 +86,9 @@ void DstOutput_move()
       {
         gSystem->Exec(mvcmd.c_str());
       }
+    }
+    if (copyscriptexists)
+    {
       flist.close();
     }
   }
