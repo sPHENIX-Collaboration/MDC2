@@ -28,10 +28,10 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_MBD_EPD(
     const int nEvents = 1,
-    const string &inputFile = "G4Hits_sHijing_OO_0_15fm-0000000030-000000.root",
-    const string &outputFile = "DST_MBD_EPD_sHijing_OO_0_15fm-0000000030-000000.root",
-    const string &outdir = ".",
-    const string &cdbtag = "MDC2",
+    const std::string &inputFile = "G4Hits_sHijing_OO_0_15fm-0000000030-000000.root",
+    const std::string &outputFile = "DST_MBD_EPD_sHijing_OO_0_15fm-0000000030-000000.root",
+    const std::string &outdir = ".",
+    const std::string &cdbtag = "MDC2",
     const std::string &gitcommit = "none")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
@@ -61,7 +61,7 @@ int Fun4All_G4_MBD_EPD(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
+  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
   int runnumber = runseg.first;
 
   Enable::CDB = true;
@@ -141,7 +141,7 @@ int Fun4All_G4_MBD_EPD(
 
   if (Enable::DSTOUT)
   {
-    string FullOutFile = DstOut::OutputFile;
+    std::string FullOutFile = DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     out->AddNode("Sync");
     out->AddNode("EventHeader");
@@ -161,8 +161,8 @@ int Fun4All_G4_MBD_EPD(
   // if we run the particle generator and use 0 it'll run forever
   if (nEvents == 0 && !Input::HEPMC && !Input::READHITS)
   {
-    cout << "using 0 for number of events is a bad idea when using particle generators" << endl;
-    cout << "it will run forever, so I just return without running anything" << endl;
+    std::cout << "using 0 for number of events is a bad idea when using particle generators" << std::endl;
+    std::cout << "it will run forever, so I just return without running anything" << std::endl;
     return 0;
   }
 

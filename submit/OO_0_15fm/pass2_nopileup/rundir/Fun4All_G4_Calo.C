@@ -36,6 +36,10 @@
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
 
+#include <TRandom3.h>
+
+#include <iomanip>
+
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libg4centrality.so)
 R__LOAD_LIBRARY(libCaloWaveformSim.so)
@@ -45,10 +49,10 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 void Fun4All_G4_Calo(
     const int nEvents = 1,
-    const string &inputFile = "G4Hits_sHijing_OO_0_15fm-0000000030-000000.root",
-    const string &outputFile = "DST_CALO_CLUSTER_sHijing_OO_0_15fm-0000000030-0000000022-000000.root",
-    const string &outdir = ".",
-    const string &cdbtag = "MDC2",
+    const std::string &inputFile = "G4Hits_sHijing_OO_0_15fm-0000000030-000000.root",
+    const std::string &outputFile = "DST_CALO_CLUSTER_sHijing_OO_0_15fm-0000000030-0000000022-000000.root",
+    const std::string &outdir = ".",
+    const std::string &cdbtag = "MDC2",
     const std::string &gitcommit = "none")
 
 {
@@ -80,7 +84,7 @@ void Fun4All_G4_Calo(
   //  rc->set_IntFlag("RANDOMSEED", 12345);
   // int seedValue = 491258969;
   // rc->set_IntFlag("RANDOMSEED", seedValue);
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
+  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
   int runnumber = runseg.first;
 
   //===============
@@ -178,7 +182,7 @@ void Fun4All_G4_Calo(
 
   if (Enable::DSTOUT)
   {
-    string FullOutFile = DstOut::OutputFile;
+    std::string FullOutFile = DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     out->AddNode("Sync");
     out->AddNode("EventHeader");
