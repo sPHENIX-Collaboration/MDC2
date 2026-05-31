@@ -25,15 +25,15 @@ R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libfun4allutils.so)
 
 void Fun4All_TruthReco(
-  const int nEvents = 0,
-  const std::string &dst_trkr_g4hit = "DST_TRKR_G4HIT_pythia8_Jet10-0000000007-00000.root",
-  const std::string &dst_trkr_cluster = "DST_TRKR_CLUSTER_pythia8_Jet10-0000000007-00000.root",
-  const std::string &dst_tracks = "DST_TRACKS_pythia8_Jet10-0000000007-00000.root",
-  const std::string &dst_truth = "DST_TRUTH_pythia8_Jet10-0000000007-00000.root",
-  const std::string &outputFile = "DST_TRUTH_RECO_pythia8_Jet10-0000000007-00000.root",
-  const std::string &outdir = ".",
-  const std::string &cdbtag = "MDC2",
-  const std::string &gitcommit = "none")
+    const int nEvents = 0,
+    const std::string &dst_trkr_g4hit = "DST_TRKR_G4HIT_pythia8_Jet10-0000000007-00000.root",
+    const std::string &dst_trkr_cluster = "DST_TRKR_CLUSTER_pythia8_Jet10-0000000007-00000.root",
+    const std::string &dst_tracks = "DST_TRACKS_pythia8_Jet10-0000000007-00000.root",
+    const std::string &dst_truth = "DST_TRUTH_pythia8_Jet10-0000000007-00000.root",
+    const std::string &outputFile = "DST_TRUTH_RECO_pythia8_Jet10-0000000007-00000.root",
+    const std::string &outdir = ".",
+    const std::string &cdbtag = "MDC2",
+    const std::string &gitcommit = "none")
 {
   gSystem->Load("libg4dst.so");
   Fun4AllServer *se = Fun4AllServer::instance();

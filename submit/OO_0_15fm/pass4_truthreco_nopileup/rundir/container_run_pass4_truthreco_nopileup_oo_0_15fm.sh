@@ -70,4 +70,6 @@ sequence=$(printf "%06d" ${10})
 echo running root.exe -q -b Fun4All_TruthReco.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"$cdbtag\",\"${11}\"\)
 root.exe -q -b  Fun4All_TruthReco.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"$cdbtag\",\"${11}\"\)
 
+[[ -f copyscript.sh ]] && sh copyscript.sh
+
 echo "script done"
