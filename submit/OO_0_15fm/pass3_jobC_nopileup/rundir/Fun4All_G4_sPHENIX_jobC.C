@@ -3,24 +3,23 @@
 #include <G4_Magnet.C>
 #include <G4_Production.C>
 #include <SaveGitTags.C>
-#include <Trkr_RecoInit.C>
 #include <Trkr_Reco.C>
+#include <Trkr_RecoInit.C>
 
-#include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
+#include <ffamodules/FlagHandler.h>
 
 #include <fun4allutils/TimerStats.h>
 
-#include <fun4all/SubsysReco.h>
-#include <fun4all/Fun4AllServer.h>
 #include <fun4all/Fun4AllDstInputManager.h>
 #include <fun4all/Fun4AllDstOutputManager.h>
+#include <fun4all/Fun4AllServer.h>
 #include <fun4all/Fun4AllSyncManager.h>
 #include <fun4all/Fun4AllUtils.h>
+#include <fun4all/SubsysReco.h>
 
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
-
 
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
@@ -28,16 +27,15 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 //________________________________________________________________________________________________
 int Fun4All_G4_sPHENIX_jobC(
-  const int nEvents = 0,
-  const int nSkipEvents = 0,
-  const std::string &inputFile1 = "DST_TRACKSEEDS_pythia8_Jet30-0000000028-00000.root",
-  const std::string &inputFile2 = "DST_CALO_CLUSTER_pythia8_Jet30-0000000028-00000.root",
-  const std::string &outputFile = "DST_TRACKS_pythia8_Jet30-0000000028-00000.root",
-  const std::string &outdir = ".",
-  const std::string &cdbtag = "MDC2",
-  const std::string &gitcommit = "none")
+    const int nEvents = 0,
+    const int nSkipEvents = 0,
+    const std::string &inputFile1 = "DST_TRACKSEEDS_pythia8_Jet30-0000000028-00000.root",
+    const std::string &inputFile2 = "DST_CALO_CLUSTER_pythia8_Jet30-0000000028-00000.root",
+    const std::string &outputFile = "DST_TRACKS_pythia8_Jet30-0000000028-00000.root",
+    const std::string &outdir = ".",
+    const std::string &cdbtag = "MDC2",
+    const std::string &gitcommit = "none")
 {
-
   // print inputs
   std::cout << "Fun4All_G4_sPHENIX_jobC - nEvents: " << nEvents << std::endl;
   std::cout << "Fun4All_G4_sPHENIX_jobC - nSkipEvents: " << nSkipEvents << std::endl;
@@ -65,7 +63,7 @@ int Fun4All_G4_sPHENIX_jobC(
   //===============
   Enable::CDB = true;
   // tag
-  rc->set_StringFlag("CDB_GLOBALTAG",cdbtag);
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP", runnumber);
 
@@ -81,7 +79,7 @@ int Fun4All_G4_sPHENIX_jobC(
   Enable::TPC = true;
   Enable::TPC_ABSORBER = true;
   Enable::MICROMEGAS = true;
- 
+
   // TPC configuration
   G4TPC::ENABLE_STATIC_DISTORTIONS = false;
   G4TPC::ENABLE_TIME_ORDERED_DISTORTIONS = false;
@@ -97,7 +95,7 @@ int Fun4All_G4_sPHENIX_jobC(
   // server
   auto *se = Fun4AllServer::instance();
   se->Verbosity(1);
-//  se->getSyncManager()->Verbosity(10);
+  //  se->getSyncManager()->Verbosity(10);
   // make sure to printout random seeds for reproducibility
   PHRandomSeed::Verbosity(1);
 
@@ -106,11 +104,11 @@ int Fun4All_G4_sPHENIX_jobC(
 
   MagnetFieldInit();
   TrackingInit();
-  
+
   // tracking
   /* we only run the track fit, starting with seed from JobA */
   Tracking_Reco_TrackFit();
-  
+
   //--------------
   // Timing module is last to register
   //--------------
@@ -132,7 +130,7 @@ int Fun4All_G4_sPHENIX_jobC(
   }
   // output manager
   auto *out = new Fun4AllDstOutputManager("DSTOUT", outputFile);
-  /* 
+  /*
    * in principle one would not need to store the clusters and cluster crossing node, as they are already in the output from Job0
    */
   out->AddNode("Sync");
@@ -144,14 +142,16 @@ int Fun4All_G4_sPHENIX_jobC(
   se->registerOutputManager(out);
 
   // skip events if any specified
-  if( nSkipEvents > 0 )
-  { se->skip( nSkipEvents ); }
+  if (nSkipEvents > 0)
+  {
+    se->skip(nSkipEvents);
+  }
 
   // process events
   se->run(nEvents);
 
   // terminate
-  CDBInterface::instance()->Print(); // print used DB files
+  CDBInterface::instance()->Print();  // print used DB files
   se->End();
   se->PrintTimer();
   std::cout << "All done" << std::endl;
