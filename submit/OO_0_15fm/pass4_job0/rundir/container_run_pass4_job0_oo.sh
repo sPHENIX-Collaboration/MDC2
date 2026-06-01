@@ -23,7 +23,7 @@ then
     perl getinputfiles.pl $2
     if [ $? -ne 0 ]
     then
-	echo error from getinputfiles.pl $2, exiting
+	echo error from perl getinputfiles.pl $2, exiting
 	exit -1
     fi
 else
@@ -63,6 +63,8 @@ filename=timing
 
 echo running root.exe -q -b Fun4All_G4_sPHENIX_job0.C\($1,0,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"$9\"\)
 root.exe -q -b  Fun4All_G4_sPHENIX_job0.C\($1,0,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"$9\"\)
+
+[[ -f copyscript.sh ]] && sh copyscript.sh
 
 timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/OO_0_15fm/pass4_job0/timing.run${7}/${5}
 
