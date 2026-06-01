@@ -64,6 +64,8 @@ root.exe -q -b  Fun4All_G4_sPHENIX_jobA.C\($1,0,\"$2\",\"$3\",\"$4\",\"$cdbtag\"
 
 #ls -l
 
+[[ -f copyscript.sh ]] && sh copyscript.sh
+
 filename=timing
 
 timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/OO_0_15fm/pass4_jobA/timing.run${7}/${5}
