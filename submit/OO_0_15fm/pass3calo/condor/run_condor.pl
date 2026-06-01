@@ -7,14 +7,14 @@ use File::Path;
 use File::Basename;
 
 my $test;
-my $memory = sprintf("2048MB");
+my $memory = sprintf("2000MB");
 my $overwrite;
 
 GetOptions("memory:s"=>\$memory, "overwrite"=>\$overwrite, "test"=>\$test);
 
 if ($#ARGV < 7)
 {
-    print "usage: run_condor.pl <events>  <jettrigger> <g4hit infile> <outfile> <outdir> <build> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events>  <pileup> <g4hit infile> <outfile> <outdir> <build> <runnumber> <sequence>\n";
     print "options:\n";
     print "--memory: memory requirement\n";
     print "--overwrite : overwrite existing jobfiles\n";
@@ -74,8 +74,10 @@ print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
 print F "Initialdir  	= $rundir\n";
-print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1)\n";
+print F "PeriodicHold 	= (NumJobStarts>=1 && JobStatus == 1 && !(ON_EVICT_CHECK_RequestMemory_REQUIREMENTS))\n";
 print F "request_memory = $memory\n";
+print F "retry_request_memory_increase = RequestMemory + 2000\n";
+print F "retry_request_memory_max = 10000MB\n";
 print F "batch_name = \"$batchname\"\n";
 print F "Priority = $baseprio\n";
 #print F "concurrency_limits = PHENIX_100\n";

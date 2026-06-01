@@ -48,12 +48,12 @@ R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4allutils.so)
 
 void Fun4All_G4_Calo(
-  const int nEvents = 1,
-  const std::string &inputFile0 = "DST_CALO_G4HIT_pythia8_Jet30_1000kHz-0000000029-000000.root",
-  const std::string &outputFile = "DST_CALO_CLUSTER_pythia8_Jet30_1000kHz-0000000029-000000.root",
-  const std::string &outdir = ".",
-  const std::string &cdbtag = "MDC2",
-  const std::string &gitcommit = "none")
+    const int nEvents = 1,
+    const std::string &inputFile0 = "DST_CALO_G4HIT_pythia8_Jet30_1000kHz-0000000029-000000.root",
+    const std::string &outputFile = "DST_CALO_CLUSTER_pythia8_Jet30_1000kHz-0000000029-000000.root",
+    const std::string &outdir = ".",
+    const std::string &cdbtag = "MDC2",
+    const std::string &gitcommit = "none")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);  // set it to 1 if you want event printouts
@@ -164,7 +164,7 @@ void Fun4All_G4_Calo(
   // a int from 0 to 3259
   int sequence = randGen.Integer(3260);
 
-  std::string pedestalname = std::format("pedestal-54256-{:05}.root",sequence);
+  std::string pedestalname = std::format("pedestal-54256-{:05}.root", sequence);
 
   Fun4AllInputManager *hitsin = new Fun4AllNoSyncDstInputManager("DST2");
   hitsin->AddFile(pedestalname);
