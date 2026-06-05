@@ -25,11 +25,11 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 void Fun4All_TruthReco(
   const int nEvents = 0,
-  const std::string &dst_trkr_g4hit = "DST_TRKR_G4HIT_pythia8_Jet10_3MHz-0000000007-00000.root",
-  const std::string &dst_trkr_cluster = "DST_TRKR_CLUSTER_pythia8_Jet10_3MHz-0000000007-00000.root",
-  const std::string &dst_tracks = "DST_TRACKS_pythia8_Jet10_3MHz-0000000007-00000.root",
-  const std::string &dst_truth = "DST_TRUTH_pythia8_Jet10_3MHz-0000000007-00000.root",
-  const std::string &outputFile = "DST_TRUTH_RECO_pythia8_Jet10_3MHz-0000000007-00000.root",
+  const std::string &dst_trkr_g4hit = "DST_TRKR_G4HIT_sHijing_OO_0_15fm_400kHz_bkg_0_15fm-0000000035-000000.root",
+  const std::string &dst_trkr_cluster = "DST_TRKR_CLUSTER_sHijing_OO_0_15fm_400kHz_bkg_0_15fm-0000000035-000000.root",
+  const std::string &dst_tracks = "DST_TRACKS_sHijing_OO_0_15fm_400kHz_bkg_0_15fm-0000000035-000000.root",
+  const std::string &dst_truth = "DST_TRUTH_sHijing_OO_0_15fm_400kHz_bkg_0_15fm-0000000035-000000.root",
+  const std::string &outputFile = "DST_TRUTH_RECO_sHijing_OO_0_15fm_400kHz_bkg_0_15fm-0000000035-000000.root",
   const std::string &outdir = ".",
   const std::string &cdbtag = "MDC2",
   const std::string &gitcommit = "none")
