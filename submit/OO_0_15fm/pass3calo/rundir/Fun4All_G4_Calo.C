@@ -41,7 +41,6 @@
 #include <format>
 
 R__LOAD_LIBRARY(libfun4all.so)
-R__LOAD_LIBRARY(libg4centrality.so)
 R__LOAD_LIBRARY(libCaloWaveformSim.so)
 R__LOAD_LIBRARY(libcalo_reco.so)
 R__LOAD_LIBRARY(libffamodules.so)
@@ -49,8 +48,8 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 void Fun4All_G4_Calo(
     const int nEvents = 1,
-    const std::string &inputFile0 = "DST_CALO_G4HIT_pythia8_Jet30_1000kHz-0000000029-000000.root",
-    const std::string &outputFile = "DST_CALO_CLUSTER_pythia8_Jet30_1000kHz-0000000029-000000.root",
+    const std::string &inputFile0 = "DST_CALO_G4HIT_sHijing_OO_0_15fm_140kHz_bkg_0_15fm-0000000035-000000.root",
+    const std::string &outputFile = "DST_CALO_CLUSTER_sHijing_OO_0_15fm_140kHz_bkg_0_15fm-0000000035-000000.root",
     const std::string &outdir = ".",
     const std::string &cdbtag = "MDC2",
     const std::string &gitcommit = "none")
@@ -181,10 +180,11 @@ void Fun4All_G4_Calo(
   {
     std::string FullOutFile = DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
+/*
     out->AddNode("Sync");
     out->AddNode("EventHeader");
+
     // Inner Hcal
-    // this is what production macto gives us
     out->AddNode("CLUSTERINFO_HCALIN");
     out->AddNode("TOWERINFO_CALIB_HCALIN");
     out->AddNode("WAVEFORM_HCALIN");
@@ -202,6 +202,7 @@ void Fun4All_G4_Calo(
     out->AddNode("TOWERINFO_CALIB_CEMC");
     out->AddNode("WAVEFORM_CEMC");
     out->AddNode("TOWERS_CEMC");
+*/
     se->registerOutputManager(out);
   }
 
