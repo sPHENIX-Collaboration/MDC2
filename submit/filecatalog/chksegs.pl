@@ -1165,7 +1165,12 @@ elsif ($system == 36)
     $systemstring_g4hits = "sHijing_OO_0_15fm";
     if (! defined $nopileup)
     {
-	$systemstring = sprintf("%s_270kHz_bkg_0_15fm",$systemstring_g4hits);
+	if (! defined $pileup)
+	{
+	    print "define --pileup in kHz like -pileup 140kHz\n";
+	    exit(1);
+	}
+	$systemstring = sprintf("%s_%s_bkg_0_15fm",$systemstring_g4hits,$pileup);
     }
     else
     {

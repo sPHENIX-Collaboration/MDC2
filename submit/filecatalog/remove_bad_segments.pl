@@ -27,7 +27,7 @@ my $ptmax;
 my $particle;
 my $pileup;
 my $magnet;
-my $dual;
+my $double;
 GetOptions("double"=>\$double, "dsttype:s"=>\$dsttype, "embed:s"=>\$embed, "fm:s" =>\$fm, "kill"=>\$kill, "magnet:s" => \$magnet, "nobkgpileup" => \$nobkgpileup, "nopileup"=>\$nopileup, "pileup:s" => \$pileup, "runnumber:i" => \$runnumber, "type:i"=>\$system, "verbose" => \$verbose);
 
 #if (! defined $pileup)
@@ -1264,7 +1264,7 @@ elsif ($system == 43)
 }
 elsif ($system == 44)
 {
-    $dual = 1;
+    $double = 1;
     $specialsystemstring{"G4Hits"} = "pythia8_Jet12_pythia8_Detroit-";
     $systemstring = "pythia8_Jet12_pythia8_Detroit_";
     $topdir = sprintf("%s/JS_pp200_signal",$topdir);
@@ -1294,7 +1294,7 @@ elsif ($system == 44)
 }
 elsif ($system == 45)
 {
-    $dual = 1;
+    $double = 1;
     $specialsystemstring{"G4Hits"} = "pythia8_PhotonJet10_pythia8_Detroit-";
     $systemstring = "pythia8_PhotonJet10_pythia8_Detroit_";
     $topdir = sprintf("%s/JS_pp200_signal",$topdir);
@@ -1407,11 +1407,11 @@ if (defined $pileupdir)
     $productionsubdir{"DST_TRKR_G4HIT"} = sprintf("%s_%s",$productionsubdir{"DST_TRKR_G4HIT"},$pileupdir);
     $productionsubdir{"DST_TRUTH_G4HIT"} = sprintf("%s_%s",$productionsubdir{"DST_TRUTH_G4HIT"},$pileupdir);
 }
-if (defined $dual)
+if (defined $double)
 {
     foreach my $proddir (keys %productionsubdir)
     {
-	$productionsubdir{$proddir} = sprintf("%s_dual",$productionsubdir{$proddir});
+	$productionsubdir{$proddir} = sprintf("%s_double",$productionsubdir{$proddir});
     }
 }
 
