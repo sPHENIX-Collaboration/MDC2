@@ -153,10 +153,10 @@ my %submitdir = (
     "JS_pp200_signal/pass2_nopileup/condor" => ("--build ana.536 --run 28 --disable_trk"),
 #    "JS_pp200_signal/pass2_nopileup/condor" => ("--build ana.536 --run 29"),
 
-# dual collisions
-    "JS_pp200_signal/pass2_dual_nopileup/condor" => ("--build ana.541 --run 28 --disable_trk"),
-    "JS_pp200_signal/pass2jet_dual_nopileup/condor" => ("--build ana.541 --run 28"),
-    "JS_pp200_signal/pass3_global_dual_nopileup/condor" => ("--build ana.541 --run 28"),
+# double collisions
+    "JS_pp200_signal/pass2_double_nopileup/condor" => ("--build ana.541 --run 28 --disable_trk"),
+    "JS_pp200_signal/pass2jet_double_nopileup/condor" => ("--build ana.541 --run 28"),
+    "JS_pp200_signal/pass3_global_double_nopileup/condor" => ("--build ana.541 --run 28"),
 
 #    "JS_pp200_signal/pass5_global_embed_nopileup/condor" => ("--build ana.515 --run 30"),
 #    "JS_pp200_signal/pass4_jobC_embed_nopileup/condor" => ("--build ana.515 --run 30"),
