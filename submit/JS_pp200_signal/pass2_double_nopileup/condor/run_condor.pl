@@ -25,7 +25,7 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 52;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_pass2_dual_nopileup_js.sh",$rundir);
+my $executable = sprintf("%s/run_pass2_double_nopileup_js.sh",$rundir);
 my $nevents = $ARGV[0];
 my $jettrigger = $ARGV[1];
 my $infile = $ARGV[2];
@@ -70,7 +70,7 @@ if (! -d $logdir)
 {
   mkpath($logdir);
 }
-my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass2_dual_nopileup/run%d/%s",$runnumber,$jettrigger);
+my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass2_double_nopileup/run%d/%s",$runnumber,$jettrigger);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);
