@@ -74,9 +74,6 @@ int Fun4All_G4_JS_pp_signal(
     SaveGitTags();
   }
 
-  TRACKING::pp_mode = true;
-  TRACKING::pp_extended_readout_time = 90000;
-
   std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
   int runnumber = runseg.first;
   int segment = runseg.second;
