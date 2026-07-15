@@ -39,7 +39,7 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 int Fun4All_G4_JS_pp_2pythia(
     const int nEvents = 1,
     const std::string &jettrigger = "Jet30",  // or "PhotonJet"
-    const std::string &outputFile = "G4Hits_pythia8_Jet30_pythia8_Detroit-0000028-000000.root",
+    const std::string &outputFile = "G4Hits_pythia8_Jet30_pythia8_Detroit-0000038-000000.root",
     const std::string &outdir = ".",
     const std::string &cdbtag = "MDC2",
     const std::string &gitcommit = "none")
@@ -73,9 +73,6 @@ int Fun4All_G4_JS_pp_2pythia(
   {
     SaveGitTags();
   }
-
-  TRACKING::pp_mode = true;
-  TRACKING::pp_extended_readout_time = 90000;
 
   std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
   int runnumber = runseg.first;
