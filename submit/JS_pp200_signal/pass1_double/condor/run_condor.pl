@@ -28,7 +28,7 @@ my $localdir=`pwd`;
 chomp $localdir;
 my $baseprio = 2;
 my $rundir = sprintf("%s/../rundir",$localdir);
-my $executable = sprintf("%s/run_pass1_dual_js.sh",$rundir);
+my $executable = sprintf("%s/run_pass1_double_js.sh",$rundir);
 my $nevents = $ARGV[0];
 my $jettrigger = $ARGV[1];
 my $dstoutdir = $ARGV[2];
@@ -48,7 +48,7 @@ if (! -d $logdir)
 {
   mkpath($logdir);
 }
-my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass1_dual/run%d/%s",$runnumber,$jettrigger);
+my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass1_double/run%d/%s",$runnumber,$jettrigger);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);

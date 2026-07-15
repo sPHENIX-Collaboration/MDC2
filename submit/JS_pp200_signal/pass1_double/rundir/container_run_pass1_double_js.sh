@@ -52,7 +52,7 @@ root.exe -q -b Fun4All_G4_JS_pp_2pythia.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\
 
 [[ -f copyscript.sh ]] && sh copyscript.sh
 
-timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/js_pp200_signal_dual/pass1/timing.run${6}/${2}
+timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/js_pp200_signal_double/pass1/timing.run${6}/${2}
 
 [ ! -d $timedirname ] &&  mkdir -p $timedirname
 
