@@ -122,8 +122,7 @@ void Fun4All_G4_Pass3Trk(
   // Global options (enabled for all enables subsystems - if implemented)
   //  Enable::VERBOSITY = 1;
 // set pp tracking mode
-  TRACKING::pp_mode = true;
-  TRACKING::pp_extended_readout_time = 50000; // 50 us, needed by electron drift and hit reco modules
+  TRACKING::streaming_mode = true;
 
   // central tracking
   Enable::MVTX = true;
