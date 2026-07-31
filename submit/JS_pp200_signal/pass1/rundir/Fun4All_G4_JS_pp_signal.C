@@ -112,6 +112,10 @@ int Fun4All_G4_JS_pp_signal(
   {
     pythia8_config_file += "phpythia8_JS_GJ_MDC2.cfg";
   }
+  else if (jettrigger == "PhotonJet3")
+  {
+    pythia8_config_file += "phpythia8_5GeV_JS_MDC2.cfg"; // 5GeV config on purpose
+  }
   else if (jettrigger == "PhotonJet5")
   {
     pythia8_config_file += "phpythia8_5GeV_JS_MDC2.cfg";
@@ -148,7 +152,7 @@ int Fun4All_G4_JS_pp_signal(
   {
     pythia8_config_file += "phpythia8_80GeV_JS_MDC2.cfg";
   }
-  else if (jettrigger == "Detroit" || jettrigger == "Jet5" || jettrigger == "Jet8" || jettrigger == "Jet10" || jettrigger == "Jet12" || jettrigger == "Jet15" || jettrigger == "Pi03" || jettrigger == "Pi08" || jettrigger == "Eta3" || jettrigger == "Eta8")
+  else if (jettrigger == "Detroit" || jettrigger == "Jet3" || jettrigger == "Jet5" || jettrigger == "Jet8" || jettrigger == "Jet10" || jettrigger == "Jet12" || jettrigger == "Jet15" || jettrigger == "Pi03" || jettrigger == "Pi08" || jettrigger == "Eta3" || jettrigger == "Eta8")
   {
     pythia8_config_file = std::string(getenv("CALIBRATIONROOT")) + "/Generators/phpythia8_detroit_minBias.cfg";
   }
@@ -176,7 +180,11 @@ int Fun4All_G4_JS_pp_signal(
       p8_photon_jet_trigger->SetEtaHighLow(1.5, -1.5);  // sample a rapidity range higher than the sPHENIX tracking pseudorapidity
       std::vector<int> partentsId{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, -22, -21, -20, -19, -18, -17, -16, -15, -14, -13, -12, -11, -10, -9, -8, -7, -6, -5, -4, -3, -2, -1};
       p8_photon_jet_trigger->AddParents(partentsId);
-      if (jettrigger == "PhotonJet5")
+      if (jettrigger == "PhotonJet3")
+      {
+        p8_photon_jet_trigger->SetPtLow(3);
+      }
+      else if (jettrigger == "PhotonJet5")
       {
         p8_photon_jet_trigger->SetPtLow(5);
       }
@@ -202,7 +210,11 @@ int Fun4All_G4_JS_pp_signal(
       p8_js_signal_trigger->SetEtaHighLow(1.5, -1.5);  // Set eta acceptance for particles into the jet between +/- 1.5
       p8_js_signal_trigger->SetJetR(0.4);              // Set the radius for the trigger jet
 
-      if (jettrigger == "Jet5")
+      if (jettrigger == "Jet3")
+      {
+        p8_js_signal_trigger->SetMinJetPt(3);  // require a 3 GeV minimum pT jet in the event
+      }
+      else if (jettrigger == "Jet5")
       {
         p8_js_signal_trigger->SetMinJetPt(5);  // require a 5 GeV minimum pT jet in the event
       }
