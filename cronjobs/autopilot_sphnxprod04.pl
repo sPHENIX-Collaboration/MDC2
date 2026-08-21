@@ -89,9 +89,9 @@ my %submitdir = (
 #    "Herwig/pass3_jobC_nopileup/condor" => ("--build ana.455 allruns"),
 #    "Herwig/pass3_jobA_nopileup/condor" => ("--build ana.455 allruns"),
 #    "Herwig/pass3_job0_nopileup/condor" => ("--build ana.455 allruns"),
-    "Herwig/pass3_global_nopileup/condor" => ("--build ana.536 --run 28"),
-    "Herwig/pass2jet_nopileup/condor" => ("--build ana.536 --run 28"),
-    "Herwig/pass2_nopileup/condor" => ("--build ana.536 --disable_trk --run 28"),
+#    "Herwig/pass3_global_nopileup/condor" => ("--build ana.536 --run 28"),
+#    "Herwig/pass2jet_nopileup/condor" => ("--build ana.536 --run 28"),
+#    "Herwig/pass2_nopileup/condor" => ("--build ana.536 --disable_trk --run 28"),
 
 #     "HF_pp200_signal/pass2/condor" => (""),
 #     "HF_pp200_signal/pass3trk/condor" => (""),
@@ -143,20 +143,20 @@ my %submitdir = (
 
 
 # JS no pileup:
-#    "JS_pp200_signal/pass3_job0_nopileup/condor" => ("--build ana.536 --run 29"),
-#    "JS_pp200_signal/pass3_jobA_nopileup/condor" => ("--build ana.536 --run 29"),
-#    "JS_pp200_signal/pass3_jobC_nopileup/condor" => ("--build ana.536 --run 29"),
-#    "JS_pp200_signal/pass4_global_nopileup/condor" => ("--build ana.536 --run 29"),
-#    "JS_pp200_signal/pass4_truthreco_nopileup/condor" => ("--build ana.536 --run 29"),
-    "JS_pp200_signal/pass3_global_nopileup/condor" => ("--build ana.536 --run 28"),
-    "JS_pp200_signal/pass2jet_nopileup/condor" => ("--build ana.536 --run 28"),
-    "JS_pp200_signal/pass2_nopileup/condor" => ("--build ana.536 --run 28 --disable_trk"),
-#    "JS_pp200_signal/pass2_nopileup/condor" => ("--build ana.536 --run 29"),
+#    "JS_pp200_signal/pass3_job0_nopileup/condor" => ("--build ana.559 --run 29"),
+#    "JS_pp200_signal/pass3_jobA_nopileup/condor" => ("--build ana.559 --run 29"),
+#    "JS_pp200_signal/pass3_jobC_nopileup/condor" => ("--build ana.559 --run 29"),
+#    "JS_pp200_signal/pass4_global_nopileup/condor" => ("--build ana.559 --run 29"),
+#    "JS_pp200_signal/pass4_truthreco_nopileup/condor" => ("--build ana.559 --run 29"),
+    "JS_pp200_signal/pass3_global_nopileup/condor" => ("--build ana.559 --run 28"),
+    "JS_pp200_signal/pass2jet_nopileup/condor" => ("--build ana.559 --run 28"),
+    "JS_pp200_signal/pass2_nopileup/condor" => ("--build ana.559 --run 28 --disable_trk"),
+#    "JS_pp200_signal/pass2_nopileup/condor" => ("--build ana.559 --run 29"),
 
 # double collisions
-    "JS_pp200_signal/pass2_double_nopileup/condor" => ("--build ana.541 --run 28 --disable_trk"),
-    "JS_pp200_signal/pass2jet_double_nopileup/condor" => ("--build ana.541 --run 28"),
-    "JS_pp200_signal/pass3_global_double_nopileup/condor" => ("--build ana.541 --run 28"),
+#    "JS_pp200_signal/pass2_double_nopileup/condor" => ("--build ana.559 --run 38 --disable_trk"),
+#    "JS_pp200_signal/pass2jet_double_nopileup/condor" => ("--build ana.559 --run 38"),
+#    "JS_pp200_signal/pass3_global_double_nopileup/condor" => ("--build ana.559 --run 38"),
 
 #    "JS_pp200_signal/pass5_global_embed_nopileup/condor" => ("--build ana.515 --run 30"),
 #    "JS_pp200_signal/pass4_jobC_embed_nopileup/condor" => ("--build ana.515 --run 30"),
@@ -223,8 +223,8 @@ my @herwigtriggers = ("MB", "Jet5", "Jet12", "Jet20", "Jet30", "Jet40", "Jet50",
 #my @herwigtriggers = ("MB", "Jet5", "Jet12", "Jet20", "Jet30",  "Jet40", "Jet50");
 #my @jettriggers2 = ("Jet10", "Jet30", "Jet40", "PhotonJet");
 #my @jettriggers2 = ("Jet10", "Jet30", "PhotonJet");
-my @jettriggers = ("Jet5", "Jet8", "Jet12", "Jet20", "Jet30", "Jet40", "Jet50", "Jet80", "PhotonJet5", "PhotonJet10", "PhotonJet20");
-#my @jettriggers = ("Jet5", "Jet10", "Jet12", "Jet15", "Jet20", "Jet30", "Jet40", "Jet50", "Jet60", "Detroit", "PhotonJet5", "PhotonJet10", "PhotonJet20");
+my @jettriggers = ("Jet12");
+#my @jettriggers = ("Jet5", "Jet10", "Jet12", "Jet15", "Jet20", "Jet30", "Jet40", "Jet50", "Jet60", "Jet70", "Jet80", "Detroit", "PhotonJet5", "PhotonJet10", "PhotonJet20");
 #my @singleparticles = {"gamma 10000 10000"};
 my @pileups = ("1000kHz");
 my @runs = ("28", "30");
