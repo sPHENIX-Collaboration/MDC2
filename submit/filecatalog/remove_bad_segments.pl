@@ -27,7 +27,6 @@ my $ptmax;
 my $particle;
 my $pileup;
 my $magnet;
-my $double;
 GetOptions("double"=>\$double, "dsttype:s"=>\$dsttype, "embed:s"=>\$embed, "fm:s" =>\$fm, "kill"=>\$kill, "magnet:s" => \$magnet, "nobkgpileup" => \$nobkgpileup, "nopileup"=>\$nopileup, "pileup:s" => \$pileup, "runnumber:i" => \$runnumber, "type:i"=>\$system, "verbose" => \$verbose);
 
 #if (! defined $pileup)

@@ -19,7 +19,7 @@ my $disable_trk;
 my $enable_calo = 0;
 my $enable_mbd = 0;
 my $enable_trk = 0;
-my $memory = "3000MB";
+my $memory = "1000MB";
 my $shared;
 my $test;
 GetOptions("build:s" => \$build, "disable_calo" => \$disable_calo, "disable_mbd" => \$disable_mbd, "disable_trk" => \$disable_trk, "increment"=>\$incremental, "overwrite" => \$overwrite, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test);
