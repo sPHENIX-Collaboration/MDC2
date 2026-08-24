@@ -45,6 +45,7 @@ R__LOAD_LIBRARY(libfun4allutils.so)
   // server
   auto *se = Fun4AllServer::instance();
   se->Verbosity(1);
+  se->VerbosityDownscale(1000);
 
   auto *rc = recoConsts::instance();
 //rc->set_IntFlag("RANDOMSEED", 12345);
