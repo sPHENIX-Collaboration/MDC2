@@ -97,7 +97,7 @@ OUTER: for (my $isub = 0; $isub < $maxsubmit; $isub++)
 	$jobfile = sprintf("%s/condor_%s-%010d-%06d.job",$logdir,$jettrigger,$runnumber,$njob);
     }
     print "using jobfile $jobfile\n";
-    my $outfile = sprintf("G4Hits_%s-%010d-%06d.root",$filetype, $runnumber,$njob);
+    my $outfile = sprintf("HepMC_%s-%010d-%06d.root",$filetype, $runnumber,$njob);
     my $fulloutfile = sprintf("%s/%s",$outdir,$outfile);
     print "out: $fulloutfile\n";
     if (defined $killexist)
