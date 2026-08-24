@@ -152,11 +152,11 @@ while (my @res = $getfiles->fetchrow_array())
 	    next;
 	}
 	my @bkgfiles = ();
-	my $minbkcsegment = $segment*$num_background + $segment_background_start;
+	my $minbcksegment = $segment*$num_background + $segment_background_start;
 	# the number of files can be large - there is no overhead, 
 	# we only open new files when the old file is exhausted
 	my $foundall = 1;
-        for (my $bkgsegment = $minbkcsegment;  $bkgsegment <= $num_background+$minbkcsegment; $bkgsegment++)
+        for (my $bkgsegment = $minbcksegment;  $bkgsegment < $num_background+$minbcksegment; $bkgsegment++)
 	{
 	    my $prefix_mb = sprintf("DST_HEPMC_pythia8_Detroit");
 	    my $bckfile = sprintf("%s-%010d-%06d.root",$prefix_mb,$runnumber,$bkgsegment);
