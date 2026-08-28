@@ -19,8 +19,8 @@ my $shared;
 my $test;
 my $pileup;
 my $verbosity = 0;
-my $num_background = 10;
-my $segment_background_start = 10000;
+my $num_background = 20;
+my $segment_background_start = 25000;
 GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "outrunnumber"=>\$outrunnumber, "overwrite"=> \$overwrite, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
 if ($#ARGV < 1)
 {

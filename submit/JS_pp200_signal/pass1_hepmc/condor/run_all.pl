@@ -4,15 +4,18 @@ use strict;
 use warnings;
 use File::Path;
 use Getopt::Long;
+use DBI;
 
 my $build;
+my $events = 200000;
 my $incremental;
 my $killexist;
+my $overwrite;
 my $runnumber;
-my $events = 100000;
 my $startsegment = -1;
 my $test;
-GetOptions("build:s" => \$build, "events:i"=> \$events, "increment"=>\$incremental, "killexist" => \$killexist, "run:i" =>\$runnumber, "startsegment:i" => \$startsegment, "test"=>\$test);
+
+GetOptions("build:s" => \$build, "events:i"=> \$events, "increment"=>\$incremental, "killexist" => \$killexist, "overwrite" => \$overwrite, "run:i" =>\$runnumber, "startsegment:i" => \$startsegment, "test"=>\$test);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> <\"Detroit\" production>\n";
@@ -20,6 +23,7 @@ if ($#ARGV < 1)
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
     print "--killexist : delete output file if it already exists (but no jobfile)\n";
+    print "--overwrite: overwrite job files\n";
     print "--run: <runnumber>\n";
     print "--startsegment: starting segment\n";
     print "--test : dryrun - create jobfiles\n";
@@ -49,6 +53,9 @@ if ($isbad > 0)
 {
     exit(1);
 }
+my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
+$dbh->{LongReadLen}=2000; # full file paths need to fit in here
+my $chkfile = $dbh->prepare("select filename from datasets where filename = ?");
 
 my $hostname = `hostname`;
 chomp $hostname;
@@ -90,16 +97,31 @@ my $njob = 0;
 OUTER: for (my $isub = 0; $isub < $maxsubmit; $isub++)
 {
     my $jobfile = sprintf("%s/condor_%s-%010d-%06d.job",$logdir,$jettrigger,$runnumber,$njob);
+    my $outfile_missing = 0;
     while (-f $jobfile || $njob<=$startsegment)
     {
-#	print "found jobfile $jobfile, njob: $njob, startsegment: $startsegment\n";
+	if ($njob<=$startsegment)
+	{
+	    $njob++;
+	    next;
+	}
+	my $outfile_chk = sprintf("DST_HEPMC_%s-%010d-%06d.root",$filetype, $runnumber,$njob);
+	$chkfile->execute($outfile_chk);
+	my $rows = $chkfile->rows;
+	if ($rows == 0)
+	{
+	    print "could not find $outfile_chk in DB\n";
+	    $outfile_missing = 1;
+	    last;
+	}
+	#	print "found jobfile $jobfile, njob: $njob, startsegment: $startsegment\n";
 	$njob++;
 	$jobfile = sprintf("%s/condor_%s-%010d-%06d.job",$logdir,$jettrigger,$runnumber,$njob);
     }
-    print "using jobfile $jobfile\n";
-    my $outfile = sprintf("HepMC_%s-%010d-%06d.root",$filetype, $runnumber,$njob);
+    my $outfile = sprintf("DST_HEPMC_%s-%010d-%06d.root",$filetype, $runnumber,$njob);
     my $fulloutfile = sprintf("%s/%s",$outdir,$outfile);
-    print "out: $fulloutfile\n";
+#    print "using jobfile $jobfile\n";
+#    print "out: $fulloutfile\n";
     if (defined $killexist)
     {
 	if (-f $fulloutfile)
@@ -113,6 +135,10 @@ OUTER: for (my $isub = 0; $isub < $maxsubmit; $isub++)
 	if (defined $test)
 	{
 	    $tstflag="--test";
+	}
+	if (defined $overwrite)
+	{
+	    $tstflag= sprintf("%s --overwrite",$tstflag);
 	}
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s",$events, $jettrigger, $outdir, $outfile, $build, $runnumber, $njob, $tstflag);
 	print "cmd: $subcmd\n";
@@ -135,6 +161,10 @@ OUTER: for (my $isub = 0; $isub < $maxsubmit; $isub++)
 	    print "maximum number of submissions $nsubmit reached, exiting\n";
 	    last OUTER;
 	}
+	if ($outfile_missing == 1)
+	{
+	    $njob++;
+	}
     }
     else
     {
@@ -142,6 +172,9 @@ OUTER: for (my $isub = 0; $isub < $maxsubmit; $isub++)
 	$njob++;
     }
 }
+
+$chkfile->finish();
+$dbh->disconnect;
 
 if (-f $condorlistfile)
 {

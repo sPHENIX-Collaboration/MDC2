@@ -41,7 +41,7 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 int Fun4All_G4_JS_pp_HepMC(
     const int nEvents = 1,
     const std::string &jettrigger = "Detroit",  // or "PhotonJet"
-    const std::string &outputFile = "HepMC_pythia8_Detroit-0000029-000000.root",
+    const std::string &outputFile = "DST_HEPMC_pythia8_Detroit-0000029-000000.root",
     const std::string &outdir = ".",
     const std::string &cdbtag = "MDC2",
     const std::string &gitcommit = "none")

@@ -1,5 +1,6 @@
 #!/usr/bin/bash
-export USER="$(id -u -n)"
+#export USER="$(id -u -n)"
+export USER="$(getent passwd "$(id -u)" | cut -d: -f1)"
 export LOGNAME=${USER}
 export HOME=/sphenix/u/${USER}
 
