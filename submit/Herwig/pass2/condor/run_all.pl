@@ -122,7 +122,7 @@ $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like 'G4Hits_Herwig_$jettriggerWithUnderScore%' and runnumber = $runnumber order by segment") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
-my $getbkglastsegment = $dbh->prepare("select max(segment) from datasets where dsttype = 'G4Hits' and filename like 'G4Hits_Herwig_Detroit-%' and runnumber = $runnumber");
+my $getbkglastsegment = $dbh->prepare("select max(segment) from datasets where dsttype = 'G4Hits' and filename like 'G4Hits_Herwig_MB-%' and runnumber = $runnumber");
 $getbkglastsegment->execute();
 my @res1 = $getbkglastsegment->fetchrow_array();
 my $lastsegment = $res1[0];
@@ -189,7 +189,7 @@ while (my @res = $getfiles->fetchrow_array())
 	$foundall = 1;
 	my @bkgfiles = ();
 	my $bkgsegments = 0;
-# if Detroit is embedded in itself, don't start with the same segment for the background
+# if MB is embedded in itself, don't start with the same segment for the background
 # for others it doesn't matter
 	my $currsegment = $segment;
 # the number of files can be large - there is no overhead, 
@@ -201,7 +201,7 @@ while (my @res = $getfiles->fetchrow_array())
 	    {
 		$currsegment = 0;
 	    }
-	    my $prefix_mb = sprintf("G4Hits_Herwig_Detroit");
+	    my $prefix_mb = sprintf("G4Hits_Herwig_MB");
 	    my $bckfile = sprintf("%s-%010d-%06d.root",$prefix_mb,$runnumber,$currsegment);
 	    $chkfile->execute($bckfile);
 	    if ($chkfile->rows == 0)
