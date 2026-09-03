@@ -33,7 +33,7 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 //________________________________________________________________________________________________
   int Fun4All_G4_Pileup_pp(
     const int nEvents = 0,
-    const std::string &inputFile = "G4Hits_Herwig_Detroit-0000000022-000000.root",
+    const std::string &inputFile = "G4Hits_Herwig_MB-0000000029-000000.root",
     const std::string &backgroundList = "pileupbkgppmb.list",
     const std::string &outdir = ".",
     const std::string &jettrigger = "NONE",
