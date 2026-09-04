@@ -93,6 +93,18 @@ my %submitdir = (
 #    "Herwig/pass2jet_nopileup/condor" => ("--build ana.536 --run 28"),
 #    "Herwig/pass2_nopileup/condor" => ("--build ana.536 --disable_trk --run 28"),
 
+    # Herwig with pileup
+    "Herwig/pass2/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
+    "Herwig/pass3jet/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
+    "Herwig/pass3trk/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
+    "Herwig/pass3calo/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
+    "Herwig/pass3_mbd/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
+    "Herwig/pass4_job0/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
+    "Herwig/pass4_jobA/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
+    "Herwig/pass4_jobC/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
+    "Herwig/pass5_global/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
+    "Herwig/pass5_truthreco/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
+
 #     "HF_pp200_signal/pass2/condor" => (""),
 #     "HF_pp200_signal/pass3trk/condor" => (""),
 #     "HF_pp200_signal/pass3calo/condor" => (""),
@@ -218,8 +230,8 @@ my @cosmics = ("on", "off");
 #my @quarkfilters = ("CharmD0piKJet5", "CharmD0piKJet12");
 my @quarkfilters = ("Charm");
 my @jettriggerspau = ("Jet10", "Jet20");
-my @herwigtriggers = ("MB", "Jet5", "Jet12", "Jet20", "Jet30", "Jet40", "Jet50", "PhotonJet5", "PhotonJet10", "PhotonJet20");
-#my @herwigtriggers = ("MB", "Jet5", "Jet20", "Jet30", "Jet40", "PhotonJet5", "PhotonJet10", "PhotonJet20");
+my @herwigtriggers = ("MB");
+#my @herwigtriggers = ("MB", "Jet5", "Jet12", "Jet20", "Jet30", "Jet40", "Jet50", "PhotonJet5", "PhotonJet10", "PhotonJet20");
 #my @herwigtriggers = ("MB", "Jet5", "Jet12", "Jet20", "Jet30",  "Jet40", "Jet50");
 #my @jettriggers2 = ("Jet10", "Jet30", "Jet40", "PhotonJet");
 #my @jettriggers2 = ("Jet10", "Jet30", "PhotonJet");

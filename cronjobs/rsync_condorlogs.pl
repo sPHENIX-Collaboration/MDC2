@@ -28,6 +28,7 @@ my @passes = ();
 #push(@passes,"job0");
 push(@passes,"pass1");
 push(@passes,"pass1_double");
+push(@passes,"pass1_hepmc");
 push(@passes,"pass2");
 push(@passes,"pass2_1MHz");
 push(@passes,"pass2_10kHz");

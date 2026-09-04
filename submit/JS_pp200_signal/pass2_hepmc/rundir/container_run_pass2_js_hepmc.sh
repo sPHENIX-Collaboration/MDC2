@@ -10,7 +10,7 @@ this_script=`readlink -f $this_script`
 this_dir=`dirname $this_script`
 echo running: $this_script $*
 
-anabuild=${6}
+anabuild=${7}
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
 
