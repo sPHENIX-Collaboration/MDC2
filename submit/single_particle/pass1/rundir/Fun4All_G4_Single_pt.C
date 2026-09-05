@@ -4,17 +4,18 @@
 #include <GlobalVariables.C>
 
 #include <G4Setup_sPHENIX.C>
-#include <G4_Mbd.C>
 #include <G4_Input.C>
+#include <G4_Mbd.C>
 #include <G4_Production.C>
 #include <G4_TrkrSimulation.C>
+#include <SaveGitTags.C>
 
 #include <fun4allutils/TimerStats.h>
 
+#include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/HeadReco.h>
 #include <ffamodules/SyncReco.h>
-#include <ffamodules/CDBInterface.h>
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
@@ -30,19 +31,20 @@ R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_Single_pt(
-  const int nEvents = 1,
-  const string &particle = "pi-", 
-  const int pmin = 10000,
-  const int pmax = 10000,
-  const string &outputFile = "G4Hits_single_pi-_pt_10000_10000MeV-0000000007-00000.root",
-  const string &outdir = ".",
-  const string &cdbtag = "MDC2_ana.416")
+    const int nEvents = 1,
+    const std::string &particle = "pi-",
+    const int pmin = 10000,
+    const int pmax = 10000,
+    const std::string &outputFile = "G4Hits_single_pi-_pt_10000_10000MeV-0000000007-00000.root",
+    const std::string &outdir = ".",
+    const std::string &cdbtag = "MDC2",
+    const std::string &gitcommit = "none")
 {
   int skip = 0;
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
 
-  //Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
+  // Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
   PHRandomSeed::Verbosity(1);
 
   // just if we set some flags somewhere in this macro
@@ -56,26 +58,35 @@ int Fun4All_G4_Single_pt(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
-  //int seedValue = 491258969;
-  //rc->set_IntFlag("RANDOMSEED", seedValue);
+  // int seedValue = 491258969;
+  // rc->set_IntFlag("RANDOMSEED", seedValue);
+
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
 
   //===============
   // conditions DB flags
   //===============
   Enable::CDB = true;
   // global tag
-  rc->set_StringFlag("CDB_GLOBALTAG",cdbtag);
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
 
-// this extracts the runnumber and segment from the output filename
-// and sets this so the server can pick it up
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
-  int runnumber=runseg.first;
-  int segment=runseg.second;
+  // this extracts the runnumber and segment from the output filename
+  // and sets this so the server can pick it up
+  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
+  int runnumber = runseg.first;
+  int segment = runseg.second;
   if (runnumber != 0)
   {
-    rc->set_IntFlag("RUNNUMBER",runnumber);
+    rc->set_IntFlag("RUNNUMBER", runnumber);
     Fun4AllSyncManager *syncman = se->getSyncManager();
     syncman->SegmentNumber(segment);
   }
@@ -112,15 +123,31 @@ int Fun4All_G4_Single_pt(
     }
     else
     {
-      INPUTGENERATOR::SimpleEventGenerator[0]->set_vertex_distribution_function(PHG4SimpleEventGenerator::Uniform,
-                                                                                PHG4SimpleEventGenerator::Uniform,
-                                                                                PHG4SimpleEventGenerator::Uniform);
-      INPUTGENERATOR::SimpleEventGenerator[0]->set_vertex_distribution_mean(0., 0., 0.);
-      INPUTGENERATOR::SimpleEventGenerator[0]->set_vertex_distribution_width(0., 0., 0.);
+      switch (runnumber)
+      {
+      case 24:
+        INPUTGENERATOR::SimpleEventGenerator[0]->set_vertex_distribution_function(PHG4SimpleEventGenerator::Uniform,
+                                                                                  PHG4SimpleEventGenerator::Uniform,
+                                                                                  PHG4SimpleEventGenerator::Uniform);
+        INPUTGENERATOR::SimpleEventGenerator[0]->set_vertex_distribution_mean(0., 0., 0.);
+        INPUTGENERATOR::SimpleEventGenerator[0]->set_vertex_distribution_width(0., 0., 0.);
+        break;
+      case 28:
+        INPUTGENERATOR::SimpleEventGenerator[0]->set_vertex_distribution_function(PHG4SimpleEventGenerator::Gaus,
+                                                                                  PHG4SimpleEventGenerator::Gaus,
+                                                                                  PHG4SimpleEventGenerator::Gaus);
+        INPUTGENERATOR::SimpleEventGenerator[0]->set_vertex_distribution_mean(0, 0, 0);
+        INPUTGENERATOR::SimpleEventGenerator[0]->set_vertex_distribution_width(120e-4, 120e-4, 65.);
+        break;
+      default:
+        std::cout << "Run " << runnumber << " beam crossing angle not implemented" << std::endl;
+        gSystem->Exit(1);
+        break;
+      }
     }
     INPUTGENERATOR::SimpleEventGenerator[0]->set_eta_range(-1.5, 1.5);
     INPUTGENERATOR::SimpleEventGenerator[0]->set_phi_range(-M_PI, M_PI);
-    INPUTGENERATOR::SimpleEventGenerator[0]->set_pt_range(pmin/1000., pmax/1000.);
+    INPUTGENERATOR::SimpleEventGenerator[0]->set_pt_range(pmin / 1000., pmax / 1000.);
   }
   // register all input generators with Fun4All
   InputRegister();
@@ -169,7 +196,6 @@ int Fun4All_G4_Single_pt(
 
   Enable::MICROMEGAS = true;
 
-
   Enable::CEMC = true;
 
   Enable::HCALIN = true;
@@ -181,15 +207,14 @@ int Fun4All_G4_Single_pt(
   Enable::EPD = true;
 
   //! forward flux return plug door. Out of acceptance and off by default.
-//  Enable::PLUGDOOR = true;
+  //  Enable::PLUGDOOR = true;
   Enable::PLUGDOOR_BLACKHOLE = true;
 
   // new settings using Enable namespace in GlobalVariables.C
   Enable::BLACKHOLE = true;
-  Enable::BLACKHOLE_FORWARD_SAVEHITS = false; // disable forward/backward hits
-  //Enable::BLACKHOLE_SAVEHITS = false; // turn off saving of bh hits
-  //BlackHoleGeometry::visible = true;
-
+  Enable::BLACKHOLE_FORWARD_SAVEHITS = false;  // disable forward/backward hits
+  // Enable::BLACKHOLE_SAVEHITS = false; // turn off saving of bh hits
+  // BlackHoleGeometry::visible = true;
 
   // Initialize the selected subsystems
   G4Init();
@@ -215,7 +240,7 @@ int Fun4All_G4_Single_pt(
   }
   if (Enable::DSTOUT)
   {
-    string FullOutFile = DstOut::OutputFile;
+    std::string FullOutFile = DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     se->registerOutputManager(out);
   }
@@ -231,8 +256,8 @@ int Fun4All_G4_Single_pt(
   // if we run the particle generator and use 0 it'll run forever
   if (nEvents == 0 && !Input::HEPMC && !Input::READHITS)
   {
-    cout << "using 0 for number of events is a bad idea when using particle generators" << endl;
-    cout << "it will run forever, so I just return without running anything" << endl;
+    std::cout << "using 0 for number of events is a bad idea when using particle generators" << std::endl;
+    std::cout << "it will run forever, so I just return without running anything" << std::endl;
     return 0;
   }
 
@@ -243,7 +268,7 @@ int Fun4All_G4_Single_pt(
   // Exit
   //-----
 
-  CDBInterface::instance()->Print(); // print used DB files
+  CDBInterface::instance()->Print();  // print used DB files
   se->End();
   se->PrintTimer();
   std::cout << "All done" << std::endl;

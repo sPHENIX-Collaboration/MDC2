@@ -34,6 +34,7 @@ fi
 # $7: build
 # $8: runnumber
 # $9: sequence
+# $10: git commit id
 
 echo 'here comes your environment'
 
@@ -48,12 +49,13 @@ echo arg6 \(output dir\): $6
 echo arg7 \(build\): $7
 echo arg8 \(runnumber\): $8
 echo arg9 \(sequence\): $9
+echo arg10 \(git commit id\): ${10}
 echo cdbtag: $cdbtag
 
 runnumber=$(printf "%010d" $8)
 sequence=$(printf "%05d" $9)
 
-echo running root.exe -q -b Fun4All_G4_Single_pt.C\($1,\"$2\",$3,$4,\"$5\",\"$6\",\"$cdbtag\"\)
-root.exe -q -b Fun4All_G4_Single_pt.C\($1,\"$2\",$3,$4,\"$5\",\"$6\",\"$cdbtag\"\)
+echo running root.exe -q -b Fun4All_G4_Single_pt.C\($1,\"$2\",$3,$4,\"$5\",\"$6\",\"$cdbtag\",\"${10}\"\)
+root.exe -q -b Fun4All_G4_Single_pt.C\($1,\"$2\",$3,$4,\"$5\",\"$6\",\"$cdbtag\",\"${10}\"\)
 
 echo "script done"
