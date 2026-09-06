@@ -58,4 +58,6 @@ sequence=$(printf "%05d" $9)
 echo running root.exe -q -b Fun4All_G4_Single_pt.C\($1,\"$2\",$3,$4,\"$5\",\"$6\",\"$cdbtag\",\"${10}\"\)
 root.exe -q -b Fun4All_G4_Single_pt.C\($1,\"$2\",$3,$4,\"$5\",\"$6\",\"$cdbtag\",\"${10}\"\)
 
+[[ -f copyscript.sh ]] && sh copyscript.sh
+
 echo "script done"
