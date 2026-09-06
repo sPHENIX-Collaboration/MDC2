@@ -10,11 +10,11 @@ echo minpt: $2
 echo maxpt: $3
 variable=$1_pt_$2_$3
 
-run=24
+run=28
 runnumber=$(printf "%010d" $run)
 
 #exit 0
-condor_q | grep ' H ' | grep run_pass1_pt_single.sh | grep ${variable} > bla
+condor_q -nobatch | grep ' H ' | grep run_pass1_pt_single.sh | grep ${variable} > bla
 
 [ -s bla ] ||  exit 1
 
@@ -25,7 +25,7 @@ for i in `cat bla | awk '{print $14}' | awk -F- '{print $3}' | awk -F. -v runnum
 
 [ -f sedlist ] && rm sedlist
 for i in `cat tmplist`; do echo log/run${run}/${1}/condor_${variable}-$i >> sedlist; done
-#for i in `cat sedlist`; do  sed -i 's/2048MB/4096MB/' $i; echo $i; done
+for i in `cat sedlist`; do  sed -i 's/5000MB/6000MB/' $i; echo $i; done
 #for i in `cat sedlist`; do  sed -i 's/4096MB/8192MB/' $i; echo $i; done
 #for i in `cat sedlist`; do  sed -i 's/8192MB/16384MB/' $i; echo $i; done
 for i in `cat sedlist`; do condor_submit $i; done
