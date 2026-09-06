@@ -11,6 +11,7 @@
 #include <G4_HcalOut_ref.C>
 #include <G4_Input.C>
 #include <G4_Production.C>
+#include <G4_RunSettings.C>
 #include <SaveGitTags.C>
 
 #include <caloreco/CaloGeomMapping.h>
@@ -35,6 +36,10 @@
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
 
+#include <TRandom3.h>
+
+#include <format>
+
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libg4centrality.so)
 R__LOAD_LIBRARY(libCaloWaveformSim.so)
@@ -44,11 +49,11 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 void Fun4All_G4_Calo(
     const int nEvents = 1,
-    const string &inputFile0 = "G4Hits_single_eta_pt_200_50000MeV-0000000024-000000.root",
-    const string &outputFile = "DST_CALO_CLUSTER_single_eta_pt_200_50000MeV-0000000024-000000.root",
-    const string &outdir = ".",
-    const string &cdbtag = "MDC2")
-
+    const std::string &inputFile0 = "G4Hits_single_eta_pt_200_30000MeV-0000000020-000000.root",
+    const std::string &outputFile = "DST_CALO_CLUSTER_single_eta_pt_200_30000MeV-0000000028-000000.root",
+    const std::string &outdir = ".",
+    const std::string &cdbtag = "MDC2",
+    const std::string &gitcommit = "none")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);  // set it to 1 if you want event printouts
@@ -69,7 +74,14 @@ void Fun4All_G4_Calo(
   // int seedValue = 491258969;
   // rc->set_IntFlag("RANDOMSEED", seedValue);
 
-  SaveGitTags(); // save the git tags from rebuild.info as rc string flags
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
 
   //===============
   // conditions DB flags
@@ -79,26 +91,10 @@ void Fun4All_G4_Calo(
   rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
   CDBInterface::instance()->Verbosity(1);
 
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
+  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
   int runnumber = runseg.first;
 
-  switch (runnumber)
-  {
-  case 21:  // zero beam xing angle
-  case 24:  // zero beam xing angle
-    Input::BEAM_CONFIGURATION = Input::pp_ZEROANGLE;
-    break;
-  case 22:  // 1.5 mrad beam xing angle
-    Input::BEAM_CONFIGURATION = Input::pp_COLLISION;
-    break;
-  case 25:  // 1.5 mrad beam xing angle
-    Input::BEAM_CONFIGURATION = Input::AA_COLLISION;
-    break;
-  default:
-    cout << "runnnumber " << runnumber << " not implemented" << endl;
-    gSystem->Exit(1);
-    break;
-  }
+  RunSettings(runnumber);
 
   //===============
   // Input options
@@ -167,13 +163,11 @@ void Fun4All_G4_Calo(
   randGen.SetSeed(seed);
   // a int from 0 to 3259
   int sequence = randGen.Integer(3260);
-  // pad the name
-  std::ostringstream opedname;
-  opedname << "pedestal-54256-0" << std::setw(4) << std::setfill('0') << sequence << ".root";
 
-  std::string pedestalname = opedname.str();
+  std::string pedestalname = std::format("pedestal-54256-{:05}.root",sequence);
 
   Fun4AllInputManager *hitsin = new Fun4AllNoSyncDstInputManager("DST2");
+  hitsin->NoRunTTree(); // suppress error message about missing T1 TTree
   hitsin->AddFile(pedestalname);
   hitsin->Repeat();
   se->registerInputManager(hitsin);
@@ -185,7 +179,7 @@ void Fun4All_G4_Calo(
 
   if (Enable::DSTOUT)
   {
-    string FullOutFile = DstOut::OutputFile;
+    std::string FullOutFile = DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     out->AddNode("Sync");
     out->AddNode("EventHeader");
@@ -222,7 +216,7 @@ void Fun4All_G4_Calo(
   // if we use a negative number of events we go back to the command line here
   if (nEvents < 0)
   {
-    return 0;
+    return;
   }
   se->run(nEvents);
 
