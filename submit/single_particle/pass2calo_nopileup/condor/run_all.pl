@@ -88,17 +88,16 @@ if (-f $condorlistfile)
 
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-print "outdir: $outdir\n";
 $outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,$partprop);
 if (! -d $outdir)
 {
   mkpath($outdir);
 }
-print "outdir spr: $outdir\n";
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'G4Hits' and filename like '%$filetype%' and runnumber = $runnumber order by segment") || die $DBI::errstr;
+#print "sql: select filename,segment from datasets where dsttype = 'G4Hits' and filename like '%$filetype%' and runnumber = $runnumber order by segment\n";
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
