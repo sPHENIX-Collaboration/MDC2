@@ -14,9 +14,9 @@ if ($#ARGV < 12)
 {
     print "usage: run_condor.pl <events> <infile> <calo outfile>  <calo outdir> <global outfile> <global outdir> <trk outdir> <build> <runnumber> <sequence> <enable_calo> <enable_mbd> <enable_trk>\n";
     print "options:\n";
-    print "-memory: memory requirement\n";
+    print "--memory: memory requirement\n";
     print "--overwrite: overwrite existing job files\n";
-    print "-test: testmode - no condor submission\n";
+    print "--test: testmode - no condor submission\n";
     exit(-2);
 }
 

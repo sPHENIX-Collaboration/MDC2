@@ -103,6 +103,12 @@ if (! defined $disable_trk)
     $outfiletype{"DST_TRUTH"} = $outdir[2];
 }
 
+my $memory = sprintf("3500MB");
+if ($enable_calo == 1 && $enable_trk == 0 && $enable_mbd == 0)
+{
+    $memory = sprintf("1000MB");
+}
+
 foreach my $type (sort keys %outfiletype)
 {
     print "type $type, dir: $outfiletype{$type}\n";
@@ -150,6 +156,10 @@ while (my @res = $getfiles->fetchrow_array())
 	if (defined $overwrite)
 	{
 	    $tstflag= sprintf("%s --overwrite", $tstflag)
+	}
+	if (defined $memory)
+	{
+	    $tstflag= sprintf("%s --memory %s",$tstflag,$memory);
 	}
 	my $calooutfilename = sprintf("DST_CALO_CLUSTER_sHijing_OO_0_15fm-%010d-%06d.root",$runnumber,$segment);
 	my $globaloutfilename = sprintf("DST_MBD_EPD_sHijing_OO_0_15fm-%010d-%06d.root",$runnumber,$segment);
