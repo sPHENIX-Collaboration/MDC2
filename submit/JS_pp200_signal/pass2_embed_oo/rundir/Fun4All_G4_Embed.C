@@ -8,7 +8,7 @@
 #include <G4_Mbd.C>
 #include <G4_OutputManager_Embed.C>
 #include <G4_Production.C>
-#include <G4_Pythia_Setup.C>
+#include <G4_Pythia8_Setup.C>
 #include <G4_RunSettings.C>
 #include <SaveGitTags.C>
 
