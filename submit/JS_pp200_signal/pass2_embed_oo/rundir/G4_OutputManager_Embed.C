@@ -9,20 +9,22 @@
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
 
+#include <format>
+#include <set>
+#include <string>
+
 namespace OUTPUTMANAGER
 {
-  set<string> outfiles;
+  std::set<std::string> outfiles;
 }
 
 void AddCommonNodes(Fun4AllOutputManager *out);
 
-void CreateDstOutput(int runnumber, int segment, const string &jettrigger, const string &fmrange)
+void CreateDstOutput(int runnumber, int segment, const std::string &jettrigger, const std::string &fmrange, const std::string &pileup)
 {
-  auto se = Fun4AllServer::instance();
-  string embedinto = "_sHijing_" + fmrange + "_50kHz_bkg_0_20fm";
-  char segrun[100];
-  snprintf(segrun,100,"%s-%010d-%06d",embedinto.c_str(),runnumber,segment);
-  string FullOutFile = "DST_BBC_G4HIT_pythia8_" + jettrigger + string(segrun) + ".root";;
+  auto *se = Fun4AllServer::instance();
+  std::string suffix = std::format("_pythia8_{}_sHijing_OO_{}_{}_bkg_0_15fm-{:010d}-{:06d}.root", jettrigger, fmrange, pileup, runnumber,segment);
+  std::string FullOutFile = "DST_BBC_G4HIT" + suffix;
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("BBCOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("G4HIT_BBC");
@@ -30,7 +32,7 @@ void CreateDstOutput(int runnumber, int segment, const string &jettrigger, const
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "DST_TRKR_G4HIT_pythia8_" + jettrigger + string(segrun) + ".root";;
+  FullOutFile = "DST_TRKR_G4HIT" + suffix;
   out = new Fun4AllDstOutputManager("TRKROUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("G4HIT_MVTX");
@@ -40,7 +42,7 @@ void CreateDstOutput(int runnumber, int segment, const string &jettrigger, const
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "DST_CALO_G4HIT_pythia8_" + jettrigger + string(segrun) + ".root";;
+  FullOutFile = "DST_CALO_G4HIT" + suffix;
   out = new Fun4AllDstOutputManager("CALOOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("G4HIT_CEMC");
@@ -49,7 +51,7 @@ void CreateDstOutput(int runnumber, int segment, const string &jettrigger, const
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "DST_TRUTH_G4HIT_pythia8_" + jettrigger + string(segrun) + ".root";;
+  FullOutFile = "DST_TRUTH_G4HIT" + suffix;
   out = new Fun4AllDstOutputManager("TRUTHOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("G4TruthInfo");
@@ -73,25 +75,25 @@ void DstOutput_move()
   {
     if (PRODUCTION::SaveOutputDir == ".")
     {
-      cout << "not copying files to themselves" << endl;
+      std::cout << "not copying files to themselves" << std::endl;
       return;
     }
-    string copyscript = "copyscript.pl";
+    std::string copyscript = "copyscript.pl";
     std::ifstream f(copyscript);
     bool scriptexists = f.good();
     f.close();
     std::ofstream flist("copyscript.sh");
     bool copyscriptexists = flist.good();
-    for (auto iter = OUTPUTMANAGER::outfiles.begin(); iter != OUTPUTMANAGER::outfiles.end(); ++iter)
+    for (const auto &outfile : OUTPUTMANAGER::outfiles)
     {
-      string mvcmd;
+      std::string mvcmd;
       if (scriptexists)
       {
-        mvcmd = "perl " + copyscript + " -outdir " + PRODUCTION::SaveOutputDir + " " + *iter;
+        mvcmd = std::format("perl {}  -outdir {} {}", copyscript, PRODUCTION::SaveOutputDir, outfile);
       }
       else
       {
-	mvcmd = "cp " + *iter + " " + PRODUCTION::SaveOutputDir;
+	mvcmd = std::format("cp {} {}", outfile, PRODUCTION::SaveOutputDir);
       }
       if (copyscriptexists)
       {
