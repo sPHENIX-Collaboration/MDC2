@@ -45,12 +45,12 @@ if ($sequence < 100)
 my $batchname = sprintf("%s %s",basename($executable),$jettrigger);
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s-%010d-%06d",$jettrigger,$runnumber,$sequence);
-my $logdir = sprintf("%s/log/%s/run%d/%s/%s",$localdir,$fm,$runnumber,$pileup,$jettrigger);
+my $logdir = sprintf("%s/log/run%d/%s/%s/%s",$localdir,$runnumber,$fm,$pileup,$jettrigger);
 if (! -d $logdir)
 {
   mkpath($logdir);
 }
-my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass2_embed_oo/%s/run%d/%s/%s",$fm,$runnumber,$pileup,$jettrigger);
+my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass2_embed_oo/run%d/%s/%s/%s",$runnumber,$fm,$pileup,$jettrigger);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);

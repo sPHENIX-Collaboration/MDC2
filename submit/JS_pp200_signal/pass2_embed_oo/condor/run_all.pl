@@ -98,7 +98,7 @@ if (-f $condorlistfile)
 
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/%s/run%04d/%s/%s",$outdir,$fm,$runnumber,$pileup,lc $jettrigger);
+$outdir = sprintf("%s/run%04d/%s/%s/%s",$outdir,$runnumber,$fm,$pileup,lc $jettrigger);
 if (! -d $outdir)
 {
   mkpath($outdir);
@@ -207,8 +207,7 @@ foreach my $segment (sort { $a <=> $b } keys %trkhash)
 	}
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %s %d %d %s %s %s", $outevents, $jettrigger, $lfn, $bbchash{sprintf("%06d",$segment)}, $calohash{sprintf("%06d",$segment)}, $truthhash{sprintf("%06d",$segment)}, $outdir, $build, $runnumber, $segment, $fm, $pileup, $tstflag);
 	print "cmd: $subcmd\n";
-	die;
-#	system($subcmd);
+	system($subcmd);
 	my $exit_value  = $? >> 8;
 	if ($exit_value != 0)
 	{
