@@ -4,10 +4,11 @@ use strict;
 use warnings;
 use Getopt::Long;
 use File::Path;
+use File::Basename;
 
 my $test;
 my $overwrite;
-my $memory = sprintf("10000MB");
+my $memory = sprintf("5000MB");
 GetOptions("test"=>\$test, "overwrite"=> \$overwrite);
 if ($#ARGV < 9)
 {
@@ -37,6 +38,7 @@ if ($sequence < 100)
 {
     $baseprio = 90;
 }
+my $batchname = sprintf("%s %s",basename($executable),$jettrigger);
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s-%010d-%06d",$jettrigger,$runnumber,$sequence);
 my $logdir = sprintf("%s/log/run%d/%s/%s/%s",$localdir,$runnumber,$fm,$pileup,$jettrigger);
@@ -44,7 +46,7 @@ if (! -d $logdir)
 {
   mkpath($logdir);
 }
-my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass3trk_embed_oo/%s/run%d/%s",$fm,$runnumber,$jettrigger);
+my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass3trk_embed_oo/run%d/%s/%s/%s",$runnumber,$fm,$pileup,$jettrigger);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);
@@ -83,6 +85,7 @@ print F "request_memory = $memory\n";
 print F "retry_request_memory_increase = RequestMemory + 2000\n";
 print F "retry_request_memory_max = 14000MB\n";
 print F "Priority = $baseprio\n";
+print F "batch_name = \"$batchname\"\n";
 print F "job_lease_duration = 3600\n";
 print F "Queue 1\n";
 close(F);
@@ -96,5 +99,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile0, $infile1, $dstoutdir, $jettrigger, $build, $runnumber, $sequence, $fm, $pileup, $outfile, $errfile, $condorlogfile, $rundir, $baseprio\n";
+print F "$executable, $nevents, $infile0, $infile1, $dstoutdir, $jettrigger, $build, $runnumber, $sequence, $fm, $pileup, $outfile, $errfile, $condorlogfile, $rundir, $baseprio, $memory, $batchname\n";
 close(F);
