@@ -94,16 +94,16 @@ my %submitdir = (
 #    "Herwig/pass2_nopileup/condor" => ("--build ana.536 --disable_trk --run 28"),
 
     # Herwig with pileup
-    "Herwig/pass2/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
-    "Herwig/pass3jet/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
-    "Herwig/pass3trk/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
-    "Herwig/pass3calo/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
-    "Herwig/pass3_mbd/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
-    "Herwig/pass4_job0/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
-    "Herwig/pass4_jobA/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
-    "Herwig/pass4_jobC/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
-    "Herwig/pass5_global/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
-    "Herwig/pass5_truthreco/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
+#    "Herwig/pass2/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
+#    "Herwig/pass3jet/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
+#    "Herwig/pass3trk/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
+#    "Herwig/pass3calo/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
+#    "Herwig/pass3_mbdepd/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
+#    "Herwig/pass4_job0/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
+#    "Herwig/pass4_jobA/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
+#    "Herwig/pass4_jobC/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
+#    "Herwig/pass5_global/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
+#    "Herwig/pass5_truthreco/condor" => ("--build ana.567 --run 29 --pileup 200kHz"),
 
 #     "HF_pp200_signal/pass2/condor" => (""),
 #     "HF_pp200_signal/pass3trk/condor" => (""),
@@ -155,15 +155,15 @@ my %submitdir = (
 
 
 # JS no pileup:
-#    "JS_pp200_signal/pass3_job0_nopileup/condor" => ("--build ana.559 --run 29"),
-#    "JS_pp200_signal/pass3_jobA_nopileup/condor" => ("--build ana.559 --run 29"),
-#    "JS_pp200_signal/pass3_jobC_nopileup/condor" => ("--build ana.559 --run 29"),
-#    "JS_pp200_signal/pass4_global_nopileup/condor" => ("--build ana.559 --run 29"),
-#    "JS_pp200_signal/pass4_truthreco_nopileup/condor" => ("--build ana.559 --run 29"),
-    "JS_pp200_signal/pass3_global_nopileup/condor" => ("--build ana.559 --run 28"),
-    "JS_pp200_signal/pass2jet_nopileup/condor" => ("--build ana.559 --run 28"),
-    "JS_pp200_signal/pass2_nopileup/condor" => ("--build ana.559 --run 28 --disable_trk"),
-#    "JS_pp200_signal/pass2_nopileup/condor" => ("--build ana.559 --run 29"),
+    "JS_pp200_signal/pass3_job0_nopileup/condor" => ("--build ana.571 --run 29"),
+    "JS_pp200_signal/pass3_jobA_nopileup/condor" => ("--build ana.571 --run 29"),
+    "JS_pp200_signal/pass3_jobC_nopileup/condor" => ("--build ana.571 --run 29"),
+    "JS_pp200_signal/pass4_global_nopileup/condor" => ("--build ana.571 --run 29"),
+    "JS_pp200_signal/pass4_truthreco_nopileup/condor" => ("--build ana.571 --run 29"),
+#    "JS_pp200_signal/pass3_global_nopileup/condor" => ("--build ana.571 --run 28"),
+#    "JS_pp200_signal/pass2jet_nopileup/condor" => ("--build ana.571 --run 29"),
+#    "JS_pp200_signal/pass2_nopileup/condor" => ("--build ana.571 --run 28 --disable_trk"),
+#    "JS_pp200_signal/pass2_nopileup/condor" => ("--build ana.571 --run 29"),
 
 # double collisions
 #    "JS_pp200_signal/pass2_double_nopileup/condor" => ("--build ana.559 --run 38 --disable_trk"),
@@ -235,7 +235,7 @@ my @herwigtriggers = ("MB");
 #my @herwigtriggers = ("MB", "Jet5", "Jet12", "Jet20", "Jet30",  "Jet40", "Jet50");
 #my @jettriggers2 = ("Jet10", "Jet30", "Jet40", "PhotonJet");
 #my @jettriggers2 = ("Jet10", "Jet30", "PhotonJet");
-my @jettriggers = ("Jet12");
+my @jettriggers = ("Jet10");
 #my @jettriggers = ("Jet5", "Jet10", "Jet12", "Jet15", "Jet20", "Jet30", "Jet40", "Jet50", "Jet60", "Jet70", "Jet80", "Detroit", "PhotonJet5", "PhotonJet10", "PhotonJet20");
 #my @singleparticles = {"gamma 10000 10000"};
 my @pileups = ("1000kHz");
