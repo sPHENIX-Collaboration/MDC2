@@ -11,6 +11,8 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
+this_gitcommitid=`git show HEAD | sed -n 1p | cut -d " " -f 2`
+
 anabuild=${8}
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
@@ -27,11 +29,11 @@ then
     echo $3 >> inputfiles.list
     echo $4 >> inputfiles.list
     echo $5 >> inputfiles.list
-    getinputfiles.pl  --filelist inputfiles.list
+    getinputfiles.pl -dd  --filelist inputfiles.list
     if [ $? -ne 0 ]
     then
         cat inputfiles.list
-	echo error from getinputfiles.pl  --filelist inputfiles.list, exiting
+	echo error from getinputfiles.pl -dd --filelist inputfiles.list, exiting
 	exit -1
     fi
 else
@@ -67,12 +69,13 @@ echo arg10 \(sequence\): ${10}
 echo arg11 \(fm range\): ${11}
 echo arg12 \(pileup\): ${12}
 echo cdbtag : $cdbtag
+echo git commit id : ${this_gitcommitid}
 
 runnumber=$(printf "%010d" $9)
 sequence=$(printf "%06d" ${10})
 
-echo running root.exe -q -b Fun4All_G4_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"${11}\",\"${12}\",\"$cdbtag\"\)
-root.exe -q -b  Fun4All_G4_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"${11}\",\"${12}\",\"$cdbtag\"\)
+echo running root.exe -q -b Fun4All_G4_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"${11}\",\"${12}\",\"$cdbtag\",\"$this_gitcommitid\"\)
+root.exe -q -b  Fun4All_G4_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"${11}\",\"${12}\",\"$cdbtag\,\"$this_gitcommitid\""\)
 
 [[ -f copyscript.sh ]] && sh copyscript.sh
 
