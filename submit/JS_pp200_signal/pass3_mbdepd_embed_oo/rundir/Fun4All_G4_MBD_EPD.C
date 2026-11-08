@@ -25,9 +25,9 @@ R__LOAD_LIBRARY(libfun4all.so)
 
 int Fun4All_G4_MBD_EPD(
     const int nEvents = 1,
-    const std::string &inputFile1 = "DST_BBC_G4HIT_pythia8_Jet30_sHijing_OO_0_15fm_220kHz_bkg_0_15fm-0000000035-00000.root",
-    const std::string &inputFile2 = "DST_TRUTH_G4HIT_pythia8_Jet30_sHijing_OO_0_15fm_220kHz_bkg_0_15fm-0000000035-00000.root",
-    const std::string &outputFile = "DST_MBD_EPD_pythia8_Jet30_sHijing_OO_0_15fm_220kHz_bkg_0_15fm-0000000035-00000.root",
+    const std::string &inputFile1 = "DST_BBC_G4HIT_pythia8_Jet30_sHijing_OO_0_15fm_220kHz_bkg_0_15fm-0000000035-000000.root",
+    const std::string &inputFile2 = "DST_TRUTH_G4HIT_pythia8_Jet30_sHijing_OO_0_15fm_220kHz_bkg_0_15fm-0000000035-000000.root",
+    const std::string &outputFile = "DST_MBD_EPD_pythia8_Jet30_sHijing_OO_0_15fm_220kHz_bkg_0_15fm-0000000035-000000.root",
     const std::string &outdir = ".",
     const std::string &cdbtag = "MDC2",
     const std::string &gitcommit = "none")
