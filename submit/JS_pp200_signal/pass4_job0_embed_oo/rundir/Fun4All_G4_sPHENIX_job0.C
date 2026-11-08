@@ -28,8 +28,8 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 int Fun4All_G4_sPHENIX_job0(
     const int nEvents = 0,
     const int nSkipEvents = 0,
-    const std::string &inputFile = "DST_TRKR_HIT_pythia8_Jet30_sHijing_OO_0_15fm_220kHz_bkg_0_15fm-0000000035-00000.root",
-    const std::string &outputFile = "DST_TRKR_CLUSTER_pythia8_Jet30_sHijing_OO_0_15fm_220kHz_bkg_0_15fm-0000000035-00000.root",
+    const std::string &inputFile = "DST_TRKR_HIT_pythia8_Jet30_sHijing_OO_0_15fm_220kHz_bkg_0_15fm-0000000035-000000.root",
+    const std::string &outputFile = "DST_TRKR_CLUSTER_pythia8_Jet30_sHijing_OO_0_15fm_220kHz_bkg_0_15fm-0000000035-000000.root",
     const std::string &outdir = ".",
     const std::string &cdbtag = "MDC2",
     const std::string &gitcommit = "none")
