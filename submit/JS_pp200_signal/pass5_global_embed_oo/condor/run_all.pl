@@ -14,6 +14,7 @@ my $incremental;
 my $outevents = 0;
 my $overwrite;
 my $phenix;
+my $pileup;
 my $runnumber;
 my $shared;
 my $test;
