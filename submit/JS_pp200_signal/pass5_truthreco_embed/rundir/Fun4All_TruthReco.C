@@ -4,6 +4,7 @@
 #include <GlobalVariables.C>
 
 #include <G4_Production.C>
+#include <SaveGitTags.C>
 #include <Trkr_TruthTables.C>
 
 #include <ffamodules/CDBInterface.h>
@@ -13,6 +14,7 @@
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
+#include <fun4all/Fun4AllUtils.h>
 #include <fun4all/SubsysReco.h>
 
 #include <phool/PHRandomSeed.h>
@@ -29,7 +31,8 @@ void Fun4All_TruthReco(
     const std::string &dst_truth = "DST_TRUTH_pythia8_Jet10_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
     const std::string &outputFile = "DST_TRUTH_RECO_pythia8_Jet10_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000007-00000.root",
     const std::string &outdir = ".",
-    const string &cdbtag = "MDC2_ana.398")
+    const std::string &cdbtag = "MDC2",
+    const std::string &gitcommit = "none")
 {
   gSystem->Load("libg4dst.so");
   Fun4AllServer *se = Fun4AllServer::instance();
@@ -40,14 +43,27 @@ void Fun4All_TruthReco(
 
   recoConsts *rc = recoConsts::instance();
 
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
+
   //===============
   // conditions DB flags
   //===============
+  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(dst_trkr_g4hit);
+  int runnumber = runseg.first;
+
   Enable::CDB = true;
   // tag
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP", runnumber);
+
   CDBInterface::instance()->Verbosity(1);
 
   // set up production relatedstuff
@@ -61,7 +77,7 @@ void Fun4All_TruthReco(
 
   build_truthreco_tables();
 
-  auto in = new Fun4AllDstInputManager("DSTin");
+  auto *in = new Fun4AllDstInputManager("DSTin");
   in->fileopen(dst_truth);
   se->registerInputManager(in);
   in = new Fun4AllDstInputManager("DSTinHit1");
@@ -79,7 +95,7 @@ void Fun4All_TruthReco(
     Production_CreateOutputDir();
   }
 
-  auto out = new Fun4AllDstOutputManager("DSTOUT", outputFile);
+  auto *out = new Fun4AllDstOutputManager("DSTOUT", outputFile);
   out->AddNode("Sync");
   out->AddNode("EventHeader");
   out->AddNode("PHG4ParticleSvtxMap");
