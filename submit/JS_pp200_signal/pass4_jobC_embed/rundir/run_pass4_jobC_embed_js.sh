@@ -11,10 +11,10 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
+this_gitcommitid=`git show HEAD | sed -n 1p | cut -d " " -f 2`
+
 anabuild=${7}
-
 source /opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
-
 
 cdbtag=MDC2_$anabuild
 
@@ -60,12 +60,13 @@ echo arg7 \(build\): $7
 echo arg8 \(runnumber\): $8
 echo arg9 \(sequence\): $9
 echo cdbtag: $cdbtag
+echo git commit id : ${this_gitcommitid}
 
 runnumber=$(printf "%010d" $8)
 sequence=$(printf "%06d" $9)
 
-echo running root.exe -q -b Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\"\)
-root.exe -q -b  Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\"\)
+echo running root.exe -q -b Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\",\"$this_gitcommitid\"\)
+root.exe -q -b  Fun4All_G4_sPHENIX_jobC.C\($1,0,\"$2\",\"$3\",\"$4\",\"$5\",\"$cdbtag\",\"$this_gitcommitid\"\)
 
 [[ -f copyscript.sh ]] && sh copyscript.sh
 
