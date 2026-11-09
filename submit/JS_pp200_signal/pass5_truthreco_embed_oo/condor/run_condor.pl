@@ -49,7 +49,7 @@ if (! -d $logdir)
 {
   mkpath($logdir);
 }
-my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass5_truthreco_embed_oo/run%d/%s/%s/%s",$runnumber,$fm,$pileup,$jettrigger);ger);
+my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass5_truthreco_embed_oo/run%d/%s/%s/%s",$runnumber,$fm,$pileup,$jettrigger);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);
