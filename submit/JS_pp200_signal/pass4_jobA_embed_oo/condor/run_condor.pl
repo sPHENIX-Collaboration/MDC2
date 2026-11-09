@@ -8,7 +8,7 @@ use File::Basename;
 
 my $test;
 my $overwrite;
-my $memory = sprintf("2000MB");
+my $memory = sprintf("4000MB");
 GetOptions("overwrite"=> \$overwrite, "test"=>\$test);
 if ($#ARGV < 9)
 {
