@@ -37,6 +37,7 @@ if ($sequence < 100)
 {
     $baseprio = 90;
 }
+my $batchname = sprintf("%s %s",basename($executable),$jettrigger);
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s-%010d-%06d",$jettrigger,$runnumber,$sequence);
 my $logdir = sprintf("%s/log/%s/run%d/%s",$localdir,$fm,$runnumber,$jettrigger);

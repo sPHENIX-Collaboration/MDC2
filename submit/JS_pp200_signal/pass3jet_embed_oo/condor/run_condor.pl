@@ -45,7 +45,7 @@ if (! -d $logdir)
 {
   mkpath($logdir);
 }
-my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass3jet_embed_oo/%s/run%d/%s",$fm,$runnumber,$jettrigger);
+my $condorlogdir = sprintf("/tmp/JS_pp200_signal/pass3jet_embed_oo/run%d/%s/%s/%s",$runnumber,$fm,$pileup,$jettrigger);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);
