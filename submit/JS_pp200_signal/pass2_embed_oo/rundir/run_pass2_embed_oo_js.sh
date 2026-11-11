@@ -75,7 +75,7 @@ runnumber=$(printf "%010d" $9)
 sequence=$(printf "%06d" ${10})
 
 echo running root.exe -q -b Fun4All_G4_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"${11}\",\"${12}\",\"$cdbtag\",\"$this_gitcommitid\"\)
-root.exe -q -b  Fun4All_G4_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"${11}\",\"${12}\",\"$cdbtag\,\"$this_gitcommitid\""\)
+root.exe -q -b  Fun4All_G4_Embed.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"${11}\",\"${12}\",\"$cdbtag\",\"$this_gitcommitid\"\)
 
 [[ -f copyscript.sh ]] && sh copyscript.sh
 
