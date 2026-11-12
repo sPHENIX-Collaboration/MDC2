@@ -8,8 +8,8 @@
 #include <G4_Input.C>
 #include <G4_Mbd.C>
 #include <G4_Production.C>
-#include <G4_TrkrSimulation.C>
 #include <G4_RunSettings.C>
+#include <G4_TrkrSimulation.C>
 #include <SaveGitTags.C>
 
 #include <phherwig7/PHHerwig7ParticleTrigger.h>
@@ -70,7 +70,7 @@ int Fun4All_G4_Pass0_herwig(
 
   // this extracts the runnumber and segment from the output filename
   // and sets this so the server can pick it up
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
+  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
   int runnumber = runseg.first;
   int segment = runseg.second;
   if (runnumber != 0)
@@ -173,7 +173,7 @@ int Fun4All_G4_Pass0_herwig(
 
   if (Enable::DSTOUT)
   {
-    string FullOutFile = DstOut::OutputFile;
+    std::string FullOutFile = DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     if (Enable::DSTOUT_COMPRESS) DstCompress(out);
     se->registerOutputManager(out);
@@ -190,8 +190,8 @@ int Fun4All_G4_Pass0_herwig(
   // if we run the particle generator and use 0 it'll run forever
   if (nEvents == 0 && !Input::HEPMC && !Input::READHITS)
   {
-    cout << "using 0 for number of events is a bad idea when using particle generators" << endl;
-    cout << "it will run forever, so I just return without running anything" << endl;
+    std::cout << "using 0 for number of events is a bad idea when using particle generators" << std::endl;
+    std::cout << "it will run forever, so I just return without running anything" << std::endl;
     return 0;
   }
 
