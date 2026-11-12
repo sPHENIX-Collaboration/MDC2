@@ -1,5 +1,5 @@
-#ifndef MACRO_FUN4ALLG4SPHENIX_C
-#define MACRO_FUN4ALLG4SPHENIX_C
+#ifndef MACRO_FUN4ALLG4PASS1HERWIG_C
+#define MACRO_FUN4ALLG4PASS1HERWIG_C
 
 #include <GlobalVariables.C>
 
@@ -7,9 +7,11 @@
 #include <G4_Input.C>
 #include <G4_Mbd.C>
 #include <G4_Production.C>
-#include <G4_TrkrSimulation.C>
 #include <G4_RunSettings.C>
+#include <G4_TrkrSimulation.C>
 #include <SaveGitTags.C>
+
+#include <g4main/HepMCNodeReader.h>
 
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
@@ -33,12 +35,11 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_Pass1_herwig(
     const int nEvents = 1,
-    const string &inputFile = "/sphenix/sim/sim01/sphnxpro/mdc2/herwig/Herwig_MB/Herwig_MB-000000.hepmc",
-    const string &outputFile = "G4Hits_herwig_mb-0000000021-000000.root",
-    const int skip = 0,
-    const string &outdir = ".",
-    const string &cdbtag = "MDC2",
-  const std::string &gitcommit = "none")
+    const std::string &inputFile = "DST_HEPMC_Herwig_PhotonJet5-0000000028-000000.root",
+    const std::string &outputFile = "G4Hits_Herwig_PhotonJet5-0000000028-000000.root",
+    const std::string &outdir = ".",
+    const std::string &cdbtag = "MDC2",
+    const std::string &gitcommit = "none")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(0);
@@ -68,15 +69,8 @@ int Fun4All_G4_Pass1_herwig(
 
   // this extracts the runnumber and segment from the output filename
   // and sets this so the server can pick it up
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
+  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
   int runnumber = runseg.first;
-  int segment = runseg.second;
-  if (runnumber != 0)
-  {
-    rc->set_IntFlag("RUNNUMBER", runnumber);
-    Fun4AllSyncManager *syncman = se->getSyncManager();
-    syncman->SegmentNumber(segment);
-  }
 
   //===============
   // conditions DB flags
@@ -92,35 +86,14 @@ int Fun4All_G4_Pass1_herwig(
   //===============
   // verbosity setting (applies to all input managers)
   Input::VERBOSITY = 1;  // so we get prinouts of the event number
-  Input::HEPMC = true;
-  Input::EmbedId = 1;
-
-  INPUTHEPMC::filename = inputFile;
-  INPUTHEPMC::EmbedId = 1;
-
-  // Event pile up simulation with collision rate in Hz MB collisions.
-  // Enable this is emulating the nominal pp/pA/AA collision vertex distribution
+  Input::READHITS = true;
+  INPUTREADHITS::filename[0] = inputFile;
 
   RunSettings(runnumber);
 
-  //-----------------
-  // Initialize the selected Input/Event generation
-  //-----------------
-  // This creates the input generator(s)
-  InputInit();
-
-  //--------------
-  // Set Input Manager specific options
-  //--------------
-  // can only be set after InputInit() is called
-
-  if (Input::HEPMC)
-  {
-    //! apply sPHENIX beam parameters with 2mrad crossing as defined in sPH-TRG-2020-001
-    Input::ApplysPHENIXBeamParameter(INPUTMANAGER::HepMCInputManager);
-  }
-  // register all input generators with Fun4All
-  InputRegister();
+  // copy HepMC records into G4
+  HepMCNodeReader *hr = new HepMCNodeReader();
+  se->registerSubsystem(hr);
 
   SyncReco *sync = new SyncReco();
   se->registerSubsystem(sync);
@@ -209,7 +182,7 @@ int Fun4All_G4_Pass1_herwig(
 
   if (Enable::DSTOUT)
   {
-    string FullOutFile = DstOut::OutputFile;
+    std::string FullOutFile = DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     if (Enable::DSTOUT_COMPRESS) DstCompress(out);
     se->registerOutputManager(out);
@@ -226,12 +199,11 @@ int Fun4All_G4_Pass1_herwig(
   // if we run the particle generator and use 0 it'll run forever
   if (nEvents == 0 && !Input::HEPMC && !Input::READHITS)
   {
-    cout << "using 0 for number of events is a bad idea when using particle generators" << endl;
-    cout << "it will run forever, so I just return without running anything" << endl;
+    std::cout << "using 0 for number of events is a bad idea when using particle generators" << std::endl;
+    std::cout << "it will run forever, so I just return without running anything" << std::endl;
     return 0;
   }
 
-  se->skip(skip);
   se->run(nEvents);
 
   //-----
@@ -251,4 +223,5 @@ int Fun4All_G4_Pass1_herwig(
   gSystem->Exit(0);
   return 0;
 }
-#endif
+
+#endif  // FUN4ALLG4PASS1HERWIG_C
