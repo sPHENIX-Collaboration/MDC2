@@ -42,7 +42,7 @@ if ($sequence < 100)
 my $batchname = sprintf("%s %s",basename($executable),$jettrigger);
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%s-%010d-%06d",$jettrigger,$runnumber,$sequence);
-my $logdir = sprintf("%s/log/%s/run%d/%s",$localdir,$fm,$runnumber,$jettrigger);
+my $logdir = sprintf("%s/log/run%d/%s/%s/%s",$localdir,$runnumber,$fm,$pileup,$jettrigger);
 if (! -d $logdir)
 {
   mkpath($logdir);
