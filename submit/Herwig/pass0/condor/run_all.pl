@@ -6,8 +6,6 @@ use File::Path;
 use Getopt::Long;
 use DBI;
 
-sub getlastsegment;
-
 my $build;
 my $events = 1000;
 my $incremental;
@@ -81,8 +79,6 @@ my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
-my $herwig_dir = sprintf("/sphenix/lustre01/sphnxpro/mdc2/HerwigHepMC");
-
 $filetype=sprintf("%s_%s",$filetype,$jettrigger);
 my $condorlistfile =  sprintf("condor.list");
 if (-f $condorlistfile)
@@ -112,7 +108,7 @@ OUTER: for (my $isub = 0; $isub < $maxsubmit; $isub++)
 	$njob++;
 	$jobfile = sprintf("%s/condor_%s-%010d-%06d.job",$logdir,$jettrigger,$runnumber,$njob);
     }
-    print "using jobfile $jobfile\n";
+#    print "using jobfile $jobfile\n";
     my $outfile = sprintf("DST_HEPMC_%s-%010d-%06d.root",$filetype, $runnumber,$njob);
     my $fulloutfile = sprintf("%s/%s",$outdir,$outfile);
     print "out: $fulloutfile\n";
@@ -169,36 +165,4 @@ if (-f $condorlistfile)
     {
 	system("condor_submit condor.job");
     }
-}
-
-sub getlastsegment()
-{
-    my $herwigsubdir = sprintf("%s/%s",$herwig_dir,$filetype);
-    opendir(DH,$herwigsubdir);
-    my @tmpfiles = sort(readdir(DH));
-    closedir(DH);
-    my @files = ();
-    foreach my $f (@tmpfiles)
-    {
-	if ($f =~ /$jettrigger/)
-	{
-	    push(@files,$f);
-	}
-    }
-    if ($#files <= 0)
-    {
-	print "no hepmc files found in $herwigsubdir\n";
-	exit(1);
-    }
-    my $last_segment = -1;
-    if ($files[$#files] =~ /(\S+)-(\d+).*\..*/ )
-    {
-	$last_segment = int($2);
-    }
-    else
-    {
-	print "cannot parse $files[$#files] for segment number\n";
-	exit(1);
-    }
-    return $last_segment;
 }
