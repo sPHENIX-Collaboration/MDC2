@@ -20,7 +20,7 @@ cdbtag=MDC2_$anabuild
 
 # arguments 
 # $1: number of events
-# $2: hepmc input file
+# $2: hepmc input filelist
 # $3: output file
 # $4: no events to skip
 # $5: output dir
