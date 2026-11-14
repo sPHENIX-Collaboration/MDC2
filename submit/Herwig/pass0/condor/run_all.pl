@@ -17,7 +17,7 @@ my $test;
 GetOptions("build:s" => \$build, "events:i"=> \$events, "increment"=>\$incremental, "overwrite"=>\$overwrite, "run:i" =>\$runnumber, "startsegment:i" => \$startsegment, "test"=>\$test);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> \"PhotonJet5\", \"PhotonJet5Frag\", \"PhotonJet10\", \"PhotonJet10Frag\", \"PhotonJet20\", \"PhotonJet20Frag\" production>\n";
+    print "usage: run_all.pl <number of jobs> \"MB\", \"PhotonJet5\", \"PhotonJet5Frag\", \"PhotonJet10\", \"PhotonJet10Frag\", \"PhotonJet20\", \"PhotonJet20Frag\" production>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--events: number of events\n";
@@ -63,7 +63,7 @@ if ($isbad > 0)
 my $maxsubmit = $ARGV[0];
 my $jettrigger = $ARGV[1];
 my $filetype="Herwig";
-if (
+if ($jettrigger  ne "MB" &&
     $jettrigger  ne "PhotonJet5" &&
     $jettrigger  ne "PhotonJet5Frag" &&
     $jettrigger  ne "PhotonJet10" &&
@@ -71,7 +71,7 @@ if (
     $jettrigger  ne "PhotonJet20" &&
     $jettrigger  ne "PhotonJet20Frag")
 {
-    print "second argument has to be PhotonJet5, PhotonJet5Frag, PhotonJet10, PhotonJet10Frag, PhotonJet20 or PhotonJet20Frag\n";
+    print "second argument has to be MB, PhotonJet5, PhotonJet5Frag, PhotonJet10, PhotonJet10Frag, PhotonJet20 or PhotonJet20Frag\n";
     exit(1);
 }
 
