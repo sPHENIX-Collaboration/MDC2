@@ -87,7 +87,7 @@ int Fun4All_G4_Pass1_herwig(
   // verbosity setting (applies to all input managers)
   Input::VERBOSITY = 1;  // so we get prinouts of the event number
   Input::READHITS = true;
-  INPUTREADHITS::filelist[0] = inputlist;
+  INPUTREADHITS::listfile[0] = inputlist;
 
   RunSettings(runnumber);
 
