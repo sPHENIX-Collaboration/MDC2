@@ -35,8 +35,8 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_Pass1_herwig(
     const int nEvents = 1,
-    const std::string &inputFile = "DST_HEPMC_Herwig_PhotonJet5-0000000028-000000.root",
-    const std::string &outputFile = "G4Hits_Herwig_PhotonJet5-0000000028-000000.root",
+    const std::string &inputlist = "condor_PhotonJet5Frag-0000000028-000000.inputlist",
+    const std::string &outputFile = "G4Hits_Herwig_PhotonJet5Frag-0000000028-000000.root",
     const std::string &outdir = ".",
     const std::string &cdbtag = "MDC2",
     const std::string &gitcommit = "none")
@@ -87,7 +87,7 @@ int Fun4All_G4_Pass1_herwig(
   // verbosity setting (applies to all input managers)
   Input::VERBOSITY = 1;  // so we get prinouts of the event number
   Input::READHITS = true;
-  INPUTREADHITS::filename[0] = inputFile;
+  INPUTREADHITS::filelist[0] = inputlist;
 
   RunSettings(runnumber);
 
