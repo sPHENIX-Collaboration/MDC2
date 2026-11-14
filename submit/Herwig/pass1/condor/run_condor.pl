@@ -10,9 +10,10 @@ my $test;
 my $memory = sprintf("5500MB");
 my $overwrite;
 GetOptions("memory:s" => \$memory, "overwrite"=>\$overwrite, "test"=>\$test);
-if ($#ARGV < 8)
+if ($#ARGV < 7)
 {
-    print "usage: run_condor.pl <events> <inlist> <outdir> <outfile> <skip> <build> <jettrigger> <runnumber> <sequence>\n";
+    print "number of args: $#ARGV\n";
+    print "usage: run_condor.pl <events> <inlist> <outdir> <outfile> <build> <jettrigger> <runnumber> <sequence>\n";
     print "options:\n";
     print "--memory: memory requirement\n";
     print "--overwrite : overwrite existing jobfiles\n";
@@ -29,14 +30,13 @@ my $baseprio = 51;
 my $rundir = sprintf("%s/../rundir",$localdir);
 my $executable = sprintf("%s/run_pass1_herwig.sh",$rundir);
 my $nevents = $ARGV[0];
-my $inlist = $ARGV[1];
-my $dstoutdir = $ARGV[2];
+my $jettrigger = $ARGV[1];
+my $inlist = $ARGV[2];
 my $dstoutfile = $ARGV[3];
-my $skip = $ARGV[4];
+my $dstoutdir = $ARGV[4];
 my $build = $ARGV[5];
-my $jettrigger = $ARGV[6];
-my $runnumber = $ARGV[7];
-my $sequence = $ARGV[8];
+my $runnumber = $ARGV[6];
+my $sequence = $ARGV[7];
 if ($sequence < 100)
 {
     $baseprio = 90;
@@ -71,7 +71,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $inlist $dstoutfile $skip $dstoutdir $build $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $inlist $dstoutfile $dstoutdir $build $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -95,5 +95,5 @@ close(F);
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $inlist, $dstoutfile, $skip, $dstoutdir, $build, $jettrigger, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio, $memory $batchname\n";
+print F "$executable, $nevents, $inlist, $dstoutfile, $dstoutdir, $build, $jettrigger, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio, $memory $batchname\n";
 close(F);

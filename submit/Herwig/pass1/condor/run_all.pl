@@ -136,25 +136,29 @@ for (my $iseg=0; $iseg<=$max_seg; $iseg++)
 {
     if (! exists $hepmcfiles{$iseg})
     {
-	print "could not find segment $iseg in hepmc input files\n";
+	if ($verbosity > 0)
+	{
+	    print "could not find segment $iseg in hepmc input files\n";
+	}
 	$allsegs_exist = 0;
     }
     else
     {
 	$hepmcsave{$iseg} =  $hepmcfiles{$iseg};
-#	print "adding $hepmcsave{$iseg} to files\n";
     }
     if ($iseg == $nsegs-1)
     {
 	if ($allsegs_exist > 0)
 	{
-	    my $listfile = sprintf("%s/condor_%s-%010d-%06d.inputlist",$logdir,$jettrigger,$runnumber,$g4hit_seg);
-	    print "would submit job for segment $g4hit_seg\n";
+	    my $listfile = sprintf("%s/condor-%010d-%06d.inputlist",$logdir,$runnumber,$g4hit_seg);
 	    open(F,">$listfile");
 	    foreach my $index (sort keys %hepmcsave)
 	    {
 		print F "$hepmcsave{$index}\n";
-		print "file $hepmcsave{$index}\n";
+		if ($verbosity > 0)
+		{
+		    print "file $hepmcsave{$index}\n";
+		}
 	    }
 	    close(F);
 	    my $outfilename = sprintf("G4Hits_%s-%010d-%06d.root",$filetype,$runnumber,$g4hit_seg);
@@ -172,7 +176,6 @@ for (my $iseg=0; $iseg<=$max_seg; $iseg++)
 		}
 		my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $listfile, $outfilename, $outdir, $build, $runnumber, $g4hit_seg, $tstflag);
 		print "cmd: $subcmd\n";
-		die;
 		system($subcmd);
 		my $exit_value  = $? >> 8;
 		if ($exit_value != 0)

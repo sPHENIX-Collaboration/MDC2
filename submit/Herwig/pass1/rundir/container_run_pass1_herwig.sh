@@ -12,7 +12,7 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
-anabuild=${6}
+anabuild=${5}
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
 
@@ -22,39 +22,37 @@ cdbtag=MDC2_$anabuild
 # $1: number of events
 # $2: hepmc input filelist
 # $3: output file
-# $4: no events to skip
-# $5: output dir
-# $6: build
-# $7: jet trigger
-# $8: runnumber
-# $9: sequence
-# $10: mdc2 git commit id
+# $4: output dir
+# $5: build
+# $6: jet trigger
+# $7: runnumber
+# $8: sequence
+# $9: mdc2 git commit id
 
 echo 'here comes your environment'
 printenv
 echo arg1 \(events\) : $1
-echo arg2 \(hepmc file\): $2
+echo arg2 \(hepmc file list\): $2
 echo arg3 \(output file\): $3
-echo arg4 \(skip\): $4
-echo arg5 \(output dir\): $5
-echo arg6 \(build\): $6
-echo arg7 \(jet trigger\): $7
-echo arg8 \(runnumber\): $8
-echo arg9 \(sequence\): $9
-echo arg10 \(git commit id\): ${10}
+echo arg4 \(output dir\): $4
+echo arg5 \(build\): $5
+echo arg6 \(jet trigger\): $6
+echo arg7 \(runnumber\): $7
+echo arg8 \(sequence\): $8
+echo arg9 \(git commit id\): $9
 echo cdbtag: $cdbtag
 
-runnumber=$(printf "%010d" $8)
-sequence=$(printf "%06d" $9)
+runnumber=$(printf "%010d" $7)
+sequence=$(printf "%06d" $8)
 
 filename=timing
 
-echo running root.exe -q -b Fun4All_G4_Pass1_herwig.C\($1,\"$2\",\"$3\",$4,\"$5\",\"$cdbtag\",\"${10}\"\)
- root.exe -q -b  Fun4All_G4_Pass1_herwig.C\($1,\"$2\",\"$3\",$4,\"$5\",\"$cdbtag\",\"${10}\"\)
+echo running root.exe -q -b Fun4All_G4_Pass1_herwig.C\($1,\"$2\",\"$3\"\"$4\",\"$cdbtag\",\"$9\"\)
+ root.exe -q -b  Fun4All_G4_Pass1_herwig.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"$9\"\)
 
 [[ -f copyscript.sh ]] && sh copyscript.sh
 
-timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/Herwig/pass1/timing.run${8}/${7}
+timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/Herwig/pass1/timing.run${7}/${8}
 
 [ ! -d $timedirname ] && mkdir -p $timedirname
 
