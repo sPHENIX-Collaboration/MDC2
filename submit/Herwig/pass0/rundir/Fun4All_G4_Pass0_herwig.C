@@ -36,9 +36,9 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_Pass0_herwig(
     const int nEvents = 1,
-    const std::string &outputFile = "DST_HEPMC_herwig_mb-0000000028-000000.root",
+    const std::string &outputFile = "DST_HEPMC_Herwig_MB-0000000028-000000.root",
     const std::string &outdir = ".",
-    const std::string &jettrigger = "PhotonJet5Frag",
+    const std::string &jettrigger = "MB",
     const std::string &cdbtag = "MDC2",
     const std::string &gitcommit = "none")
 {
