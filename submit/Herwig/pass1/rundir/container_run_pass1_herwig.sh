@@ -18,6 +18,20 @@ source /opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
 
 cdbtag=MDC2_$anabuild
 
+if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
+then
+    cd $_CONDOR_SCRATCH_DIR # redundant but in case someone screw this up and we fill the home disk
+    perl getinputfiles.pl -dd --filelist $2
+    if [ $? -ne 0 ]
+    then
+	echo error from getinputfiles.pl -dd --filelist $2, exiting
+	exit -1
+    fi
+else
+    echo condor scratch NOT set
+    exit -1
+fi
+
 # arguments 
 # $1: number of events
 # $2: hepmc input filelist
@@ -47,7 +61,7 @@ sequence=$(printf "%06d" $8)
 
 filename=timing
 
-echo running root.exe -q -b Fun4All_G4_Pass1_herwig.C\($1,\"$2\",\"$3\"\"$4\",\"$cdbtag\",\"$9\"\)
+echo running root.exe -q -b Fun4All_G4_Pass1_herwig.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"$9\"\)
  root.exe -q -b  Fun4All_G4_Pass1_herwig.C\($1,\"$2\",\"$3\",\"$4\",\"$cdbtag\",\"$9\"\)
 
 [[ -f copyscript.sh ]] && sh copyscript.sh
