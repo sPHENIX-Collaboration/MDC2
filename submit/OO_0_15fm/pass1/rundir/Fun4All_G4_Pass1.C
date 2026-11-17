@@ -69,8 +69,8 @@ int Fun4All_G4_Pass1(
     SaveGitTags();
   }
 // set tracking to extended readout and pp mode (planned for OO)
-  TRACKING::pp_mode = true;
-  TRACKING::pp_extended_readout_time = 90000;
+  TRACKING::streaming_mode = true;
+  TRACKING::extended_readout_time = 90000;
   // this extracts the runnumber and segment from the output filename
   // and sets this so the server can pick it up
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);

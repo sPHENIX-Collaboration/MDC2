@@ -5,6 +5,7 @@
 #include <SaveGitTags.C>
 #include <Trkr_RecoInit.C>
 #include <Trkr_Reco.C>
+#include <Trkr_Clustering.C>
 
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
@@ -109,8 +110,12 @@ int Fun4All_G4_sPHENIX_jobA(
   MagnetFieldInit();
   TrackingInit();
   
+  Mvtx_Clustering();
+  Intt_Clustering();
+  Micromegas_Clustering();
+  
   // tracking
-  Tracking_Reco_TrackSeed();
+  Tracking_Reco_PolySeed();
 
   TimerStats *ts = new TimerStats();
   ts->OutFileName("jobtime.root");
