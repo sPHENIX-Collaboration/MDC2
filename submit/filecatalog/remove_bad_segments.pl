@@ -501,10 +501,20 @@ elsif ($system == 11)
 	{
 	    $pileupstring = "_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm";
 	}
-	else
+	elsif ($embed eq "auau")
 	{
 	    $pileupstring = sprintf("_sHijing_%s%s",$fm,$AuAu_bkgpileup);
 	}
+	elsif ($embed eq "oo")
+	{
+	    $pileupstring = sprintf("_sHijing_OO_0_15fm_%dkHz_bkg_0_15fm",$pileup);
+	}
+	else
+	{
+	    print "embed $embed not implemented\n";
+	    exit 1;
+	}
+	       
     }
     $specialcondorfileadd{"G4Hits"} = "Jet30";
 }

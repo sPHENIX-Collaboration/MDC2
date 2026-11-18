@@ -7,14 +7,14 @@ use DBI;
 use Getopt::Long;
 
 my $mdc = "mdc2";
-my $test;
-GetOptions("test"=>\$test);
+my $notest;
+GetOptions("notest"=>\$notest);
 
 if ($#ARGV < 0)
 {
     print "usage: add_fcat <lustredir>\n";
     print "parameters:\n";
-    print "--test: run in test mode\n";
+    print "--notest: run for real\n";
     exit(1);
 }
 
@@ -51,53 +51,53 @@ while (my $file = <F>)
     my $lfn = basename($file);
     my $needinsert = 1;
 #    print "checking $lfn\n";
-#    $chkfile->execute($lfn);
-#    if ($chkfile->rows == 0)
-#    {
-    if (! defined $test)
+    $chkfile->execute($lfn);
+    if ($chkfile->rows == 0)
     {
-	print "inserting $lfn\n";
-	my $fdate = stat($file)->mtime;
-	$insertfile->execute($lfn, $file,  $fdate, $fsize);
+	if (defined $notest)
+	{
+	    print "inserting $lfn\n";
+	    my $fdate = stat($file)->mtime;
+	    $insertfile->execute($lfn, $file,  $fdate, $fsize);
+	}
+	else
+	{
+	    print "would insert $lfn, lustre, $file, now, $fsize \n";
+	}
     }
     else
     {
-	print "would insert $lfn, lustre, $file, now, $fsize \n";
+	while(my @res = $chkfile->fetchrow_array)
+	{
+#	    print "$res[1], $file\n";
+	    if ($res[1] eq  $file)
+	    {
+#		print "size $fsize, $res[0]\n";
+		if ($fsize == $res[0])
+		{
+		    $needinsert = 0;
+		    next;
+		}
+		else
+		{
+		    if (defined $notest)
+		    {
+			print "updating size for $lfn from $res[0] to $fsize\n";
+			$updatesize->execute($fsize,$lfn,$file);
+			$needinsert = 0;
+			next;
+		    }
+		    else
+		    {
+			print "would update size for $lfn from $res[0] to $fsize\n";
+		    }
+		}
+	    }
+	}
     }
-#    }
-#    else
-#    {
-#	while(my @res = $chkfile->fetchrow_array)
-#	{
-#	print "$res[1], $file\n";
-#	    if ($res[1] eq  $file)
-#    {
-#	    print "size $fsize, $res[0]\n";
-#		if ($fsize == $res[0])
-#		{
-#		    $needinsert = 0;
-#		    next;
-#		}
-#		else
-#		{
-#		    if (! defined $test)
-#		    {
-#			print "updating size for $lfn from $res[0] to $fsize\n";
-#		        $updatesize->execute($fsize,$lfn,$file);
-#			$needinsert = 0;
-#			next;
-#		    }
-#		    else
-#		    {
-#			print "would update size for $lfn from $res[0] to $fsize\n";
-#		    }
-#		}
-#	    }
-#	    }
-#	    }
 }
-    close(F);
-    $chkfile->finish();
-    $insertfile->finish();
-    $updatesize->finish();
-    $dbh->disconnect;
+close(F);
+$chkfile->finish();
+$insertfile->finish();
+$updatesize->finish();
+$dbh->disconnect;

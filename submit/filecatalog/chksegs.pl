@@ -259,6 +259,10 @@ elsif ($system == 11)
 		{
 		    $systemstring = sprintf("%s_sHijing_pAu_0_10fm%s",$systemstring_g4hits,$pAu_bkgpileup);
 		}
+		elsif ($embed eq "oo")
+		{
+		    $systemstring = sprintf("%s_sHijing_OO_0_15fm_%dkHz_bkg_0_15fm",$systemstring_g4hits,$pileup);
+		}
 		else
 		{
 		    print "bad embed val: $embed, valid values auau, pau\n";
@@ -692,6 +696,10 @@ elsif ($system == 26)
 		elsif ($embed eq "pau")
 		{
 		    $systemstring = sprintf("%s_sHijing_pAu_0_10fm_500kHz_bkg_0_10fm",$systemstring_g4hits);
+		}
+		elsif ($embed eq "oo")
+		{
+		    $systemstring = sprintf("%s_sHijing_OO_0_15fm_%dkHz_bkg_0_15fm",$systemstring_g4hits,$pileup);
 		}
 		else
 		{
@@ -1131,6 +1139,10 @@ elsif ($system == 35)
 		{
 		    $systemstring = sprintf("%s_sHijing_pAu_0_10fm%s",$systemstring_g4hits,$pAu_bkgpileup);
 		}
+		elsif ($embed eq "oo")
+		{
+		    $systemstring = sprintf("%s_sHijing_OO_0_15fm_%dkHz_bkg_0_15fm",$systemstring_g4hits,$pileup);
+		}
 		else
 		{
 		    print "bad embed val: $embed, valid values auau, pau\n";
@@ -1249,6 +1261,10 @@ elsif ($system == 38)
 		elsif ($embed eq "pau")
 		{
 		    $systemstring = sprintf("%s_sHijing_pAu_0_10fm%s",$systemstring_g4hits,$pAu_bkgpileup);
+		}
+		elsif ($embed eq "oo")
+		{
+		    $systemstring = sprintf("%s_sHijing_OO_0_15fm_%dkHz_bkg_0_15fm",$systemstring_g4hits,$pileup);
 		}
 		else
 		{
