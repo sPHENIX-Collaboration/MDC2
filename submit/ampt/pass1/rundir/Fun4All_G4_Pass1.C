@@ -32,31 +32,23 @@ R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_Pass1(
-    const int nEvents = 1,
-    const string &inputFile = "/sphenix/sim/sim01/sphnxpro/mdc2/AMPT/AuAu/AMPT_AuAu-0000000001-00000.dat",
-    const string &outputFile = "G4Hits_ampt-0000000026-000000.root",
-    const int skip = 0,
-    const string &outdir = ".",
-    const string &cdbtag = "MDC2",
-    const std::string &gitcommit = "none")
+  const int nEvents = 1,
+  const string &inputFile = "/sphenix/lustre01/sphnxpro/mdc2/AMPT/OO/AMPT_OO_200GeV-0000000001-000000.hepmc",
+  const string &outputFile = "G4Hits_AMPT_OO_200GeV-0000000035-000000.root",
+  const int skip = 0,
+  const string &outdir = ".",
+  const string &cdbtag = "MDC2",
+  const std::string &gitcommit = "none")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
-  se->Verbosity(0);
+  se->Verbosity(1);
 
   // Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
   PHRandomSeed::Verbosity(1);
 
   // just if we set some flags somewhere in this macro
   recoConsts *rc = recoConsts::instance();
-  // save all git tags from build
-  if (gitcommit != "none")
-  {
-    SaveGitTags(gitcommit);
-  }
-  else
-  {
-    SaveGitTags();
-  }
+
   // By default every random number generator uses
   // PHRandomSeed() which reads /dev/urandom to get its seed
   // if the RANDOMSEED flag is set its value is taken as seed
@@ -67,15 +59,20 @@ int Fun4All_G4_Pass1(
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
 
-  //===============
-  // conditions DB flags
-  //===============
-  Enable::CDB = true;
-  // global tag
-  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
-  // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+// save all git tags from build
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
 
+
+// set tracking to extended readout and pp mode (planned for OO)
+  TRACKING::streaming_mode = true;
+  TRACKING::extended_readout_time = 90000;
   // this extracts the runnumber and segment from the output filename
   // and sets this so the server can pick it up
   pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
@@ -88,21 +85,27 @@ int Fun4All_G4_Pass1(
     syncman->SegmentNumber(segment);
   }
 
+  RunSettings(runnumber);
+
+  //===============
+  // conditions DB flags
+  //===============
+  Enable::CDB = true;
+  // global tag
+  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
+  // 64 bit timestamp
+  rc->set_uint64Flag("TIMESTAMP", runnumber);
+
   //===============
   // Input options
   //===============
   // verbosity setting (applies to all input managers)
   Input::VERBOSITY = 1;  // so we get prinouts of the event number
 
-  Input::BEAM_CONFIGURATION = Input::AA_COLLISION;  // for 2023 sims we want the AA geometry for no pileup sims
-
-  RunSettings(runnumber);
-
   Input::HEPMC = true;
 
   INPUTHEPMC::filename = inputFile;
   INPUTHEPMC::REACTIONPLANERAND = true;
-  // Event pile up simulation with collision rate in Hz MB collisions.
 
   //-----------------
   // Initialize the selected Input/Event generation
@@ -119,13 +122,6 @@ int Fun4All_G4_Pass1(
   {
     //! apply sPHENIX nominal beam parameter with 2mrad crossing as defined in sPH-TRG-2020-001
     Input::ApplysPHENIXBeamParameter(INPUTMANAGER::HepMCInputManager);
-    if (Input::PILEUPRATE > 0)
-    {
-      // Copy vertex settings from foreground hepmc input
-      INPUTMANAGER::HepMCPileupInputManager->CopyHelperSettings(INPUTMANAGER::HepMCInputManager);
-      // and then modify the ones you want to be different
-      // INPUTMANAGER::HepMCPileupInputManager->set_vertex_distribution_width(100e-4,100e-4,8,0);
-    }
   }
   // register all input generators with Fun4All
   InputRegister();
