@@ -7,8 +7,6 @@ use File::Basename;
 use Getopt::Long;
 use DBI;
 
-sub submitjob;
-
 my $build;
 my $incremental;
 my $memory;
