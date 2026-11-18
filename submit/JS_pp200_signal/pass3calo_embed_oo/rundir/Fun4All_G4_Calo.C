@@ -14,6 +14,11 @@
 #include <G4_RunSettings.C>
 #include <SaveGitTags.C>
 
+#include <ffamodules/CDBInterface.h>
+#include <ffamodules/FlagHandler.h>
+
+#include <fun4allutils/TimerStats.h>
+
 #include <caloreco/CaloGeomMapping.h>
 #include <caloreco/CaloTowerBuilder.h>
 #include <caloreco/CaloTowerCalib.h>
@@ -27,11 +32,6 @@
 #include <fun4all/Fun4AllRunNodeInputManager.h>
 #include <fun4all/Fun4AllServer.h>
 #include <fun4all/Fun4AllUtils.h>
-
-#include <ffamodules/CDBInterface.h>
-#include <ffamodules/FlagHandler.h>
-
-#include <fun4allutils/TimerStats.h>
 
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
@@ -49,8 +49,8 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 void Fun4All_G4_Calo(
   const int nEvents = 1,
-  const std::string &inputFile0 = "DST_CALO_G4HIT_pythia8_Jet30_sHijing_OO_0_15fm_220kHz_bkg_0_15fm-0000000035-000000.root",
-  const std::string &outputFile = "DST_CALO_CLUSTER_pythia8_Jet30_sHijing_OO_0_15fm_220kHz_bkg_0_15fm-0000000035-000000.root",
+  const std::string &inputFile0 = "DST_CALO_G4HIT_Herwig_MB_200kHz-0000000029-000000.root",
+  const std::string &outputFile = "DST_CALO_CLUSTER_Herwig_MB_200kHz-0000000029-000000.root",
   const std::string &outdir = ".",
   const std::string &cdbtag = "MDC2",
   const std::string &gitcommit = "none")
@@ -82,20 +82,19 @@ void Fun4All_G4_Calo(
   {
     SaveGitTags();
   }
+  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile0);
+  int runnumber = runseg.first;
+  //  int segment = runseg.second;
 
   //===============
   // conditions DB flags
   //===============
-
-  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
-  int runnumber = runseg.first;
-
-  RunSettings(runnumber);
-
   Enable::CDB = true;
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   rc->set_uint64Flag("TIMESTAMP", runnumber);
   CDBInterface::instance()->Verbosity(1);
+
+  RunSettings(runnumber);
 
   //===============
   // Input options
@@ -165,7 +164,8 @@ void Fun4All_G4_Calo(
   // a int from 0 to 3259
   int sequence = randGen.Integer(3260);
 
-  std::string pedestalname = std::format("pedestal-54256-{:05}.root",sequence);
+  int pedestalrun = 54256;
+  std::string pedestalname = std::format("pedestal-{:08}-{:05}.root",pedestalrun, sequence);
 
   Fun4AllInputManager *hitsin = new Fun4AllNoSyncDstInputManager("DST2");
   hitsin->NoRunTTree(); // suppress error message about missing T1 TTree
@@ -185,7 +185,7 @@ void Fun4All_G4_Calo(
     out->AddNode("Sync");
     out->AddNode("EventHeader");
     // Inner Hcal
-    // this is what production macro gives us
+    // this is what production macto gives us
     out->AddNode("CLUSTERINFO_HCALIN");
     out->AddNode("TOWERINFO_CALIB_HCALIN");
     out->AddNode("WAVEFORM_HCALIN");
@@ -223,12 +223,12 @@ void Fun4All_G4_Calo(
   CDBInterface::instance()->Print();  // print used DB files
   se->End();
   se->PrintTimer();
-  std::cout << "All done" << std::endl;
   delete se;
   if (Enable::PRODUCTION)
   {
     Production_MoveOutput();
   }
+  std::cout << "All done" << std::endl;
   gSystem->Exit(0);
 }
 

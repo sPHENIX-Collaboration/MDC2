@@ -1,3 +1,5 @@
+// these include guards are not really needed, but if we ever include this
+// file somewhere they would be missed and we will have to refurbish all macros
 #ifndef MACRO_FUN4ALLG4CALO_C
 #define MACRO_FUN4ALLG4CALO_C
 
@@ -20,40 +22,46 @@
 #include <caloreco/CaloGeomMapping.h>
 #include <caloreco/CaloTowerBuilder.h>
 #include <caloreco/CaloTowerCalib.h>
-#include <caloreco/CaloWaveformProcessing.h>
 #include <caloreco/CaloTowerStatus.h>
+#include <caloreco/CaloWaveformProcessing.h>
 
 #include <calowaveformsim/CaloWaveformSim.h>
 
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
+#include <fun4all/Fun4AllRunNodeInputManager.h>
 #include <fun4all/Fun4AllServer.h>
 #include <fun4all/Fun4AllUtils.h>
 
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
 
-R__LOAD_LIBRARY(libffamodules.so)
+#include <TRandom3.h>
+
+#include <format>
+
 R__LOAD_LIBRARY(libfun4all.so)
-R__LOAD_LIBRARY(libfun4allutils.so)
+R__LOAD_LIBRARY(libg4centrality.so)
 R__LOAD_LIBRARY(libCaloWaveformSim.so)
 R__LOAD_LIBRARY(libcalo_reco.so)
+R__LOAD_LIBRARY(libffamodules.so)
+R__LOAD_LIBRARY(libfun4allutils.so)
 
-int Fun4All_G4_Calo(
-    const int nEvents = 1,
-    const string &inputFile0 = "DST_CALO_G4HIT_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000023-000000.root",
-    const string &outputFile = "DST_CALO_CLUSTER_pythia8_Jet30_sHijing_0_20fm_50kHz_bkg_0_20fm-0000000023-000000.root",
-    const string &outdir = ".",
-    const string &cdbtag = "MDC2")
+void Fun4All_G4_Calo(
+  const int nEvents = 1,
+  const std::string &inputFile0 = "DST_CALO_G4HIT_Herwig_MB_200kHz-0000000029-000000.root",
+  const std::string &outputFile = "DST_CALO_CLUSTER_Herwig_MB_200kHz-0000000029-000000.root",
+  const std::string &outdir = ".",
+  const std::string &cdbtag = "MDC2",
+  const std::string &gitcommit = "none")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
-  se->Verbosity(1);
+  se->Verbosity(1);  // set it to 1 if you want event printouts
+
+  recoConsts *rc = recoConsts::instance();
 
   // Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
   PHRandomSeed::Verbosity(1);
-
-  // just if we set some flags somewhere in this macro
-  recoConsts *rc = recoConsts::instance();
   // By default every random number generator uses
   // PHRandomSeed() which reads /dev/urandom to get its seed
   // if the RANDOMSEED flag is set its value is taken as seed
@@ -63,22 +71,31 @@ int Fun4All_G4_Calo(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
+  // int seedValue = 491258969;
+  // rc->set_IntFlag("RANDOMSEED", seedValue);
 
-  SaveGitTags(); // save the git tags from rebuild.info as rc string flags
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
+  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile0);
+  int runnumber = runseg.first;
+  //  int segment = runseg.second;
 
   //===============
   // conditions DB flags
   //===============
-
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
-  int runnumber = runseg.first;
-
-  RunSettings(runnumber);
-
   Enable::CDB = true;
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   rc->set_uint64Flag("TIMESTAMP", runnumber);
   CDBInterface::instance()->Verbosity(1);
+
+  RunSettings(runnumber);
+
   //===============
   // Input options
   //===============
@@ -90,6 +107,7 @@ int Fun4All_G4_Calo(
   // the simulations step completely. The G4Setup macro is only loaded to get information
   // about the number of layers used for the cell reco code
   Input::READHITS = true;
+
   INPUTREADHITS::filename[0] = inputFile0;
 
   //-----------------
@@ -117,12 +135,6 @@ int Fun4All_G4_Calo(
   DstOut::OutputDir = outdir;
   DstOut::OutputFile = outputFile;
 
-  //======================
-  // What to run
-  //======================
-  // Global options (enabled for all enables subsystems - if implemented)
-  //  Enable::VERBOSITY = 1;
-
   Enable::CEMC_TOWERINFO = true;
   Enable::HCALIN_TOWERINFO = true;
   Enable::HCALOUT_TOWERINFO = true;
@@ -132,6 +144,7 @@ int Fun4All_G4_Calo(
   HCALOuter_Towers();
 
   Process_Calo_Calib();
+
   //--------------
   // Timing module is last to register
   //--------------
@@ -144,20 +157,18 @@ int Fun4All_G4_Calo(
   //--------------
 
   InputManagers();
-
   TRandom3 randGen;
   // get seed
   unsigned int seed = PHRandomSeed();
   randGen.SetSeed(seed);
   // a int from 0 to 3259
   int sequence = randGen.Integer(3260);
-  // pad the name
-  std::ostringstream opedname;
-  opedname << "pedestal-54256-0" << std::setw(4) << std::setfill('0') << sequence << ".root";
 
-  std::string pedestalname = opedname.str();
+  int pedestalrun = 54256;
+  std::string pedestalname = std::format("pedestal-{:08}-{:05}.root",pedestalrun, sequence);
 
   Fun4AllInputManager *hitsin = new Fun4AllNoSyncDstInputManager("DST2");
+  hitsin->NoRunTTree(); // suppress error message about missing T1 TTree
   hitsin->AddFile(pedestalname);
   hitsin->Repeat();
   se->registerInputManager(hitsin);
@@ -169,11 +180,12 @@ int Fun4All_G4_Calo(
 
   if (Enable::DSTOUT)
   {
-    string FullOutFile = DstOut::OutputFile;
+    std::string FullOutFile = DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     out->AddNode("Sync");
     out->AddNode("EventHeader");
     // Inner Hcal
+    // this is what production macto gives us
     out->AddNode("CLUSTERINFO_HCALIN");
     out->AddNode("TOWERINFO_CALIB_HCALIN");
     out->AddNode("WAVEFORM_HCALIN");
@@ -193,13 +205,14 @@ int Fun4All_G4_Calo(
     out->AddNode("TOWERS_CEMC");
     se->registerOutputManager(out);
   }
+
   //-----------------
   // Event processing
   //-----------------
   // if we use a negative number of events we go back to the command line here
   if (nEvents < 0)
   {
-    return 0;
+    return;
   }
   se->run(nEvents);
 
@@ -210,14 +223,13 @@ int Fun4All_G4_Calo(
   CDBInterface::instance()->Print();  // print used DB files
   se->End();
   se->PrintTimer();
-  std::cout << "All done" << std::endl;
   delete se;
   if (Enable::PRODUCTION)
   {
     Production_MoveOutput();
   }
-
+  std::cout << "All done" << std::endl;
   gSystem->Exit(0);
-  return 0;
 }
-#endif
+
+#endif  // MACRO_FUN4ALLG4CALO_C

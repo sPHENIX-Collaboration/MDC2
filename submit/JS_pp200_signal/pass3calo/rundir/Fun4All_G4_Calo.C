@@ -49,8 +49,8 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 void Fun4All_G4_Calo(
   const int nEvents = 1,
-  const std::string &inputFile0 = "DST_CALO_G4HIT_pythia8_Jet30_1000kHz-0000000029-000000.root",
-  const std::string &outputFile = "DST_CALO_CLUSTER_pythia8_Jet30_1000kHz-0000000029-000000.root",
+  const std::string &inputFile0 = "DST_CALO_G4HIT_Herwig_MB_200kHz-0000000029-000000.root",
+  const std::string &outputFile = "DST_CALO_CLUSTER_Herwig_MB_200kHz-0000000029-000000.root",
   const std::string &outdir = ".",
   const std::string &cdbtag = "MDC2",
   const std::string &gitcommit = "none")
@@ -164,9 +164,11 @@ void Fun4All_G4_Calo(
   // a int from 0 to 3259
   int sequence = randGen.Integer(3260);
 
-  std::string pedestalname = std::format("pedestal-54256-{:05}.root",sequence);
+  int pedestalrun = 54256;
+  std::string pedestalname = std::format("pedestal-{:08}-{:05}.root",pedestalrun, sequence);
 
   Fun4AllInputManager *hitsin = new Fun4AllNoSyncDstInputManager("DST2");
+  hitsin->NoRunTTree(); // suppress error message about missing T1 TTree
   hitsin->AddFile(pedestalname);
   hitsin->Repeat();
   se->registerInputManager(hitsin);
