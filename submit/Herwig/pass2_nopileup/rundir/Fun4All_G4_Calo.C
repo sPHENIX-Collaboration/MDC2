@@ -162,8 +162,8 @@ void Fun4All_G4_Calo(
   randGen.SetSeed(seed);
   // a int from 0 to 3259
   int sequence = randGen.Integer(3260);
-
-  std::string pedestalname = std::format("pedestal-54256-{:05}.root",sequence);
+  int pedestalrun = 54256;
+  std::string pedestalname = std::format("pedestal-{:08}-{:05}.root",pedestalrun, sequence);
 
   Fun4AllInputManager *hitsin = new Fun4AllNoSyncDstInputManager("DST2");
   hitsin->AddFile(pedestalname);
