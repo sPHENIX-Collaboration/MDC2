@@ -85,7 +85,7 @@ print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";
 print F "Executable 	= $executable\n";
-print F "Arguments       = \"$nevents $infile $backgroundlist $dstoutdir $jettrigger $build $pileuprate $runnumber $sequence\"\n";
+print F "Arguments       = \"$nevents $infile $backgroundlist $dstoutdir $jettrigger $build $pileuprate $pileup $runnumber $sequence\"\n";
 print F "Output  	= $outfile\n";
 print F "Error 		= $errfile\n";
 print F "Log  		= $condorlogfile\n";
@@ -109,5 +109,5 @@ if (defined $test)
 #}
 
 open(F,">>$condorlistfile");
-print F "$executable, $nevents, $infile, $backgroundlist, $dstoutdir, $jettrigger, $build, $pileuprate, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio, $memory $batchname\n";
+print F "$executable, $nevents, $infile, $backgroundlist, $dstoutdir, $jettrigger, $build, $pileuprate, $pileup, $runnumber, $sequence, $outfile, $errfile, $condorlogfile, $rundir, $baseprio, $memory $batchname\n";
 close(F);

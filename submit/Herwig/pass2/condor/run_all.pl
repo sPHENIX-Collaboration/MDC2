@@ -145,7 +145,7 @@ while (my @res = $getfiles->fetchrow_array())
 	}
 	foreach my $type (sort keys %outfiletype)
 	{
-	    my $outfilename = sprintf("%s/%s_Herwig_%s-%010d-%06d.root",$outdir,$type,$jettrigger,$outrunnumber,$segment);
+	    my $outfilename = sprintf("%s/%s_Herwig_%s_%s-%010d-%06d.root",$outdir,$type,$jettrigger,$pileup,$outrunnumber,$segment);
 #	    print "checking for $outfilename\n";
 	    if (! -f  $outfilename)
 	    {

@@ -38,6 +38,7 @@ R__LOAD_LIBRARY(libfun4allutils.so)
     const std::string &outdir = ".",
     const std::string &jettrigger = "NONE",
     const int pileup = 200000,
+    const std::string  &pileupstring = 200000,
     const std::string &cdbtag = "MDC2",
     const std::string &gitcommit = "none")
 {
@@ -119,7 +120,7 @@ R__LOAD_LIBRARY(libfun4allutils.so)
   //  se->registerOutputManager(out);
   if (Enable::PRODUCTION)
   {
-    CreateDstOutput(runnumber, segment, jettrigger);
+    CreateDstOutput(runnumber, segment, jettrigger, pileupstring);
   }
 
   // process events

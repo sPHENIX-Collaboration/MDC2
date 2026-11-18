@@ -36,7 +36,7 @@ fi
 # $4: output directory
 # $5: jettrigger
 # $6: build
-# $7: pileup (in kHz)
+# $7: pileuprate (in kHz)
 # $8: run number
 # $9: sequence
 # $10: git commit id
@@ -49,23 +49,24 @@ echo arg3 \(background listfile\): $3
 echo arg4 \(output dir\): $4
 echo arg5 \(jettrigger\): $5
 echo arg6 \(build\): $6
-echo arg7 \(pileup\): $7
-echo arg8 \(runnumber\): $8
-echo arg9 \(sequence\): $9
-echo arg10 \(git commit id\): ${10}
+echo arg7 \(pileuprate\): $7
+echo arg8 \(pileup\): $8
+echo arg9 \(runnumber\): $9
+echo arg10 \(sequence\): ${10}
+echo arg11 \(git commit id\): ${11}
 echo cdbtag: $cdbtag
 
-runnumber=$(printf "%010d" $8)
-sequence=$(printf "%06d" $9)
+runnumber=$(printf "%010d" $9)
+sequence=$(printf "%06d" ${10})
 
 filename=timing
 
-echo running root.exe -q -b Fun4All_G4_Pileup_pp.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",$7,\"$cdbtag\",\"${10}\"\)
-root.exe -q -b  Fun4All_G4_Pileup_pp.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",$7,\"$cdbtag\",\"${10}\"\)
+echo running root.exe -q -b Fun4All_G4_Pileup_pp.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",$7,\"$8\",\"$cdbtag\",\"${11}\"\)
+root.exe -q -b  Fun4All_G4_Pileup_pp.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",$7,,\"$8\",\"$cdbtag\",\"${11}\"\)
 
 [[ -f copyscript.sh ]] && sh copyscript.sh
 
-timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/Herwig/pass2/timing.run${8}/${5}
+timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/Herwig/pass2/timing.run${9}/${5}
 
 [ ! -d $timedirname ] &&  mkdir -p $timedirname
 
