@@ -29,8 +29,8 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_Pass3Trk(
     const int nEvents = 1,
-    const std::string &inputFile0 = "DST_TRKR_G4HIT_pythia8_Jet30_1000kHz-0000000028-000000.root",
-    const std::string &inputFile1 = "DST_TRUTH_G4HIT_pythia8_Jet30_1000kHz-0000000028-000000.root",
+    const std::string &inputFile0 = "DST_TRKR_G4HIT_sHijing_OO_0_15fm_220kHz_bkg_0_15fm-0000000035-000000.root",
+    const std::string &inputFile1 = "DST_TRUTH_G4HIT_sHijing_OO_0_15fm_220kHz_bkg_0_15fm-0000000035-000000.root",
     const std::string &outdir = ".",
     const std::string &pileup = "270kHz",
     const std::string &cdbtag = "MDC2",
@@ -122,8 +122,8 @@ int Fun4All_G4_Pass3Trk(
   // Global options (enabled for all enables subsystems - if implemented)
   //  Enable::VERBOSITY = 1;
 
-  // set pp tracking mode
-  TRACKING::pp_mode = true;
+  // set streaming tracking mode
+  TRACKING::streaming_mode = true;
   
   // central tracking
   Enable::MVTX = true;
