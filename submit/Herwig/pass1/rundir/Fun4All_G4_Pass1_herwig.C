@@ -42,7 +42,7 @@ int Fun4All_G4_Pass1_herwig(
     const std::string &gitcommit = "none")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
-  se->Verbosity(0);
+  se->Verbosity(1);
 
   // Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
   PHRandomSeed::Verbosity(1);
@@ -85,7 +85,7 @@ int Fun4All_G4_Pass1_herwig(
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP", runnumber);
-
+  rc->set_IntFlag("RUNNUMBER", runnumber); // currently PHG4TpcSubsystem uses it at initialization
   //===============
   // Input options
   //===============

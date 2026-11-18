@@ -166,6 +166,7 @@ void Fun4All_G4_Calo(
   std::string pedestalname = std::format("pedestal-{:08}-{:05}.root",pedestalrun, sequence);
 
   Fun4AllInputManager *hitsin = new Fun4AllNoSyncDstInputManager("DST2");
+  hitsin->NoRunTTree(); // suppress error message about missing T1 TTree
   hitsin->AddFile(pedestalname);
   hitsin->Repeat();
   se->registerInputManager(hitsin);
