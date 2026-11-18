@@ -22,7 +22,7 @@ my $verbosity = 0;
 GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "outrunnumber"=>\$outrunnumber, "overwrite"=> \$overwrite, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet5\", \"Jet12\", \"Jet20\", \"Jet30\", \"Jet40\", \"Jet50\", \"MB\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\" production>\n";
+    print "usage: run_all.pl <number of jobs> \"MB\", \"PhotonJet5\", \"PhotonJet5Frag\", \"PhotonJet10\", \"PhotonJet10Frag\", \"PhotonJet20\", \"PhotonJet20Frag\" production>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
@@ -73,18 +73,15 @@ if ($isbad > 0)
 
 my $maxsubmit = $ARGV[0];
 my $jettrigger = $ARGV[1];
-if ($jettrigger  ne "Jet5" &&
-    $jettrigger  ne "Jet12" &&
-    $jettrigger  ne "Jet20" &&
-    $jettrigger  ne "Jet30" &&
-    $jettrigger  ne "Jet40" &&
-    $jettrigger  ne "Jet50" &&
-    $jettrigger  ne "MB" &&
+if ($jettrigger  ne "MB" &&
     $jettrigger  ne "PhotonJet5" &&
+    $jettrigger  ne "PhotonJet5Frag" &&
     $jettrigger  ne "PhotonJet10" &&
-    $jettrigger  ne "PhotonJet20")
+    $jettrigger  ne "PhotonJet10Frag" &&
+    $jettrigger  ne "PhotonJet20" &&
+    $jettrigger  ne "PhotonJet20Frag")
 {
-    print "second argument has to be Jet5, Jet12, Jet20, Jet30, Jet40, Jet50, MB, PhotonJet5, PhotonJet10 or PhotonJet20\n";
+    print "second argument has to be MB, PhotonJet5, PhotonJet5Frag, PhotonJet10, PhotonJet10Frag, PhotonJet20 or PhotonJet20Frag\n";
     exit(1);
 }
 
@@ -97,8 +94,7 @@ if (-f $condorlistfile)
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
 my $jettriggerWithUnderScore = sprintf("%s-",$jettrigger);
-$jettrigger = sprintf("%s_%s",$jettrigger,$pileup);
-$outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,lc $jettrigger);
+$outdir = sprintf("%s/run%04d/%s/%s",$outdir,$runnumber,lc $pileup,lc $jettrigger);
 if (! -d $outdir)
 {
   mkpath($outdir);
@@ -112,7 +108,7 @@ $outfiletype{"DST_TRUTH_G4HIT"} = "DST_TRUTH";
 
 my $localdir=`pwd`;
 chomp $localdir;
-my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$jettrigger);
+my $logdir = sprintf("%s/log/run%d/%s/%s",$localdir,$runnumber,$pileup,$jettrigger);
 if (! -d $logdir)
 {
   mkpath($logdir);
@@ -224,7 +220,7 @@ while (my @res = $getfiles->fetchrow_array())
 #	    print "foundall is 1\n";
 	    next;
 	}
-	my $bkglistfile = sprintf("%s/condor_%s-%010d-%06d.bkglist",$logdir,$jettrigger,$runnumber,$segment);
+	my $bkglistfile = sprintf("%s/condor-%010d-%06d.bkglist",$logdir,$runnumber,$segment);
 	open(F1,">$bkglistfile");
 	foreach my $bf (@bkgfiles)
 	{
