@@ -14,6 +14,11 @@
 #include <G4_RunSettings.C>
 #include <SaveGitTags.C>
 
+#include <ffamodules/CDBInterface.h>
+#include <ffamodules/FlagHandler.h>
+
+#include <fun4allutils/TimerStats.h>
+
 #include <caloreco/CaloGeomMapping.h>
 #include <caloreco/CaloTowerBuilder.h>
 #include <caloreco/CaloTowerCalib.h>
@@ -28,13 +33,12 @@
 #include <fun4all/Fun4AllServer.h>
 #include <fun4all/Fun4AllUtils.h>
 
-#include <ffamodules/CDBInterface.h>
-#include <ffamodules/FlagHandler.h>
-
-#include <fun4allutils/TimerStats.h>
-
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
+
+#include <TRandom3.h>
+
+#include <format>
 
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libg4centrality.so)
@@ -44,28 +48,17 @@ R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4allutils.so)
 
 void Fun4All_G4_Calo(
-    const int nEvents = 1,
-    const string &inputFile = "G4Hits_epos_0_153fm-0000000026-000000.root",
-    const string &outputFile = "DST_CALO_CLUSTER_epos_0_153fm-0000000026-0000000022-000000.root",
-    const string &outdir = ".",
-    const string &cdbtag = "MDC2",
-    const std::string &gitcommit = "none")
-
+  const int nEvents = 1,
+  const std::string &inputFile0 = "DST_CALO_G4HIT_Herwig_MB_200kHz-0000000029-000000.root",
+  const std::string &outputFile = "DST_CALO_CLUSTER_Herwig_MB_200kHz-0000000029-000000.root",
+  const std::string &outdir = ".",
+  const std::string &cdbtag = "MDC2",
+  const std::string &gitcommit = "none")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);  // set it to 1 if you want event printouts
 
   recoConsts *rc = recoConsts::instance();
-
-  // save all git tags from build
-  if (gitcommit != "none")
-  {
-    SaveGitTags(gitcommit);
-  }
-  else
-  {
-    SaveGitTags();
-  }
 
   // Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
   PHRandomSeed::Verbosity(1);
@@ -81,8 +74,17 @@ void Fun4All_G4_Calo(
   // int seedValue = 491258969;
   // rc->set_IntFlag("RANDOMSEED", seedValue);
 
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
+  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile0);
   int runnumber = runseg.first;
+  //  int segment = runseg.second;
 
   //===============
   // conditions DB flags
@@ -106,7 +108,7 @@ void Fun4All_G4_Calo(
   // about the number of layers used for the cell reco code
   Input::READHITS = true;
 
-  INPUTREADHITS::filename[0] = inputFile;
+  INPUTREADHITS::filename[0] = inputFile0;
 
   //-----------------
   // Initialize the selected Input/Event generation
@@ -161,13 +163,12 @@ void Fun4All_G4_Calo(
   randGen.SetSeed(seed);
   // a int from 0 to 3259
   int sequence = randGen.Integer(3260);
-  // pad the name
-  std::ostringstream opedname;
-  opedname << "pedestal-54256-0" << std::setw(4) << std::setfill('0') << sequence << ".root";
 
-  std::string pedestalname = opedname.str();
+  int pedestalrun = 54256;
+  std::string pedestalname = std::format("pedestal-{:08}-{:05}.root",pedestalrun, sequence);
 
   Fun4AllInputManager *hitsin = new Fun4AllNoSyncDstInputManager("DST2");
+  hitsin->NoRunTTree(); // suppress error message about missing T1 TTree
   hitsin->AddFile(pedestalname);
   hitsin->Repeat();
   se->registerInputManager(hitsin);
@@ -179,7 +180,7 @@ void Fun4All_G4_Calo(
 
   if (Enable::DSTOUT)
   {
-    string FullOutFile = DstOut::OutputFile;
+    std::string FullOutFile = DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
     out->AddNode("Sync");
     out->AddNode("EventHeader");
@@ -202,11 +203,6 @@ void Fun4All_G4_Calo(
     out->AddNode("TOWERINFO_CALIB_CEMC");
     out->AddNode("WAVEFORM_CEMC");
     out->AddNode("TOWERS_CEMC");
-
-    // leave the topo cluster here in case we run this during pass3
-    out->AddNode("TOPOCLUSTER_ALLCALO");
-    out->AddNode("TOPOCLUSTER_EMCAL");
-    out->AddNode("TOPOCLUSTER_HCAL");
     se->registerOutputManager(out);
   }
 
@@ -216,7 +212,7 @@ void Fun4All_G4_Calo(
   // if we use a negative number of events we go back to the command line here
   if (nEvents < 0)
   {
-    return 0;
+    return;
   }
   se->run(nEvents);
 
@@ -227,12 +223,12 @@ void Fun4All_G4_Calo(
   CDBInterface::instance()->Print();  // print used DB files
   se->End();
   se->PrintTimer();
-  std::cout << "All done" << std::endl;
   delete se;
   if (Enable::PRODUCTION)
   {
     Production_MoveOutput();
   }
+  std::cout << "All done" << std::endl;
   gSystem->Exit(0);
 }
 
