@@ -99,8 +99,8 @@ R__LOAD_LIBRARY(libfun4allutils.so)
   // background input manager
   auto *inpile = new Fun4AllDstPileupInputManager("DST_background");
   inpile->setCollisionRate(pileup);
-  double low_time_window = -105.5 / (8.0 / 1000.0); // tpc integration window start
-  double high_time_window = -low_time_window + 50000; // 50us
+  double low_time_window = -105.5 / G4TPC::tpc_drift_velocity_sim; // tpc integration window start
+  double high_time_window = -low_time_window + + TRACKING::extended_readout_time;
   inpile->setPileupTimeWindow(low_time_window, high_time_window);
   inpile->setDetectorActiveCrossings("BBC",1);
   inpile->setDetectorActiveCrossings("HCALIN",1);
@@ -110,6 +110,7 @@ R__LOAD_LIBRARY(libfun4allutils.so)
   inpile->setDetectorActiveCrossings("BH_1",1);
   // open file
   inpile->AddListFile(backgroundList);
+  inpile->Verbosity(1);
   se->registerInputManager(inpile);
 
   // output manager
