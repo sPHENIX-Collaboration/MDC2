@@ -20,7 +20,7 @@ my $verbosity = 0;
 GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "overwrite" => \$overwrite, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet5\", \"Jet12\", \"Jet20\", \"Jet30\", \"Jet40\", \"Jet50\", \"MB\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\" production>\n";
+    print "usage: run_all.pl <number of jobs> \"MB\", \"PhotonJet5\", \"PhotonJet5Frag\", \"PhotonJet10\", \"PhotonJet10Frag\", \"PhotonJet20\", \"PhotonJet20Frag\" production>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
@@ -66,18 +66,15 @@ if ($isbad > 0)
 
 my $maxsubmit = $ARGV[0];
 my $jettrigger = $ARGV[1];
-if ($jettrigger  ne "Jet5" &&
-    $jettrigger  ne "Jet12" &&
-    $jettrigger  ne "Jet20" &&
-    $jettrigger  ne "Jet30" &&
-    $jettrigger  ne "Jet40" &&
-    $jettrigger  ne "Jet50" &&
-    $jettrigger  ne "MB" &&
+if ($jettrigger  ne "MB" &&
     $jettrigger  ne "PhotonJet5" &&
+    $jettrigger  ne "PhotonJet5Frag" &&
     $jettrigger  ne "PhotonJet10" &&
-    $jettrigger  ne "PhotonJet20")
+    $jettrigger  ne "PhotonJet10Frag" &&
+    $jettrigger  ne "PhotonJet20" &&
+    $jettrigger  ne "PhotonJet20Frag")
 {
-    print "second argument has to be Jet5, Jet12, Jet20, Jet30, Jet40, Jet50, MB, PhotonJet5, PhotonJet10 or PhotonJet20\n";
+    print "second argument has to be MB, PhotonJet5, PhotonJet5Frag, PhotonJet10, PhotonJet10Frag, PhotonJet20 or PhotonJet20Frag\n";
     exit(1);
 }
 
@@ -95,11 +92,11 @@ if (! -d $outdir)
   mkpath($outdir);
 }
 
-my $jettriggerWithDash = sprintf("%s-",$jettrigger);
+my $outfilelike = sprintf("Herwig_%s-",$jettrigger);
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'G4Hits' and filename like '%Herwig_$jettriggerWithDash%' and runnumber = $runnumber order by segment") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'G4Hits' and filename like '%$outfilelike%' and runnumber = $runnumber order by segment") || die $DBI::errstr;
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
@@ -110,7 +107,7 @@ while (my @res = $getfiles->fetchrow_array())
     {
         my $runnumber = int($2);
         my $segment = int($3);
-        my $outfilename = sprintf("DST_TRUTH_JET_Herwig_%s-%010d-%06d.root",$jettrigger,$runnumber,$segment);
+        my $outfilename = sprintf("DST_TRUTH_JET_%s%010d-%06d.root",$outfilelike,$runnumber,$segment);
         $chkfile->execute($outfilename);
         if ($chkfile->rows > 0)
         {
