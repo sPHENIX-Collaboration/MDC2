@@ -67,6 +67,11 @@ int Fun4All_G4_Pass1_herwig(
     SaveGitTags();
   }
 
+// set tracking to extended readout and streaming mode, extend the readout
+// till after the nominal 50000 for the evaluator to catch late hits
+  TRACKING::streaming_mode = true;
+  TRACKING::extended_readout_time = 90000;
+
   // this extracts the runnumber and segment from the output filename
   // and sets this so the server can pick it up
   std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
