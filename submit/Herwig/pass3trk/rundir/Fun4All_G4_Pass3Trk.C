@@ -32,7 +32,7 @@ int Fun4All_G4_Pass3Trk(
     const std::string &inputFile0 = "DST_TRKR_G4HIT_Herwig_MB_200kHz-0000000028-000000.root",
     const std::string &inputFile1 = "DST_TRUTH_G4HIT_Herwig_MB_200kHz-0000000028-000000.root",
     const std::string &outdir = ".",
-    const std::string &jettrigger = "Jet30",
+    const std::string &jettrigger = "MB",
     const std::string &cdbtag = "MDC2",
     const std::string &gitcommit = "none")
 {

@@ -77,7 +77,6 @@ if ($jettrigger  ne "MB" &&
     exit(1);
 }
 
-my $outfilelike = sprintf("Herwig_%s-",$jettrigger);
 
 my $condorlistfile =  sprintf("condor.list");
 if (-f $condorlistfile)
@@ -92,6 +91,8 @@ if (! -d $outdir)
 {
   mkpath($outdir);
 }
+
+my $outfilelike = sprintf("Herwig_%s-",$jettrigger);
 
 my %mbdepdhash = ();
 

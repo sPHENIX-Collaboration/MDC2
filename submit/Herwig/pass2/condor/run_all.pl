@@ -116,6 +116,8 @@ if (! -d $logdir)
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like 'G4Hits_Herwig_$jettriggerWithUnderScore%' and runnumber = $runnumber order by segment") || die $DBI::errstr;
+#print "select filename from datasets where dsttype = 'G4Hits' and filename like 'G4Hits_Herwig_$jettriggerWithUnderScore%' and runnumber = $runnumber order by segment\n";
+
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
 my $getbkglastsegment = $dbh->prepare("select max(segment) from datasets where dsttype = 'G4Hits' and filename like 'G4Hits_Herwig_MB-%' and runnumber = $runnumber");
