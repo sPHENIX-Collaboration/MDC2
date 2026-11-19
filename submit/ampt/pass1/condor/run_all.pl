@@ -12,8 +12,9 @@ my $build;
 my $incremental;
 my $memory;
 my $runnumber;
+my $system;
 my $test;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "run:i" =>\$runnumber, "test"=>\$test);
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "run:i" =>\$runnumber, "system:s"=>\$system, "test"=>\$test);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
@@ -22,6 +23,7 @@ if ($#ARGV < 0)
     print "--increment : submit jobs while processing running\n";
     print "--memory: <memory in MB like 8000MB>\n";
     print "--run: <runnumber>\n";
+    print "--system: <AuAu or OO>\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
@@ -30,9 +32,9 @@ my $isbad = 0;
 
 my $hostname = `hostname`;
 chomp $hostname;
-if ($hostname !~ /phnxsub/)
+if ($hostname !~ /sphnxprod/)
 {
-    print "submit only from phnxsub hosts\n";
+    print "submit only from sphnxprod hosts\n";
     $isbad = 1;
 }
 if (! defined $runnumber)
@@ -63,10 +65,20 @@ my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::er
 
 my $maxsubmit = $ARGV[0];
 my $ampt_runnumber = 1;
-my $ampt_dir = sprintf("/sphenix/sim/sim01/sphnxpro/mdc2/AMPT/AuAu");
-my $events = 200; # for running with plugdoor
-#$events = 100; # for ftfp_bert_hp
+my $ampt_dir = sprintf("/sphenix/lustre01/sphnxpro/mdc2/AMPT/%s",$system);
+if (! -d $ampt_dir)
+{
+    print "could not locate $ampt_dir\n";
+    exit(1);
+}
+
+my $events = 1000;
 my $evtsperfile = 10000;
+if ($system eq "OO")
+{
+    $evtsperfile = 1000;
+}
+
 my $nmax = $evtsperfile;
 
 my $condorlistfile =  sprintf("condor.list");
@@ -82,7 +94,7 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/run%04d",$outdir,$runnumber);
+$outdir = sprintf("%s/%s/run%04d",$outdir,$system,$runnumber);
 if (! -d $outdir)
 {
     mkpath($outdir);
@@ -92,17 +104,22 @@ my $nsubmit = 0;
 my $lastsegment=getlastsegment();
 OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
 {
-    my $amptdatfile = sprintf("%s/AMPT_AuAu-%010d-%06d.dat",$ampt_dir,$ampt_runnumber, $segment);
+    my $amptdatfile = sprintf("%s/AMPT_%s_200GeV-%010d-%06d.hepmc",$ampt_dir,$system,$ampt_runnumber, $segment);
     if (! -f $amptdatfile)
     {
-	print "could not locate $amptdatfile\n";
-	next;
+	my $uncomp = $amptdatfile;
+	$amptdatfile = sprintf("%s.gz",$amptdatfile);
+	if (! -f $amptdatfile)
+	{
+	    print "could not locate $uncomp or $amptdatfile\n";
+	    next;
+	}
     }
 #    print "ampt: $amptdatfile, nmax: $nmax, events $events\n";
     my $sequence = $segment*$evtsperfile/$events;
     for (my $n=0; $n<$nmax; $n+=$events)
     {
-	my $outfile = sprintf("G4Hits_ampt_0_20fm-%010d-%06d.root",$runnumber,$sequence);
+	my $outfile = sprintf("G4Hits_AMPT_%s_200GeV-%010d-%06d.root",$system,$runnumber,$sequence);
 	$chkfile->execute($outfile);
 	if ($chkfile->rows == 0)
 	{
@@ -115,7 +132,7 @@ OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
 	    {
 		$tstflag = sprintf("%s --memory %s",$tstflag,$memory)
 	    }
-	    my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %s %d %d %s", $events, $amptdatfile, $outdir, $outfile, $n, $build, $runnumber, $sequence, $tstflag);
+	    my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %s %d %d %s %s", $events, $amptdatfile, $outdir, $outfile, $n, $build, $runnumber, $sequence, $system, $tstflag);
 	    print "cmd: $subcmd\n";
 	    system($subcmd);
 	    my $exit_value  = $? >> 8;
@@ -163,9 +180,10 @@ sub getlastsegment()
     my @tmpfiles = sort(readdir(DH));
     closedir(DH);
     my @files = ();
+    my $compstr = sprintf("AMPT_%s",$system);
     foreach my $f (@tmpfiles)
     {
-	if ($f =~ /AMPT_AuAu/)
+	if ($f =~ /$compstr/)
 	{
 	    push(@files,$f);
 	}
