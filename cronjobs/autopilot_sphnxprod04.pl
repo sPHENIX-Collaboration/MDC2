@@ -89,8 +89,8 @@ my %submitdir = (
 #    "Herwig/pass3_jobC_nopileup/condor" => ("--build ana.584 allruns"),
 #    "Herwig/pass3_jobA_nopileup/condor" => ("--build ana.584 allruns"),
 #    "Herwig/pass3_job0_nopileup/condor" => ("--build ana.584 allruns"),
-#    "Herwig/pass3_global_nopileup/condor" => ("--build ana.584 --run 28"),
-#    "Herwig/pass2jet_nopileup/condor" => ("--build ana.584 --run 28"),
+    "Herwig/pass3_global_nopileup/condor" => ("--build ana.584 --run 28"),
+    "Herwig/pass2jet_nopileup/condor" => ("--build ana.584 --run 28"),
     "Herwig/pass2_nopileup/condor" => ("--build ana.584 --disable_trk --run 28"),
 #    "Herwig/pass1/condor" => ("--build ana.584  --run 28"),
 
@@ -199,15 +199,15 @@ my %submitdir = (
 
     # JS embed in OO with pileup
 #    "JS_pp200_signal/pass2_embed_oo/condor" => ("--build ana.581 --run 35 pileup"),
-    "JS_pp200_signal/pass3calo_embed_oo/condor" => ("--build ana.581 --run 35 pileup"),
-    "JS_pp200_signal/pass3trk_embed_oo/condor" => ("--build ana.581 --run 35 pileup"),
-    "JS_pp200_signal/pass3jet_embed_oo/condor" => ("--build ana.581 --run 35 pileup"),
-    "JS_pp200_signal/pass3_mbdepd_embed_oo/condor" => ("--build ana.581 --run 35 pileup"),
-    "JS_pp200_signal/pass4_job0_embed_oo/condor" => ("--build ana.581 --run 35 pileup"),
-    "JS_pp200_signal/pass4_jobA_embed_oo/condor" => ("--build ana.581 --run 35 pileup"),
-    "JS_pp200_signal/pass4_jobC_embed_oo/condor" => ("--build ana.581 --run 35 pileup"),
-    "JS_pp200_signal/pass5_global_embed_oo/condor" => ("--build ana.581 --run 35 pileup"),
-    "JS_pp200_signal/pass5_truthreco_embed_oo/condor" => ("--build ana.581 --run 35 pileup"),
+#    "JS_pp200_signal/pass3calo_embed_oo/condor" => ("--build ana.581 --run 35 pileup"),
+#    "JS_pp200_signal/pass3trk_embed_oo/condor" => ("--build ana.581 --run 35 pileup"),
+#    "JS_pp200_signal/pass3jet_embed_oo/condor" => ("--build ana.581 --run 35 pileup"),
+#    "JS_pp200_signal/pass3_mbdepd_embed_oo/condor" => ("--build ana.581 --run 35 pileup"),
+#    "JS_pp200_signal/pass4_job0_embed_oo/condor" => ("--build ana.581 --run 35 pileup"),
+#    "JS_pp200_signal/pass4_jobA_embed_oo/condor" => ("--build ana.581 --run 35 pileup"),
+#    "JS_pp200_signal/pass4_jobC_embed_oo/condor" => ("--build ana.581 --run 35 pileup"),
+#    "JS_pp200_signal/pass5_global_embed_oo/condor" => ("--build ana.581 --run 35 pileup"),
+#    "JS_pp200_signal/pass5_truthreco_embed_oo/condor" => ("--build ana.581 --run 35 pileup"),
     
 # OO without pileup
 #    "OO_0_15fm/pass3_global_nopileup/condor" => ("-build ana.513 --run 33"),
@@ -221,8 +221,8 @@ my %submitdir = (
     # OO with pileup
 #    "OO_0_15fm/pass2/condor" => ("--build ana.584 --run 35 0 --pileup 140kHz"),
 #    "OO_0_15fm/pass3trk/condor" => ("--build ana.584 --run 35 0 --pileup 140kHz"),
-    "OO_0_15fm/pass3calo/condor" => ("--build ana.584 --run 35 0 --pileup 140kHz"),
-    "OO_0_15fm/pass3_mbdepd/condor" => ("--build ana.584 --run 35 0 --pileup 140kHz"),
+#    "OO_0_15fm/pass3calo/condor" => ("--build ana.584 --run 35 0 --pileup 140kHz"),
+#    "OO_0_15fm/pass3_mbdepd/condor" => ("--build ana.584 --run 35 0 --pileup 140kHz"),
 #    "OO_0_15fm/pass4_job0/condor" => ("--build ana.584 --run 35 0 --pileup 140kHz"),
 #    "OO_0_15fm/pass4_jobA/condor" => ("--build ana.584 --run 35 0 --pileup 140kHz"),
 #    "OO_0_15fm/pass4_jobC/condor" => ("--build ana.584 --run 35 0 --pileup 140kHz"),
