@@ -62,7 +62,7 @@ sequence=$(printf "%06d" ${10})
 filename=timing
 
 echo running root.exe -q -b Fun4All_G4_Pileup_pp.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",$7,\"$8\",\"$cdbtag\",\"${11}\"\)
-root.exe -q -b  Fun4All_G4_Pileup_pp.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",$7,,\"$8\",\"$cdbtag\",\"${11}\"\)
+root.exe -q -b  Fun4All_G4_Pileup_pp.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",$7,\"$8\",\"$cdbtag\",\"${11}\"\)
 
 [[ -f copyscript.sh ]] && sh copyscript.sh
 

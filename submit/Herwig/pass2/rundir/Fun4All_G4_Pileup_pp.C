@@ -38,7 +38,7 @@ R__LOAD_LIBRARY(libfun4allutils.so)
     const std::string &outdir = ".",
     const std::string &jettrigger = "NONE",
     const int pileup = 200000,
-    const std::string  &pileupstring = 200000,
+    const std::string  &pileupstring = "200kHz",
     const std::string &cdbtag = "MDC2",
     const std::string &gitcommit = "none")
 {
