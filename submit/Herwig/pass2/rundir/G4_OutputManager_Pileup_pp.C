@@ -24,7 +24,7 @@ void CreateDstOutput(int runnumber, int segment, const std::string &jettrigger, 
   auto *se = Fun4AllServer::instance();
 
   std::string suffix = std::format("Herwig_{}_{}-{:010}-{:06}.root",jettrigger,pileupstring,runnumber,segment);
-  std::string FullOutFile = "DST_BBC_G4HIT_Herwig_" + suffix;
+  std::string FullOutFile = "DST_BBC_G4HIT_" + suffix;
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("BBCOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("G4HIT_BBC");
