@@ -215,8 +215,6 @@ int Fun4All_G4_Pass1(
   {
     string FullOutFile = DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
-    if (Enable::DSTOUT_COMPRESS) DstCompress(out);
-    se->registerOutputManager(out);
   }
   //-----------------
   // Event processing
