@@ -3,14 +3,14 @@
 
 #include <GlobalVariables.C>
 
-#include <G4_OutputManager_Pass3Trk.C>
 #include <G4_Input.C>
+#include <G4_OutputManager_Pass3Trk.C>
 #include <G4_Production.C>
 #include <G4_TrkrSimulation.C>
 #include <SaveGitTags.C>
 
-#include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
+#include <ffamodules/FlagHandler.h>
 
 #include <fun4allutils/TimerStats.h>
 
@@ -33,6 +33,7 @@ int Fun4All_G4_Pass3Trk(
     const std::string &inputFile1 = "DST_TRUTH_G4HIT_Herwig_MB_200kHz-0000000028-000000.root",
     const std::string &outdir = ".",
     const std::string &jettrigger = "MB",
+    const std::string &pileup = "200kHz",
     const std::string &cdbtag = "MDC2",
     const std::string &gitcommit = "none")
 {
@@ -48,7 +49,7 @@ int Fun4All_G4_Pass3Trk(
     SaveGitTags();
   }
 
-  //Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
+  // Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
   PHRandomSeed::Verbosity(1);
 
   // just if we set some flags somewhere in this macro
@@ -66,13 +67,13 @@ int Fun4All_G4_Pass3Trk(
   std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile0);
   int runnumber = runseg.first;
   int segment = abs(runseg.second);
-  rc->set_IntFlag("RUNNUMBER",runnumber);
+  rc->set_IntFlag("RUNNUMBER", runnumber);
 
   Enable::CDB = true;
   // tag
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP",runnumber);
+  rc->set_uint64Flag("TIMESTAMP", runnumber);
 
   //===============
   // Input options
@@ -100,7 +101,6 @@ int Fun4All_G4_Pass3Trk(
   // set up production relatedstuff
   Enable::PRODUCTION = true;
 
-
   //======================
   // Write the DST
   //======================
@@ -112,7 +112,7 @@ int Fun4All_G4_Pass3Trk(
   if (Enable::PRODUCTION)
   {
     PRODUCTION::SaveOutputDir = DstOut::OutputDir;
-//    Production_CreateOutputDir();
+    //    Production_CreateOutputDir();
   }
 
   //======================
@@ -122,7 +122,7 @@ int Fun4All_G4_Pass3Trk(
   // Global options (enabled for all enables subsystems - if implemented)
   //  Enable::VERBOSITY = 1;
 
-// set pp tracking mode
+  // set streaming tracking mode
   TRACKING::streaming_mode = true;
 
   // central tracking
@@ -173,8 +173,8 @@ int Fun4All_G4_Pass3Trk(
 
   if (Enable::PRODUCTION)
   {
-    CreateDstOutput(runnumber, segment, jettrigger);
-//    Production_CreateOutputDir();
+    CreateDstOutput(runnumber, segment, jettrigger, pileup);
+    //    Production_CreateOutputDir();
   }
 
   //-----------------
@@ -196,12 +196,11 @@ int Fun4All_G4_Pass3Trk(
 
   se->run(nEvents);
 
-
   //-----
   // Exit
   //-----
 
-  CDBInterface::instance()->Print(); // print used DB files
+  CDBInterface::instance()->Print();  // print used DB files
   se->End();
   se->PrintTimer();
   if (Enable::PRODUCTION)

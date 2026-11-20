@@ -19,12 +19,12 @@ namespace OUTPUTMANAGER
 
 void AddCommonNodes(Fun4AllOutputManager *out);
 
-void CreateDstOutput(int runnumber, int segment, const std::string &jettrigger)
+void CreateDstOutput(int runnumber, int segment, const std::string &jettrigger, const std::string &pileup)
 {
   auto *se = Fun4AllServer::instance();
 
-  std::string segrun = std::format("{}-{:010}-{:06}",jettrigger,runnumber,segment);
-  std::string FullOutFile = "DST_TRUTH_Herwig_" + segrun + ".root";;
+  std::string suffix = std::format("Herwig_{}_{}-{:010}-{:06}.root", jettrigger, pileup, runnumber, segment);
+  std::string FullOutFile = "DST_TRUTH_" + suffix;
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("TRUTHOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("PHHepMCGenEventMap");
@@ -34,7 +34,7 @@ void CreateDstOutput(int runnumber, int segment, const std::string &jettrigger)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "DST_TRKR_HIT_Herwig_" + std::string(segrun) + ".root";;
+  FullOutFile = "DST_TRKR_HIT_" + suffix;
   out = new Fun4AllDstOutputManager("TRKROUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("TRKR_HITSET");
@@ -64,15 +64,15 @@ void DstOutput_move()
     }
     for (const auto &outfile : OUTPUTMANAGER::outfiles)
     {
-//   std::string mvcmd = "mv " + *iter + " " + PRODUCTION::SaveOutputDir;
+      //   std::string mvcmd = "mv " + *iter + " " + PRODUCTION::SaveOutputDir;
       std::string mvcmd;
       if (scriptexists)
       {
-        mvcmd = std::format("perl {} -dd -outdir {} {}",copyscript, PRODUCTION::SaveOutputDir, outfile);
+        mvcmd = std::format("perl {} -dd -outdir {} {}", copyscript, PRODUCTION::SaveOutputDir, outfile);
       }
       else
       {
-	mvcmd = std::format("cp {} {}", outfile, PRODUCTION::SaveOutputDir);
+        mvcmd = std::format("cp {} {}", outfile, PRODUCTION::SaveOutputDir);
       }
       std::cout << "copy command: " << mvcmd << std::endl;
       gSystem->Exec(mvcmd.c_str());
