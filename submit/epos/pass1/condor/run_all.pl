@@ -12,8 +12,9 @@ my $build;
 my $incremental;
 my $memory;
 my $runnumber;
+my $system;
 my $test;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "run:i" =>\$runnumber, "test"=>\$test);
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "run:i" =>\$runnumber, "system:s"=>\$system, "test"=>\$test);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
@@ -22,6 +23,7 @@ if ($#ARGV < 0)
     print "--increment : submit jobs while processing running\n";
     print "--memory: <memory in MB like 8000MB>\n";
     print "--run: <runnumber>\n";
+    print "--system: <AuAu or OO>\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
@@ -30,9 +32,9 @@ my $isbad = 0;
 
 my $hostname = `hostname`;
 chomp $hostname;
-if ($hostname !~ /phnxsub/)
+if ($hostname !~ /sphnxprod/)
 {
-    print "submit only from phnxsub hosts\n";
+    print "submit only from sphnxprod hosts\n";
     $isbad = 1;
 }
 if (! defined $runnumber)
@@ -62,11 +64,21 @@ $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
 my $maxsubmit = $ARGV[0];
-my $epos_runnumber = 1;
-my $epos_dir = sprintf("/sphenix/sim/sim01/sphnxpro/mdc2/EPOS/AuAu");
-my $events = 200;
-#$events = 100; # for ftfp_bert_hp
-my $evtsperfile = 400;
+my $epos4_runnumber = 1;
+my $epos4_dir = sprintf("/sphenix/lustre01/sphnxpro/mdc2/EPOS4/%s",$system);
+if (! -d $epos4_dir)
+{
+    print "could not locate $epos4_dir\n";
+    exit(1);
+}
+
+my $events = 1000;
+my $evtsperfile = 10000;
+if ($system eq "OO")
+{
+    $evtsperfile = 1000;
+}
+
 my $nmax = $evtsperfile;
 
 my $condorlistfile =  sprintf("condor.list");
@@ -75,9 +87,14 @@ if (-f $condorlistfile)
     unlink $condorlistfile;
 }
 
+if (! -f "outdir.txt")
+{
+    print "could not find outdir.txt\n";
+    exit(1);
+}
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/run%04d",$outdir,$runnumber);
+$outdir = sprintf("%s/%s/run%04d",$outdir,$system,$runnumber);
 if (! -d $outdir)
 {
     mkpath($outdir);
@@ -87,17 +104,22 @@ my $nsubmit = 0;
 my $lastsegment=getlastsegment();
 OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
 {
-    my $eposdatfile = sprintf("%s/EPOS_AuAu-%010d-%06d.dat",$epos_dir,$epos_runnumber, $segment);
-    if (! -f $eposdatfile)
+    my $epos4datfile = sprintf("%s/EPOS4_%s_200GeV-%010d-%06d.hepmc",$epos4_dir,$system,$epos4_runnumber, $segment);
+    if (! -f $epos4datfile)
     {
-	print "could not locate $eposdatfile\n";
-	next;
+	my $uncomp = $epos4datfile;
+	$epos4datfile = sprintf("%s.gz",$epos4datfile);
+	if (! -f $epos4datfile)
+	{
+	    print "could not locate $uncomp or $epos4datfile\n";
+	    next;
+	}
     }
-#    print "epos: $eposdatfile, nmax: $nmax, events $events\n";
+#    print "epos4: $epos4datfile, nmax: $nmax, events $events\n";
     my $sequence = $segment*$evtsperfile/$events;
     for (my $n=0; $n<$nmax; $n+=$events)
     {
-	my $outfile = sprintf("G4Hits_epos_0_153fm-%010d-%06d.root",$runnumber,$sequence);
+	my $outfile = sprintf("G4Hits_EPOS4_%s_200GeV-%010d-%06d.root",$system,$runnumber,$sequence);
 	$chkfile->execute($outfile);
 	if ($chkfile->rows == 0)
 	{
@@ -110,7 +132,7 @@ OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
 	    {
 		$tstflag = sprintf("%s --memory %s",$tstflag,$memory)
 	    }
-	    my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %s %d %d %s", $events, $eposdatfile, $outdir, $outfile, $n, $build, $runnumber, $sequence, $tstflag);
+	    my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %s %d %d %s %s", $events, $epos4datfile, $outdir, $outfile, $n, $build, $runnumber, $sequence, $system, $tstflag);
 	    print "cmd: $subcmd\n";
 	    system($subcmd);
 	    my $exit_value  = $? >> 8;
@@ -154,13 +176,14 @@ if (-f $condorlistfile)
 
 sub getlastsegment()
 {
-    opendir(DH,$epos_dir);
+    opendir(DH,$epos4_dir);
     my @tmpfiles = sort(readdir(DH));
     closedir(DH);
     my @files = ();
+    my $compstr = sprintf("EPOS4_%s",$system);
     foreach my $f (@tmpfiles)
     {
-	if ($f =~ /EPOS_AuAu/)
+	if ($f =~ /$compstr/)
 	{
 	    push(@files,$f);
 	}
