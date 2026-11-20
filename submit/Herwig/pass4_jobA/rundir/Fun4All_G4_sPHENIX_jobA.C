@@ -5,6 +5,7 @@
 #include <SaveGitTags.C>
 #include <Trkr_RecoInit.C>
 #include <Trkr_Reco.C>
+#include <Trkr_Clustering.C>
 
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
@@ -28,8 +29,8 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 int Fun4All_G4_sPHENIX_jobA(
   const int nEvents = 0,
   const int nSkipEvents = 0,
-  const std::string &inputFile = "DST_TRKR_CLUSTER_Herwig_MB_200kHz-0000000028-000000.root",
-  const std::string &outputFile = "DST_TRACKSEEDS_Herwig_MB_200kHz-0000000028-000000.root",
+  const std::string &inputFile = "DST_TRKR_HIT_Herwig_MB_200kHz-0000000029-000000-000000.root",
+  const std::string &outputFile = "DST_TRACKSEEDS_Herwig_MB_200kHz-0000000029-000000-000000.root",
   const std::string &outdir = ".",
   const std::string &cdbtag = "MDC2",
   const std::string &gitcommit = "none")
@@ -109,8 +110,12 @@ int Fun4All_G4_sPHENIX_jobA(
   MagnetFieldInit();
   TrackingInit();
   
+  Mvtx_Clustering();
+  Intt_Clustering();
+  Micromegas_Clustering();
+
   // tracking
-  Tracking_Reco_TrackSeed();
+  Tracking_Reco_PolySeed();
 
   TimerStats *ts = new TimerStats();
   ts->OutFileName("jobtime.root");
