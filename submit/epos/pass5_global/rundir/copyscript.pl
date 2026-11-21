@@ -125,7 +125,7 @@ else
 	$outhost = 'lustre';
 	if (defined $use_dd)
 	{
-	    $copycmd = sprintf("dd if=%s of=%s bs=12M 2>&1",$file,$outfile);
+	    $copycmd = sprintf("dd oflag=nocache if=%s of=%s bs=12M 2>&1",$file,$outfile);
 	}
 	else
 	{
