@@ -72,7 +72,7 @@ int Fun4All_G4_sPHENIX_jobC(
   DstOut::OutputDir = outdir;
   DstOut::OutputFile = outputFile;
 
-  // set pp tracking mode
+  // set streaming tracking mode
   TRACKING::streaming_mode = true;
 
   // central tracking

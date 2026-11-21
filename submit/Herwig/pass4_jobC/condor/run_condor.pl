@@ -12,9 +12,9 @@ my $overwrite;
 
 GetOptions("memory:s"=>\$memory, "overwrite"=>\$overwrite, "test"=>\$test);
 
-if ($#ARGV < 8)
+if ($#ARGV < 9)
 {
-    print "usage: run_condor.pl <events> <jettrigger> <seeds infile> <cluster infile> <outfile> <outdir> <build> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <jettrigger> <seeds infile> <cluster infile> <outfile> <outdir> <build> <runnumber> <sequence> <pileup>\n";
     print "options:\n";
     print "--memory: memory requirement\n";
     print "--overwrite : overwrite existing jobfiles\n";
@@ -36,19 +36,20 @@ my $dstoutdir = $ARGV[5];
 my $build = $ARGV[6];
 my $runnumber = $ARGV[7];
 my $sequence = $ARGV[8];
+my $pileup = $ARGV[9];
 if ($sequence < 100)
 {
     $baseprio = 90;
 }
 my $batchname = sprintf("%s %s",basename($executable),$jettrigger);
 my $condorlistfile = sprintf("condor.list");
-my $suffix = sprintf("_%s-%010d-%06d",$jettrigger,$runnumber,$sequence);
-my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$jettrigger);
+my $suffix = sprintf("-%010d-%06d",$runnumber,$sequence);
+my $logdir = sprintf("%s/log/run%d/%s/%s",$localdir,$runnumber,$pileup,$jettrigger);
 if (! -d $logdir)
 {
   mkpath($logdir);
 }
-my $condorlogdir = sprintf("/tmp/Herwig/pass4_jobC/run%d/%s",$runnumber,$jettrigger);
+my $condorlogdir = sprintf("/tmp/Herwig/pass4_jobC/run%d/%s/%s",$runnumber,$pileup,$jettrigger);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);
