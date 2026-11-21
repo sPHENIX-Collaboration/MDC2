@@ -105,7 +105,7 @@ int Fun4All_G4_Pass1(
   Input::HEPMC = true;
 
   INPUTHEPMC::filename = inputFile;
-  INPUTHEPMC::REACTIONPLANERAND = true;
+//  INPUTHEPMC::REACTIONPLANERAND = true;
 
   //-----------------
   // Initialize the selected Input/Event generation
