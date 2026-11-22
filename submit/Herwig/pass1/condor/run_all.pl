@@ -12,10 +12,11 @@ my $incremental;
 my $memory;
 my $nsegs;
 my $outevents = 0;
+my $overwrite;
 my $runnumber;
 my $test;
 my $verbosity = 0;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "run:i" =>\$runnumber, "segments:i" => \$nsegs, "test"=>\$test, "verbosity:i" => \$verbosity);
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "overwrite" => \$overwrite, "run:i" =>\$runnumber, "segments:i" => \$nsegs, "test"=>\$test, "verbosity:i" => \$verbosity);
 if ($#ARGV < 1)
 {
     print "usage: run_all.pl <number of jobs> \"MB\", \"PhotonJet5\", \"PhotonJet5Frag\", \"PhotonJet10\", \"PhotonJet10Frag\", \"PhotonJet20\", \"PhotonJet20Frag\" production>\n";
@@ -24,6 +25,7 @@ if ($#ARGV < 1)
     print "--increment : submit jobs while processing running\n";
     print "--memory : memory requirement with unit (MB)\n";
     print "--segments: <number of input segments>\n";
+    print "--overwrite: overwrite existing job file\n";
     print "--run: <runnumber>\n";
     print "--test : dryrun - create jobfiles\n";
     print "--verbosity : <level>\n";
@@ -168,9 +170,13 @@ for (my $iseg=0; $iseg<=$max_seg; $iseg++)
 		{
 		    $tstflag="--test";
 		}
+		if (defined $overwrite)
+		{
+		    $tstflag=sprintf("%s --overwrite",$tstflag);
+		}
 		if (defined $memory)
 		{
-		    $tstflag=sprintf("%s --memory %s",$memory);
+		    $tstflag=sprintf("%s --memory %s",$tstflag, $memory);
 		}
 		my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $listfile, $outfilename, $outdir, $build, $runnumber, $g4hit_seg, $tstflag);
 		print "cmd: $subcmd\n";

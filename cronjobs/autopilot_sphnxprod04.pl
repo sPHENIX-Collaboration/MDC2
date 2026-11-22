@@ -95,14 +95,14 @@ my %submitdir = (
 #    "Herwig/pass1/condor" => ("--build ana.584  --run 28"),
 
     # Herwig with pileup
-    "Herwig/pass2/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
+#    "Herwig/pass2/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
 #    "Herwig/pass3jet/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
     "Herwig/pass3trk/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
     "Herwig/pass3calo/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
-#    "Herwig/pass3_mbdepd/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
+    "Herwig/pass3_mbdepd/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
 #    "Herwig/pass4_job0/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
     "Herwig/pass4_jobA/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
-#    "Herwig/pass4_jobC/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
+    "Herwig/pass4_jobC/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
 #    "Herwig/pass5_global/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
 #    "Herwig/pass5_truthreco/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
 
@@ -219,15 +219,15 @@ my %submitdir = (
 #    "OO_0_15fm/pass4_truthreco_nopileup/condor" => (""),
 
     # OO with pileup
-#    "OO_0_15fm/pass2/condor" => ("--build ana.584 --run 35 0 --pileup 140kHz"),
-#    "OO_0_15fm/pass3trk/condor" => ("--build ana.584 --run 35 0 --pileup 140kHz"),
-#    "OO_0_15fm/pass3calo/condor" => ("--build ana.584 --run 35 0 --pileup 140kHz"),
-#    "OO_0_15fm/pass3_mbdepd/condor" => ("--build ana.584 --run 35 0 --pileup 140kHz"),
-#    "OO_0_15fm/pass4_job0/condor" => ("--build ana.584 --run 35 0 --pileup 140kHz"),
-#    "OO_0_15fm/pass4_jobA/condor" => ("--build ana.584 --run 35 0 --pileup 140kHz"),
-#    "OO_0_15fm/pass4_jobC/condor" => ("--build ana.584 --run 35 0 --pileup 140kHz"),
-#    "OO_0_15fm/pass5_global/condor" => ("--build ana.584 --run 35 0 --pileup 140kHz"),
-#    "OO_0_15fm/pass5_truthreco/condor" => ("--build ana.584 --run 35 0 --pileup 140kHz"),
+#    "OO_0_15fm/pass2/condor" => ("--build ana.586 --run 35 0 --pileup 140kHz"),
+#    "OO_0_15fm/pass3trk/condor" => ("--build ana.586 --run 35 0 --pileup 140kHz"),
+#    "OO_0_15fm/pass3calo/condor" => ("--build ana.586 --run 35 0 --pileup 140kHz"),
+#    "OO_0_15fm/pass3_mbdepd/condor" => ("--build ana.586 --run 35 0 --pileup 140kHz"),
+#    "OO_0_15fm/pass4_job0/condor" => ("--build ana.586 --run 35 0 --pileup 140kHz"),
+    "OO_0_15fm/pass4_jobA/condor" => ("--build ana.586 --run 35 0 --pileup 140kHz"),
+    "OO_0_15fm/pass4_jobC/condor" => ("--build ana.586 --run 35 0 --pileup 140kHz"),
+    "OO_0_15fm/pass5_global/condor" => ("--build ana.586 --run 35 0 --pileup 140kHz"),
+    "OO_0_15fm/pass5_truthreco/condor" => ("--build ana.586 --run 35 0 --pileup 140kHz"),
 
 #    "single_particle/pass3calo_embed/condor" => (""),
 #    "single_particle/pass3trk_embed/condor" => (""),

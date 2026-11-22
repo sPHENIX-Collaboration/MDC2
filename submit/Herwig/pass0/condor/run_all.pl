@@ -107,6 +107,16 @@ OUTER: for (my $isub = 0; $isub < $maxsubmit; $isub++)
 #	print "found jobfile $jobfile, njob: $njob, startsegment: $startsegment\n";
 	$njob++;
 	$jobfile = sprintf("%s/condor_%s-%010d-%06d.job",$logdir,$jettrigger,$runnumber,$njob);
+	if (defined $overwrite)
+	{
+          my $testoutfile = sprintf("DST_HEPMC_%s-%010d-%06d.root",$filetype, $runnumber,$njob);
+	  $chkfile->execute($testoutfile);
+	  if ($chkfile->rows == 0)
+	  {
+	      print "file $testoutfile missing\n";
+	      unlink $jobfile;
+	  }
+	}
     }
 #    print "using jobfile $jobfile\n";
     my $outfile = sprintf("DST_HEPMC_%s-%010d-%06d.root",$filetype, $runnumber,$njob);

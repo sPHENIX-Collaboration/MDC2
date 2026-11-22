@@ -99,7 +99,7 @@ int Fun4All_G4_Pass1(
   // Input options
   //===============
   // verbosity setting (applies to all input managers)
-  Input::VERBOSITY = 1;  // so we get prinouts of the event number
+  //Input::VERBOSITY = 1;  // so we get prinouts of the event number
 
   Input::HEPMC = true;
 
