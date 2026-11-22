@@ -96,7 +96,7 @@ my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 
 my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like 'DST_TRKR_G4HIT_$outfilelike-%' and runnumber = $runnumber") || die $DBI::errstr;
-my $getclusterfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_CLUSTER' and filename like 'DST_TRKR_CLUSTER_$outfilelike-%' and runnumber = $runnumber") || die $DBI::errstr;
+my $getclusterfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRACKSEEDS' and filename like 'DST_TRACKSEEDS_$outfilelike-%' and runnumber = $runnumber") || die $DBI::errstr;
 my $gettrackfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRACKS' and filename like 'DST_TRACKS_$outfilelike-%' and runnumber = $runnumber") || die $DBI::errstr;
 my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH' and filename like 'DST_TRUTH_$outfilelike-%' and runnumber = $runnumber") || die $DBI::errstr;
 
