@@ -33,11 +33,11 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_Pass1(
     const int nEvents = 1,
-    const string &inputFile = "/sphenix/lustre01/sphnxpro/mdc2/EPOS4/OO/EPOS4_OO_200GeV-0000000001-000000.hepmc",
-    const string &outputFile = "G4Hits_EPOS4_OO_200GeV-0000000035-000000.root",
+    const std::string &inputFile = "/sphenix/lustre01/sphnxpro/mdc2/EPOS4/OO/EPOS4_OO_200GeV-0000000001-000000.hepmc",
+    const std::string &outputFile = "G4Hits_EPOS4_OO_200GeV-0000000035-000000.root",
     const int skip = 0,
-    const string &outdir = ".",
-    const string &cdbtag = "MDC2",
+    const std::string &outdir = ".",
+    const std::string &cdbtag = "MDC2",
     const std::string &gitcommit = "none")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
@@ -69,12 +69,12 @@ int Fun4All_G4_Pass1(
     SaveGitTags();
   }
 
-// set tracking to extended readout and pp mode (planned for OO)
+  // set tracking to extended readout and pp mode (planned for OO)
   TRACKING::streaming_mode = true;
   TRACKING::extended_readout_time = 90000;
   // this extracts the runnumber and segment from the output filename
   // and sets this so the server can pick it up
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
+  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(outputFile);
   int runnumber = runseg.first;
   int segment = runseg.second;
   if (runnumber != 0)
@@ -95,7 +95,6 @@ int Fun4All_G4_Pass1(
   // 64 bit timestamp
   rc->set_uint64Flag("TIMESTAMP", runnumber);
 
-
   //===============
   // Input options
   //===============
@@ -105,7 +104,7 @@ int Fun4All_G4_Pass1(
   Input::HEPMC = true;
 
   INPUTHEPMC::filename = inputFile;
-//  INPUTHEPMC::REACTIONPLANERAND = true;
+  //  INPUTHEPMC::REACTIONPLANERAND = true;
 
   //-----------------
   // Initialize the selected Input/Event generation
@@ -213,8 +212,9 @@ int Fun4All_G4_Pass1(
 
   if (Enable::DSTOUT)
   {
-    string FullOutFile = DstOut::OutputFile;
+    std::string FullOutFile = DstOut::OutputFile;
     Fun4AllDstOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", FullOutFile);
+    se->registerOutputManager(out);
   }
   //-----------------
   // Event processing
@@ -228,8 +228,8 @@ int Fun4All_G4_Pass1(
   // if we run the particle generator and use 0 it'll run forever
   if (nEvents == 0 && !Input::HEPMC && !Input::READHITS)
   {
-    cout << "using 0 for number of events is a bad idea when using particle generators" << endl;
-    cout << "it will run forever, so I just return without running anything" << endl;
+    std::cout << "using 0 for number of events is a bad idea when using particle generators" << std::endl;
+    std::cout << "it will run forever, so I just return without running anything" << std::endl;
     return 0;
   }
 
