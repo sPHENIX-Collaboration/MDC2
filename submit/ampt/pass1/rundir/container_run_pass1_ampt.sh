@@ -47,7 +47,7 @@ sequence=$(printf "%06d" $8)
 filename=timing
 
 echo running root.exe -q -b Fun4All_G4_Pass1.C\($1,\"$2\",\"$3\",$4,\"$5\",\"$cdbtag\",\"$9\"\)
- root.exe -q -b  Fun4All_G4_Pass1.C\($1,\"$2\",\"$3\",$4,\"$5\",\"$cdbtag\"\)
+ root.exe -q -b  Fun4All_G4_Pass1.C\($1,\"$2\",\"$3\",$4,\"$5\",\"$cdbtag\",\"$9\"\)
 
 [[ -f copyscript.sh ]] && sh copyscript.sh
 
