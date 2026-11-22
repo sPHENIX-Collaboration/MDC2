@@ -9,17 +9,19 @@ use DBI;
 sub getlastsegment;
 
 my $build;
+my $events = 1000;
 my $incremental;
 my $memory;
 my $runnumber;
 my $system;
 my $test;
-GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "run:i" =>\$runnumber, "system:s"=>\$system, "test"=>\$test);
+GetOptions("build:s" => \$build, "events:i"=>\$events, "increment"=>\$incremental, "memory:s"=>\$memory, "run:i" =>\$runnumber, "system:s"=>\$system, "test"=>\$test);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
+    print "--events: <number of event>\n";
     print "--increment : submit jobs while processing running\n";
     print "--memory: <memory in MB like 8000MB>\n";
     print "--run: <runnumber>\n";
@@ -72,7 +74,6 @@ if (! -d $epos4_dir)
     exit(1);
 }
 
-my $events = 1000;
 my $evtsperfile = 10000;
 if ($system eq "OO")
 {
