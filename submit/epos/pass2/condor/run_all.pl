@@ -92,7 +92,7 @@ $outfiletype{"DST_TRUTH_G4HIT"} = "DST_TRUTH";
 
 my $localdir=`pwd`;
 chomp $localdir;
-my $logdir = sprintf("%s/log/run%d",$localdir,$runnumber);
+my $logdir = sprintf("%s/log/%s/run%d/%s",$localdir,$system,$runnumber,$pileup);
 if (! -d $logdir)
 {
   mkpath($logdir);
@@ -157,7 +157,7 @@ while (my @res = $getfiles->fetchrow_array())
 	$foundall = 1;
 	my @bkgfiles = ();
 
-	for (my $cnt = $segment+1; $cnt <=$segment+99; $cnt++)
+	for (my $cnt = $segment+1; $cnt <=$segment+100; $cnt++)
 	{
 	    my $bkgseg = $cnt;
 	    while ($bkgseg > $lastsegment)
@@ -165,7 +165,7 @@ while (my @res = $getfiles->fetchrow_array())
 		$bkgseg = $bkgseg - $lastsegment -1; # make sure it starts at segment zero, not 1
 	    }
 	    my $bckfile = sprintf("%s-%010d-%06d.root",$prefix,$runnumber,$bkgseg);
-	    print "checking $bckfile\n";
+#	    print "checking $bckfile\n";
 	    $chkfile->execute($bckfile);
 	    if ($chkfile->rows == 0)
 	    {
@@ -197,7 +197,6 @@ while (my @res = $getfiles->fetchrow_array())
 	}
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %s", $outevents, $lfn, $bkglistfile, $outdir, $build, $pileup, $system, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
-	die;
 	system($subcmd);
 	my $exit_value  = $? >> 8;
 	if ($exit_value != 0)
