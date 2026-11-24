@@ -62,12 +62,12 @@ sequence=$(printf "%06d" ${10})
 
 filename=timing
 
-echo running root.exe -q -b Fun4All_G4_Pileup.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",$7,\"$8\",\"$cdbtag\",\"${11}\"\)
-root.exe -q -b  Fun4All_G4_Pileup.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",$7,\"$8\",\"$cdbtag\",\"${11}\"\)
+echo running root.exe -q -b Fun4All_G4_Pileup.C\($1,\"$2\",\"$3\",\"$4\",$6,\"$7\",\"$8\",\"$cdbtag\",\"${11}\"\)
+root.exe -q -b  Fun4All_G4_Pileup.C\($1,\"$2\",\"$3\",\"$4\",$6,\"$7\",\"$8\",\"$cdbtag\",\"${11}\"\)
 
 [[ -f copyscript.sh ]] && sh copyscript.sh
 
-timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/Herwig/pass2/timing.run${9}/${5}
+timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/Herwig/pass2/$8/timing.run${9}/${7}
 
 [ ! -d $timedirname ] &&  mkdir -p $timedirname
 

@@ -36,7 +36,6 @@ R__LOAD_LIBRARY(libfun4allutils.so)
     const std::string &inputFile = "G4Hits_EPOS4_OO_200GeV-0000000035-000000.root",
     const std::string &backgroundList = "pileupbkgmb.list",
     const std::string &outdir = ".",
-    const std::string &jettrigger = "NONE",
     const int pileup = 140000,
     const std::string &pileupstring = "140kHz",
     const std::string &system = "OO",
