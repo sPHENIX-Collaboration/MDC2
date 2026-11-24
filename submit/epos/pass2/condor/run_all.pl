@@ -178,9 +178,8 @@ while (my @res = $getfiles->fetchrow_array())
 		{
 		    print "$bckfile missing\n";
 		}
-#		$foundall = 0;
-#		last;
-		next;
+		$foundall = 0;
+		last;
 	    }
 	    push(@bkgfiles,$bckfile);
 	}

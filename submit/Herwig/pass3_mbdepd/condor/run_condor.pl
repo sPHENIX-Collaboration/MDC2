@@ -7,7 +7,7 @@ use File::Path;
 use File::Basename;
 
 my $test;
-my $memory = sprintf("4000MB");
+my $memory = sprintf("1000MB");
 my $overwrite;
 
 GetOptions("memory:s"=>\$memory, "overwrite"=>\$overwrite, "test"=>\$test);
@@ -41,7 +41,7 @@ if ($sequence < 100)
 {
     $baseprio = 90;
 }
-my $batchname = sprintf("%s %s",basename($executable),$jettrigger);
+my $batchname = sprintf("%s %s %s",basename($executable),$jettrigger,$pileup);
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("-%010d-%06d",$runnumber,$sequence);
 my $logdir = sprintf("%s/log/run%d/%s/%s",$localdir,$runnumber,$pileup,$jettrigger);

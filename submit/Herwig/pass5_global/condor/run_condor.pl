@@ -7,14 +7,14 @@ use File::Path;
 use File::Basename;
 
 my $test;
-my $memory = sprintf("2048MB");
+my $memory = sprintf("2000MB");
 my $overwrite;
 
 GetOptions("memory:s"=>\$memory, "overwrite"=>\$overwrite, "test"=>\$test);
 
-if ($#ARGV < 8)
+if ($#ARGV < 9)
 {
-    print "usage: run_condor.pl <events> <seeds infile> <mbdepd infile> <jettrigger> <outfile> <outdir> <build> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <events> <seeds infile> <mbdepd infile> <jettrigger> <outfile> <outdir> <build> <runnumber> <sequence> <pileup>\n";
     print "options:\n";
     print "-memory: memory requirement\n";
     print "-overwrite : overwrite existing jobfiles\n";
@@ -36,36 +36,37 @@ my $dstoutdir = $ARGV[5];
 my $build = $ARGV[6];
 my $runnumber = $ARGV[7];
 my $sequence = $ARGV[8];
+my $pileup = $ARGV[9];
 if ($sequence < 100)
 {
     $baseprio = 90;
 }
-my $batchname = sprintf("%s %s",basename($executable),$jettrigger);
+my $batchname = sprintf("%s %s %s",basename($executable),$jettrigger,$pileup);
 my $condorlistfile = sprintf("condor.list");
-my $suffix = sprintf("%s-%010d-%06d",$jettrigger,$runnumber,$sequence);
-my $logdir = sprintf("%s/log/run%d/%s",$localdir,$runnumber,$jettrigger);
+my $suffix = sprintf("-%010d-%06d",$runnumber,$sequence);
+my $logdir = sprintf("%s/log/run%d/%s/%s",$localdir,$runnumber,$pileup,$jettrigger);
 if (! -d $logdir)
 {
   mkpath($logdir);
 }
-my $condorlogdir = sprintf("/tmp/Herwig/pass5_global/run%d/%s",$runnumber,$jettrigger);
+my $condorlogdir = sprintf("/tmp/Herwig/pass5_global/run%d/%s/%s",$runnumber,$pileup,$jettrigger);
 if (! -d $condorlogdir)
 {
   mkpath($condorlogdir);
 }
-my $jobfile = sprintf("%s/condor_%s.job",$logdir,$suffix);
+my $jobfile = sprintf("%s/condor%s.job",$logdir,$suffix);
 if (-f $jobfile && ! defined $overwrite)
 {
     print "jobfile $jobfile exists, possible overlapping names\n";
     exit(1);
 }
-my $condorlogfile = sprintf("%s/condor_%s.log",$condorlogdir,$suffix);
+my $condorlogfile = sprintf("%s/condor%s.log",$condorlogdir,$suffix);
 if (-f $condorlogfile)
 {
     unlink $condorlogfile;
 }
-my $errfile = sprintf("%s/condor_%s.err",$logdir,$suffix);
-my $outfile = sprintf("%s/condor_%s.out",$logdir,$suffix);
+my $errfile = sprintf("%s/condor%s.err",$logdir,$suffix);
+my $outfile = sprintf("%s/condor%s.out",$logdir,$suffix);
 print "job: $jobfile\n";
 open(F,">$jobfile");
 print F "Universe 	= vanilla\n";

@@ -15,9 +15,9 @@ if ($#ARGV < 8)
 {
     print "usage: run_condor.pl <inevents> <jettrigger> <infile> <bkglist> <outdir> <build> <pileup> <runnumber> <sequence>\n";
     print "options:\n";
-    print "-memory: memory requirement\n";
+    print "--memory: memory requirement\n";
     print "--overwrite : overwrite existing jobfiles\n";
-    print "-test: testmode - no condor submission\n";
+    print "--test: testmode - no condor submission\n";
     exit(-2);
 }
 
@@ -55,7 +55,7 @@ else
     print "bad pileup: $pileuprate\n";
     exit(-1);
 }
-my $batchname = sprintf("%s %s",basename($executable),$jettrigger);
+my $batchname = sprintf("%s %s %s",basename($executable),$jettrigger,$pileup);
 my $condorlistfile = sprintf("condor.list");
 my $suffix = sprintf("%010d-%06d",$runnumber,$sequence);
 my $logdir = sprintf("%s/log/run%d/%s/%s",$localdir,$runnumber,$pileup,$jettrigger);

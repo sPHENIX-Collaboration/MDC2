@@ -96,13 +96,13 @@ my %submitdir = (
 
     # Herwig with pileup
     "Herwig/pass2/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
-#    "Herwig/pass3jet/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
-#    "Herwig/pass3trk/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
-#    "Herwig/pass3calo/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
-#    "Herwig/pass3_mbdepd/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
+    "Herwig/pass3jet/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
+    "Herwig/pass3trk/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
+    "Herwig/pass3calo/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
+    "Herwig/pass3_mbdepd/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
 #    "Herwig/pass4_job0/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
-#    "Herwig/pass4_jobA/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
-#    "Herwig/pass4_jobC/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
+    "Herwig/pass4_jobA/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
+    "Herwig/pass4_jobC/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
 #    "Herwig/pass5_global/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
 #    "Herwig/pass5_truthreco/condor" => ("--build ana.586 --run 29 --pileup 200kHz"),
 
