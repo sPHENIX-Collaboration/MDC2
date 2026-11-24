@@ -9,21 +9,22 @@
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
 
+#include <format>
+#include <fstream>
+
 namespace OUTPUTMANAGER
 {
-  set<string> outfiles;
+  std::set<std::string> outfiles;
 }
 
 void AddCommonNodes(Fun4AllOutputManager *out);
 
-void CreateDstOutput(int runnumber, int segment)
+void CreateDstOutput(int runnumber, int segment, const std::string &system, const std::string &pileupstring)
 {
-  auto se = Fun4AllServer::instance();
+  auto *se = Fun4AllServer::instance();
 
-  char segrun[100];
-  snprintf(segrun,100,"%010d-%06d",runnumber,segment);
-
-  string FullOutFile = "DST_BBC_G4HIT_epos_0_153fm_50kHz_bkg_0_153fm-" + string(segrun) + ".root";;
+  std::string suffix = std::format("EPOS4_{}_200GeV_{}_EPOS4_{}_200GeV-{:010}-{:06}.root",system,pileupstring,system,runnumber,segment);
+  std::string FullOutFile = "DST_BBC_G4HIT_" + suffix;
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("BBCOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("G4HIT_BBC");
@@ -31,7 +32,7 @@ void CreateDstOutput(int runnumber, int segment)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "DST_TRKR_G4HIT_epos_0_153fm_50kHz_bkg_0_153fm-" + string(segrun) + ".root";;
+  FullOutFile = "DST_TRKR_G4HIT_" + suffix;
   out = new Fun4AllDstOutputManager("TRKROUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("G4HIT_MVTX");
@@ -41,7 +42,7 @@ void CreateDstOutput(int runnumber, int segment)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "DST_CALO_G4HIT_epos_0_153fm_50kHz_bkg_0_153fm-" + string(segrun) + ".root";;
+  FullOutFile = "DST_CALO_G4HIT_" + suffix;
   out = new Fun4AllDstOutputManager("CALOOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("G4HIT_CEMC");
@@ -50,7 +51,7 @@ void CreateDstOutput(int runnumber, int segment)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "DST_TRUTH_G4HIT_epos_0_153fm_50kHz_bkg_0_153fm-" + string(segrun) + ".root";;
+  FullOutFile = "DST_TRUTH_G4HIT_" + suffix;
   out = new Fun4AllDstOutputManager("TRUTHOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("G4TruthInfo");
@@ -58,10 +59,12 @@ void CreateDstOutput(int runnumber, int segment)
   out->AddNode("PHHepMCGenEventMap");
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
+
 }
 
 void AddCommonNodes(Fun4AllOutputManager *out)
 {
+  out->StripCompositeNode("RECO_TRACKING_GEOMETRY");
   out->AddNode("Sync");
   out->AddNode("EventHeader");
   return;
@@ -69,8 +72,8 @@ void AddCommonNodes(Fun4AllOutputManager *out)
 
 void DstOutput_move()
 {
-  string copyscript = "copyscript.pl";
-  ifstream f(copyscript);
+  std::string copyscript = "copyscript.pl";
+  std::ifstream f(copyscript);
   bool scriptexists = f.good();
   f.close();
   if (Enable::DSTOUT)
@@ -80,19 +83,20 @@ void DstOutput_move()
     {
       return;
     }
-    for (auto iter = OUTPUTMANAGER::outfiles.begin(); iter != OUTPUTMANAGER::outfiles.end(); ++iter)
+    for (const auto &outfile : OUTPUTMANAGER::outfiles)
     {
-//   string mvcmd = "mv " + *iter + " " + PRODUCTION::SaveOutputDir;
-      string mvcmd;
+//   std::string mvcmd = "mv " + *iter + " " + PRODUCTION::SaveOutputDir;
+      std::string mvcmd;
       if (scriptexists)
       {
 //        mvcmd = copyscript + " -outdir " + PRODUCTION::SaveOutputDir + " " + *iter + " --test";
-        mvcmd = copyscript + " -outdir " + PRODUCTION::SaveOutputDir + " " + *iter;
+        mvcmd = std::format("perl {} -dd -outdir {} {}",copyscript, PRODUCTION::SaveOutputDir, outfile);
       }
       else
       {
-	mvcmd = "cp " + *iter + " " + PRODUCTION::SaveOutputDir;
+	mvcmd = std::format("cp {} {}", outfile, PRODUCTION::SaveOutputDir);
       }
+      std::cout << "move command: " << mvcmd << std::endl;
       gSystem->Exec(mvcmd.c_str());
     }
   }

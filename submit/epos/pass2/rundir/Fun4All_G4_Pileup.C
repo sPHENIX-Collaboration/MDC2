@@ -5,13 +5,15 @@
 
 #include <G4_OutputManager_Pileup.C>
 #include <G4_Production.C>
+#include <G4_RunSettings.C>
+#include <SaveGitTags.C>
 
 #include <g4main/Fun4AllDstPileupInputManager.h>
 #include <g4main/PHG4VertexSelection.h>
 
 #include <ffamodules/FlagHandler.h>
-
 #include <ffamodules/CDBInterface.h>
+
 #include <fun4allutils/TimerStats.h>
 
 #include <fun4all/Fun4AllDstInputManager.h>
@@ -29,28 +31,43 @@ R__LOAD_LIBRARY(libg4testbench.so)
 R__LOAD_LIBRARY(libfun4allutils.so)
 
 //________________________________________________________________________________________________
-int Fun4All_G4_Pileup(
+  int Fun4All_G4_Pileup(
     const int nEvents = 0,
-    const string &inputFile = "G4Hits_epos_0_153fm-0000000040-00000.root",
-    const string &backgroundList = "pileupbkg.list",
-    const string &outdir = ".",
-    const string &cdbtag = "MDC2_ana.416")
+    const std::string &inputFile = "G4Hits_EPOS4_OO_200GeV-0000000035-000000.root",
+    const std::string &backgroundList = "pileupbkgmb.list",
+    const std::string &outdir = ".",
+    const std::string &jettrigger = "NONE",
+    const int pileup = 140000,
+    const std::string &pileupstring = "140kHz",
+    const std::string &system = "OO",
+    const std::string &cdbtag = "MDC2",
+    const std::string &gitcommit = "none")
 {
   gSystem->Load("libg4dst.so");
   // server
-  auto se = Fun4AllServer::instance();
+  auto *se = Fun4AllServer::instance();
   se->Verbosity(1);
 
-  auto rc = recoConsts::instance();
+  auto *rc = recoConsts::instance();
 
-  //===============
-  // conditions DB flags
-  //===============
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
+
+  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
+  int runnumber = runseg.first;
+  int segment = runseg.second;
+  RunSettings(runnumber);
   Enable::CDB = true;
-  // global tag
+  // tag
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP",runnumber);
 
   FlagHandler *flag = new FlagHandler();
   se->registerSubsystem(flag);
@@ -59,14 +76,16 @@ int Fun4All_G4_Pileup(
   Enable::PRODUCTION = true;
   Enable::DSTOUT = true;
   DstOut::OutputDir = outdir;
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
-  int runnumber = runseg.first;
-  int segment = abs(runseg.second);
+
   if (Enable::PRODUCTION)
   {
     PRODUCTION::SaveOutputDir = DstOut::OutputDir;
 //    Production_CreateOutputDir();
   }
+
+  // signal input manager
+  auto *in = new Fun4AllDstInputManager("DST_signal");
+//  in->registerSubsystem(new PHG4VertexSelection);
 
   //--------------
   // Timing module is last to register
@@ -75,40 +94,38 @@ int Fun4All_G4_Pileup(
   ts->OutFileName("jobtime.root");
   se->registerSubsystem(ts);
 
-  // signal input manager
-  auto in = new Fun4AllDstInputManager("DST_signal");
-  in->registerSubsystem(new PHG4VertexSelection);
-
   // open file
   in->fileopen(inputFile);
   se->registerInputManager(in);
 
   // background input manager
-  auto inpile = new Fun4AllDstPileupInputManager("DST_background");
+  auto *inpile = new Fun4AllDstPileupInputManager("DST_background");
+  inpile->setCollisionRate(pileup);
+  double low_time_window = -105.5 / G4TPC::tpc_drift_velocity_sim; // tpc integration window start
+  double high_time_window = -low_time_window + + TRACKING::extended_readout_time;
+  inpile->setPileupTimeWindow(low_time_window, high_time_window);
   inpile->setDetectorActiveCrossings("BBC",1);
   inpile->setDetectorActiveCrossings("HCALIN",1);
   inpile->setDetectorActiveCrossings("HCALOUT",1);
   inpile->setDetectorActiveCrossings("EPD",1);
   inpile->setDetectorActiveCrossings("CEMC",1);
   inpile->setDetectorActiveCrossings("BH_1",1);
-
   // open file
   inpile->AddListFile(backgroundList);
+  inpile->Verbosity(1);
   se->registerInputManager(inpile);
 
-  // output manager
-  /* all the nodes from DST and RUN are saved to the output */
-  //  auto out = new Fun4AllDstOutputManager("DSTOUT", outputFile);
-  //  se->registerOutputManager(out);
+  // output manager setup in G4_OutputManager.C
   if (Enable::PRODUCTION)
   {
-    CreateDstOutput(runnumber, segment);
+    CreateDstOutput(runnumber, segment, system, pileupstring);
   }
 
   // process events
   se->run(nEvents);
 
   // terminate
+  CDBInterface::instance()->Print();
   se->End();
   if (Enable::PRODUCTION)
   {
