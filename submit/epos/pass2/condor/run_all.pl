@@ -44,6 +44,11 @@ if (! defined $runnumber)
     print "need runnumber with --run <runnumber>\n";
     $isbad = 1;
 }
+if (! defined $system)
+{
+    print "need system with --system <OO or AuAu>\n";
+    $isbad = 1;
+}
 
 if (! defined $build)
 {

@@ -67,7 +67,7 @@ root.exe -q -b  Fun4All_G4_Pileup.C\($1,\"$2\",\"$3\",\"$4\",$6,\"$7\",\"$8\",\"
 
 [[ -f copyscript.sh ]] && sh copyscript.sh
 
-timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/Herwig/pass2/$8/timing.run${9}/${7}
+timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/epos/$8/pass2/timing.run${9}/${7}
 
 [ ! -d $timedirname ] &&  mkdir -p $timedirname
 
