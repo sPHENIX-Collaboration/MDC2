@@ -9,20 +9,22 @@
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
 
+#include <format>
+#include <fstream>
+
 namespace OUTPUTMANAGER
 {
-  set<string> outfiles;
+  std::set<std::string> outfiles;
 }
 
 void AddCommonNodes(Fun4AllOutputManager *out);
 
 void CreateDstOutput(int runnumber, int segment, const std::string &system, const std::string &pileupstring)
 {
-  auto se = Fun4AllServer::instance();
+  auto *se = Fun4AllServer::instance();
 
-  std::string suffix = std::format("_AMPT_{}_200GeV_{}-{:010}-{:06}", system, pileupstring, runnumber, segment);
-
-  std::string FullOutFile = "DST_BBC_G4HIT" + suffix;
+  std::string suffix = std::format("AMPT_{}_200GeV_{}_AMPT_{}_200GeV-{:010}-{:06}.root",system,pileupstring,system,runnumber,segment);
+  std::string FullOutFile = "DST_BBC_G4HIT_" + suffix;
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("BBCOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("G4HIT_BBC");
@@ -30,7 +32,7 @@ void CreateDstOutput(int runnumber, int segment, const std::string &system, cons
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "DST_TRKR_G4HIT" + suffix;
+  FullOutFile = "DST_TRKR_G4HIT_" + suffix;
   out = new Fun4AllDstOutputManager("TRKROUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("G4HIT_MVTX");
@@ -40,7 +42,7 @@ void CreateDstOutput(int runnumber, int segment, const std::string &system, cons
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "DST_CALO_G4HIT" + suffix;
+  FullOutFile = "DST_CALO_G4HIT_" + suffix;
   out = new Fun4AllDstOutputManager("CALOOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("G4HIT_CEMC");
@@ -49,7 +51,7 @@ void CreateDstOutput(int runnumber, int segment, const std::string &system, cons
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "DST_TRUTH_G4HIT" + suffix;
+  FullOutFile = "DST_TRUTH_G4HIT_" + suffix;
   out = new Fun4AllDstOutputManager("TRUTHOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("G4TruthInfo");
@@ -57,10 +59,12 @@ void CreateDstOutput(int runnumber, int segment, const std::string &system, cons
   out->AddNode("PHHepMCGenEventMap");
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
+
 }
 
 void AddCommonNodes(Fun4AllOutputManager *out)
 {
+  out->StripCompositeNode("RECO_TRACKING_GEOMETRY");
   out->AddNode("Sync");
   out->AddNode("EventHeader");
   return;

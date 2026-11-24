@@ -8,27 +8,56 @@ use Getopt::Long;
 use DBI;
 
 
+my $build;
 my $outevents = 0;
-my $runnumber = 14;
+my $pileup;
+my $runnumber;
+my $system;
 my $test;
 my $incremental;
 my $verbosity;
-GetOptions("test"=>\$test, "increment"=>\$incremental, "verbose"=>\$verbosity);
+GetOptions("build:s" => \$build,  "increment"=>\$incremental, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "system:s"=>\$system,  "test"=>\$test, "verbose"=>\$verbosity);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
+    print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
+    print "--pileup : collision rate (with unit kHz)\n";
+    print "--run: <runnumber>\n";
+    print "--system: <AuAu or OO>\n";
     print "--test : dryrun - create jobfiles\n";
     print "--verbose : turn on blabbering\n";
     exit(1);
 }
 
+my $isbad = 0;
 my $hostname = `hostname`;
 chomp $hostname;
-if ($hostname !~ /phnxsub/)
+if ($hostname !~ /sphnxprod/)
 {
-    print "submit only from phnxsub01 or phnxsub02\n";
+    print "submit only from sphnxprod hosts\n";
+    $isbad = 1;
+}
+if (! defined $runnumber)
+{
+    print "need runnumber with --run <runnumber>\n";
+    $isbad = 1;
+}
+
+if (! defined $build)
+{
+    print "need build with --build <ana build>\n";
+    $isbad = 1;
+}
+if (! -f "outdir.txt")
+{
+    print "could not find outdir.txt\n";
+    $isbad = 1;
+}
+
+if ($isbad > 0)
+{
     exit(1);
 }
 
@@ -47,8 +76,13 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir = sprintf("%s/run%04d",$outdir,$runnumber);
-mkpath($outdir);
+
+$outdir =~ s/pileup/$system\/pileup/;
+$outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,lc $pileup);
+if (! -d $outdir)
+{
+  mkpath($outdir);
+}
 
 my %outfiletype = ();
 $outfiletype{"DST_BBC_G4HIT"} = 1;
@@ -58,18 +92,22 @@ $outfiletype{"DST_TRUTH_G4HIT"} = "DST_TRUTH";
 
 my $localdir=`pwd`;
 chomp $localdir;
-my $logdir = sprintf("%s/log/run%d",$localdir,$runnumber);
+my $logdir = sprintf("%s/log/%s/run%d/%s",$localdir,$system,$runnumber,$pileup);
 if (! -d $logdir)
 {
   mkpath($logdir);
 }
 
+my $infilelike = sprintf("AMPT_%s_200GeV-",$system);
+my $outfilelike = sprintf("AMPT_%s_200GeV_%s_bkg_AMPT_%s_200GeV-",$system,$pileup,$system);
+
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%ampt_0_20fm%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%$infilelike%' and runnumber = $runnumber order by segment") || die $DBI::errstr;
+print "select filename from datasets where dsttype = 'G4Hits' and filename like '%$infilelike%' and runnumber = $runnumber order by segment\n";
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
-my $getbkglastsegment = $dbh->prepare("select max(segment) from datasets where dsttype = 'G4Hits' and filename like '%ampt_0_20fm%' and runnumber = $runnumber");
+my $getbkglastsegment = $dbh->prepare("select max(segment) from datasets where dsttype = 'G4Hits' and filename like '%$infilelike%' and runnumber = $runnumber");
 $getbkglastsegment->execute();
 my @res1 = $getbkglastsegment->fetchrow_array();
 my $lastsegment = $res1[0];
@@ -80,6 +118,7 @@ $getfiles->execute() || die $DBI::errstr;
 while (my @res = $getfiles->fetchrow_array())
 {
     my $lfn = $res[0];
+#    print "$lfn\n";
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
         my $prefix=$1;
@@ -88,7 +127,7 @@ while (my @res = $getfiles->fetchrow_array())
 	my $foundall = 1;
 	foreach my $type (sort keys %outfiletype)
 	{
-            my $lfn =  sprintf("%s_ampt_0_20fm_50kHz_bkg_0_20fm-%010d-%06d.root",$type,$runnumber,$segment);
+            my $lfn =  sprintf("%s_%s%010d-%06d.root",$type,$outfilelike,$runnumber,$segment);
 	    $chkfile->execute($lfn);
 	    if ($chkfile->rows > 0)
 	    {
@@ -118,7 +157,7 @@ while (my @res = $getfiles->fetchrow_array())
 	$foundall = 1;
 	my @bkgfiles = ();
 
-	for (my $cnt = $segment+1; $cnt <=$segment+3; $cnt++)
+	for (my $cnt = $segment+1; $cnt <=$segment+100; $cnt++)
 	{
 	    my $bkgseg = $cnt;
 	    while ($bkgseg > $lastsegment)
@@ -126,6 +165,7 @@ while (my @res = $getfiles->fetchrow_array())
 		$bkgseg = $bkgseg - $lastsegment -1; # make sure it starts at segment zero, not 1
 	    }
 	    my $bckfile = sprintf("%s-%010d-%06d.root",$prefix,$runnumber,$bkgseg);
+#	    print "checking $bckfile\n";
 	    $chkfile->execute($bckfile);
 	    if ($chkfile->rows == 0)
 	    {
@@ -133,8 +173,9 @@ while (my @res = $getfiles->fetchrow_array())
 		{
 		    print "$bckfile missing\n";
 		}
-		$foundall = 0;
-		last;
+#		$foundall = 0;
+#		last;
+		next;
 	    }
 	    push(@bkgfiles,$bckfile);
 	}
@@ -154,7 +195,7 @@ while (my @res = $getfiles->fetchrow_array())
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %d %s", $outevents, $lfn, $bkglistfile, $outdir, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %s", $outevents, $lfn, $bkglistfile, $outdir, $build, $pileup, $system, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

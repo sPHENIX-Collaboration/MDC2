@@ -11,8 +11,8 @@
 #include <g4main/Fun4AllDstPileupInputManager.h>
 #include <g4main/PHG4VertexSelection.h>
 
-#include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
+#include <ffamodules/CDBInterface.h>
 
 #include <fun4allutils/TimerStats.h>
 
@@ -25,21 +25,19 @@
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
 
-#include <format>
-
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libg4testbench.so)
 R__LOAD_LIBRARY(libfun4allutils.so)
 
 //________________________________________________________________________________________________
-int Fun4All_G4_Pileup(
+  int Fun4All_G4_Pileup(
     const int nEvents = 0,
     const std::string &inputFile = "G4Hits_AMPT_OO_200GeV-0000000035-000000.root",
-    const std::string &backgroundList = "pileupbkgppmb.list",
+    const std::string &backgroundList = "pileupbkgmb.list",
     const std::string &outdir = ".",
     const int pileup = 140000,
-    const std::string &pileupstr = "140kHz",
+    const std::string &pileupstring = "140kHz",
     const std::string &system = "OO",
     const std::string &cdbtag = "MDC2",
     const std::string &gitcommit = "none")
@@ -59,7 +57,7 @@ int Fun4All_G4_Pileup(
   {
     SaveGitTags();
   }
-  std::string pileupstring = std::format("{}_bkg_0_15fm", pileupstr);
+
   std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile);
   int runnumber = runseg.first;
   int segment = runseg.second;
@@ -68,7 +66,7 @@ int Fun4All_G4_Pileup(
   // tag
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP", runnumber);
+  rc->set_uint64Flag("TIMESTAMP",runnumber);
 
   FlagHandler *flag = new FlagHandler();
   se->registerSubsystem(flag);
@@ -81,11 +79,12 @@ int Fun4All_G4_Pileup(
   if (Enable::PRODUCTION)
   {
     PRODUCTION::SaveOutputDir = DstOut::OutputDir;
-    //    Production_CreateOutputDir();
+//    Production_CreateOutputDir();
   }
 
   // signal input manager
   auto *in = new Fun4AllDstInputManager("DST_signal");
+//  in->registerSubsystem(new PHG4VertexSelection);
 
   //--------------
   // Timing module is last to register
@@ -101,24 +100,21 @@ int Fun4All_G4_Pileup(
   // background input manager
   auto *inpile = new Fun4AllDstPileupInputManager("DST_background");
   inpile->setCollisionRate(pileup);
-  double low_time_window = -105.5 /  G4TPC::tpc_drift_velocity_sim;    // tpc integration window start
-  double high_time_window = -low_time_window + TRACKING::extended_readout_time;  // 50us
+  double low_time_window = -105.5 / G4TPC::tpc_drift_velocity_sim; // tpc integration window start
+  double high_time_window = -low_time_window + + TRACKING::extended_readout_time;
   inpile->setPileupTimeWindow(low_time_window, high_time_window);
-  inpile->setDetectorActiveCrossings("BBC", 1);
-  inpile->setDetectorActiveCrossings("HCALIN", 1);
-  inpile->setDetectorActiveCrossings("HCALOUT", 1);
-  inpile->setDetectorActiveCrossings("EPD", 1);
-  inpile->setDetectorActiveCrossings("CEMC", 1);
-  inpile->setDetectorActiveCrossings("BH_1", 1);
+  inpile->setDetectorActiveCrossings("BBC",1);
+  inpile->setDetectorActiveCrossings("HCALIN",1);
+  inpile->setDetectorActiveCrossings("HCALOUT",1);
+  inpile->setDetectorActiveCrossings("EPD",1);
+  inpile->setDetectorActiveCrossings("CEMC",1);
+  inpile->setDetectorActiveCrossings("BH_1",1);
   // open file
   inpile->AddListFile(backgroundList);
   inpile->Verbosity(1);
   se->registerInputManager(inpile);
 
-  // output manager
-  /* all the nodes from DST and RUN are saved to the output */
-  //  auto out = new Fun4AllDstOutputManager("DSTOUT", outputFile);
-  //  se->registerOutputManager(out);
+  // output manager setup in G4_OutputManager.C
   if (Enable::PRODUCTION)
   {
     CreateDstOutput(runnumber, segment, system, pileupstring);
