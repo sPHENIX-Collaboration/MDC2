@@ -103,7 +103,8 @@ my $outfilelike = sprintf("EPOS4_%s_200GeV_%s_bkg_EPOS4_%s_200GeV-",$system,$pil
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%$infilelike%' and runnumber = $runnumber order by filename") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename from datasets where dsttype = 'G4Hits' and filename like '%$infilelike%' and runnumber = $runnumber order by segment") || die $DBI::errstr;
+print "select filename from datasets where dsttype = 'G4Hits' and filename like '%$infilelike%' and runnumber = $runnumber order by segment\n";
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
 my $getbkglastsegment = $dbh->prepare("select max(segment) from datasets where dsttype = 'G4Hits' and filename like '%$infilelike%' and runnumber = $runnumber");
@@ -156,7 +157,7 @@ while (my @res = $getfiles->fetchrow_array())
 	$foundall = 1;
 	my @bkgfiles = ();
 
-	for (my $cnt = $segment+1; $cnt <=$segment+4; $cnt++)
+	for (my $cnt = $segment+1; $cnt <=$segment+99; $cnt++)
 	{
 	    my $bkgseg = $cnt;
 	    while ($bkgseg > $lastsegment)

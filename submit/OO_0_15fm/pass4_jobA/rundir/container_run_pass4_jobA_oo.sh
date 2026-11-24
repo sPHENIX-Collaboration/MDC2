@@ -23,7 +23,7 @@ then
     perl getinputfiles.pl --dd  $2
     if [ $? -ne 0 ]
     then
-	echo error from perl getinputfiles.pl $2, exiting
+	echo error from perl getinputfiles.pl --dd $2, exiting
 	exit -1
     fi
 else
