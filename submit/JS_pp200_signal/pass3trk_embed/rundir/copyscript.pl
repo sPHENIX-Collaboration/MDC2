@@ -331,6 +331,14 @@ if ($lfn =~ /_ampt/)
 {
     $splitstring = "_ampt";
 }
+if ($lfn =~ /_EPOS/)
+{
+    $splitstring = "_EPOS";
+}
+if ($lfn =~ /_AMPT/)
+{
+    $splitstring = "_AMPT";
+}
 if ($lfn =~ /_Herwig/)
 {
     $splitstring = "_Herwig";
