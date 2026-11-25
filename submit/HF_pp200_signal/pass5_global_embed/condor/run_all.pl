@@ -98,7 +98,7 @@ while (my @res = $getbbcepdfiles->fetchrow_array())
 }
 $getbbcepdfiles->finish();
 
-foreach my $segment (sort keys %trkhash)
+foreach my $segment (sort { $a <=> $b } keys %trkhash)
 {
     if (! exists $bbcepdhash{$segment})
     {

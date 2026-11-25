@@ -93,7 +93,7 @@ while (my @res = $getcalofiles->fetchrow_array())
 }
 $getcalofiles->finish();
 
-foreach my $segment (sort keys %g4hithash)
+foreach my $segment (sort { $a <=> $b } keys %g4hithash)
 {
     if (! exists $calohash{$segment})
     {

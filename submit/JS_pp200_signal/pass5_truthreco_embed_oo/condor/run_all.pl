@@ -152,7 +152,7 @@ print "input files g4hit: $ng4hit, cluster: $ncluster, track: $ntrack, truth: $n
 
 my $nsubmit = 0;
 
-foreach my $segment (sort keys %trackhash)
+foreach my $segment (sort { $a <=> $b } keys %trackhash)
 {
     if (! exists $g4hithash{$segment})
     {

@@ -116,7 +116,7 @@ $getvertexfiles->finish();
 
 
 #print "input files: $ncal, truth: $ntruth\n";
-foreach my $segment (sort keys %trkhash)
+foreach my $segment (sort { $a <=> $b } keys %trkhash)
 {
     if (! exists $bbchash{$segment})
     {

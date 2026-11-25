@@ -81,7 +81,7 @@ while (my @res = $getclusterfiles->fetchrow_array())
 }
 $getclusterfiles->finish();
 
-foreach my $segment (sort keys %trkhash)
+foreach my $segment (sort { $a <=> $b } keys %trkhash)
 {
     if (! exists $clusterhash{$segment})
     {

@@ -101,7 +101,7 @@ while (my @res = $getmbdepdfiles->fetchrow_array())
     $mbdepdhash{sprintf("%06d",$res[1])} = $res[0];
 }
 $getmbdepdfiles->finish();
-foreach my $segment (sort keys %trkhash)
+foreach my $segment (sort { $a <=> $b } keys %trkhash)
 {
     if (! exists $mbdepdhash{$segment})
     {

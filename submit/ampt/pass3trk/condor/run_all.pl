@@ -77,7 +77,7 @@ while (my @res = $gettruthfiles->fetchrow_array())
 }
 $gettruthfiles->finish();
 #print "input files: $ncal, truth: $ntruth\n";
-foreach my $segment (sort keys %trkhash)
+foreach my $segment (sort { $a <=> $b } keys %trkhash)
 {
     if (! exists $truthhash{$segment})
     {

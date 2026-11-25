@@ -91,7 +91,7 @@ while (my @res = $gettruthfiles->fetchrow_array())
 }
 $gettruthfiles->finish();
 
-foreach my $segment (sort keys %bbchash)
+foreach my $segment (sort { $a <=> $b } keys %bbchash)
 {
     if (! exists $truthhash{$segment})
     {
