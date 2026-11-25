@@ -47,8 +47,7 @@ fi
 # $8: build
 # $9: run number
 # $10: sequence
-# $11: jettrigger
-# $12 git commit id
+# $11 git commit id
 
 echo 'here comes your environment'
 printenv
@@ -62,15 +61,14 @@ echo arg7 \(output dir\): $7
 echo arg8 \(build\): $8
 echo arg9 \(runnumber\): $9
 echo arg10 \(sequence\): ${10}
-echo arg11 \(jettrigger\): ${11}
-echo arg12 \(git commit id\): ${12}
+echo arg12 \(git commit id\): ${11}
 echo cdbtag: $cdbtag
 
 runnumber=$(printf "%010d" $9)
 sequence=$(printf "%06d" ${10})
 
-echo running root.exe -q -b Fun4All_TruthReco.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"$cdbtag\",\"${12}\"\)
-root.exe -q -b  Fun4All_TruthReco.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"$cdbtag\",\"${12}\"\)
+echo running root.exe -q -b Fun4All_TruthReco.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"$cdbtag\",\"${11}\"\)
+root.exe -q -b  Fun4All_TruthReco.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"$cdbtag\",\"${11}\"\)
 
 [[ -f copyscript.sh ]] && sh copyscript.sh
 

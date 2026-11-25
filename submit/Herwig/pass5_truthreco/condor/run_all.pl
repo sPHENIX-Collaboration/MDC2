@@ -21,7 +21,7 @@ my $verbosity = 0;
 GetOptions("build:s" => \$build, "increment"=>\$incremental, "memory:s"=>\$memory, "overwrite" => \$overwrite, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "shared" => \$shared, "test"=>\$test, "verbosity:i" => \$verbosity);
 if ($#ARGV < 1)
 {
-    print "usage: run_all.pl <number of jobs> <\"Jet5\", \"Jet12\", \"Jet20\", \"Jet30\", \"Jet40\", \"Jet50\", \"MB\", \"PhotonJet5\", \"PhotonJet10\", \"PhotonJet20\" production>\n";
+    print "usage: run_all.pl <number of jobs> \"MB\", \"PhotonJet5\", \"PhotonJet5Frag\", \"PhotonJet10\", \"PhotonJet10Frag\", \"PhotonJet20\", \"PhotonJet20Frag\" production>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
@@ -74,18 +74,15 @@ if ($isbad > 0)
 
 my $maxsubmit = $ARGV[0];
 my $jettrigger = $ARGV[1];
-if ($jettrigger  ne "Jet5" &&
-    $jettrigger  ne "Jet12" &&
-    $jettrigger  ne "Jet20" &&
-    $jettrigger  ne "Jet30" &&
-    $jettrigger  ne "Jet40" &&
-    $jettrigger  ne "Jet50" &&
-    $jettrigger  ne "MB" &&
+if ($jettrigger  ne "MB" &&
     $jettrigger  ne "PhotonJet5" &&
+    $jettrigger  ne "PhotonJet5Frag" &&
     $jettrigger  ne "PhotonJet10" &&
-    $jettrigger  ne "PhotonJet20")
+    $jettrigger  ne "PhotonJet10Frag" &&
+    $jettrigger  ne "PhotonJet20" &&
+    $jettrigger  ne "PhotonJet20Frag")
 {
-    print "second argument has to be Jet5, Jet12, Jet20, Jet30, Jet40, Jet50, MB, PhotonJet5, PhotonJet10 or PhotonJet20\n";
+    print "second argument has to be MB, PhotonJet5, PhotonJet5Frag, PhotonJet10, PhotonJet10Frag, PhotonJet20 or PhotonJet20Frag\n";
     exit(1);
 }
 
@@ -97,22 +94,21 @@ if (-f $condorlistfile)
 
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$jettrigger = sprintf("%s_%s",$jettrigger,$pileup);
-$outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,lc $jettrigger);
+$outdir = sprintf("%s/run%04d/%s/%s",$outdir,$runnumber,lc $pileup,lc $jettrigger);
 if (! -d $outdir)
 {
   mkpath($outdir);
 }
 
-my $outfilelike = sprintf("Herwig_%s",$jettrigger);
+my $outfilelike = sprintf("Herwig_%s_%s-",$jettrigger,$pileup);
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like 'DST_TRKR_G4HIT_$outfilelike-%' and runnumber = $runnumber") || die $DBI::errstr;
-my $getclusterfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_CLUSTER' and filename like 'DST_TRKR_CLUSTER_$outfilelike-%' and runnumber = $runnumber") || die $DBI::errstr;
-my $gettrackfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRACKS' and filename like 'DST_TRACKS_$outfilelike-%' and runnumber = $runnumber") || die $DBI::errstr;
-my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH' and filename like 'DST_TRUTH_$outfilelike-%' and runnumber = $runnumber") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like '%$outfilelike%' and runnumber = $runnumber") || die $DBI::errstr;
+my $getclusterfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRACKSEEDS' and filename like '%$outfilelike%' and runnumber = $runnumber") || die $DBI::errstr;
+my $gettrackfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRACKS' and filename like '%$outfilelike-%' and runnumber = $runnumber") || die $DBI::errstr;
+my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH' and filename like '%$outfilelike-%' and runnumber = $runnumber") || die $DBI::errstr;
 
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
@@ -178,7 +174,7 @@ foreach my $segment (sort keys %trackhash)
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-        my $outfilename =  sprintf("DST_TRUTH_RECO_%s-%010d-%06d.root",$outfilelike,$runnumber,$segment);
+        my $outfilename =  sprintf("DST_TRUTH_RECO_%s%010d-%06d.root",$outfilelike,$runnumber,$segment);
 	$chkfile->execute($outfilename);
 	if ($chkfile->rows > 0)
 	{
@@ -197,7 +193,7 @@ foreach my $segment (sort keys %trackhash)
 	{
 	    $tstflag= sprintf("%s --overwrite",$tstflag);
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %s %s %d %d %s", $outevents, $jettrigger, $g4hithash{sprintf("%06d",$segment)}, $clusterhash{sprintf("%06d",$segment)}, $trackhash{sprintf("%06d",$segment)}, $truthhash{sprintf("%06d",$segment)}, $outfilename, $outdir, $build, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %s %s %d %d %s %s", $outevents, $jettrigger, $g4hithash{sprintf("%06d",$segment)}, $clusterhash{sprintf("%06d",$segment)}, $trackhash{sprintf("%06d",$segment)}, $truthhash{sprintf("%06d",$segment)}, $outfilename, $outdir, $build, $runnumber, $segment, $pileup, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
