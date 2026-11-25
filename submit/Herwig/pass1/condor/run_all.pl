@@ -152,7 +152,7 @@ for (my $iseg=0; $iseg<=$max_seg; $iseg++)
 	{
 	    my $listfile = sprintf("%s/condor-%010d-%06d.inputlist",$logdir,$runnumber,$g4hit_seg);
 	    open(F,">$listfile");
-	    foreach my $index (sort keys %hepmcsave)
+	    foreach my $index (sort { $a <=> $b } keys %hepmcsave)
 	    {
 		print F "$hepmcsave{$index}\n";
 		if ($verbosity > 0)
