@@ -113,7 +113,7 @@ while (my @res = $getclusterfiles->fetchrow_array())
     $clusterhash{sprintf("%06d",$res[1])} = $res[0];
 }
 $getclusterfiles->finish();
-foreach my $segment (sort keys %trkhash)
+foreach my $segment (sort { $a <=> $b } keys %trackhash)
 {
     if (! exists $clusterhash{$segment})
     {
