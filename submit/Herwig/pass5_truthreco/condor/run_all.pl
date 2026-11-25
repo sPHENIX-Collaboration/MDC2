@@ -107,8 +107,8 @@ $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 
 my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like '%$outfilelike%' and runnumber = $runnumber") || die $DBI::errstr;
 my $getclusterfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRACKSEEDS' and filename like '%$outfilelike%' and runnumber = $runnumber") || die $DBI::errstr;
-my $gettrackfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRACKS' and filename like '%$outfilelike-%' and runnumber = $runnumber") || die $DBI::errstr;
-my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH' and filename like '%$outfilelike-%' and runnumber = $runnumber") || die $DBI::errstr;
+my $gettrackfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRACKS' and filename like '%$outfilelike%' and runnumber = $runnumber") || die $DBI::errstr;
+my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH' and filename like '%$outfilelike%' and runnumber = $runnumber") || die $DBI::errstr;
 
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 
@@ -150,7 +150,7 @@ while (my @res = $gettruthfiles->fetchrow_array())
 $gettruthfiles->finish();
 
 
-print "input files g4hit: $ng4hit, cluster: $ncluster, track: $ntrack, truth: $ntruth\n";
+#print "input files g4hit: $ng4hit, cluster: $ncluster, track: $ntrack, truth: $ntruth\n";
 
 my $nsubmit = 0;
 
