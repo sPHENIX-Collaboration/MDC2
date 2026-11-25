@@ -7,19 +7,20 @@ use File::Basename;
 use Getopt::Long;
 use DBI;
 
-
+my $build;
 my $incremental;
 my $outevents = 0;
 my $pileup;
 my $system;
 my $runnumber;
 my $test;
-GetOptions("increment"=>\$incremental, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "system:s"=>\$system, "test"=>\$test);
+GetOptions("build:s" => \$build, "events:i"=>\$outevents, "increment"=>\$incremental, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "system:s"=>\$system, "test"=>\$test);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
+    print "--events: <events to process, default 0=all>\n";
     print "--increment : submit jobs while processing running\n";
     print "--pileup : collision rate (with unit kHz)\n";
     print "--run: <runnumber>\n";
@@ -91,11 +92,12 @@ $outfiletype{"DST_TRUTH"} = 1;
 my %trkhash = ();
 my %truthhash = ();
 
-my $outfilelike = sprintf("AMPT_%s_200GeV_%s_bkg_AMPT_%s_200GeV-",$system,$pileup,$system);
+my $outfilelike = sprintf("AMPT_%s_200GeV_%s_AMPT_%s_200GeV-",$system,$pileup,$system);
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
 my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like '%$outfilelike%' and runnumber = $runnumber") || die $DBI::errstr;
+#print "select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like '%$outfilelike%' and runnumber = $runnumber\n";
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
 my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH_G4HIT' and filename like '%$outfilelike%' and runnumber = $runnumber");
 my $nsubmit = 0;
@@ -152,7 +154,7 @@ foreach my $segment (sort { $a <=> $b } keys %trkhash)
 	    $tstflag="--test";
 	}
 	my $truthfile = $truthhash{sprintf("%06d",$segment)};
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %d %s", $outevents, $lfn, $truthfile, $outdir, $build, $pileup, $system, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %s", $outevents, $lfn, $truthfile, $outdir, $build, $pileup, $system, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

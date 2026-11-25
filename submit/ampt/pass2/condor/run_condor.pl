@@ -12,7 +12,7 @@ my $test;
 GetOptions("memory:s" => \$memory, "overwrite"=>\$overwrite, "test"=>\$test);
 if ($#ARGV < 8)
 {
-    print "usage: run_condor.pl <nevents> <infile> <bkglist> <outdir> <build> <pileup> <runnumber> <sequence>\n";
+    print "usage: run_condor.pl <nevents> <infile> <bkglist> <outdir> <build> <pileup> <system> <runnumber> <sequence>\n";
     print "options:\n";
     print "--memory: memory requirement\n";
     print "--overwrite : overwrite existing jobfiles\n";

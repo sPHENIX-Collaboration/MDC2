@@ -16,7 +16,7 @@ my $system;
 my $test;
 my $incremental;
 my $verbosity;
-GetOptions("build:s" => \$build,  "increment"=>\$incremental, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "system:s"=>\$system,  "test"=>\$test, "verbose"=>\$verbosity);
+GetOptions("build:s" => \$build, "increment"=>\$incremental, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "system:s"=>\$system, "test"=>\$test, "verbose"=>\$verbosity);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
