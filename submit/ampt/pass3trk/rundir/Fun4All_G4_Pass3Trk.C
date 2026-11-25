@@ -29,8 +29,8 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_Pass3Trk(
     const int nEvents = 1,
-    const string &inputFile0 = "DST_TRKR_G4HIT_AMPT_OO_200GeV_140kHz_AMPT_OO_200GeV-0000000035-000000.root",
-    const string &inputFile1 = "DST_TRUTH_G4HIT_AMPT_OO_200GeV_140kHz_AMPT_OO_200GeV-0000000035-000000.root",
+    const std::string &inputFile0 = "DST_TRKR_G4HIT_AMPT_OO_200GeV_140kHz_AMPT_OO_200GeV-0000000035-000000.root",
+    const std::string &inputFile1 = "DST_TRUTH_G4HIT_AMPT_OO_200GeV_140kHz_AMPT_OO_200GeV-0000000035-000000.root",
     const std::string &outdir = ".",
     const std::string &pileup = "140kHz",
     const std::string &system = "OO",
