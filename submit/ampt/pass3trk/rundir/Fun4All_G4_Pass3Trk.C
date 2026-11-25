@@ -6,7 +6,9 @@
 #include <G4_Input.C>
 #include <G4_OutputManager_Pass3Trk.C>
 #include <G4_Production.C>
+#include <G4_RunSettings.C>
 #include <G4_TrkrSimulation.C>
+#include <SaveGitTags.C>
 
 #include <ffamodules/FlagHandler.h>
 #include <ffamodules/CDBInterface.h>
@@ -26,11 +28,14 @@ R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_Pass3Trk(
-    const int nEvents = 1,
-    const string &inputFile0 = "DST_TRKR_G4HIT_ampt_0_20fm_50kHz_bkg_0_20fm-0000000014-000000.root",
-    const string &inputFile1 = "DST_TRUTH_G4HIT_ampt_0_20fm_50kHz_bkg_0_20fm-0000000014-000000.root",
+    const int nEvents = 0,
+    const string &inputFile0 = "DST_TRKR_G4HIT_AMPT_OO_200GeV_140kHz_AMPT_OO_200GeV-0000000035-000000.root",
+    const string &inputFile1 = "DST_TRUTH_G4HIT_AMPT_OO_200GeV_140kHz_AMPT_OO_200GeV-0000000035-000000.root",
     const string &outdir = ".",
-    const string &cdbtag = "MDC2_ana.416")
+    const std::string &pileup = "140kHz",
+    const std::string &system = "OO",
+    const std::string &cdbtag = "MDC2",
+    const std::string &gitcommit = "none")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
@@ -49,11 +54,25 @@ int Fun4All_G4_Pass3Trk(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
+
+  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile0);
+  int runnumber = runseg.first;
+  int segment = runseg.second;
+  RunSettings(runnumber);
+
   Enable::CDB = true;
   // tag
   rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
   // 64 bit timestamp
-  rc->set_uint64Flag("TIMESTAMP",CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP",runnumber);
 
   //===============
   // Input options
@@ -90,9 +109,6 @@ int Fun4All_G4_Pass3Trk(
   Enable::DSTOUT_COMPRESS = false;
   DstOut::OutputDir = outdir;
 
-  pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile0);
-  int runnumber = runseg.first;
-  int segment = abs(runseg.second);
   if (Enable::PRODUCTION)
   {
     PRODUCTION::SaveOutputDir = DstOut::OutputDir;
@@ -150,16 +166,11 @@ int Fun4All_G4_Pass3Trk(
 
   if (Enable::PRODUCTION)
   {
-    CreateDstOutput(runnumber, segment);
+    CreateDstOutput(runnumber, segment, system, pileup);
 //    Production_CreateOutputDir();
   }
 
   // if we use a negative number of events we go back to the command line here
-  if (nEvents < 0)
-  {
-    return 0;
-  }
-  // if we run the particle generator and use 0 it'll run forever
   if (nEvents < 0)
   {
     return 0;
@@ -174,12 +185,11 @@ int Fun4All_G4_Pass3Trk(
   CDBInterface::instance()->Print(); // print used DB files
   se->End();
   se->PrintTimer();
-  std::cout << "All done" << std::endl;
   if (Enable::PRODUCTION)
   {
     DstOutput_move();
   }
-
+  std::cout << "All done" << std::endl;
   delete se;
   gSystem->Exit(0);
   return 0;

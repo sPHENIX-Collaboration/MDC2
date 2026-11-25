@@ -9,21 +9,23 @@
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
 
+#include <format>
+#include <fstream>
+
 namespace OUTPUTMANAGER
 {
-  set<string> outfiles;
+  std::set<std::string> outfiles;
 }
 
 void AddCommonNodes(Fun4AllOutputManager *out);
 
-void CreateDstOutput(int runnumber, int segment)
+void CreateDstOutput(int runnumber, int segment, const std::string &system, const std::string &pileupstring)
 {
-  auto se = Fun4AllServer::instance();
+  auto *se = Fun4AllServer::instance();
 
-  char segrun[100];
-  snprintf(segrun,100,"%010d-%06d",runnumber,segment);
-
-  string FullOutFile = "DST_TRUTH_ampt_0_20fm_50kHz_bkg_0_20fm-" + string(segrun) + ".root";;
+  std::string suffix = std::format("AMPT_{}_200GeV_{}_AMPT_{}_200GeV-{:010}-{:06}.root",system,pileupstring,system,runnumber,segment);
+  std::string FullOutFile = "DST_TRUTH_" + suffix;;
+  ;
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("TRUTHOUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("PHHepMCGenEventMap");
@@ -33,7 +35,7 @@ void CreateDstOutput(int runnumber, int segment)
   se->registerOutputManager(out);
   OUTPUTMANAGER::outfiles.insert(FullOutFile);
 
-  FullOutFile = "DST_TRKR_HIT_ampt_0_20fm_50kHz_bkg_0_20fm-" + string(segrun) + ".root";;
+  FullOutFile = "DST_TRKR_HIT_" + suffix;
   out = new Fun4AllDstOutputManager("TRKROUT", FullOutFile);
   AddCommonNodes(out);
   out->AddNode("TRKR_HITSET");
@@ -50,10 +52,6 @@ void AddCommonNodes(Fun4AllOutputManager *out)
 
 void DstOutput_move()
 {
-  string copyscript = "copyscript.pl";
-  ifstream f(copyscript);
-  bool scriptexists = f.good();
-  f.close();
   if (Enable::DSTOUT)
   {
     // if run locally it will try to copy output file to itself wiping it out
@@ -61,20 +59,37 @@ void DstOutput_move()
     {
       return;
     }
-    for (auto iter = OUTPUTMANAGER::outfiles.begin(); iter != OUTPUTMANAGER::outfiles.end(); ++iter)
+    std::string copyscript = "copyscript.pl";
+    std::ifstream f(copyscript);
+    bool scriptexists = f.good();
+    f.close();
+    std::ofstream flist("copyscript.sh");
+    bool copyscriptexists = flist.good();
+    for (const auto &outfile : OUTPUTMANAGER::outfiles)
     {
-//   string mvcmd = "mv " + *iter + " " + PRODUCTION::SaveOutputDir;
-      string mvcmd;
+      //   std::string mvcmd = "mv " + *iter + " " + PRODUCTION::SaveOutputDir;
+      std::string mvcmd;
       if (scriptexists)
       {
-//        mvcmd = copyscript + " -outdir " + PRODUCTION::SaveOutputDir + " " + *iter + " --test";
-        mvcmd = copyscript + " -outdir " + PRODUCTION::SaveOutputDir + " " + *iter;
+        mvcmd = std::format("perl {} -dd -outdir {} {}", copyscript, PRODUCTION::SaveOutputDir, outfile);
       }
       else
       {
-	mvcmd = "cp " + *iter + " " + PRODUCTION::SaveOutputDir;
+        mvcmd = std::format("mv {} {}", outfile, PRODUCTION::SaveOutputDir);
       }
-      gSystem->Exec(mvcmd.c_str());
+      std::cout << "copy command: " << mvcmd << std::endl;
+      if (copyscriptexists)
+      {
+        flist << mvcmd << std::endl;
+      }
+      else
+      {
+        gSystem->Exec(mvcmd.c_str());
+      }
+    }
+    if (copyscriptexists)
+    {
+      flist.close();
     }
   }
 }
