@@ -11,11 +11,35 @@ this_dir=`dirname $this_script`
 echo rsyncing from $this_dir
 echo running: $this_script $*
 
+# arguments
+# $1: number of events
+# $2: track g4hits input file
+# $3: truth g4hits input file
+# $4: output dir
+# $5: build
+# $6: pileup
+# $7: system
+# $8: run number
+# $9: sequence
+echo Arguments:
+echo arg1 \(events\) : $1
+echo arg2 \(track g4hits file\): $2
+echo arg3 \(truth g4hits file\): $3
+echo arg4 \(output dir\): $4
+echo arg5 \(build\): $5
+echo arg6 \(pileup\): $6
+echo arg7 \(system\): $7
+echo arg5 \(runnumber\): $8
+echo arg6 \(sequence\): $9
 anabuild=${5}
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
 
 cdbtag=MDC2_$anabuild
+echo cdbtag: $cdbtag
+
+echo 'here comes your environment'
+printenv
 
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
@@ -33,30 +57,6 @@ else
     echo condor scratch NOT set
     exit -1
 fi
-
-# arguments 
-# $1: number of events
-# $2: track g4hits input file
-# $3: truth g4hits input file
-# $4: output dir
-# $5: build
-# $6: pileup
-# $7: system
-# $8: run number
-# $9: sequence
-
-echo 'here comes your environment'
-printenv
-echo arg1 \(events\) : $1
-echo arg2 \(track g4hits file\): $2
-echo arg3 \(truth g4hits file\): $3
-echo arg4 \(output dir\): $4
-echo arg5 \(build\): $5
-echo arg6 \(pileup\): $6
-echo arg7 \(system\): $7
-echo arg5 \(runnumber\): $8
-echo arg6 \(sequence\): $9
-echo cdbtag: $cdbtag
 
 runnumber=$(printf "%010d" $8)
 sequence=$(printf "%06d" $9)
