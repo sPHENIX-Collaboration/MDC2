@@ -23,8 +23,7 @@ echo running: $this_script $*
 # $10: sequence
 # $11: git commit id
 
-echo 'here comes your environment'
-printenv
+echo Arguments:
 echo arg1 \(output events\) : $1
 echo arg2 \(input file\): $2
 echo arg3 \(background listfile\): $3
@@ -36,13 +35,17 @@ echo arg8 \(system\): $8
 echo arg9 \(runnumber\): $9
 echo arg10 \(sequence\): ${10}
 echo arg11 \(git commit id\): ${11}
-echo cdbtag: $cdbtag
 
 anabuild=${5}
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
 
 cdbtag=MDC2_$anabuild
+echo cdbtag: $cdbtag
+
+echo 'here comes your environment'
+printenv
+
 if [[ ! -z "$_CONDOR_SCRATCH_DIR" && -d $_CONDOR_SCRATCH_DIR ]]
 then
     cd $_CONDOR_SCRATCH_DIR # redundant but in case someone screw this up and we fill the home disk

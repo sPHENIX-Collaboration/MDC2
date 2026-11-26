@@ -23,7 +23,7 @@ void CreateDstOutput(int runnumber, int segment, const std::string &system, cons
 {
   auto *se = Fun4AllServer::instance();
 
-  std::string suffix = std::format("AMPT_{}_200GeV_{}_AMPT_{}_200GeV-{:010}-{:06}.root",system,pileupstring,system,runnumber,segment);
+  std::string suffix = std::format("AMPT_{}_200GeV_{}_bkg_AMPT_{}_200GeV-{:010}-{:06}.root",system,pileupstring,system,runnumber,segment);
   std::string FullOutFile = "DST_BBC_G4HIT_" + suffix;
   Fun4AllOutputManager *out = new Fun4AllDstOutputManager("BBCOUT", FullOutFile);
   AddCommonNodes(out);

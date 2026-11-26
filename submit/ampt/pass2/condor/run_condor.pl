@@ -70,8 +70,15 @@ if (! -d $condorlogdir)
 my $jobfile = sprintf("%s/condor-%s.job",$logdir,$suffix);
 if (-f $jobfile)
 {
-    print "jobfile $jobfile exists, possible overlapping names\n";
-    exit(1);
+    if (! defined $overwrite)
+    {
+	print "jobfile $jobfile exists, possible overlapping names\n";
+	exit(1);
+    }
+    else
+    {
+	print "overwriting $jobfile\n";
+    }
 }
 my $condorlogfile = sprintf("%s/condor-%s.log",$condorlogdir,$suffix);
 if (-f $condorlogfile)
