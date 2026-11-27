@@ -92,7 +92,7 @@ $outfiletype{"DST_TRUTH"} = 1;
 my %trkhash = ();
 my %truthhash = ();
 
-my $outfilelike = sprintf("AMPT_%s_200GeV_%s_AMPT_%s_200GeV-",$system,$pileup,$system);
+my $outfilelike = sprintf("AMPT_%s_200GeV_%s_bkg_AMPT_%s_200GeV-",$system,$pileup,$system);
 
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
