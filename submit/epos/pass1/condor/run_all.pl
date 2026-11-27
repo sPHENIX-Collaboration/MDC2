@@ -12,10 +12,11 @@ my $build;
 my $events = 1000;
 my $incremental;
 my $memory;
+my $overwrite;
 my $runnumber;
 my $system;
 my $test;
-GetOptions("build:s" => \$build, "events:i"=>\$events, "increment"=>\$incremental, "memory:s"=>\$memory, "run:i" =>\$runnumber, "system:s"=>\$system, "test"=>\$test);
+GetOptions("build:s" => \$build, "events:i"=>\$events, "increment"=>\$incremental, "memory:s"=>\$memory, "overwrite"=>\$overwrite, "run:i" =>\$runnumber, "system:s"=>\$system, "test"=>\$test);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
@@ -24,6 +25,7 @@ if ($#ARGV < 0)
     print "--events: <number of event>\n";
     print "--increment : submit jobs while processing running\n";
     print "--memory: <memory in MB like 8000MB>\n";
+    print "--overwrite : overwrite eisting output\n";
     print "--run: <runnumber>\n";
     print "--system: <AuAu or OO>\n";
     print "--test : dryrun - create jobfiles\n";
@@ -132,6 +134,10 @@ OUTER: for (my $segment=0; $segment<=$lastsegment; $segment++)
 	    if (defined $memory)
 	    {
 		$tstflag = sprintf("%s --memory %s",$tstflag,$memory)
+	    }
+	    if (defined $overwrite)
+	    {
+		$tstflag = sprintf("%s --overwrite",$tstflag);
 	    }
 	    my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %d %s %d %d %s %s", $events, $epos4datfile, $outdir, $outfile, $n, $build, $runnumber, $sequence, $system, $tstflag);
 	    print "cmd: $subcmd\n";
