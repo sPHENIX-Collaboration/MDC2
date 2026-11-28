@@ -7,6 +7,7 @@
 #include <G4_EPD.C>
 #include <G4_Input.C>
 #include <G4_Production.C>
+#include <SaveGitTags.C>
 
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
@@ -14,23 +15,37 @@
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
+#include <fun4all/Fun4AllUtils.h>
 
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
 
 R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4all.so)
+R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_MBD_EPD(
     const int nEvents = 1,
-     const string &inputFile1 = "DST_BBC_G4HIT_epos_0_153fm_50kHz_bkg_0_153fm-0000000010-00000.root",
-     const string &inputFile2 = "DST_TRUTH_G4HIT_epos_0_153fm_50kHz_bkg_0_153fm-0000000010-00000.root",
-     const string &outputFile = "DST_MBD_EPD_epos_0_153fm_50kHz_bkg_0_153fm-0000000010-00000.root",
-    const string &outdir = ".")
+     const string &inputFile1 = "DST_BBC_G4HIT_EPOS4_OO_200GeV_140kHz_bkg_EPOS4_OO_200GeV-0000000035-000000.root",
+     const string &inputFile2 = "DST_TRUTH_G4HIT_EPOS4_OO_200GeV_140kHz_bkg_EPOS4_OO_200GeV-0000000035-000000.root",
+     const string &outputFile = "DST_MBD_EPD_EPOS4_OO_200GeV_140kHz_bkg_EPOS4_OO_200GeV-0000000035-000000.root",
+    const string &outdir = ".",
+    const std::string &pileup = "140kHz",
+    const std::string &system = "OO",
+    const std::string &cdbtag = "MDC2",
+    const std::string &gitcommit = "none")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
 
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
   // Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
   PHRandomSeed::Verbosity(1);
 
@@ -45,9 +60,15 @@ int Fun4All_G4_MBD_EPD(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
+
+  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile0);
+  int runnumber = runseg.first;
+  int segment = abs(runseg.second);
+
   Enable::CDB = true;
   rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
-  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  rc->set_uint64Flag("TIMESTAMP", runnumber);
+
   CDBInterface::instance()->Verbosity(1);
 
   //===============
@@ -88,6 +109,12 @@ int Fun4All_G4_MBD_EPD(
   Enable::DSTOUT_COMPRESS = false;
   DstOut::OutputDir = outdir;
   DstOut::OutputFile = outputFile;
+
+  if (Enable::PRODUCTION)
+  {
+    PRODUCTION::SaveOutputDir = DstOut::OutputDir;
+    //    Production_CreateOutputDir();
+  }
 
   //======================
   // What to run

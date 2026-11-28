@@ -7,30 +7,59 @@ use File::Basename;
 use Getopt::Long;
 use DBI;
 
-
-my $outevents = 0;
-my $inrunnumber=10;
-#my $outrunnumber=40;
-my $outrunnumber=$inrunnumber;
-my $test;
+my $build;
 my $incremental;
-my $shared;
-GetOptions("test"=>\$test, "increment"=>\$incremental, "shared" => \$shared);
+my $outevents = 0;
+my $pileup;
+my $system;
+my $runnumber;
+my $test;
+GetOptions("build:s" => \$build, "events:i"=>\$outevents, "increment"=>\$incremental, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "system:s"=>\$system, "test"=>\$test);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
+    print "--build: <ana build>\n";
+    print "--events: <events to process, default 0=all>\n";
     print "--increment : submit jobs while processing running\n";
-    print "--shared : submit jobs to shared pool\n";
+    print "--pileup : collision rate (with unit kHz)\n";
+    print "--run: <runnumber>\n";
+    print "--system: <AuAu or OO>\n";
     print "--test : dryrun - create jobfiles\n";
     exit(1);
 }
 
+my $isbad = 0;
 my $hostname = `hostname`;
 chomp $hostname;
-if ($hostname !~ /phnxsub/)
+if ($hostname !~ /sphnxprod/)
 {
-    print "submit only from phnxsub01 or phnxsub02\n";
+    print "submit only from sphnxprod hosts\n";
+    $isbad = 1;
+}
+if (! defined $runnumber)
+{
+    print "need runnumber with --run <runnumber>\n";
+    $isbad = 1;
+}
+if (! defined $system)
+{
+    print "need system with --system <OO or AuAu>\n";
+    $isbad = 1;
+}
+
+if (! defined $build)
+{
+    print "need build with --build <ana build>\n";
+    $isbad = 1;
+}
+if (! -f "outdir.txt")
+{
+    print "could not find outdir.txt\n";
+    $isbad = 1;
+}
+if ($isbad > 0)
+{
     exit(1);
 }
 
@@ -47,55 +76,42 @@ if (! -f "outdir.txt")
     print "could not find outdir.txt\n";
     exit(1);
 }
-
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-my $outdirsubdir = sprintf("run%04d",$inrunnumber);
-$outdir = sprintf("%s/%s",$outdir,$outdirsubdir);
- mkpath($outdir);
+$outdir =~ s/trkrhit/$system\/trkrhit/;
+$outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,lc $pileup);
+if (! -d $outdir)
+{
+  mkpath($outdir);
+}
 
 my %mbdhash = ();
 my %truthhash = ();
 
+my $outfilelike = sprintf("EPOS4_%s_200GeV_%s_bkg_EPOS4_%s_200GeV-",$system,$pileup,$system);
+
 my $dbh = DBI->connect("dbi:ODBC:FileCatalog","phnxrc") || die $DBI::errstr;
 $dbh->{LongReadLen}=2000; # full file paths need to fit in here
-my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_BBC_G4HIT' and filename like 'DST_BBC_G4HIT_epos_0_153fm_50kHz_bkg_0_153fm%' and runnumber = $inrunnumber order by filename") || die $DBI::errstr;
+my $getfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_BBC_G4HIT' and filename like '%$outfilelike%' and runnumber = $runnumber") || die $DBI::errstr;
+#print "select filename,segment from datasets where dsttype = 'DST_TRKR_G4HIT' and filename like '%$outfilelike%' and runnumber = $runnumber\n";
 my $chkfile = $dbh->prepare("select lfn from files where lfn=?") || die $DBI::errstr;
-
-my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH_G4HIT' and filename like 'DST_TRUTH_G4HIT_epos_0_153fm_50kHz_bkg_0_153fm%' and runnumber = $inrunnumber");
-
+my $gettruthfiles = $dbh->prepare("select filename,segment from datasets where dsttype = 'DST_TRUTH_G4HIT' and filename like '%$outfilelike%' and runnumber = $runnumber");
 my $nsubmit = 0;
 $getfiles->execute() || die $DBI::errstr;
-my $nmbd = $getfiles->rows;
-
+my $ncal = $getfiles->rows;
 while (my @res = $getfiles->fetchrow_array())
 {
-    if ($res[1] < 100000)
-    {
-	$mbdhash{sprintf("%05d",$res[1])} = $res[0];
-    }
-    else
-    {
 	$mbdhash{sprintf("%06d",$res[1])} = $res[0];
-    }
 }
 $getfiles->finish();
-
 $gettruthfiles->execute() || die $DBI::errstr;
 my $ntruth = $gettruthfiles->rows;
 while (my @res = $gettruthfiles->fetchrow_array())
 {
-    if ($res[1] < 100000)
-    {
-	$truthhash{sprintf("%05d",$res[1])} = $res[0];
-    }
-    else
-    {
 	$truthhash{sprintf("%06d",$res[1])} = $res[0];
-    }
 }
 $gettruthfiles->finish();
-
+#print "input files: $ncal, truth: $ntruth\n";
 foreach my $segment (sort { $a <=> $b } keys %mbdhash)
 {
     if (! exists $truthhash{$segment})
@@ -104,26 +120,19 @@ foreach my $segment (sort { $a <=> $b } keys %mbdhash)
     }
 
     my $lfn = $mbdhash{$segment};
+#    print "found $lfn\n";
     if ($lfn =~ /(\S+)-(\d+)-(\d+).*\..*/ )
     {
 	my $runnumber = int($2);
 	my $segment = int($3);
-	my $outfilename = sprintf("DST_MBD_EPD_epos_0_153fm_50kHz_bkg_0_153fm-%010d-%06d.root",$outrunnumber,$segment);
-	if ($segment < 100000)
-	{
-	    $outfilename = sprintf("DST_MBD_EPD_epos_0_153fm_50kHz_bkg_0_153fm-%010d-%05d.root",$outrunnumber,$segment);
-	}
-	$chkfile->execute($outfilename);
-	if ($chkfile->rows > 0)
-	{
-	    next;
-	}
+	my $outfilename = sprintf("DST_MBD_EPD_%s%010d-%06d.root",$outfilelike,$runnumber,$segment);
 	my $tstflag="";
 	if (defined $test)
 	{
 	    $tstflag="--test";
 	}
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %d %d %s", $outevents, $lfn, $truthhash{sprintf("%05d",$segment)}, $outfilename, $outdir, $outrunnumber, $segment, $tstflag);
+	my $truthfile = $truthhash{sprintf("%06d",$segment)};
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %s", $outevents, $lfn, $truthfile, $outfilename, $outdir, $build, $pileup, $system, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;
@@ -139,26 +148,18 @@ foreach my $segment (sort { $a <=> $b } keys %mbdhash)
 	{
 	    $nsubmit++;
 	}
-	if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit >=20000)
+	if (($maxsubmit != 0 && $nsubmit >= $maxsubmit) || $nsubmit >= 20000)
 	{
 	    print "maximum number of submissions $nsubmit reached, exiting\n";
 	    last;
 	}
     }
 }
+
 $chkfile->finish();
 $dbh->disconnect;
 
 my $jobfile = sprintf("condor.job");
-if (defined $shared)
-{
- $jobfile = sprintf("condor.job.shared");
-}
-if (! -f $jobfile)
-{
-    print "could not find $jobfile\n";
-    exit(1);
-}
 if (-f $condorlistfile)
 {
     if (defined $test)
