@@ -48,9 +48,9 @@ R__LOAD_LIBRARY(libffamodules.so)
 R__LOAD_LIBRARY(libfun4allutils.so)
 
 void Fun4All_G4_Calo(
-  const int nEvents = 1,
-  const std::string &inputFile0 = "DST_CALO_G4HIT_Herwig_MB_200kHz-0000000029-000000.root",
-  const std::string &outputFile = "DST_CALO_CLUSTER_Herwig_MB_200kHz-0000000029-000000.root",
+  const int nEvents = 0,
+  const std::string &inputFile0 = "DST_CALO_G4HIT_EPOS4_OO_200GeV_140kHz_bkg_EPOS4_OO_200GeV-0000000035-000000.root",
+  const std::string &outputFile = "DST_CALO_CLUSTER_EPOS4_OO_200GeV_140kHz_bkg_EPOS4_OO_200GeV-0000000035-000000.root",
   const std::string &outdir = ".",
   const std::string &cdbtag = "MDC2",
   const std::string &gitcommit = "none")
