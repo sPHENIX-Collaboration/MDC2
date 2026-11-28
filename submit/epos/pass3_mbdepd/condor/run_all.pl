@@ -125,6 +125,11 @@ foreach my $segment (sort { $a <=> $b } keys %mbdhash)
 	my $runnumber = int($2);
 	my $segment = int($3);
 	my $outfilename = sprintf("DST_MBD_EPD_%s%010d-%06d.root",$outfilelike,$runnumber,$segment);
+	$chkfile->execute($outfilename);
+	if ($chkfile->rows > 0)
+	{
+	    next;
+	}
 	my $tstflag="";
 	if (defined $test)
 	{

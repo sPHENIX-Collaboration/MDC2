@@ -61,8 +61,8 @@ else
     exit -1
 fi
 
-runnumber=$(printf "%010d" $8)
-sequence=$(printf "%06d" $9)
+runnumber=$(printf "%010d" $9)
+sequence=$(printf "%06d" ${10})
 
 filename=timing
 
@@ -71,7 +71,7 @@ root.exe -q -b  Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7
 
 [[ -f copyscript.sh ]] && sh copyscript.sh
 
-timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/epos/$7/pass3_mbdepd/timing.run${8}/${6}
+timedirname=/sphenix/sim/sim01/sphnxpro/mdc2/logs/epos/$8/pass3_mbdepd/timing.run${9}/${7}
 
 [ ! -d $timedirname ] && mkdir -p $timedirname
 
