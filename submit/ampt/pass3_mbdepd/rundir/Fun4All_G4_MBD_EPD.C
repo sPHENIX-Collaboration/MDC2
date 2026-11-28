@@ -7,15 +7,15 @@
 #include <G4_EPD.C>
 #include <G4_Input.C>
 #include <G4_Production.C>
+#include <SaveGitTags.C>
 
 #include <ffamodules/CDBInterface.h>
 #include <ffamodules/FlagHandler.h>
 
-#include <fun4allutils/TimerStats.h>
-
 #include <fun4all/Fun4AllDstOutputManager.h>
 #include <fun4all/Fun4AllOutputManager.h>
 #include <fun4all/Fun4AllServer.h>
+#include <fun4all/Fun4AllUtils.h>
 
 #include <phool/PHRandomSeed.h>
 #include <phool/recoConsts.h>
@@ -26,15 +26,26 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_MBD_EPD(
     const int nEvents = 1,
-     const string &inputFile1 = "DST_BBC_G4HIT_ampt_0_20fm_50kHz_bkg_0_20fm-0000000014-000000.root",
-     const string &inputFile2 = "DST_TRUTH_G4HIT_ampt_0_20fm_50kHz_bkg_0_20fm-0000000014-000000.root",
-     const string &outputFile = "DST_MBD_EPD_ampt_0_20fm_50kHz_bkg_0_20fm-0000000014-000000.root",
+     const string &inputFile0 = "DST_BBC_G4HIT_AMPT_OO_200GeV_140kHz_bkg_AMPT_OO_200GeV-0000000035-000000.root",
+     const string &inputFile1 = "DST_TRUTH_G4HIT_AMPT_OO_200GeV_140kHz_bkg_AMPT_OO_200GeV-0000000035-000000.root",
+     const string &outputFile = "DST_MBD_EPD_AMPT_OO_200GeV_140kHz_bkg_AMPT_OO_200GeV-0000000035-000000.root",
     const string &outdir = ".",
-    const string &cdbtag = "MDC2_ana.416")
+    const std::string &pileup = "140kHz",
+    const std::string &system = "OO",
+    const std::string &cdbtag = "MDC2",
+    const std::string &gitcommit = "none")
 {
   Fun4AllServer *se = Fun4AllServer::instance();
   se->Verbosity(1);
 
+  if (gitcommit != "none")
+  {
+    SaveGitTags(gitcommit);
+  }
+  else
+  {
+    SaveGitTags();
+  }
   // Opt to print all random seed used for debugging reproducibility. Comment out to reduce stdout prints.
   PHRandomSeed::Verbosity(1);
 
@@ -49,9 +60,15 @@ int Fun4All_G4_MBD_EPD(
   //  rc->set_IntFlag("RANDOMSEED",PHRandomSeed());
   // or set it to a fixed value so you can debug your code
   //  rc->set_IntFlag("RANDOMSEED", 12345);
+
+  std::pair<int, int> runseg = Fun4AllUtils::GetRunSegment(inputFile0);
+  int runnumber = runseg.first;
+  int segment = abs(runseg.second);
+
   Enable::CDB = true;
-  rc->set_StringFlag("CDB_GLOBALTAG", cdbtag);
-  rc->set_uint64Flag("TIMESTAMP", CDB::timestamp);
+  rc->set_StringFlag("CDB_GLOBALTAG", CDB::global_tag);
+  rc->set_uint64Flag("TIMESTAMP", runnumber);
+
   CDBInterface::instance()->Verbosity(1);
 
   //===============
@@ -65,8 +82,8 @@ int Fun4All_G4_MBD_EPD(
   // the simulations step completely. The G4Setup macro is only loaded to get information
   // about the number of layers used for the cell reco code
   Input::READHITS = true;
-  INPUTREADHITS::filename[0] = inputFile1;
-  INPUTREADHITS::filename[1] = inputFile2;
+  INPUTREADHITS::filename[0] = inputFile0;
+  INPUTREADHITS::filename[1] = inputFile1;
 
   //-----------------
   // Initialize the selected Input/Event generation
@@ -93,6 +110,12 @@ int Fun4All_G4_MBD_EPD(
   DstOut::OutputDir = outdir;
   DstOut::OutputFile = outputFile;
 
+  if (Enable::PRODUCTION)
+  {
+    PRODUCTION::SaveOutputDir = DstOut::OutputDir;
+    //    Production_CreateOutputDir();
+  }
+
   //======================
   // What to run
   //======================
@@ -106,13 +129,6 @@ int Fun4All_G4_MBD_EPD(
   Mbd_Reco();
 
   EPD_Tiles();
-
-  //--------------
-  // Timing module is last to register
-  //--------------
-  TimerStats *ts = new TimerStats();
-  ts->OutFileName("jobtime.root");
-  se->registerSubsystem(ts);
 
   //--------------
   // Set up Input Managers
