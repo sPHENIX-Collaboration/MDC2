@@ -78,13 +78,12 @@ if (! -f "outdir.txt")
 }
 my $outdir = `cat outdir.txt`;
 chomp $outdir;
-$outdir =~ s/trkrhit/$system\/trkrhit/;
+$outdir =~ s/mbdepd/$system\/mbdepd/;
 $outdir = sprintf("%s/run%04d/%s",$outdir,$runnumber,lc $pileup);
 if (! -d $outdir)
 {
   mkpath($outdir);
 }
-
 my %mbdhash = ();
 my %truthhash = ();
 
@@ -132,7 +131,7 @@ foreach my $segment (sort { $a <=> $b } keys %mbdhash)
 	    $tstflag="--test";
 	}
 	my $truthfile = $truthhash{sprintf("%06d",$segment)};
-	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %s", $outevents, $lfn, $truthfile, $outfilename, $outdir, $build, $pileup, $system, $runnumber, $segment, $tstflag);
+	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %s %d %d %s", $outevents, $lfn, $truthfile, $outfilename, $outdir, $build, $pileup, $system, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
 	system($subcmd);
 	my $exit_value  = $? >> 8;

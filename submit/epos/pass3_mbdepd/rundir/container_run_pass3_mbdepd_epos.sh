@@ -26,14 +26,15 @@ echo Arguments:
 echo arg1 \(events\) : $1
 echo arg2 \(track g4hits file\): $2
 echo arg3 \(truth g4hits file\): $3
-echo arg4 \(output dir\): $4
-echo arg5 \(build\): $5
-echo arg6 \(pileup\): $6
-echo arg7 \(system\): $7
-echo arg8 \(runnumber\): $8
-echo arg9 \(sequence\): $9
-
-anabuild=${5}
+echo arg4 \(output file\): $4
+echo arg5 \(output dir\): $5
+echo arg6 \(build\): $6
+echo arg7 \(pileup\): $7
+echo arg8 \(system\): $8
+echo arg9 \(runnumber\): $9
+echo arg10 \(sequence\): ${10}
+echoo arg11: \(gitcommit id\): ${11}
+anabuild=${6}
 
 source /opt/sphenix/core/bin/sphenix_setup.sh -n $anabuild
 
@@ -48,11 +49,11 @@ then
     cd $_CONDOR_SCRATCH_DIR
     echo $2 > inputfiles.list
     echo $3 >> inputfiles.list
-    getinputfiles.pl --dd  --filelist inputfiles.list
+    perl getinputfiles.pl --dd  --filelist inputfiles.list
     if [ $? -ne 0 ]
     then
         cat inputfiles.list
-	echo error from getinputfiles.pl --dd --filelist inputfiles.list, exiting
+	echo error from perl getinputfiles.pl --dd --filelist inputfiles.list, exiting
 	exit -1
     fi
 else
@@ -65,8 +66,8 @@ sequence=$(printf "%06d" $9)
 
 filename=timing
 
-echo running root.exe -q -b Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
-root.exe -q -b  Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$3\",\"$4\",\"$5\"\)
+echo running root.exe -q -b Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"$cdbtag\"\"${11}\"\)
+root.exe -q -b  Fun4All_G4_MBD_EPD.C\($1,\"$2\",\"$3\",\"$4\",\"$5\",\"$6\",\"$7\",\"$cdbtag\",\"${11}\"\)
 
 [[ -f copyscript.sh ]] && sh copyscript.sh
 
