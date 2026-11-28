@@ -26,8 +26,8 @@ R__LOAD_LIBRARY(libfun4allutils.so)
 
 int Fun4All_G4_MBD_EPD(
     const int nEvents = 1,
-     const string &inputFile1 = "DST_BBC_G4HIT_EPOS4_OO_200GeV_140kHz_bkg_EPOS4_OO_200GeV-0000000035-000000.root",
-     const string &inputFile2 = "DST_TRUTH_G4HIT_EPOS4_OO_200GeV_140kHz_bkg_EPOS4_OO_200GeV-0000000035-000000.root",
+     const string &inputFile0 = "DST_BBC_G4HIT_EPOS4_OO_200GeV_140kHz_bkg_EPOS4_OO_200GeV-0000000035-000000.root",
+     const string &inputFile1 = "DST_TRUTH_G4HIT_EPOS4_OO_200GeV_140kHz_bkg_EPOS4_OO_200GeV-0000000035-000000.root",
      const string &outputFile = "DST_MBD_EPD_EPOS4_OO_200GeV_140kHz_bkg_EPOS4_OO_200GeV-0000000035-000000.root",
     const string &outdir = ".",
     const std::string &pileup = "140kHz",
@@ -82,8 +82,8 @@ int Fun4All_G4_MBD_EPD(
   // the simulations step completely. The G4Setup macro is only loaded to get information
   // about the number of layers used for the cell reco code
   Input::READHITS = true;
-  INPUTREADHITS::filename[0] = inputFile1;
-  INPUTREADHITS::filename[1] = inputFile2;
+  INPUTREADHITS::filename[0] = inputFile0;
+  INPUTREADHITS::filename[1] = inputFile1;
 
   //-----------------
   // Initialize the selected Input/Event generation
