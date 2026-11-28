@@ -9,20 +9,24 @@ use DBI;
 
 
 my $build;
+my $memory;
 my $outevents = 0;
 my $pileup;
+my $overwrite;
 my $runnumber;
 my $system;
 my $test;
 my $incremental;
 my $verbosity;
-GetOptions("build:s" => \$build,  "increment"=>\$incremental, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "system:s"=>\$system,  "test"=>\$test, "verbose"=>\$verbosity);
+GetOptions("build:s" => \$build,  "increment"=>\$incremental, "memory:s"=>\$memory, "overwrite"=>\$overwrite, "pileup:s" => \$pileup, "run:i" =>\$runnumber, "system:s"=>\$system,  "test"=>\$test, "verbose"=>\$verbosity);
 if ($#ARGV < 0)
 {
     print "usage: run_all.pl <number of jobs>\n";
     print "parameters:\n";
     print "--build: <ana build>\n";
     print "--increment : submit jobs while processing running\n";
+    print "--memory : memory requirement with unit (MB)\n";
+    print "--overwrite : overwrite existing job files\n";
     print "--pileup : collision rate (with unit kHz)\n";
     print "--run: <runnumber>\n";
     print "--system: <AuAu or OO>\n";
@@ -198,6 +202,14 @@ while (my @res = $getfiles->fetchrow_array())
 	if (defined $test)
 	{
 	    $tstflag="--test";
+	}
+	if (defined $memory)
+	{
+	    $tstflag = sprintf("%s %s",$tstflag,$memory);
+	}
+	if (defined $overwrite)
+	{
+	    $tstflag= sprintf("%s --overwrite", $tstflag)
 	}
 	my $subcmd = sprintf("perl run_condor.pl %d %s %s %s %s %s %s %d %d %s", $outevents, $lfn, $bkglistfile, $outdir, $build, $pileup, $system, $runnumber, $segment, $tstflag);
 	print "cmd: $subcmd\n";
